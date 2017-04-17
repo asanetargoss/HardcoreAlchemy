@@ -81,6 +81,9 @@ public class ListenerMorph {
 		    return;
 		}		
 		String morphName = morph.name;
+		if (morphName == null || morphName.equals("")) {
+		    return;
+		}
 		// Get player capability for kill count
 		if (KILL_COUNT_CAPABILITY == null) {
 		    return;
@@ -94,9 +97,10 @@ public class ListenerMorph {
 		if (requiredKills == null) {
 		    // Set a sane default
 		    mapRequiredKills.put(morphName, 5);
+		    requiredKills = 5;
 		}
-		killCount.addKill(morph.name);
-	    int timesKilled = killCount.getNumKills(morph.name);
+		killCount.addKill(morphName);
+	    int timesKilled = killCount.getNumKills(morphName);
 	    // The player has to kill the mob requiredKills times to make the ghost spawn
 	    if (timesKilled % requiredKills != 0) {
 	        event.setCanceled(true);

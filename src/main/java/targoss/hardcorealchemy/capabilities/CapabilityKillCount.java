@@ -23,16 +23,19 @@ public class CapabilityKillCount implements ICapabilityKillCount {
     
     @Override
     public int getNumKills(String morphName) {
-        if (killCounts.containsKey(morphName)) {
-            return killCounts.get(morphName);
+        Integer kills = killCounts.get(morphName);
+        if (kills != null) {
+            return kills;
         }
+        killCounts.put(morphName, 0);
         return 0;
     }
 
     @Override
     public void addKill(String morphName) {
-        if (killCounts.containsKey(morphName)) {
-            killCounts.put(morphName, killCounts.get(morphName) + 1);
+        Integer kills = killCounts.get(morphName);
+        if (kills != null) {
+            killCounts.put(morphName, kills + 1);
         }
         else {
             killCounts.put(morphName, 1);
