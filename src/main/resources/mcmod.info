@@ -1,0 +1,27 @@
+[
+{
+  "modid": "hardcorealchemy",
+  "name": "Hardcore Alchemy",
+  "description": "Powering the Hardcore Alchemy Modpack.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["asanetargoss"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+},
+// This is a test to see if adding TaN to this mcmod.info will fix model loading errors and broken commands
+{
+    "modid": "ToughAsNails",
+    "name": "Tough As Nails",
+    "description": "Adds survival features to increase difficulty and realism, including thirst, body temperature, and more!",
+    "version": "1.0.0",
+    "mcversion": "1.9.4",
+	"url": "http://mods.curse.com/mc-mods/minecraft/246391-tough-as-nails",
+    "authorList": ["Adubbz", "Forstride"],
+    "logoFile": "assets/toughasnails/textures/gui/logo.png"
+}
+]
