@@ -1,6 +1,7 @@
 package targoss.hardcorealchemy.network;
 
 import io.netty.buffer.ByteBuf;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
@@ -16,8 +17,8 @@ public class PacketHandler {
     }
     
     public static void register() {
-        PacketHandler dummyInstance = new PacketHandler();
-        (new MessageHumanity()).register(dummyInstance);
+        PacketHandler packetHandler = new PacketHandler();
+        (new MessageHumanity()).register(packetHandler);
     }
     
 }

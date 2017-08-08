@@ -1,5 +1,7 @@
 package targoss.hardcorealchemy.listener;
 
+import java.util.Random;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
@@ -15,9 +17,11 @@ public class ListenerGui {
     public static final ResourceLocation TILESET = new ResourceLocation("hardcorealchemy:textures/gui/icon_tileset.png");
     
     public static final int HUMANITY_ICONS = 10;
+    private static double HUMANITY_3MIN_LEFT = ListenerHumanity.HUMANITY_3MIN_LEFT;
     public static boolean render_humanity = true;
     public static double humanity = 0.0D;
     public static double max_humanity = 0.0D;
+    private Random rand = new Random();
     
     @SubscribeEvent
     public void onRenderOverlayPre(RenderGameOverlayEvent.Pre event) {
@@ -25,6 +29,10 @@ public class ListenerGui {
             return;
         }
         
+        if (GuiIngameForge.left_height == 37) {
+            // The health render code doesn't make a space for itself when health is zero, which causes our icons to overlap with the TaN icons
+            GuiIngameForge.left_height += 12;
+        }
         ScaledResolution resolution = event.getResolution();
         int width = resolution.getScaledWidth();
         int height = resolution.getScaledHeight();
@@ -34,21 +42,28 @@ public class ListenerGui {
         mc.getTextureManager().bindTexture(TILESET);
         GlStateManager.enableBlend();
         //TODO: Get this working first, then worry about performance
-        //TODO: Jitter effect when humanity is < 0.25 which starts at the rightmost icon and moves left
-        //TODO: Represent unfilled icons which exceed max humanity as dotted outlines a la TaN (should not jitter)
+        //TODO: Jitter effect when humanity is < HUMANITY_3MIN_LEFT
         for (int i = 1; i <= HUMANITY_ICONS; i++) {
+            int y = top;
+            if (humanity <= HUMANITY_3MIN_LEFT) {
+                y += rand.nextInt(2);
+            }
             //TODO: BUG: 10 gets graphically interpreted as 9
             if (i*2 <= humanity) {
                 // Render full icon
-                mc.ingameGUI.drawTexturedModalRect(left + (i-1)*8, top, 0, 0, 9, 9);
+                mc.ingameGUI.drawTexturedModalRect(left + (i-1)*8, y, 0, 0, 9, 9);
             }
             else if (i*2 <= humanity+1) {
                 // Render partial icon
-                mc.ingameGUI.drawTexturedModalRect(left + (i-1)*8, top, 9, 0, 9, 9);
+                mc.ingameGUI.drawTexturedModalRect(left + (i-1)*8, y, 9, 0, 9, 9);
+            }
+            else if (i*2 <= max_humanity) {
+                // Render empty icon
+                mc.ingameGUI.drawTexturedModalRect(left + (i-1)*8, y, 18, 0, 9, 9);
             }
             else {
-                // Render empty icon
-                mc.ingameGUI.drawTexturedModalRect(left + (i-1)*8, top, 18, 0, 9, 9);
+                // Render dotted icon
+                mc.ingameGUI.drawTexturedModalRect(left + (i-1)*8, top, 27, 0, 9, 9);
             }
         }
         // Clean up after ourselves. Give the Minecraft GUI their tileset back. Tell them to move.

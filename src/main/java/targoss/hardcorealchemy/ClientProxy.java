@@ -8,6 +8,6 @@ public class ClientProxy extends CommonProxy {
     public void registerListeners() {
         super.registerListeners();
         // Technically, these only need to be registered on the logical client, but... meh
-        //MinecraftForge.EVENT_BUS.register(new ListenerGui());
+        MinecraftForge.EVENT_BUS.register(new ListenerGui());
     }
 }

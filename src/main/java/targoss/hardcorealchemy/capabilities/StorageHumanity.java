@@ -11,7 +11,12 @@ public class StorageHumanity implements Capability.IStorage<ICapabilityHumanity>
     public NBTBase writeNBT(Capability<ICapabilityHumanity> capability, ICapabilityHumanity instance, EnumFacing side) {
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setDouble("humanity", instance.getHumanity());
-        nbt.setBoolean("has_humanity_storage", true);
+        nbt.setDouble("lastHumanity", instance.getLastHumanity());
+        nbt.setInteger("tick", instance.getTick());
+        nbt.setBoolean("hasLostHumanity", instance.getHasLostHumanity());
+        nbt.setBoolean("hasLostMorphAbility", instance.getHasLostMorphAbility());
+        nbt.setBoolean("isMarried", instance.getIsMarried());
+        nbt.setBoolean("isMage", instance.getIsMage());
         return nbt;
     }
 
@@ -22,12 +27,13 @@ public class StorageHumanity implements Capability.IStorage<ICapabilityHumanity>
             return;
         }
         NBTTagCompound nbtCompound = (NBTTagCompound)nbt;
-        if (!nbtCompound.getBoolean("has_humanity_storage")) {
-            instance.setHumanity(instance.getDefaultHumanity());
-        }
-        else {
-            instance.setHumanity(nbtCompound.getDouble("humanity"));
-        }
+        instance.setHumanity(nbtCompound.getDouble("humanity"));
+        instance.setLastHumanity(nbtCompound.getDouble("lastHumanity"));
+        instance.setTick(nbtCompound.getInteger("tick"));
+        instance.setHasLostHumanity(nbtCompound.getBoolean("hasLostHumanity"));
+        instance.setHasLostMorphAbility(nbtCompound.getBoolean("hasLostMorphAbility"));
+        instance.setIsMarried(nbtCompound.getBoolean("isMarried"));
+        instance.setIsMage(nbtCompound.getBoolean("isMage"));
     }
     
 }

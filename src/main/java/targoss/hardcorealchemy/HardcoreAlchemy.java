@@ -4,6 +4,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 
 //TODO: Dependencies >.>
 // So far we depend on...
@@ -27,5 +28,10 @@ public class HardcoreAlchemy
         proxy.registerListeners();
         proxy.registerCapabilities();
         proxy.registerNetworking();
+    }
+    
+    @EventHandler
+    public void postInit(FMLPostInitializationEvent event) {
+        proxy.postInit();
     }
 }

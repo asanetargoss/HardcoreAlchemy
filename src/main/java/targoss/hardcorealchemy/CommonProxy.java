@@ -11,15 +11,19 @@ public class CommonProxy {
     
     public void registerListeners() {
         MinecraftForge.EVENT_BUS.register(new ListenerMorph());
-        //MinecraftForge.EVENT_BUS.register(new ListenerHumanity());
+        MinecraftForge.EVENT_BUS.register(new ListenerHumanity());
     }
     
     public void registerCapabilities() {
         CapabilityKillCount.register();
-        //CapabilityHumanity.register();
+        CapabilityHumanity.register();
     }
     
     public void registerNetworking() {
-        MinecraftForge.EVENT_BUS.register(new PacketHandler());
+        PacketHandler.register();
+    }
+    
+    public void postInit() {
+        ListenerHumanity.postInit();
     }
 }

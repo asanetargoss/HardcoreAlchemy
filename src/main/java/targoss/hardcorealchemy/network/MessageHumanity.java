@@ -21,14 +21,14 @@ public class MessageHumanity extends MessageToClient {
     }
 
     @Override
-    public void fromBytes(ByteBuf buf) {
+    public void toBytes(ByteBuf buf) {
         buf.writeBoolean(render_humanity);
         buf.writeDouble(humanity);
         buf.writeDouble(max_humanity);
     }
 
     @Override
-    public void toBytes(ByteBuf buf) {
+    public void fromBytes(ByteBuf buf) {
         render_humanity = buf.readBoolean();
         humanity = buf.readDouble();
         max_humanity = buf.readDouble();

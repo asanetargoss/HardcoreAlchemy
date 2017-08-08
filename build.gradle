@@ -36,6 +36,12 @@ minecraft {
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 }
 
+repositories {
+    flatDir {
+        dirs 'subsources/metamorph/build/libs'
+    }
+}
+
 dependencies {
     // you may put jars on which you depend on in ./libs
     // or you may define them like so..
@@ -45,8 +51,7 @@ dependencies {
     // real examples
     //compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'  // adds buildcraft to the dev env
     //compile 'com.googlecode.efficient-java-matrix-library:ejml:0.24' // adds ejml to the dev env
-    //compile 'glitchfiend.toughasnails:toughasnails:1.0.0:dev' // probably won't work
-    //compile 'glitchfiend.toughasnails:toughasnails' // probably won't work
+    compile group : 'mchorse.metamorph', name : 'metamorph', version : '1.1.1-1.10.2'
     
     // the 'provided' configuration is for optional dependencies that exist at compile-time but might not at runtime.
     //provided 'com.mod-buildcraft:buildcraft:6.0.8:dev'

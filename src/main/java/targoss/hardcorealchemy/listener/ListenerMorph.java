@@ -30,6 +30,8 @@ public class ListenerMorph {
 	@CapabilityInject(ICapabilityKillCount.class)
     public static final Capability<ICapabilityKillCount> KILL_COUNT_CAPABILITY = null;
 	public static final ResourceLocation KILL_COUNT_RESOURCE_LOCATION = CapabilityKillCount.RESOURCE_LOCATION;
+	@CapabilityInject(ICapabilityHumanity.class)
+    public static final Capability<ICapabilityHumanity> HUMANITY_CAPABILITY = null;
 	
 	static {
 	    //TODO: add the rest of the morph counts
@@ -84,10 +86,12 @@ public class ListenerMorph {
 		if (morphName == null || morphName.equals("")) {
 		    return;
 		}
-		// Get player capability for kill count
-		if (KILL_COUNT_CAPABILITY == null) {
+		// Check if the player's humanity permits acquiring morphs
+		ICapabilityHumanity humanity = event.player.getCapability(HUMANITY_CAPABILITY, null);
+		if (humanity != null && !humanity.canMorph()) {
 		    return;
 		}
+		// Get player capability for kill count
 		ICapabilityKillCount killCount = event.player.getCapability(KILL_COUNT_CAPABILITY, null);
 		if (killCount == null) {
 		    return;
