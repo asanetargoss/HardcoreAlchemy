@@ -41,14 +41,12 @@ public class ListenerGui {
         // Bind our tileset and set up graphics state.
         mc.getTextureManager().bindTexture(TILESET);
         GlStateManager.enableBlend();
-        //TODO: Get this working first, then worry about performance
-        //TODO: Jitter effect when humanity is < HUMANITY_3MIN_LEFT
         for (int i = 1; i <= HUMANITY_ICONS; i++) {
             int y = top;
             if (humanity <= HUMANITY_3MIN_LEFT) {
                 y += rand.nextInt(2);
             }
-            //TODO: BUG: 10 gets graphically interpreted as 9
+            //TODO: BUG: 10 gets graphically interpreted as 9 (Not sure if the bug still exists. We'll see!)
             if (i*2 <= humanity) {
                 // Render full icon
                 mc.ingameGUI.drawTexturedModalRect(left + (i-1)*8, y, 0, 0, 9, 9);
