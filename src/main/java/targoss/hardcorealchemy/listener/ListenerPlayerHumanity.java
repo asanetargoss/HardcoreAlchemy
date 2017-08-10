@@ -33,7 +33,7 @@ import targoss.hardcorealchemy.capability.killcount.ProviderKillCount;
 import targoss.hardcorealchemy.network.MessageHumanity;
 import targoss.hardcorealchemy.network.PacketHandler;
 
-public class ListenerHumanity {
+public class ListenerPlayerHumanity {
     @CapabilityInject(ICapabilityHumanity.class)
     public static final Capability<ICapabilityHumanity> HUMANITY_CAPABILITY = null;
     public static final ResourceLocation HUMANITY_RESOURCE_LOCATION = CapabilityHumanity.RESOURCE_LOCATION;

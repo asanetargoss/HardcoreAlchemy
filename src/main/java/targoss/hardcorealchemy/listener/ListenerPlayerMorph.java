@@ -23,7 +23,7 @@ import targoss.hardcorealchemy.capability.killcount.CapabilityKillCount;
 import targoss.hardcorealchemy.capability.killcount.ICapabilityKillCount;
 import targoss.hardcorealchemy.capability.killcount.ProviderKillCount;
 
-public class ListenerMorph {
+public class ListenerPlayerMorph {
 	
 	public static Map<String, Integer> mapRequiredKills = new HashMap<String, Integer>();
 	
@@ -64,7 +64,7 @@ public class ListenerMorph {
 	    mapRequiredKills.put("Ghast", 8);
 	}
 	
-	public ListenerMorph() { }
+	public ListenerPlayerMorph() { }
 	
 	@SubscribeEvent
 	public void onAttachCapability(AttachCapabilitiesEvent<Entity> event) {

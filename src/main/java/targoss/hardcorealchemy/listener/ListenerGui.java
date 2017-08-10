@@ -17,7 +17,7 @@ public class ListenerGui {
     public static final ResourceLocation TILESET = new ResourceLocation("hardcorealchemy:textures/gui/icon_tileset.png");
     
     public static final int HUMANITY_ICONS = 10;
-    private static double HUMANITY_3MIN_LEFT = ListenerHumanity.HUMANITY_3MIN_LEFT;
+    private static double HUMANITY_3MIN_LEFT = ListenerPlayerHumanity.HUMANITY_3MIN_LEFT;
     public static boolean render_humanity = true;
     public static double humanity = 0.0D;
     public static double max_humanity = 0.0D;
