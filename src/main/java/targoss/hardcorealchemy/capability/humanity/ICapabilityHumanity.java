@@ -1,4 +1,4 @@
-package targoss.hardcorealchemy.capabilities;
+package targoss.hardcorealchemy.capability.humanity;
 
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.RangedAttribute;

@@ -1,4 +1,4 @@
-package targoss.hardcorealchemy.capabilities;
+package targoss.hardcorealchemy.capability.killcount;
 
 import java.util.HashMap;
 import java.util.Map;

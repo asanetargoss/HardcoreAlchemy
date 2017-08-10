@@ -26,10 +26,10 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import targoss.hardcorealchemy.HardcoreAlchemy;
-import targoss.hardcorealchemy.capabilities.CapabilityHumanity;
-import targoss.hardcorealchemy.capabilities.ICapabilityHumanity;
-import targoss.hardcorealchemy.capabilities.ProviderHumanity;
-import targoss.hardcorealchemy.capabilities.ProviderKillCount;
+import targoss.hardcorealchemy.capability.humanity.CapabilityHumanity;
+import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
+import targoss.hardcorealchemy.capability.humanity.ProviderHumanity;
+import targoss.hardcorealchemy.capability.killcount.ProviderKillCount;
 import targoss.hardcorealchemy.network.MessageHumanity;
 import targoss.hardcorealchemy.network.PacketHandler;
 

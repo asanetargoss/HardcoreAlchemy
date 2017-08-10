@@ -1,4 +1,4 @@
-package targoss.hardcorealchemy.capabilities;
+package targoss.hardcorealchemy.capability.killcount;
 
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.EnumFacing;

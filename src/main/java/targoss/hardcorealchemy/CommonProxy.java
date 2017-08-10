@@ -1,8 +1,8 @@
 package targoss.hardcorealchemy;
 
 import net.minecraftforge.common.MinecraftForge;
-import targoss.hardcorealchemy.capabilities.CapabilityHumanity;
-import targoss.hardcorealchemy.capabilities.CapabilityKillCount;
+import targoss.hardcorealchemy.capability.humanity.CapabilityHumanity;
+import targoss.hardcorealchemy.capability.killcount.CapabilityKillCount;
 import targoss.hardcorealchemy.listener.ListenerHumanity;
 import targoss.hardcorealchemy.listener.ListenerMorph;
 import targoss.hardcorealchemy.network.PacketHandler;
