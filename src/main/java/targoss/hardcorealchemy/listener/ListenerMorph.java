@@ -76,7 +76,7 @@ public class ListenerMorph {
 	}
 	
 	@SubscribeEvent
-	public void onSpawnGhost(SpawnGhostEvent event) {
+	public void onSpawnGhost(SpawnGhostEvent.Pre event) {
 	    // Get morph
 		AbstractMorph morph = event.morph;
 		if (morph == null) {

@@ -162,7 +162,7 @@ public class ListenerHumanity {
     }
     
     @SubscribeEvent
-    public void onPlayerMorph(MorphEvent event) {
+    public void onPlayerMorph(MorphEvent.Pre event) {
         if (event.force || event.isCanceled()) {
             return;
         }
@@ -181,7 +181,7 @@ public class ListenerHumanity {
     }
     
     @SubscribeEvent
-    public void onSpawnGhost(SpawnGhostEvent event) {
+    public void onSpawnGhost(SpawnGhostEvent.Pre event) {
         ICapabilityHumanity capabilityHumanity = event.player.getCapability(HUMANITY_CAPABILITY, null);
         if (capabilityHumanity == null) {
             return;

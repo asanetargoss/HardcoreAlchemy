@@ -51,7 +51,7 @@ dependencies {
     // real examples
     //compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'  // adds buildcraft to the dev env
     //compile 'com.googlecode.efficient-java-matrix-library:ejml:0.24' // adds ejml to the dev env
-    compile group : 'mchorse.metamorph', name : 'metamorph', version : '1.1.1-1.10.2'
+    compile group : 'mchorse.metamorph', name : 'metamorph', version : '1.1.4-1.10.2'
     
     // the 'provided' configuration is for optional dependencies that exist at compile-time but might not at runtime.
     //provided 'com.mod-buildcraft:buildcraft:6.0.8:dev'
