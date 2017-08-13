@@ -38,10 +38,12 @@ public class ListenerPlayerHumanity {
     public static final Capability<ICapabilityHumanity> HUMANITY_CAPABILITY = null;
     public static final ResourceLocation HUMANITY_RESOURCE_LOCATION = CapabilityHumanity.RESOURCE_LOCATION;
     public static final IAttribute MAX_HUMANITY = ICapabilityHumanity.MAX_HUMANITY;
+    public static final double HUMANITY_LOSS_RATE = 2.0D/24000.0D/3.0D; // Per tick
     // It takes three whole Minecraft days to lose a humanity icon and nine days to gain it back
     // So, you can only be in a morph <25% of the time if you don't want to be stuck that way
-    public static final double HUMANITY_LOSS_RATE = 2.0D/24000.0D/3.0D; // Per tick
-    public static final double HUMANITY_GAIN_RATE = HUMANITY_LOSS_RATE/3.0D;
+    //public static final double HUMANITY_GAIN_RATE = HUMANITY_LOSS_RATE/3.0D;
+    // Kick down the humanity regen rate; the old rate seemed to not put enough pressure on the player
+    public static final double HUMANITY_GAIN_RATE = HUMANITY_LOSS_RATE/12.0D;
     // Thresholds for displaying warnings when your humanity gets critically low
     public static final double HUMANITY_1MIN_LEFT = HUMANITY_LOSS_RATE*20.0D*60.0D;
     public static final double HUMANITY_2MIN_LEFT = HUMANITY_1MIN_LEFT*2.0D;
