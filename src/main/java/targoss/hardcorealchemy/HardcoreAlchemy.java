@@ -1,5 +1,8 @@
 package targoss.hardcorealchemy;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -20,11 +23,11 @@ public class HardcoreAlchemy
     @SidedProxy(modId=MOD_ID, clientSide=CLIENT_PROXY, serverSide=COMMON_PROXY)
     public static CommonProxy proxy;
     
+    public static final Logger LOGGER = LogManager.getLogger("Hardcore Alchemy");
     @EventHandler
     public void init(FMLInitializationEvent event)
     {
-        //TODO: Console logger >.>
-        System.out.println("It's time to get magical.");
+        LOGGER.info("It's time to get magical.");
         proxy.registerListeners();
         proxy.registerCapabilities();
         proxy.registerNetworking();

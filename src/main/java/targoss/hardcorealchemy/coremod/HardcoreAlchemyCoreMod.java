@@ -1,7 +1,14 @@
 package targoss.hardcorealchemy.coremod;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Map;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.util.TraceClassVisitor;
 
 import net.minecraftforge.fml.common.DummyModContainer;
 import net.minecraftforge.fml.common.LoadController;
@@ -15,7 +22,11 @@ import targoss.hardcorealchemy.coremod.transform.TUseless;
 @IFMLLoadingPlugin.TransformerExclusions(value = "targoss.hardcorealchemy.coremod.")
 @IFMLLoadingPlugin.SortingIndex(value = 1001)
 public class HardcoreAlchemyCoreMod implements IFMLLoadingPlugin {
-
+    
+    public static boolean obfuscated = false;
+    
+    public static final Logger LOGGER = LogManager.getLogger("Hardcore Alchemy Coremod");
+    
 	@Override
 	public String[] getASMTransformerClass() {
 		return new String[]{
@@ -32,7 +43,7 @@ public class HardcoreAlchemyCoreMod implements IFMLLoadingPlugin {
 		public Container() {
 			super(new ModMetadata());
 			ModMetadata meta = getMetadata();
-			meta.modId = "targoss-hardcorealchemy-coremod";
+			meta.modId = "hardcorealchemy-coremod";
 			meta.name = "Hardcore Alchemy Core Mod";
 			meta.version = "0.1.0";
 			meta.credits = "";
@@ -52,20 +63,26 @@ public class HardcoreAlchemyCoreMod implements IFMLLoadingPlugin {
 
 	@Override
 	public String getSetupClass() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void injectData(Map<String, Object> data) {
-		// TODO Auto-generated method stub
-		
+		obfuscated = !(Boolean)(data.get("runtimeDeobfuscationEnabled"));
+		//TODO: if possible, consider getting the list of loading plugins from the blackboard,
+		//  and their defined loading indexes if those are available separately
 	}
 
 	@Override
 	public String getAccessTransformerClass() {
-		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	public static void logBytesToDebug(byte[] bytes) {
+	    StringWriter stringWriter = new StringWriter();
+        TraceClassVisitor traceVisitor = new TraceClassVisitor(new PrintWriter(stringWriter));
+        (new ClassReader(bytes)).accept(traceVisitor, 0);
+        LOGGER.debug(stringWriter.getBuffer());
 	}
 
 }
