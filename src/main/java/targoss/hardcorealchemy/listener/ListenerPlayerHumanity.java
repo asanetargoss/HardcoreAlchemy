@@ -15,6 +15,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.FoodStats;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentString;
@@ -179,6 +180,19 @@ public class ListenerPlayerHumanity {
         if (!capabilityHumanity.canMorph()) {
             event.setCanceled(true);
             ((EntityPlayerMP)player).addChatMessage(new TextComponentString("§7§o" + capabilityHumanity.explainWhyCantMorph()));
+        }
+    }
+    
+    @SubscribeEvent
+    public void onPlayerPostMorph(MorphEvent.Post event) {
+        EntityPlayer player = event.player;
+        if (player.worldObj.isRemote) {
+            return;
+        }
+        // Morphing costs one hunger shank unless you're morphing back into a player
+        if (!event.isDemorphing()) {
+            FoodStats foodStats = player.getFoodStats();
+            foodStats.setFoodLevel(foodStats.getFoodLevel() - 2);
         }
     }
     
