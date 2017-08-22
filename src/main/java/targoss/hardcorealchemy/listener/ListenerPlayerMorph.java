@@ -3,6 +3,7 @@ package targoss.hardcorealchemy.listener;
 import java.util.HashMap;
 import java.util.Map;
 
+import mchorse.metamorph.Metamorph;
 import mchorse.metamorph.api.events.MorphEvent;
 import mchorse.metamorph.api.events.SpawnGhostEvent;
 import mchorse.metamorph.api.morphs.AbstractMorph;
@@ -15,8 +16,10 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.capability.CapUtil;
 import targoss.hardcorealchemy.capability.humanity.CapabilityHumanity;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.capability.humanity.ProviderHumanity;
@@ -109,6 +112,15 @@ public class ListenerPlayerMorph {
 	    // The player has to kill the mob requiredKills times to make the ghost spawn
 	    if (timesKilled % requiredKills != 0) {
 	        event.setCanceled(true);
+	    }
+	}
+	
+	@SubscribeEvent
+	public void onPlayerClone(PlayerEvent.Clone event) {
+	    if (event.isWasDeath() && Metamorph.proxy.config.keep_morphs) {
+	        EntityPlayer player = event.getEntityPlayer();
+	        EntityPlayer playerOld = event.getOriginal();
+	        CapUtil.copyOldToNew(KILL_COUNT_CAPABILITY, playerOld, player);
 	    }
 	}
 }
