@@ -71,7 +71,7 @@ public class ListenerPlayerHumanity {
     @SubscribeEvent
     public void onAttachCapability(AttachCapabilitiesEvent<Entity> event) {
         Entity entity = event.getObject();
-        if (!(entity instanceof EntityPlayer)) {
+        if (!(entity instanceof EntityPlayerMP)) {
             return;
         }
         event.addCapability(HUMANITY_RESOURCE_LOCATION, new ProviderHumanity());

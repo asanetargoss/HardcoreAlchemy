@@ -8,6 +8,7 @@ import mchorse.metamorph.api.events.SpawnGhostEvent;
 import mchorse.metamorph.api.morphs.AbstractMorph;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
@@ -69,7 +70,7 @@ public class ListenerPlayerMorph {
 	@SubscribeEvent
 	public void onAttachCapability(AttachCapabilitiesEvent<Entity> event) {
 	    Entity entity = event.getObject();
-	    if (!(entity instanceof EntityPlayer)) {
+	    if (!(entity instanceof EntityPlayerMP)) {
 	        return;
 	    }
 	    event.addCapability(KILL_COUNT_RESOURCE_LOCATION, new ProviderKillCount());
