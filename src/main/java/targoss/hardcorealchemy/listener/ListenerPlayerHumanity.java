@@ -178,7 +178,7 @@ public class ListenerPlayerHumanity {
         }
         if (!capabilityHumanity.canMorph()) {
             event.setCanceled(true);
-            ((EntityPlayerMP)player).addChatMessage(new TextComponentString("ง7งo" + capabilityHumanity.explainWhyCantMorph()));
+            ((EntityPlayerMP)player).addChatMessage(new TextComponentString("ยง7ยงo" + capabilityHumanity.explainWhyCantMorph()));
         }
     }
     
@@ -239,25 +239,25 @@ public class ListenerPlayerHumanity {
         // If humanity passes a critical threshold, display message (most urgent one first)
         if (newHumanity <= 0) {
             // Display lost humanity message
-            ((EntityPlayerMP)player).addChatMessage(new TextComponentString("ง7งo" + "You feel your humanity fade away"));
+            ((EntityPlayerMP)player).addChatMessage(new TextComponentString("ยง7ยงo" + "You feel your humanity fade away"));
         }
         else if (newHumanity <= HUMANITY_3MIN_LEFT) {
             if (newHumanity <= HUMANITY_1MIN_LEFT && oldHumanity > HUMANITY_1MIN_LEFT) {
                 // Display 1 minute left message
                 ((EntityPlayerMP)player).addChatMessage(new TextComponentString(
-                        "ง4งo" + "You panic as you realize you don't remember who you are"
+                        "ยง4ยงo" + "You panic as you realize you don't remember who you are"
                         ));
             }
             else if (newHumanity <= HUMANITY_2MIN_LEFT && oldHumanity > HUMANITY_2MIN_LEFT) {
                 // Display 2 minutes left message
                 ((EntityPlayerMP)player).addChatMessage(new TextComponentString(
-                        "ง7งo" + "You fantasize a life without thought or inhibition"
+                        "ยง7ยงo" + "You fantasize a life without thought or inhibition"
                         ));
             }
             else if (oldHumanity > HUMANITY_3MIN_LEFT) {
                 // Display 3 minutes left message
                 ((EntityPlayerMP)player).addChatMessage(new TextComponentString(
-                        "ง7งo" + "You begin to tire of remembering your human form in the back of your mind"
+                        "ยง7ยงo" + "You begin to tire of remembering your human form in the back of your mind"
                         ));
             }
         }
