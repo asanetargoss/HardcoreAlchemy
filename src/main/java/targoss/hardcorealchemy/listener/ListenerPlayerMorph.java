@@ -3,20 +3,26 @@ package targoss.hardcorealchemy.listener;
 import java.util.HashMap;
 import java.util.Map;
 
+import ladysnake.dissolution.common.capabilities.IIncorporealHandler;
+import ladysnake.dissolution.common.capabilities.IncorporealDataHandler;
 import mchorse.metamorph.Metamorph;
 import mchorse.metamorph.api.events.MorphEvent;
 import mchorse.metamorph.api.events.SpawnGhostEvent;
 import mchorse.metamorph.api.morphs.AbstractMorph;
+import mchorse.metamorph.capabilities.morphing.IMorphing;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent.Clone;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.capability.CapUtil;
@@ -36,6 +42,10 @@ public class ListenerPlayerMorph {
 	public static final ResourceLocation KILL_COUNT_RESOURCE_LOCATION = CapabilityKillCount.RESOURCE_LOCATION;
 	@CapabilityInject(ICapabilityHumanity.class)
     public static final Capability<ICapabilityHumanity> HUMANITY_CAPABILITY = null;
+	
+	// The capability from Metamorph itself
+    @CapabilityInject(IMorphing.class)
+    public static final Capability<IMorphing> MORPHING_CAPABILITY = null;
 	
 	static {
 	    //TODO: add the rest of the morph counts
@@ -116,11 +126,48 @@ public class ListenerPlayerMorph {
 	}
 	
 	@SubscribeEvent
-	public void onPlayerClone(PlayerEvent.Clone event) {
+	public void onPlayerClone(Clone event) {
 	    if (event.isWasDeath() && Metamorph.proxy.config.keep_morphs) {
+	        // Keep kill count if morphs are kept
 	        EntityPlayer player = event.getEntityPlayer();
 	        EntityPlayer playerOld = event.getOriginal();
 	        CapUtil.copyOldToNew(KILL_COUNT_CAPABILITY, playerOld, player);
 	    }
+	}
+	
+	@Optional.Method(modid=HardcoreAlchemy.DISSOLUTION_ID)
+	@SubscribeEvent
+	public void onPlayerMorphAsGhost(MorphEvent.Pre event) {
+	    if (isIncorporeal(event.player) && !event.isDemorphing()) {
+    	        // You're a ghost, so being in a morph doesn't really make sense
+    	        event.setCanceled(true);
+    	        if (event.player instanceof EntityPlayerMP) {
+    	            ((EntityPlayerMP)(event.player)).addChatMessage(new TextComponentString(
+    	                    "§7§o" + "Your soul shall always be human."
+    	                    ));
+	        }
+	    }
+	}
+	
+	@Optional.Method(modid=HardcoreAlchemy.DISSOLUTION_ID)
+	@SubscribeEvent
+    public void onPlayerEnterAfterlife(PlayerRespawnEvent event) {
+	    EntityPlayer player = event.player;
+	    if (isIncorporeal(player)) {
+            IMorphing morphing = player.getCapability(MORPHING_CAPABILITY, null);
+            if (morphing != null) {
+                // You're a ghost, so being in a morph doesn't really make sense
+                morphing.demorph(player);
+            }
+        }
+    }
+	
+	@Optional.Method(modid=HardcoreAlchemy.DISSOLUTION_ID)
+	public boolean isIncorporeal(EntityPlayer player) {
+	    IIncorporealHandler incorporeal = player.getCapability(IncorporealDataHandler.CAPABILITY_INCORPOREAL, null);
+	    if (incorporeal != null && incorporeal.isIncorporeal()) {
+	        return true;
+	    }
+	    return false;
 	}
 }
