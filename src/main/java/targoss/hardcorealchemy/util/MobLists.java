@@ -6,7 +6,9 @@ import java.util.Set;
 import mchorse.metamorph.entity.EntityMorph;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
+import net.minecraft.entity.passive.EntityOcelot;
 import net.minecraft.entity.passive.EntityVillager;
+import net.minecraft.entity.passive.EntityWolf;
 
 /**
  * Various mob lists, mainly used for deciding which
@@ -79,10 +81,41 @@ public class MobLists {
         
         // Vanilla
         humans.add(EntityVillager.class.getName());
-        //TODO: Add the rest of human-like mobs from MCA and possibly ToroQuest if we keep that one
+        // Ars Magica
+        humans.add("am2.entity.EntityLightMage");
+        humans.add("am2.entity.EntityDarkMage");
+        // Minecraft Comes Alive
+        humans.add("mca.entity.EntityHuman");
+        // ToroQuest
+        humans.add("net.torocraft.toroquest.entities.EntityFugitive");
+        humans.add("net.torocraft.toroquest.entities.EntityGuard");
+        humans.add("net.torocraft.toroquest.entities.EntityMage");
+        humans.add("net.torocraft.toroquest.entities.EntityFugitive");
+        humans.add("net.torocraft.toroquest.entities.EntityRainbowGuard");
+        humans.add("net.torocraft.toroquest.entities.EntityRainbowKing");
+        humans.add("net.torocraft.toroquest.entities.EntitySentry");
+        humans.add("net.torocraft.toroquest.entities.EntityShopkeeper");
+        humans.add("net.torocraft.toroquest.entities.EntityFugitive");
+        humans.add("net.torocraft.toroquest.entities.EntityVillageLord");
         
         return humans;
     }
     
-    //TODO: tameables
+    /*
+     * All classes of this set must be derived from EntityTameable
+     */
+    public static Set<String> getEntityTameables() {
+        Set<String> entityTameables = new HashSet();
+        
+        // Minecraft
+        entityTameables.add(EntityWolf.class.getName());
+        entityTameables.add(EntityOcelot.class.getName());
+        // Voidcraft
+        entityTameables.add("Tamaized.Voidcraft.entity.companion.EntityCompanion");
+        entityTameables.add("Tamaized.Voidcraft.entity.companion.EntityCompanionFireElemental");
+        // ToroQuest
+        entityTameables.add("net.torocraft.toroquest.entities.EntityToro");
+        
+        return entityTameables;
+    }
 }
