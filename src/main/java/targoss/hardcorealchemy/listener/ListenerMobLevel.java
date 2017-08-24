@@ -46,7 +46,7 @@ public class ListenerMobLevel {
     @SubscribeEvent
     public void onAttachCapability(AttachCapabilitiesEvent<Entity> event) {
         Entity entity = event.getObject();
-        if (entity instanceof EntityLivingBase) {
+        if (entity instanceof EntityLivingBase && !(entity instanceof EntityPlayer)) {
             World world = entity.worldObj;
             if (world != null && world.isRemote) {
                 return;
