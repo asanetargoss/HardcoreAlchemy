@@ -13,10 +13,10 @@ import targoss.hardcorealchemy.network.PacketHandler;
 public class CommonProxy {
     
     public void registerListeners() {
-        //TODO: reduce event listener code run on the client for ListenerPlayerMorph and ListenerHumanity
         MinecraftForge.EVENT_BUS.register(new ListenerPlayerMorph());
         MinecraftForge.EVENT_BUS.register(new ListenerPlayerHumanity());
         MinecraftForge.EVENT_BUS.register(new ListenerMobLevel());
+        MinecraftForge.EVENT_BUS.register(new ListenerMobAI());
     }
     
     public void registerCapabilities() {
