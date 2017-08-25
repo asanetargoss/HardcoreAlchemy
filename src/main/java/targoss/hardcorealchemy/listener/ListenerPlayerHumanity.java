@@ -190,7 +190,7 @@ public class ListenerPlayerHumanity {
             return;
         }
         // Morphing costs one hunger shank unless you're morphing back into a player
-        if (!event.isDemorphing()) {
+        if (!event.isDemorphing() && !event.force) {
             FoodStats foodStats = player.getFoodStats();
             foodStats.setFoodLevel(foodStats.getFoodLevel() - 2);
         }
