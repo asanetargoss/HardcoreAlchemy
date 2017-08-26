@@ -32,6 +32,7 @@ import targoss.hardcorealchemy.capability.humanity.ProviderHumanity;
 import targoss.hardcorealchemy.capability.killcount.CapabilityKillCount;
 import targoss.hardcorealchemy.capability.killcount.ICapabilityKillCount;
 import targoss.hardcorealchemy.capability.killcount.ProviderKillCount;
+import targoss.hardcorealchemy.util.Chat;
 
 public class ListenerPlayerMorph {
 	
@@ -142,9 +143,7 @@ public class ListenerPlayerMorph {
     	        // You're a ghost, so being in a morph doesn't really make sense
     	        event.setCanceled(true);
     	        if (event.player instanceof EntityPlayerMP) {
-    	            ((EntityPlayerMP)(event.player)).addChatMessage(new TextComponentString(
-    	                    "§7§o" + "Your soul shall always be human."
-    	                    ));
+    	            Chat.notify((EntityPlayerMP)(event.player), "Your soul shall always be human.");
 	        }
 	    }
 	}

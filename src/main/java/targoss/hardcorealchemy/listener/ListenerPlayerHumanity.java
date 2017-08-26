@@ -18,7 +18,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.FoodStats;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
@@ -33,6 +32,7 @@ import targoss.hardcorealchemy.capability.humanity.ProviderHumanity;
 import targoss.hardcorealchemy.capability.killcount.ProviderKillCount;
 import targoss.hardcorealchemy.network.MessageHumanity;
 import targoss.hardcorealchemy.network.PacketHandler;
+import targoss.hardcorealchemy.util.Chat;
 
 public class ListenerPlayerHumanity {
     @CapabilityInject(ICapabilityHumanity.class)
@@ -179,7 +179,7 @@ public class ListenerPlayerHumanity {
         }
         if (!capabilityHumanity.canMorph()) {
             event.setCanceled(true);
-            ((EntityPlayerMP)player).addChatMessage(new TextComponentString("§7§o" + capabilityHumanity.explainWhyCantMorph()));
+            Chat.notify((EntityPlayerMP)player, capabilityHumanity.explainWhyCantMorph());
         }
     }
     
@@ -253,26 +253,20 @@ public class ListenerPlayerHumanity {
         // If humanity passes a critical threshold, display message (most urgent one first)
         if (newHumanity <= 0) {
             // Display lost humanity message
-            ((EntityPlayerMP)player).addChatMessage(new TextComponentString("§7§o" + "You feel your humanity fade away"));
+            Chat.notify((EntityPlayerMP)player, "You feel your humanity fade away");
         }
         else if (newHumanity <= HUMANITY_3MIN_LEFT) {
             if (newHumanity <= HUMANITY_1MIN_LEFT && oldHumanity > HUMANITY_1MIN_LEFT) {
                 // Display 1 minute left message
-                ((EntityPlayerMP)player).addChatMessage(new TextComponentString(
-                        "§4§o" + "You panic as you realize you don't remember who you are"
-                        ));
+                Chat.alarm((EntityPlayerMP)player, "You panic as you realize you don't remember who you are");
             }
             else if (newHumanity <= HUMANITY_2MIN_LEFT && oldHumanity > HUMANITY_2MIN_LEFT) {
                 // Display 2 minutes left message
-                ((EntityPlayerMP)player).addChatMessage(new TextComponentString(
-                        "§7§o" + "You fantasize a life without thought or inhibition"
-                        ));
+                Chat.notify((EntityPlayerMP)player, "You fantasize a life without thought or inhibition");
             }
             else if (oldHumanity > HUMANITY_3MIN_LEFT) {
                 // Display 3 minutes left message
-                ((EntityPlayerMP)player).addChatMessage(new TextComponentString(
-                        "§7§o" + "You begin to tire of remembering your human form in the back of your mind"
-                        ));
+                Chat.notify((EntityPlayerMP)player, "You begin to tire of remembering your human form in the back of your mind");
             }
         }
     }
