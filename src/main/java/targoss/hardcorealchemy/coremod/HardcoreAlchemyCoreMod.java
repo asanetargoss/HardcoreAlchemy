@@ -16,6 +16,8 @@ import net.minecraftforge.fml.common.ModMetadata;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 import targoss.hardcorealchemy.coremod.transform.TEntityLivingBase;
+import targoss.hardcorealchemy.coremod.transform.TProjectEKeyHandler;
+import targoss.hardcorealchemy.coremod.transform.TSlot;
 
 @IFMLLoadingPlugin.Name(value = "Hardcore Alchemy Core")
 @IFMLLoadingPlugin.MCVersion(value = "1.10.2")
@@ -30,7 +32,9 @@ public class HardcoreAlchemyCoreMod implements IFMLLoadingPlugin {
 	@Override
 	public String[] getASMTransformerClass() {
 		return new String[]{
-				TEntityLivingBase.class.getName()
+				TEntityLivingBase.class.getName(),
+				TSlot.class.getName(),
+				TProjectEKeyHandler.class.getName()
 		};
 	}
 
@@ -68,7 +72,7 @@ public class HardcoreAlchemyCoreMod implements IFMLLoadingPlugin {
 
 	@Override
 	public void injectData(Map<String, Object> data) {
-		obfuscated = !(Boolean)(data.get("runtimeDeobfuscationEnabled"));
+		obfuscated = (Boolean)(data.get("runtimeDeobfuscationEnabled"));
 		LOGGER.debug("runtimeDeobfuscationEnabled: "+obfuscated);
 	}
 

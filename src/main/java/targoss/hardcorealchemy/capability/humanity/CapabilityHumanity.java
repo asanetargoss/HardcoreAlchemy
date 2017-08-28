@@ -11,6 +11,9 @@ public class CapabilityHumanity implements ICapabilityHumanity {
     
     public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(HardcoreAlchemy.MOD_ID, "humanity");
     
+    // Not stored
+    private boolean notifiedMagicFail;
+    
     private double humanity;
     // Humanity in the previous tick after humanity tick calculations; allows us to see if humanity was changed in other ways
     private double lastHumanity;
@@ -20,6 +23,7 @@ public class CapabilityHumanity implements ICapabilityHumanity {
     private boolean hasLostMorphAbility;
     private boolean isMarried;
     private boolean isMage;
+    private boolean highMagicOverride;
     
     public static void register() {
         CapabilityManager.INSTANCE.register(ICapabilityHumanity.class, new StorageHumanity(), CapabilityHumanity.class);
@@ -33,6 +37,8 @@ public class CapabilityHumanity implements ICapabilityHumanity {
         hasLostMorphAbility = false;
         isMarried = false;
         isMage = false;
+        highMagicOverride = false;
+        notifiedMagicFail = false;
     }
     
     @Override
@@ -71,6 +77,11 @@ public class CapabilityHumanity implements ICapabilityHumanity {
     }
     
     @Override
+    public void setHighMagicOverride(boolean highMagicOverride) {
+        this.highMagicOverride = highMagicOverride;
+    }
+    
+    @Override
     public boolean getHasLostHumanity() {
         return hasLostHumanity;
     }
@@ -86,8 +97,18 @@ public class CapabilityHumanity implements ICapabilityHumanity {
     }
     
     @Override
+    public boolean getHighMagicOverride() {
+        return highMagicOverride;
+    }
+    
+    @Override
     public boolean canMorph() {
         return !(hasLostHumanity || hasLostMorphAbility || isMarried || isMage);
+    }
+    
+    @Override
+    public boolean canUseHighMagic() {
+        return !(hasLostHumanity || hasLostMorphAbility) || highMagicOverride;
     }
     
     @Override
@@ -101,7 +122,7 @@ public class CapabilityHumanity implements ICapabilityHumanity {
             return "You fail to comprehend other forms.";
         }
         if (hasLostHumanity) {
-            return "Your humanity is gone. You no longer have magic.";
+            return "Your humanity is gone. Your mind is confined to this body.";
         }
         if (isMarried) {
             return "Your humanity is strengthened by the power of love. You cannot find it in you to become a beast.";
@@ -130,6 +151,16 @@ public class CapabilityHumanity implements ICapabilityHumanity {
     @Override
     public double getLastHumanity() {
         return lastHumanity;
+    }
+
+    @Override
+    public void setNotifiedMagicFail(boolean notifiedMagicFail) {
+        this.notifiedMagicFail = notifiedMagicFail;
+    }
+
+    @Override
+    public boolean getNotifiedMagicFail() {
+        return notifiedMagicFail;
     }
 
 }

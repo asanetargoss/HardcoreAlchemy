@@ -15,6 +15,7 @@ public interface ICapabilityHumanity {
     public abstract void setHasLostMorphAbility(boolean hasLostMorphAbility);
     public abstract void setIsMarried(boolean isMarried);
     public abstract void setIsMage(boolean isMage);
+    public abstract void setHighMagicOverride(boolean highMagicOverride);
     public abstract double getHumanity();
     public abstract double getLastHumanity();
     public abstract int getTick();
@@ -22,7 +23,15 @@ public interface ICapabilityHumanity {
     public abstract boolean getHasLostMorphAbility();
     public abstract boolean getIsMarried();
     public abstract boolean getIsMage();
-    public boolean canMorph();
-    public String explainWhyCantMorph();
-    public boolean shouldDisplayHumanity();
+    public abstract boolean getHighMagicOverride();
+    public abstract boolean canMorph();
+    public abstract boolean canUseHighMagic();
+    public abstract String explainWhyCantMorph();
+    public abstract boolean shouldDisplayHumanity();
+    
+    /* A temporary variable used to prevent a player from seeing multiple notifications about
+     * not being able to use magic in the same tick, due to multiple events being fired.
+     */
+    public abstract void setNotifiedMagicFail(boolean notifiedMagicFail);
+    public abstract boolean getNotifiedMagicFail();
 }

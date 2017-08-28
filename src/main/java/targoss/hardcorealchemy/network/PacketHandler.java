@@ -19,6 +19,7 @@ public class PacketHandler {
     public static void register() {
         PacketHandler packetHandler = new PacketHandler();
         (new MessageHumanity()).register();
+        (new MessageMagic()).register();
     }
     
 }

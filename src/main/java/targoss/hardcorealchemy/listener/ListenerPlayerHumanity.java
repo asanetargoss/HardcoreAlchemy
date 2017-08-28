@@ -1,9 +1,13 @@
 package targoss.hardcorealchemy.listener;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import mchorse.metamorph.api.MorphAPI;
 import mchorse.metamorph.api.MorphManager;
 import mchorse.metamorph.api.events.MorphEvent;
 import mchorse.metamorph.api.events.SpawnGhostEvent;
+import mchorse.metamorph.api.morphs.AbstractMorph;
 import mchorse.metamorph.capabilities.morphing.IMorphing;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
@@ -31,6 +35,7 @@ import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.capability.humanity.ProviderHumanity;
 import targoss.hardcorealchemy.capability.killcount.ProviderKillCount;
 import targoss.hardcorealchemy.network.MessageHumanity;
+import targoss.hardcorealchemy.network.MessageMagic;
 import targoss.hardcorealchemy.network.PacketHandler;
 import targoss.hardcorealchemy.util.Chat;
 
@@ -55,6 +60,16 @@ public class ListenerPlayerHumanity {
     // The capability from Metamorph itself
     @CapabilityInject(IMorphing.class)
     public static final Capability<IMorphing> MORPHING_CAPABILITY = null;
+    
+    // Players stuck in these morphs will still be capable of all forms of magic
+    public static final Set<String> HIGH_MAGIC_MORPHS = new HashSet<String>();
+    
+    static {
+        HIGH_MAGIC_MORPHS.add("Skeleton");
+        HIGH_MAGIC_MORPHS.add("PigZombie");
+        HIGH_MAGIC_MORPHS.add("Blaze");
+        HIGH_MAGIC_MORPHS.add("Enderman");
+    }
     
     private static Item ROTTEN_FLESH;
     private static Item CHORUS_FRUIT;
@@ -83,13 +98,6 @@ public class ListenerPlayerHumanity {
     }
     
     @SubscribeEvent
-    public void onPlayerTickStart(TickEvent.PlayerTickEvent event) {
-        if (event.phase != Phase.START) {
-            return;
-        }
-    }
-    
-    @SubscribeEvent
     public void onPlayerTickMP(TickEvent.PlayerTickEvent event) {
         if (event.player.worldObj.isRemote) {
             return;
@@ -97,9 +105,6 @@ public class ListenerPlayerHumanity {
         EntityPlayerMP player = (EntityPlayerMP)(event.player);
         if (event.phase == Phase.START) {
             calculateHumanity(player);
-        }
-        if (event.phase == Phase.END) {
-            sendHumanityPacket(player);
         }
     }
     
@@ -140,10 +145,13 @@ public class ListenerPlayerHumanity {
             capabilityHumanity.setHumanity(newHumanity);
             if (newHumanity == 0) {
                 if (item == ROTTEN_FLESH) {
-                    // Uh oh, you're a zombie now!
-                    NBTTagCompound nbt = new NBTTagCompound();
-                    nbt.setString("Name", "Zombie");
-                    MorphAPI.morph(player, MorphManager.INSTANCE.morphFromNBT(nbt), true);
+                    // If you are already in a morph, then congrats, you get to keep that morph!
+                    if (morphing.getCurrentMorph() == null) {
+                        // Uh oh, you're a zombie now!
+                        NBTTagCompound nbt = new NBTTagCompound();
+                        nbt.setString("Name", "Zombie");
+                        MorphAPI.morph(player, MorphManager.INSTANCE.morphFromNBT(nbt), true);
+                    }
                 }
                 else if (item == CHORUS_FRUIT) {
                     // Uh oh, you're an enderman now!
@@ -156,6 +164,8 @@ public class ListenerPlayerHumanity {
                     NBTTagCompound nbt = new NBTTagCompound();
                     nbt.setString("Name", "Skeleton");
                     //TODO: actually make the player become a wither skeleton (This seems to be insufficient)
+                    //      By acquiring the wither skeleton morph normally, I should be able to inspect
+                    //      the NBT data and figure out what makes a wither skeleton morph work
                     nbt.setInteger("SkeletonType", 1);
                     MorphAPI.morph(player, MorphManager.INSTANCE.morphFromNBT(nbt), true);
                     //TODO: clear the withering effect
@@ -207,6 +217,7 @@ public class ListenerPlayerHumanity {
         }
     }
     
+    //TODO: Check if the player is unmorphed when humanity is zero, and if so choose a morph
     private void calculateHumanity(EntityPlayerMP player) {
         IAttributeInstance maxHumanity = player.getEntityAttribute(MAX_HUMANITY);
         if (maxHumanity == null) {
@@ -229,6 +240,17 @@ public class ListenerPlayerHumanity {
                 // If humanity reaches zero, make player stuck in a morph
                 if (newHumanity <= 0) {
                     capabilityHumanity.setHasLostHumanity(true);
+                    AbstractMorph morph = morphing.getCurrentMorph();
+                    if (morph != null && HIGH_MAGIC_MORPHS.contains(morph.name)) {
+                        // Allows certain morphs to still use magic due to their intelligence
+                        capabilityHumanity.setHighMagicOverride(true);
+                    }
+                    if (morph == null) {
+                        // If the player isn't in a morph, give a reasonable default
+                        NBTTagCompound nbt = new NBTTagCompound();
+                        nbt.setString("Name", "Zombie");
+                        MorphAPI.morph(player, MorphManager.INSTANCE.morphFromNBT(nbt), true);
+                    }
                 }
             }
         }
@@ -268,37 +290,6 @@ public class ListenerPlayerHumanity {
                 // Display 3 minutes left message
                 Chat.notify((EntityPlayerMP)player, "You begin to tire of remembering your human form in the back of your mind");
             }
-        }
-    }
-    
-    private void sendHumanityPacket(EntityPlayerMP player) {
-        ICapabilityHumanity capabilityHumanity = player.getCapability(HUMANITY_CAPABILITY, null);
-        if (capabilityHumanity == null) {
-            PacketHandler.INSTANCE.sendTo(new MessageHumanity(false, 0, 0), player);
-            return;
-        }
-        
-        int humanityTick = capabilityHumanity.getTick();
-        if (humanityTick >= HUMANITY_UPDATE_TICKS) {
-            capabilityHumanity.setTick(0);
-            
-            IAttributeInstance humanityInstance = player.getAttributeMap().getAttributeInstance(MAX_HUMANITY);
-            double maxHumanity;
-            if (humanityInstance != null) {
-                maxHumanity = humanityInstance.getAttributeValue();
-            }
-            else {
-                maxHumanity = 20.0D;
-            }
-            
-            PacketHandler.INSTANCE.sendTo(
-                    new MessageHumanity(capabilityHumanity.shouldDisplayHumanity(),
-                            capabilityHumanity.getHumanity(),
-                            maxHumanity),
-                    player);
-        }
-        else {
-            capabilityHumanity.setTick(humanityTick + 1);
         }
     }
 }
