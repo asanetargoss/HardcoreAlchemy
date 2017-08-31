@@ -13,14 +13,14 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 
-//TODO: Dependencies >.>
-// So far we depend on...
-// Metamorph [my own custom build at that... need to fix]
-@Mod(modid = HardcoreAlchemy.MOD_ID, version = HardcoreAlchemy.VERSION)
+@Mod(modid = HardcoreAlchemy.MOD_ID, version = HardcoreAlchemy.VERSION,
+    dependencies = HardcoreAlchemy.DEPENDENCIES, acceptedMinecraftVersions = HardcoreAlchemy.MC_VERSIONS)
 public class HardcoreAlchemy
 {
     public static final String MOD_ID = "hardcorealchemy";
     public static final String VERSION = "0.1.0";
+    public static final String DEPENDENCIES = "required-after:metamorph;";
+    public static final String MC_VERSIONS = "[1.10.2]";
     public static final String CLIENT_PROXY = "targoss.hardcorealchemy.ClientProxy";
     public static final String COMMON_PROXY = "targoss.hardcorealchemy.CommonProxy";
     
@@ -31,14 +31,20 @@ public class HardcoreAlchemy
     
     public static final String DISSOLUTION_ID = "dissolution";
     public static final String NUTRITION_ID = "nutrition";
+    public static final String BLOOD_MAGIC_ID = "BloodMagic";
+    public static final String ARS_MAGICA_ID = "arsmagica2";
     public static boolean isDissolutionLoaded = false;
     public static boolean isNutritionLoaded = false;
+    public static boolean isBloodMagicLoaded = false;
+    public static boolean isArsMagicaLoaded = false;
     
     @EventHandler
     public void preInit(FMLInitializationEvent event) {
         Map<String, ModContainer> modMap = Loader.instance().getIndexedModList();
         isDissolutionLoaded = modMap.containsKey(DISSOLUTION_ID);
         isNutritionLoaded = modMap.containsKey(NUTRITION_ID);
+        isBloodMagicLoaded = modMap.containsKey(BLOOD_MAGIC_ID);
+        isArsMagicaLoaded = modMap.containsKey(ARS_MAGICA_ID);
     }
     
     @EventHandler
