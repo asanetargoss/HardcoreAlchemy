@@ -281,20 +281,20 @@ public class ListenerPlayerHumanity {
         // If humanity passes a critical threshold, display message (most urgent one first)
         if (newHumanity <= 0) {
             // Display lost humanity message
-            Chat.notify((EntityPlayerMP)player, "You feel your humanity fade away");
+            Chat.notify((EntityPlayerMP)player, "You feel your humanity fade away.");
         }
         else if (newHumanity <= HUMANITY_3MIN_LEFT) {
             if (newHumanity <= HUMANITY_1MIN_LEFT && oldHumanity > HUMANITY_1MIN_LEFT) {
                 // Display 1 minute left message
-                Chat.alarm((EntityPlayerMP)player, "You panic as you realize you don't remember who you are");
+                Chat.alarm((EntityPlayerMP)player, "You panic as you realize you don't remember who you are.");
             }
             else if (newHumanity <= HUMANITY_2MIN_LEFT && oldHumanity > HUMANITY_2MIN_LEFT) {
                 // Display 2 minutes left message
-                Chat.notify((EntityPlayerMP)player, "You fantasize a life without thought or inhibition");
+                Chat.notify((EntityPlayerMP)player, "You fantasize a life without thought or inhibition.");
             }
             else if (oldHumanity > HUMANITY_3MIN_LEFT) {
                 // Display 3 minutes left message
-                Chat.notify((EntityPlayerMP)player, "You begin to tire of remembering your human form in the back of your mind");
+                Chat.notify((EntityPlayerMP)player, "You begin to tire of remembering your human form in the back of your mind.");
             }
         }
     }
