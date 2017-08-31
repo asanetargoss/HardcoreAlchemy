@@ -3,8 +3,8 @@ package targoss.hardcorealchemy.listener;
 import java.util.HashMap;
 import java.util.Map;
 
+import ladysnake.dissolution.common.capabilities.CapabilityIncorporealHandler;
 import ladysnake.dissolution.common.capabilities.IIncorporealHandler;
-import ladysnake.dissolution.common.capabilities.IncorporealDataHandler;
 import mchorse.metamorph.Metamorph;
 import mchorse.metamorph.api.events.MorphEvent;
 import mchorse.metamorph.api.events.SpawnGhostEvent;
@@ -163,7 +163,7 @@ public class ListenerPlayerMorph {
 	
 	@Optional.Method(modid=HardcoreAlchemy.DISSOLUTION_ID)
 	public boolean isIncorporeal(EntityPlayer player) {
-	    IIncorporealHandler incorporeal = player.getCapability(IncorporealDataHandler.CAPABILITY_INCORPOREAL, null);
+	    IIncorporealHandler incorporeal = player.getCapability(CapabilityIncorporealHandler.CAPABILITY_INCORPOREAL, null);
 	    if (incorporeal != null && incorporeal.isIncorporeal()) {
 	        return true;
 	    }
