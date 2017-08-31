@@ -1,11 +1,11 @@
 package targoss.hardcorealchemy.entity.ai;
 
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
+import net.minecraft.entity.monster.EntitySpider;
 
 public class AISpiderTargetMobOrMorph<T extends EntityLivingBase> extends AIAttackTargetMobOrMorph<T> {
 
-    public AISpiderTargetMobOrMorph(EntityAINearestAttackableTarget<T> AIIgnoringMorph) {
+    public AISpiderTargetMobOrMorph(EntitySpider.AISpiderTarget<T> AIIgnoringMorph) {
         super(AIIgnoringMorph);
     }
     
