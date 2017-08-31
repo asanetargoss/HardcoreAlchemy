@@ -10,6 +10,7 @@ import targoss.hardcorealchemy.listener.ListenerPlayerMorph;
 import targoss.hardcorealchemy.listener.ListenerMobAI;
 import targoss.hardcorealchemy.listener.ListenerMobLevel;
 import targoss.hardcorealchemy.listener.ListenerPacketUpdatePlayer;
+import targoss.hardcorealchemy.listener.ListenerPlayerDiet;
 import targoss.hardcorealchemy.network.PacketHandler;
 
 public class CommonProxy {
@@ -19,6 +20,7 @@ public class CommonProxy {
         MinecraftForge.EVENT_BUS.register(new ListenerPlayerMorph());
         MinecraftForge.EVENT_BUS.register(new ListenerPlayerHumanity());
         MinecraftForge.EVENT_BUS.register(new ListenerPlayerMagic());
+        MinecraftForge.EVENT_BUS.register(new ListenerPlayerDiet());
         MinecraftForge.EVENT_BUS.register(new ListenerMobLevel());
         MinecraftForge.EVENT_BUS.register(new ListenerMobAI());
     }

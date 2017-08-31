@@ -6,7 +6,24 @@ import java.util.Set;
 import mchorse.metamorph.entity.EntityMorph;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
+import net.minecraft.entity.monster.EntityBlaze;
+import net.minecraft.entity.monster.EntityCreeper;
+import net.minecraft.entity.monster.EntityEnderman;
+import net.minecraft.entity.monster.EntityGhast;
+import net.minecraft.entity.monster.EntityMagmaCube;
+import net.minecraft.entity.monster.EntityPigZombie;
+import net.minecraft.entity.monster.EntitySilverfish;
+import net.minecraft.entity.monster.EntitySkeleton;
+import net.minecraft.entity.monster.EntitySlime;
+import net.minecraft.entity.monster.EntitySpider;
+import net.minecraft.entity.monster.EntityWitch;
+import net.minecraft.entity.monster.EntityZombie;
+import net.minecraft.entity.passive.EntityChicken;
+import net.minecraft.entity.passive.EntityCow;
+import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.entity.passive.EntityOcelot;
+import net.minecraft.entity.passive.EntityPig;
+import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.passive.EntityWolf;
 
@@ -81,6 +98,7 @@ public class MobLists {
         
         // Vanilla
         humans.add(EntityVillager.class.getName());
+        humans.add(EntityWitch.class.getName());
         // Ars Magica
         humans.add("am2.entity.EntityLightMage");
         humans.add("am2.entity.EntityDarkMage");
@@ -101,6 +119,19 @@ public class MobLists {
         return humans;
     }
     
+    public static Set<String> getPassiveMobs() {
+        Set<String> passiveMobs = new HashSet();
+        
+        // Minecraft
+        passiveMobs.add(EntityPig.class.getName());
+        passiveMobs.add(EntityCow.class.getName());
+        passiveMobs.add(EntityChicken.class.getName());
+        passiveMobs.add(EntitySheep.class.getName());
+        passiveMobs.add(EntityHorse.class.getName());
+        
+        return passiveMobs;
+    }
+    
     /*
      * All classes of this set must be derived from EntityTameable
      */
@@ -117,5 +148,56 @@ public class MobLists {
         entityTameables.add("net.torocraft.toroquest.entities.EntityToro");
         
         return entityTameables;
+    }
+    
+    public static Set<String> getNightMobs() {
+        Set<String> nightMobs = new HashSet();
+        
+        // Minecraft
+        nightMobs.add(EntityZombie.class.getName());
+        nightMobs.add(EntitySkeleton.class.getName());
+        nightMobs.add(EntityCreeper.class.getName());
+        nightMobs.add(EntitySpider.class.getName());
+        nightMobs.add(EntityEnderman.class.getName());
+        nightMobs.add(EntitySilverfish.class.getName());
+        nightMobs.add(EntitySlime.class.getName());
+        // Deadly Monsters
+        nightMobs.add("com.dmonsters.entity.EntityBaby");
+        nightMobs.add("com.dmonsters.entity.EntityClimber");
+        nightMobs.add("com.dmonsters.entity.EntityEntrail");
+        nightMobs.add("com.dmonsters.entity.EntityFreezer");
+        nightMobs.add("com.dmonsters.entity.EntityMutantSteve");
+        nightMobs.add("com.dmonsters.entity.EntityPresent");
+        nightMobs.add("com.dmonsters.entity.EntityWideman");
+        nightMobs.add("com.dmonsters.entity.EntityWoman");
+        nightMobs.add("com.dmonsters.entity.EntityZombieChicken");
+        //TODO: Ars Magica Elementals
+        
+        return nightMobs;
+    }
+    
+    public static Set<String> getNetherMobs() {
+        Set<String> netherMobs = new HashSet();
+        
+        // Minecraft
+        netherMobs.add(EntityPigZombie.class.getName());
+        netherMobs.add(EntityGhast.class.getName());
+        netherMobs.add(EntityBlaze.class.getName());
+        netherMobs.add(EntityMagmaCube.class.getName());
+        // Ad Inferos
+        netherMobs.add("com.superdextor.adinferos.entity.monster.EntityBlackWidow");
+        netherMobs.add("com.superdextor.adinferos.entity.monster.EntityCurse");
+        netherMobs.add("com.superdextor.adinferos.entity.monster.EntityGhost");
+        netherMobs.add("com.superdextor.adinferos.entity.monster.EntityGlowstoneSkeleton");
+        netherMobs.add("com.superdextor.adinferos.entity.monster.EntityHerobrine");
+        netherMobs.add("com.superdextor.adinferos.entity.monster.EntityHerobrineClone");
+        netherMobs.add("com.superdextor.adinferos.entity.monster.EntityInfernumAvis");
+        netherMobs.add("com.superdextor.adinferos.entity.monster.EntityObsidianSheepman");
+        netherMobs.add("com.superdextor.adinferos.entity.monster.EntityPhantom");
+        netherMobs.add("com.superdextor.adinferos.entity.monster.EntityReaper");
+        netherMobs.add("com.superdextor.adinferos.entity.monster.EntitySkeletonHorse");
+        netherMobs.add("com.superdextor.adinferos.entity.monster.EntitySummoner");
+        
+        return netherMobs;
     }
 }

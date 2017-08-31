@@ -30,15 +30,15 @@ public class HardcoreAlchemy
     public static final Logger LOGGER = LogManager.getLogger("Hardcore Alchemy");
     
     public static final String DISSOLUTION_ID = "dissolution";
+    public static final String NUTRITION_ID = "nutrition";
     public static boolean isDissolutionLoaded = false;
+    public static boolean isNutritionLoaded = false;
     
     @EventHandler
     public void preInit(FMLInitializationEvent event) {
         Map<String, ModContainer> modMap = Loader.instance().getIndexedModList();
-        ModContainer dissolutionContainer = modMap.get(DISSOLUTION_ID);
-        if (dissolutionContainer != null) {
-            isDissolutionLoaded = true;
-        }
+        isDissolutionLoaded = modMap.containsKey(DISSOLUTION_ID);
+        isNutritionLoaded = modMap.containsKey(NUTRITION_ID);
     }
     
     @EventHandler

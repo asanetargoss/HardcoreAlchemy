@@ -176,6 +176,9 @@ public class ListenerPlayerHumanity {
                     capabilityHumanity.setHighMagicOverride(true);
                     //TODO: clear the withering effect
                 }
+                if (HardcoreAlchemy.isNutritionLoaded) {
+                    ListenerPlayerDiet.updateMorphDiet(player);
+                }
             }
         }
     }
@@ -257,6 +260,9 @@ public class ListenerPlayerHumanity {
                         nbt.setString("Name", "Zombie");
                         MorphAPI.morph(player, MorphManager.INSTANCE.morphFromNBT(nbt), true);
                     }
+                    if (HardcoreAlchemy.isNutritionLoaded) {
+                        ListenerPlayerDiet.updateMorphDiet(player);
+                    }
                 }
             }
         }
@@ -271,6 +277,8 @@ public class ListenerPlayerHumanity {
         capabilityHumanity.setHumanity(newHumanity);
         capabilityHumanity.setLastHumanity(newHumanity);
     }
+    
+    //TODO: Helper function for force morphing
     
     private void sendHumanityWarnings(EntityPlayerMP player, double oldHumanity, double newHumanity) {
         // We are only interested if humanity decreases
