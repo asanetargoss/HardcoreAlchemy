@@ -152,12 +152,17 @@ public class ListenerPlayerHumanity {
                         nbt.setString("Name", "Zombie");
                         MorphAPI.morph(player, MorphManager.INSTANCE.morphFromNBT(nbt), true);
                     }
+                    if (HIGH_MAGIC_MORPHS.contains(morphing.getCurrentMorph().name)) {
+                        // Allows certain morphs to still use magic due to their intelligence
+                        capabilityHumanity.setHighMagicOverride(true);
+                    }
                 }
                 else if (item == CHORUS_FRUIT) {
                     // Uh oh, you're an enderman now!
                     NBTTagCompound nbt = new NBTTagCompound();
                     nbt.setString("Name", "Enderman");
                     MorphAPI.morph(player, MorphManager.INSTANCE.morphFromNBT(nbt), true);
+                    capabilityHumanity.setHighMagicOverride(true);
                 }
                 else if (item == WITHER_APPLE) {
                     // Uh oh, you're a wither skeleton now!
@@ -168,6 +173,7 @@ public class ListenerPlayerHumanity {
                     //      the NBT data and figure out what makes a wither skeleton morph work
                     nbt.setInteger("SkeletonType", 1);
                     MorphAPI.morph(player, MorphManager.INSTANCE.morphFromNBT(nbt), true);
+                    capabilityHumanity.setHighMagicOverride(true);
                     //TODO: clear the withering effect
                 }
             }
