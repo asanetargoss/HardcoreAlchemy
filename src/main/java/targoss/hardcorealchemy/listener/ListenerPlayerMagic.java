@@ -52,11 +52,8 @@ public class ListenerPlayerMagic {
         MAGIC_ITEM_ALLOW_USE = new HashSet<String>();
         MAGIC_ITEM_ALLOW_USE.add("projecte:item.pe_alchemical_bag");
         MAGIC_ITEM_ALLOW_USE.add("arsmagica2:workbench_upgrade");
-        /* I was sorta forced to whitelist the wizard's chalk item
-         * because Ars Magica forcefully sets the block state for it
-         * without letting Forge events run.
-         * TODO: PR Ars Magica so Forge events are called correctly
-         * for that item
+        /* TODO: Add custom handler to prevent chalk from being used
+         * and remove it from the whitelist
          */
         MAGIC_ITEM_ALLOW_USE.add("arsmagica2:chalk");
         
@@ -74,8 +71,6 @@ public class ListenerPlayerMagic {
     //TODO: Use Java reflection to check if these items/blocks even have a use to begin with, and only notify chat if that is the case
     
     /*TODO: Prevent using block transmutation feature of Philosopher Stone
-     * Looks like the Philosopher Stone does right click logic when
-     * it's supposed to only give its item action type. *shakes head*
      */
     
     @SubscribeEvent
