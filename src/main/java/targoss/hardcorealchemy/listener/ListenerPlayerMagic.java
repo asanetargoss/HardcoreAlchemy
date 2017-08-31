@@ -1,7 +1,5 @@
 package targoss.hardcorealchemy.listener;
 
-import static targoss.hardcorealchemy.HardcoreAlchemy.LOGGER;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -154,7 +152,6 @@ public class ListenerPlayerMagic {
         if (event.isCanceled()) {
             return;
         }
-        LOGGER.debug("onTakeStackPre");
         ItemStack craftResult = event.slot.getStack();
         if (craftResult == null || !(event.slot instanceof SlotCrafting)) {
             return;
@@ -162,13 +159,11 @@ public class ListenerPlayerMagic {
         
         EntityPlayer player = event.player;
         if (player.worldObj.isRemote) {
-            LOGGER.debug("Attempt to craft item by player: " + craftResult.getItem().getRegistryName().toString());
             if (!canUseHighMagic && !isAllowed(MAGIC_ITEM_ALLOW_CRAFT, craftResult)) {
                 event.setCanceled(true);
             }
         }
         else {
-            LOGGER.debug("Attempt to craft item by player: " + craftResult.getItem().getRegistryName().toString());
             ICapabilityHumanity capabilityHumanity = player.getCapability(HUMANITY_CAPABILITY, null);
             if (capabilityHumanity != null &&
                     !capabilityHumanity.canUseHighMagic() &&
