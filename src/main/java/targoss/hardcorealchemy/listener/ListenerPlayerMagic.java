@@ -1,8 +1,24 @@
 package targoss.hardcorealchemy.listener;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
+import WayofTime.bloodmagic.api.saving.SoulNetwork;
+import WayofTime.bloodmagic.api.util.helper.NetworkHelper;
+import am2.api.affinity.Affinity;
+import am2.api.event.SpellCastEvent;
+import am2.api.extensions.IAffinityData;
+import am2.api.extensions.IEntityExtension;
+import am2.api.extensions.ISkillData;
+import am2.api.skill.Skill;
+import am2.api.skill.SkillPoint;
+import am2.extensions.AffinityData;
+import am2.extensions.EntityExtension;
+import am2.extensions.SkillData;
+import am2.spell.ContingencyType;
+import moze_intel.projecte.api.ProjectEAPI;
+import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
 import net.minecraft.block.Block;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayer;
@@ -14,9 +30,12 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.event.EventTakeStack;
@@ -172,6 +191,15 @@ public class ListenerPlayerMagic {
         }
     }
     
+    @SubscribeEvent
+    public void onMageDie(PlayerRespawnEvent event) {
+        if (event.player.worldObj.isRemote) {
+            return;
+        }
+        
+        eraseAllMortalMagic((EntityPlayerMP)(event.player));
+    }
+    
     public static boolean isAllowed(Set<String> whitelist, ItemStack itemStack) {
         ResourceLocation itemResource = itemStack.getItem().getRegistryName();
         return !HIGH_MAGIC_MODS.contains(itemResource.getResourceDomain()) ||
@@ -182,5 +210,87 @@ public class ListenerPlayerMagic {
         ResourceLocation blockResource = block.getRegistryName();
         return !HIGH_MAGIC_MODS.contains(blockResource.getResourceDomain()) ||
                     whitelist.contains(blockResource.toString());
+    }
+    
+    public static void eraseAllMortalMagic(EntityPlayerMP player) {
+        if (HardcoreAlchemy.isBloodMagicLoaded) {
+            eraseBloodMagic(player);
+        }
+        if (HardcoreAlchemy.isArsMagicaLoaded) {
+            eraseSpellMagic(player);
+        }
+        if (HardcoreAlchemy.isProjectELoaded) {
+            eraseEMC(player);
+        }
+        //TODO: Clear Astral Sorcery passive buffs?
+    }
+    
+    /*
+     * What it does: Makes it as if the player never used a blood orb.
+     * Why it does it: 1) Prevents syphoning effect from Life Drain mod
+     * 2) Hopefully stops rituals from running, but I haven't tested that so who knows?
+     * 3) For the challenge
+     */
+    @Optional.Method(modid = HardcoreAlchemy.BLOOD_MAGIC_ID)
+    public static void eraseBloodMagic(EntityPlayerMP player) {
+        SoulNetwork network = NetworkHelper.getSoulNetwork(player);
+        network.setOrbTier(0);
+        network.setCurrentEssence(0);
+    }
+    
+    /*
+     * What it does: Resets magic level, skill allocations, and affinities
+     * Why it does it: 1) Prevents affinity effects from persisting across lives or
+     * (In the case of ListenerPlayerHumanity) into permanent morphs
+     * 2) Sets other aspects of the player's magic to be consistent with that fact
+     * 3) Allow for the player to try new specializations
+     */
+    @Optional.Method(modid = HardcoreAlchemy.ARS_MAGICA_ID)
+    public static void eraseSpellMagic(EntityPlayerMP player) {
+        
+        IEntityExtension playerMagicExtension = EntityExtension.For(player);
+        if (playerMagicExtension != null) {
+            playerMagicExtension.setCurrentLevel(1);
+            playerMagicExtension.setCurrentXP(0.0F);
+        }
+        
+        ISkillData playerSkillData = SkillData.For(player);
+        if (playerSkillData != null) {
+            Map<SkillPoint, Integer> playerSkillPoints = playerSkillData.getSkillPoints();
+            for (SkillPoint skillPoint : playerSkillPoints.keySet()) {
+                if (skillPoint == SkillPoint.SKILL_POINT_1 /*blue skill point*/) {
+                    playerSkillPoints.replace(skillPoint, 3);
+                }
+                else {
+                    playerSkillPoints.replace(skillPoint, 0);
+                }
+            }
+            Map<Skill, Boolean> playerSkills = playerSkillData.getSkills();
+            for (Skill skill : playerSkills.keySet()) {
+                playerSkills.replace(skill, false);
+            }
+        }
+        
+        IAffinityData playerAffinityData = AffinityData.For(player);
+        if (playerAffinityData != null) {
+            playerAffinityData.setLocked(false);
+            for (Affinity affinity : GameRegistry.findRegistry(Affinity.class).getValues()) {
+                playerAffinityData.setAffinityDepth(affinity, 0.0D);
+            }
+        }
+    }
+    
+    /*
+     * What it does: Sets EMC for the player's transmutation table to zero
+     * Why it does it: 1) To prevent the player from transferring ridiculous amounts
+     * of EMC across deaths
+     * 2) Gently encourage players to not use the transmutation table for long-term storage
+     */
+    @Optional.Method(modid = HardcoreAlchemy.PROJECT_E_ID)
+    public static void eraseEMC(EntityPlayerMP player) {
+        IKnowledgeProvider transmutationKnowledge = player.getCapability(ProjectEAPI.KNOWLEDGE_CAPABILITY, null);
+        if (transmutationKnowledge != null) {
+            transmutationKnowledge.setEmc(0.0D);
+        }
     }
 }

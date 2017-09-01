@@ -39,6 +39,9 @@ import targoss.hardcorealchemy.network.MessageMagic;
 import targoss.hardcorealchemy.network.PacketHandler;
 import targoss.hardcorealchemy.util.Chat;
 
+/*
+ * TODO: Refactor forced morphing!
+ */
 public class ListenerPlayerHumanity {
     @CapabilityInject(ICapabilityHumanity.class)
     public static final Capability<ICapabilityHumanity> HUMANITY_CAPABILITY = null;
@@ -156,6 +159,14 @@ public class ListenerPlayerHumanity {
                         // Allows certain morphs to still use magic due to their intelligence
                         capabilityHumanity.setHighMagicOverride(true);
                     }
+                    else {
+                        if (HardcoreAlchemy.isArsMagicaLoaded) {
+                            ListenerPlayerMagic.eraseSpellMagic(player);
+                        }
+                        if (HardcoreAlchemy.isProjectELoaded) {
+                            ListenerPlayerMagic.eraseEMC(player);
+                        }
+                    }
                 }
                 else if (item == CHORUS_FRUIT) {
                     // Uh oh, you're an enderman now!
@@ -226,7 +237,6 @@ public class ListenerPlayerHumanity {
         }
     }
     
-    //TODO: Check if the player is unmorphed when humanity is zero, and if so choose a morph
     private void calculateHumanity(EntityPlayerMP player) {
         IAttributeInstance maxHumanity = player.getEntityAttribute(MAX_HUMANITY);
         if (maxHumanity == null) {
@@ -250,15 +260,31 @@ public class ListenerPlayerHumanity {
                 if (newHumanity <= 0) {
                     capabilityHumanity.setHasLostHumanity(true);
                     AbstractMorph morph = morphing.getCurrentMorph();
-                    if (morph != null && HIGH_MAGIC_MORPHS.contains(morph.name)) {
-                        // Allows certain morphs to still use magic due to their intelligence
-                        capabilityHumanity.setHighMagicOverride(true);
+                    if (morph != null) {
+                        if (HIGH_MAGIC_MORPHS.contains(morph.name)) {
+                            // Allows certain morphs to still use magic due to their intelligence
+                            capabilityHumanity.setHighMagicOverride(true);
+                        }
+                        else {
+                            if (HardcoreAlchemy.isArsMagicaLoaded) {
+                                ListenerPlayerMagic.eraseSpellMagic(player);
+                            }
+                            if (HardcoreAlchemy.isProjectELoaded) {
+                                ListenerPlayerMagic.eraseEMC(player);
+                            }
+                        }
                     }
                     if (morph == null) {
                         // If the player isn't in a morph, give a reasonable default
                         NBTTagCompound nbt = new NBTTagCompound();
                         nbt.setString("Name", "Zombie");
                         MorphAPI.morph(player, MorphManager.INSTANCE.morphFromNBT(nbt), true);
+                        if (HardcoreAlchemy.isArsMagicaLoaded) {
+                            ListenerPlayerMagic.eraseSpellMagic(player);
+                        }
+                        if (HardcoreAlchemy.isProjectELoaded) {
+                            ListenerPlayerMagic.eraseEMC(player);
+                        }
                     }
                     if (HardcoreAlchemy.isNutritionLoaded) {
                         ListenerPlayerDiet.updateMorphDiet(player);
@@ -277,8 +303,6 @@ public class ListenerPlayerHumanity {
         capabilityHumanity.setHumanity(newHumanity);
         capabilityHumanity.setLastHumanity(newHumanity);
     }
-    
-    //TODO: Helper function for force morphing
     
     private void sendHumanityWarnings(EntityPlayerMP player, double oldHumanity, double newHumanity) {
         // We are only interested if humanity decreases
