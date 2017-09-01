@@ -128,7 +128,7 @@ public class CapabilityHumanity implements ICapabilityHumanity {
             return "Your humanity is strengthened by the power of love. You cannot find it in you to become a beast.";
         }
         if (isMage) {
-            return "Your affinity to hermitian magic renders your soul incompatible with anything other than a human body.";
+            return "Your affinity to magic has bound you to your form.";
         }
         return "";
     }

@@ -17,9 +17,14 @@ import am2.extensions.AffinityData;
 import am2.extensions.EntityExtension;
 import am2.extensions.SkillData;
 import am2.spell.ContingencyType;
+import mchorse.metamorph.api.MorphAPI;
+import mchorse.metamorph.api.morphs.AbstractMorph;
+import mchorse.metamorph.capabilities.morphing.IMorphing;
+import mchorse.metamorph.capabilities.morphing.Morphing;
 import moze_intel.projecte.api.ProjectEAPI;
 import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
 import net.minecraft.block.Block;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -191,6 +196,42 @@ public class ListenerPlayerMagic {
         }
     }
     
+    // When a player chooses the path of a spellcaster, they lose the ability to morph
+    @Optional.Method(modid = HardcoreAlchemy.ARS_MAGICA_ID)
+    @SubscribeEvent
+    public void onCastFirstSpell(SpellCastEvent.Pre event) {
+        EntityLivingBase entity = event.entityLiving;
+        if (entity.worldObj.isRemote || !(entity instanceof EntityPlayerMP)) {
+            return;
+        }
+        EntityPlayerMP player = (EntityPlayerMP)entity;
+        ICapabilityHumanity humanityCapability = player.getCapability(HUMANITY_CAPABILITY, null);
+        if (humanityCapability != null && !humanityCapability.getIsMage()) {
+            IMorphing morphing = Morphing.get(player);
+            if (morphing != null) {
+                AbstractMorph morph = morphing.getCurrentMorph();
+                /* Casting a spell makes you lose the ability to morph.
+                 * Normally, this makes you stuck as a human.
+                 * However, some morphs can still use spells, resulting
+                 * in the player being stuck as that morph.
+                 */
+                if (morph != null) {
+                    if (humanityCapability.canMorph() && ListenerPlayerHumanity.HIGH_MAGIC_MORPHS.contains(morph.name)) {
+                        // If a player is stuck in a morph, they should by definition have no humanity
+                        humanityCapability.setHumanity(0.0D);
+                        // Prevents setting forced morph flag hasLostHumanity. I REALLY need to refactor forced morphs/being stuck as a human
+                        humanityCapability.setLastHumanity(0.0D); 
+                    }
+                    else {
+                        MorphAPI.demorph(player);
+                    }
+                }
+            }
+            humanityCapability.setIsMage(true);
+            Chat.notifyMagical(player, "You feel enlightened.");
+        }
+    }
+    
     @SubscribeEvent
     public void onMageDie(PlayerRespawnEvent event) {
         if (event.player.worldObj.isRemote) {
@@ -250,8 +291,16 @@ public class ListenerPlayerMagic {
         
         IEntityExtension playerMagicExtension = EntityExtension.For(player);
         if (playerMagicExtension != null) {
-            playerMagicExtension.setCurrentLevel(1);
+            /* Ars Magica seems to randomly forget to send players their magic level
+             * when you die. (took me a while to figure out it wasn't this method's code)
+             * Not good!
+             * Workaround: Cast enough spells to raise your magic level
+             * TODO: Test Ars Magica by itself to verify it is a bug from that
+             * mod specifically
+             */
+            playerMagicExtension.setMagicLevelWithMana(1);
             playerMagicExtension.setCurrentXP(0.0F);
+            
         }
         
         ISkillData playerSkillData = SkillData.For(player);
