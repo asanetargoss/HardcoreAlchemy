@@ -69,13 +69,13 @@ public class ListenerPlayerMorph {
 	    mapRequiredKills.put("Silverfish", 8);
 	    mapRequiredKills.put("Spider", 8);
 	    mapRequiredKills.put("Zombie", 12);
-	    mapRequiredKills.put("Skeleton", 12);
+	    mapRequiredKills.put("Skeleton", 24);
 	    mapRequiredKills.put("Creeper", 12);
-	    mapRequiredKills.put("Enderman", 10);
+	    mapRequiredKills.put("Enderman", 20);
 	    mapRequiredKills.put("Guardian", 8);
 	    // Nether monsters
 	    mapRequiredKills.put("LavaSlime", 14);
-	    mapRequiredKills.put("Blaze", 20);
+	    mapRequiredKills.put("Blaze", 40);
 	    mapRequiredKills.put("Ghast", 8);
 	}
 	
