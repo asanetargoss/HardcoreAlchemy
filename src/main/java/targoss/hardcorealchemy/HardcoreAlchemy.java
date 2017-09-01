@@ -33,10 +33,12 @@ public class HardcoreAlchemy
     public static final String NUTRITION_ID = "nutrition";
     public static final String BLOOD_MAGIC_ID = "BloodMagic";
     public static final String ARS_MAGICA_ID = "arsmagica2";
+    public static final String PROJECT_E_ID = "ProjectE";
     public static boolean isDissolutionLoaded = false;
     public static boolean isNutritionLoaded = false;
     public static boolean isBloodMagicLoaded = false;
     public static boolean isArsMagicaLoaded = false;
+    public static boolean isProjectELoaded = false;
     
     @EventHandler
     public void preInit(FMLInitializationEvent event) {
@@ -45,6 +47,7 @@ public class HardcoreAlchemy
         isNutritionLoaded = modMap.containsKey(NUTRITION_ID);
         isBloodMagicLoaded = modMap.containsKey(BLOOD_MAGIC_ID);
         isArsMagicaLoaded = modMap.containsKey(ARS_MAGICA_ID);
+        isProjectELoaded = modMap.containsKey(PROJECT_E_ID);
     }
     
     @EventHandler
