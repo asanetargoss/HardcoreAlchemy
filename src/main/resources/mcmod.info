@@ -11,7 +11,7 @@
   "credits": "",
   "logoFile": "",
   "screenshots": [],
-  "dependencies": []
+  "dependencies": ["metamorph"]
 },
 // This is a test to see if adding TaN to this mcmod.info will fix model loading errors and broken commands
 {
