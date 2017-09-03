@@ -100,6 +100,7 @@ public class MobLists {
         humans.add(EntityVillager.class.getName());
         humans.add(EntityWitch.class.getName());
         // Ars Magica
+        humans.add("am2.entity.EntityDryad");
         humans.add("am2.entity.EntityLightMage");
         humans.add("am2.entity.EntityDarkMage");
         // Minecraft Comes Alive
