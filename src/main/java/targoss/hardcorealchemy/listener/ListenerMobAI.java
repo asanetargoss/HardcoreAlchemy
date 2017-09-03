@@ -48,10 +48,6 @@ public class ListenerMobAI {
             mobAIMorphBlacklist.add(mob);
             mobAIIgnoreBlacklist.add(mob);
         }
-        for (String mob : mobLists.getHumans()) {
-            mobAIMorphBlacklist.add(mob);
-            mobAIIgnoreBlacklist.add(mob);
-        }
     }
     
     @SubscribeEvent
