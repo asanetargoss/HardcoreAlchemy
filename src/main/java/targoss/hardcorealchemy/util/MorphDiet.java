@@ -96,23 +96,17 @@ public class MorphDiet {
     }
     
     public static enum Restriction {
-        OMNIVORE,
-        CARNIVORE,
-        VEGAN,
-        UNFEEDING // Does not need to eat, and cannot eat
+        OMNIVORE(""),
+        CARNIVORE("The idea of eating pacifist weakling food is disgusting to you."),
+        VEGAN("You cannot stand the thought of exploiting another living being for food."),
+        // Does not need to eat, and cannot eat
+        UNFEEDING("You perceive no practical use in this chunk of matter.")
         ;
-    }
-    
-    public static String explainRestriction(Restriction restriction) {
-        switch (restriction) {
-        case CARNIVORE:
-            return "The idea of eating pacifist weakling food is disgusting to you.";
-        case VEGAN:
-            return "You cannot stand the thought of exploiting another living being for food.";
-        case UNFEEDING:
-            return "You perceive no practical use in this chunk of matter.";
-        default:
-            return "";
+        
+        public final String cantEatReason;
+        
+        private Restriction(String cantEatReason) {
+            this.cantEatReason = cantEatReason;
         }
     }
     
