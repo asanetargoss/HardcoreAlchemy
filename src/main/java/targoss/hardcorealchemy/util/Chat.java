@@ -24,14 +24,14 @@ public class Chat {
     }
     
     public static void notify(EntityPlayerMP player, String message) {
-        ((EntityPlayerMP)player).addChatMessage(new TextComponentString(message).setStyle(LIGHT_GREY_ITALIC));
+        player.addChatMessage(new TextComponentString(message).setStyle(LIGHT_GREY_ITALIC));
     }
     
     public static void notifyMagical(EntityPlayerMP player, String message) {
-        ((EntityPlayerMP)player).addChatMessage(new TextComponentString(message).setStyle(BLUE_ITALIC));
+        player.addChatMessage(new TextComponentString(message).setStyle(BLUE_ITALIC));
     }
     
     public static void alarm(EntityPlayerMP player, String message) {
-        ((EntityPlayerMP)player).addChatMessage(new TextComponentString(message).setStyle(RED_ITALIC));
+        player.addChatMessage(new TextComponentString(message).setStyle(RED_ITALIC));
     }
 }
