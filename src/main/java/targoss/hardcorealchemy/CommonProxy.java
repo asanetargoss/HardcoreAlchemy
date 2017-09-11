@@ -2,6 +2,7 @@ package targoss.hardcorealchemy;
 
 import net.minecraftforge.common.MinecraftForge;
 import targoss.hardcorealchemy.capability.combatlevel.CapabilityCombatLevel;
+import targoss.hardcorealchemy.capability.food.CapabilityFood;
 import targoss.hardcorealchemy.capability.humanity.CapabilityHumanity;
 import targoss.hardcorealchemy.capability.killcount.CapabilityKillCount;
 import targoss.hardcorealchemy.listener.ListenerPlayerHumanity;
@@ -29,6 +30,7 @@ public class CommonProxy {
         CapabilityKillCount.register();
         CapabilityHumanity.register();
         CapabilityCombatLevel.register();
+        CapabilityFood.register();
     }
     
     public void registerNetworking() {

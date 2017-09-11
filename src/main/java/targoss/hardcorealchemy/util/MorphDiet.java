@@ -1,5 +1,6 @@
 package targoss.hardcorealchemy.util;
 
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -19,6 +20,7 @@ import net.minecraft.entity.monster.EntitySlime;
 import net.minecraft.entity.passive.EntityChicken;
 import net.minecraft.entity.passive.EntityPig;
 import net.minecraft.entity.passive.EntitySquid;
+import net.minecraft.util.text.TextFormatting;
 
 public class MorphDiet {
     
@@ -95,18 +97,82 @@ public class MorphDiet {
         return needs;
     }
     
+    /** Do not change the name of these enums as they are used in serialization
+     */
     public static enum Restriction {
-        OMNIVORE(""),
-        CARNIVORE("The idea of eating pacifist weakling food is disgusting to you."),
-        VEGAN("You cannot stand the thought of exploiting another living being for food."),
+        OMNIVORE("", TextFormatting.GOLD),
+        CARNIVORE("The idea of eating pacifist weakling food is disgusting to you.", TextFormatting.RED),
+        VEGAN("You cannot stand the thought of exploiting another living being for food.", TextFormatting.GREEN),
         // Does not need to eat, and cannot eat
-        UNFEEDING("You perceive no practical use in this chunk of matter.")
+        UNFEEDING("You perceive no practical use in this chunk of matter.", TextFormatting.DARK_GRAY)
         ;
         
         public final String cantEatReason;
+        public final String prettyString;
         
-        private Restriction(String cantEatReason) {
+        private Restriction(String cantEatReason, TextFormatting tooltipColor) {
             this.cantEatReason = cantEatReason;
+            this.prettyString = this.getPrettyName(tooltipColor);
+        }
+        
+        private String getPrettyName(TextFormatting formatting) {
+            String enumString = this.toString();
+            String formatString = formatting.toString();
+            return formatString + enumString.substring(0,1) + enumString.substring(1,enumString.length()).toLowerCase();
+        }
+        
+        private static Map<String, Restriction> stringMap;
+        
+        static {
+            stringMap = new HashMap<String, Restriction>();
+            for (Restriction restriction : EnumSet.allOf(Restriction.class)) {
+                stringMap.put(restriction.toString(), restriction);
+            }
+        }
+        
+        public static Restriction fromString(String str) {
+            return stringMap.get(str);
+        }
+        
+        public static Restriction merge(Restriction left, Restriction right) {
+            if (left == null) {
+                return right;
+            }
+            if (left == right || right == null) {
+                return left;
+            }
+            
+            switch (left) {
+            case OMNIVORE:
+                return OMNIVORE;
+            case CARNIVORE:
+                if (right == VEGAN || right == OMNIVORE) {
+                    return OMNIVORE;
+                }
+                return CARNIVORE;
+            case VEGAN:
+                if (right == CARNIVORE || right == OMNIVORE) {
+                    return OMNIVORE;
+                }
+                return VEGAN;
+            case UNFEEDING:
+                return right;
+            default:
+                return left;
+            }
+        }
+        
+        public boolean canEat(Restriction foodRestriction) {
+            if (foodRestriction == UNFEEDING) {
+                return true;
+            }
+            else if (this == UNFEEDING) {
+                return false;
+            }
+            if (foodRestriction == null || this == OMNIVORE) {
+                return true;
+            }
+            return this == foodRestriction;
         }
     }
     
