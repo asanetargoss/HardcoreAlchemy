@@ -161,6 +161,11 @@ public class ListenerPlayerDiet {
         }
 
         EntityPlayer player = event.getEntityPlayer();
+        ICapabilityHumanity capabilityHumanity = player.getCapability(HUMANITY_CAPABILITY, null);
+        if (capabilityHumanity == null || capabilityHumanity.canMorph()) {
+            return;
+        }
+        
         IMorphing morphing = Morphing.get(player);
         AbstractMorph morph = null;
         if (morphing != null) {
