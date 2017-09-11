@@ -31,9 +31,11 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.SlotCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -193,6 +195,15 @@ public class ListenerPlayerMagic {
                     Chat.notify((EntityPlayerMP)player, "Your inhuman form prevents you from crafting this magical object.");
                 }
             }
+        }
+    }
+    
+    // A client-side tooltip when hovering over an uncraftable magic item
+    @SubscribeEvent
+    public void onTooltipMagicCrafting(ItemTooltipEvent event) {
+        ItemStack craftResult = event.getItemStack();
+        if (!canUseHighMagic && !isAllowed(MAGIC_ITEM_ALLOW_CRAFT, craftResult)) {
+            event.getToolTip().add(TextFormatting.DARK_GRAY.toString() + "Your form prevents crafting this");
         }
     }
     
