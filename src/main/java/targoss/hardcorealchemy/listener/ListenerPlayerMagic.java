@@ -216,7 +216,7 @@ public class ListenerPlayerMagic {
                  * in the player being stuck as that morph.
                  */
                 if (morph != null) {
-                    if (humanityCapability.canMorph() && ListenerPlayerHumanity.HIGH_MAGIC_MORPHS.contains(morph.name)) {
+                    if (ListenerPlayerHumanity.HIGH_MAGIC_MORPHS.contains(morph.name)) {
                         // If a player is stuck in a morph, they should by definition have no humanity
                         humanityCapability.setHumanity(0.0D);
                         // Prevents setting forced morph flag hasLostHumanity. I REALLY need to refactor forced morphs/being stuck as a human
