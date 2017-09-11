@@ -15,6 +15,7 @@ import net.minecraftforge.fml.common.LoadController;
 import net.minecraftforge.fml.common.ModMetadata;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
+import targoss.hardcorealchemy.coremod.transform.TCraftingManager;
 import targoss.hardcorealchemy.coremod.transform.TEntityLivingBase;
 import targoss.hardcorealchemy.coremod.transform.TProjectEKeyHandler;
 import targoss.hardcorealchemy.coremod.transform.TSlot;
@@ -34,7 +35,8 @@ public class HardcoreAlchemyCoreMod implements IFMLLoadingPlugin {
 		return new String[]{
 				TEntityLivingBase.class.getName(),
 				TSlot.class.getName(),
-				TProjectEKeyHandler.class.getName()
+				TProjectEKeyHandler.class.getName(),
+				TCraftingManager.class.getName()
 		};
 	}
 
