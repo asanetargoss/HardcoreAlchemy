@@ -31,6 +31,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.SlotCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -134,7 +135,7 @@ public class ListenerPlayerMagic {
                 event.setCanceled(true);
                 if (!capabilityHumanity.getNotifiedMagicFail()) {
                     capabilityHumanity.setNotifiedMagicFail(true);
-                    Chat.notify((EntityPlayerMP)player, "Your inhuman form prevents you from comprehending this magical item.");
+                    Chat.notify((EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.magic.disabled.item"));
                 }
             }
         }
@@ -162,7 +163,7 @@ public class ListenerPlayerMagic {
                 event.setCanceled(true);
                 if (!capabilityHumanity.getNotifiedMagicFail()) {
                     capabilityHumanity.setNotifiedMagicFail(true);
-                    Chat.notify((EntityPlayerMP)player, "Your inhuman form prevents you from comprehending this magical object.");
+                    Chat.notify((EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.magic.disabled.block"));
                 }
             }
         }
@@ -192,7 +193,7 @@ public class ListenerPlayerMagic {
                 event.setCanceled(true);
                 if (!capabilityHumanity.getNotifiedMagicFail()) {
                     capabilityHumanity.setNotifiedMagicFail(true);
-                    Chat.notify((EntityPlayerMP)player, "Your inhuman form prevents you from crafting this magical object.");
+                    Chat.notify((EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.magic.disabled.craft"));
                 }
             }
         }
@@ -203,7 +204,7 @@ public class ListenerPlayerMagic {
     public void onTooltipMagicCrafting(ItemTooltipEvent event) {
         ItemStack craftResult = event.getItemStack();
         if (!canUseHighMagic && !isAllowed(MAGIC_ITEM_ALLOW_CRAFT, craftResult)) {
-            event.getToolTip().add(TextFormatting.DARK_GRAY.toString() + "Your form prevents crafting this");
+            event.getToolTip().add(TextFormatting.DARK_GRAY.toString() + new TextComponentTranslation("hardcorealchemy.magic.disabled.crafttooltip").getUnformattedText());
         }
     }
     
@@ -239,7 +240,7 @@ public class ListenerPlayerMagic {
                 }
             }
             humanityCapability.setIsMage(true);
-            Chat.notifyMagical(player, "You feel enlightened.");
+            Chat.notifyMagical(player, new TextComponentTranslation("hardcorealchemy.magic.becomemage"));
         }
     }
     

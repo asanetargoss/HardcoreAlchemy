@@ -1,6 +1,7 @@
 package targoss.hardcorealchemy.util;
 
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
@@ -23,15 +24,15 @@ public class Chat {
         BLUE_ITALIC.setColor(TextFormatting.DARK_AQUA);
     }
     
-    public static void notify(EntityPlayerMP player, String message) {
-        player.addChatMessage(new TextComponentString(message).setStyle(LIGHT_GREY_ITALIC));
+    public static void notify(EntityPlayerMP player, ITextComponent message) {
+        player.addChatMessage(message.setStyle(LIGHT_GREY_ITALIC));
     }
     
-    public static void notifyMagical(EntityPlayerMP player, String message) {
-        player.addChatMessage(new TextComponentString(message).setStyle(BLUE_ITALIC));
+    public static void notifyMagical(EntityPlayerMP player, ITextComponent message) {
+        player.addChatMessage(message.setStyle(BLUE_ITALIC));
     }
     
-    public static void alarm(EntityPlayerMP player, String message) {
-        player.addChatMessage(new TextComponentString(message).setStyle(RED_ITALIC));
+    public static void alarm(EntityPlayerMP player, ITextComponent message) {
+        player.addChatMessage(message.setStyle(RED_ITALIC));
     }
 }

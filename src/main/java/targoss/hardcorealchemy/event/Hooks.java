@@ -1,6 +1,7 @@
 package targoss.hardcorealchemy.event;
 
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
@@ -21,7 +22,7 @@ public class Hooks {
         }
         if (!capabilityHumanity.getNotifiedMagicFail()) {
             capabilityHumanity.setNotifiedMagicFail(true);
-            Chat.notify((EntityPlayerMP)player, "Your inhuman form prevents you from manipulating alchemical constructs.");
+            Chat.notify((EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.magic.disabled.projectekeypress"));
         }
         return false;
     }

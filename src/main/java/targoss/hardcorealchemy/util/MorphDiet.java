@@ -20,6 +20,10 @@ import net.minecraft.entity.monster.EntitySlime;
 import net.minecraft.entity.passive.EntityChicken;
 import net.minecraft.entity.passive.EntityPig;
 import net.minecraft.entity.passive.EntitySquid;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 
 public class MorphDiet {
@@ -100,25 +104,33 @@ public class MorphDiet {
     /** Do not change the name of these enums as they are used in serialization
      */
     public static enum Restriction {
-        OMNIVORE("", TextFormatting.GOLD),
-        CARNIVORE("The idea of eating pacifist weakling food is disgusting to you.", TextFormatting.RED),
-        VEGAN("You cannot stand the thought of exploiting another living being for food.", TextFormatting.GREEN),
+        OMNIVORE("",
+                "hardcorealchemy.diet.display.omnivore.upper", TextFormatting.GOLD),
+        CARNIVORE("hardcorealchemy.diet.refuse.carnivore",
+                "hardcorealchemy.diet.display.carnivore.upper", TextFormatting.RED),
+        VEGAN("hardcorealchemy.diet.refuse.vegan",
+                "hardcorealchemy.diet.display.vegan.upper", TextFormatting.GREEN),
         // Does not need to eat, and cannot eat
-        UNFEEDING("You perceive no practical use in this chunk of matter.", TextFormatting.DARK_GRAY)
+        UNFEEDING("hardcorealchemy.diet.refuse.unfeeding",
+                "hardcorealchemy.diet.display.unfeeding.upper", TextFormatting.DARK_GRAY)
         ;
         
-        public final String cantEatReason;
-        public final String prettyString;
+        private final String cantEatReason;
+        private final String displayName;
+        private final Style tooltipStyle;
         
-        private Restriction(String cantEatReason, TextFormatting tooltipColor) {
+        private Restriction(String cantEatReason, String displayName, TextFormatting tooltipColor) {
             this.cantEatReason = cantEatReason;
-            this.prettyString = this.getPrettyName(tooltipColor);
+            this.displayName = displayName;
+            this.tooltipStyle = new Style().setColor(tooltipColor);
         }
         
-        private String getPrettyName(TextFormatting formatting) {
-            String enumString = this.toString();
-            String formatString = formatting.toString();
-            return formatString + enumString.substring(0,1) + enumString.substring(1,enumString.length()).toLowerCase();
+        public ITextComponent getFoodTooltip() {
+            return new TextComponentTranslation(displayName).setStyle(tooltipStyle);
+        }
+        
+        public ITextComponent getFoodRefusal() {
+            return new TextComponentTranslation(cantEatReason);
         }
         
         private static Map<String, Restriction> stringMap;

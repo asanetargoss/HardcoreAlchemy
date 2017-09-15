@@ -4,6 +4,9 @@ import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 
@@ -117,20 +120,20 @@ public class CapabilityHumanity implements ICapabilityHumanity {
     }
     
     @Override
-    public String explainWhyCantMorph() {
+    public ITextComponent explainWhyCantMorph() {
         if (hasLostMorphAbility) {
-            return "You fail to comprehend other forms.";
+            return new TextComponentTranslation("hardcorealchemy.morph.disabled.noability");
         }
         if (hasLostHumanity) {
-            return "Your humanity is gone. Your mind is confined to this body.";
+            return new TextComponentTranslation("hardcorealchemy.morph.disabled.nohumanity");
         }
         if (isMarried) {
-            return "Your humanity is strengthened by the power of love. You cannot find it in you to become a beast.";
+            return new TextComponentTranslation("hardcorealchemy.morph.disabled.marriage");
         }
         if (isMage) {
-            return "Your affinity to magic has bound you to your form.";
+            return new TextComponentTranslation("hardcorealchemy.morph.disabled.mage");
         }
-        return "";
+        return new TextComponentString("");
     }
 
     @Override

@@ -19,6 +19,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
@@ -156,7 +157,7 @@ public class ListenerPlayerMorph {
             // You're a ghost, so being in a morph doesn't really make sense
             event.setCanceled(true);
             if (event.player instanceof EntityPlayerMP) {
-                Chat.notify((EntityPlayerMP) (event.player), "Your soul shall always be human.");
+                Chat.notify((EntityPlayerMP) (event.player), new TextComponentTranslation("hardcorealchemy.morph.disabled.dead"));
             }
         }
     }

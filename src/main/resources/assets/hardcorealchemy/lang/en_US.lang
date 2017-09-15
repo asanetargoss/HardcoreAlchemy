@@ -1,0 +1,33 @@
+
+language.name=English
+language.region=United States
+language.code=en_US
+
+# Gameplay
+
+hardcorealchemy.humanity.warn1.variant1=You begin to tire of remembering your human form in the back of your mind.
+hardcorealchemy.humanity.warn2.variant1=You fantasize a life without thought or inhibition.
+hardcorealchemy.humanity.warn3.variant1=You panic as you realize you don't remember who you are.
+hardcorealchemy.humanity.lost=You feel your humanity fade away.
+
+hardcorealchemy.morph.disabled.noability=You fail to comprehend other forms.
+hardcorealchemy.morph.disabled.nohumanity=Your humanity is gone. Your mind is confined to this body.
+hardcorealchemy.morph.disabled.marriage=Your humanity is strengthened by the power of love. You cannot find it in you to become a beast.
+hardcorealchemy.morph.disabled.mage=Your affinity to magic has bound you to your form.
+hardcorealchemy.morph.disabled.dead=Your soul shall always be human.
+
+hardcorealchemy.magic.disabled.item=Your inhuman form prevents you from comprehending this magical item.
+hardcorealchemy.magic.disabled.block=Your inhuman form prevents you from comprehending this magical object.
+hardcorealchemy.magic.disabled.craft=Your inhuman form prevents you from crafting this magical object.
+hardcorealchemy.magic.disabled.crafttooltip=Your form prevents crafting this
+hardcorealchemy.magic.disabled.projectekeypress=Your inhuman form prevents you from manipulating alchemical constructs.
+
+hardcorealchemy.magic.becomemage=You feel enlightened.
+
+hardcorealchemy.diet.display.omnivore.upper=Omnivore
+hardcorealchemy.diet.display.carnivore.upper=Carnivore
+hardcorealchemy.diet.display.vegan.upper=Vegan
+hardcorealchemy.diet.display.unfeeding.upper=Unfeeding
+hardcorealchemy.diet.refuse.carnivore=The idea of eating pacifist weakling food is disgusting to you.
+hardcorealchemy.diet.refuse.vegan=You cannot stand the thought of exploiting another living being for food.
+hardcorealchemy.diet.refuse.unfeeding=You perceive no practical use in this chunk of matter.

@@ -184,7 +184,7 @@ public class ListenerPlayerDiet {
 
         if (!needs.restriction.canEat(itemRestriction)) {
             event.setCanceled(true);
-            targoss.hardcorealchemy.util.Chat.notify((EntityPlayerMP)player, needs.restriction.cantEatReason);
+            targoss.hardcorealchemy.util.Chat.notify((EntityPlayerMP)player, needs.restriction.getFoodRefusal());
         }
     }
     
@@ -209,7 +209,7 @@ public class ListenerPlayerDiet {
 
         if (itemRestriction != null) {
             List<String> tooltips = event.getToolTip();
-            tooltips.add(itemRestriction.prettyString);
+            tooltips.add(itemRestriction.getFoodTooltip().getFormattedText());
         }
     }
 }

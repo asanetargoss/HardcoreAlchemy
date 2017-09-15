@@ -2,6 +2,7 @@ package targoss.hardcorealchemy.capability.humanity;
 
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
+import net.minecraft.util.text.ITextComponent;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 
 public interface ICapabilityHumanity {
@@ -26,7 +27,7 @@ public interface ICapabilityHumanity {
     public abstract boolean getHighMagicOverride();
     public abstract boolean canMorph();
     public abstract boolean canUseHighMagic();
-    public abstract String explainWhyCantMorph();
+    public abstract ITextComponent explainWhyCantMorph();
     public abstract boolean shouldDisplayHumanity();
     
     /* A temporary variable used to prevent a player from seeing multiple notifications about
