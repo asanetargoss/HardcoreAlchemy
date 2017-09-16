@@ -4,7 +4,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import targoss.hardcorealchemy.listener.ListenerGui;
+import targoss.hardcorealchemy.listener.ListenerGuiHud;
 
 public class MessageHumanity extends MessageToClient {
     
@@ -47,9 +47,9 @@ public class MessageHumanity extends MessageToClient {
         
         @Override
         public void run() {
-            ListenerGui.render_humanity = render_humanity;
-            ListenerGui.humanity = humanity;
-            ListenerGui.max_humanity = max_humanity;
+            ListenerGuiHud.render_humanity = render_humanity;
+            ListenerGuiHud.humanity = humanity;
+            ListenerGuiHud.max_humanity = max_humanity;
         }
     }
     

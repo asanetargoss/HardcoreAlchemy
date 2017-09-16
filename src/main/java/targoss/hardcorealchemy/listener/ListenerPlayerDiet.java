@@ -187,29 +187,4 @@ public class ListenerPlayerDiet {
             targoss.hardcorealchemy.util.Chat.notify((EntityPlayerMP)player, needs.restriction.getFoodRefusal());
         }
     }
-    
-    @SubscribeEvent
-    public void onDisplayRestrictionTooltip(ItemTooltipEvent event) {
-        if (!event.getEntity().getEntityWorld().isRemote) {
-            return;
-        }
-        
-        ItemStack itemStack = event.getItemStack();
-        MorphDiet.Restriction itemRestriction = null;
-
-        // We're on the client side. NBT tags are synchronized, but we need to
-        // turn it into a capability ourselves.
-        ICapabilityFood capabilityFood = CapUtil.getVirtualCapability(itemStack, FOOD_CAPABILITY);
-        if (capabilityFood != null) {
-            itemRestriction = capabilityFood.getRestriction();
-        }
-        else {
-            itemRestriction = FoodLists.getRestriction(itemStack);
-        }
-
-        if (itemRestriction != null) {
-            List<String> tooltips = event.getToolTip();
-            tooltips.add(itemRestriction.getFoodTooltip().getFormattedText());
-        }
-    }
 }

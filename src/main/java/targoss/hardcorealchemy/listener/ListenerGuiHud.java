@@ -12,7 +12,7 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-public class ListenerGui {
+public class ListenerGuiHud {
     private final Minecraft mc = Minecraft.getMinecraft();
     public static final ResourceLocation TILESET = new ResourceLocation("hardcorealchemy:textures/gui/icon_tileset.png");
     
