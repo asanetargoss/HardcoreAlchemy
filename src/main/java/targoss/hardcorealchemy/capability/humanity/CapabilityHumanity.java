@@ -85,6 +85,33 @@ public class CapabilityHumanity implements ICapabilityHumanity {
     }
     
     @Override
+    public void loseMorphAbilityFor(LostMorphReason reason) {
+        switch (reason) {
+        case LOST_HUMANITY:
+            this.hasLostHumanity = true;
+            this.isMarried = false;
+            this.hasLostMorphAbility = false;
+            break;
+        case MAGE:
+            this.isMage = true;
+            break;
+        case MARRIED:
+            this.isMarried = true;
+            this.hasLostHumanity = false;
+            this.hasLostMorphAbility = false;
+            break;
+        case NO_ABILITY:
+            this.hasLostMorphAbility = true;
+            this.isMarried = false;
+            this.isMage = false;
+            this.hasLostHumanity = false;
+            break;
+        default:
+            break;
+        }
+    }
+    
+    @Override
     public boolean getHasLostHumanity() {
         return hasLostHumanity;
     }

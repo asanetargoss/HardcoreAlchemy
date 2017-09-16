@@ -46,6 +46,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
+import targoss.hardcorealchemy.capability.humanity.LostMorphReason;
 import targoss.hardcorealchemy.event.EventTakeStack;
 import targoss.hardcorealchemy.network.MessageHumanity;
 import targoss.hardcorealchemy.network.MessageMagic;
@@ -218,19 +219,13 @@ public class ListenerPlayerMagic {
                  * However, some morphs can still use spells, resulting
                  * in the player being stuck as that morph.
                  */
-                if (morph != null) {
-                    if (ListenerPlayerHumanity.HIGH_MAGIC_MORPHS.contains(morph.name)) {
-                        // If a player is stuck in a morph, they should by definition have no humanity
-                        humanityCapability.setHumanity(0.0D);
-                        // Prevents setting forced morph flag hasLostHumanity. I REALLY need to refactor forced morphs/being stuck as a human
-                        humanityCapability.setLastHumanity(0.0D); 
-                    }
-                    else {
-                        MorphAPI.demorph(player);
-                    }
+                if (morph != null && ListenerPlayerHumanity.HIGH_MAGIC_MORPHS.contains(morph.name)) {
+                    ListenerPlayerHumanity.forceForm(player, LostMorphReason.MAGE, morph);
+                }
+                else {
+                    ListenerPlayerHumanity.forceForm(player, LostMorphReason.MAGE, (AbstractMorph)null);
                 }
             }
-            humanityCapability.setIsMage(true);
             Chat.notifyMagical(player, new TextComponentTranslation("hardcorealchemy.magic.becomemage"));
         }
     }

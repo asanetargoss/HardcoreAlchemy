@@ -17,6 +17,8 @@ public interface ICapabilityHumanity {
     public abstract void setIsMarried(boolean isMarried);
     public abstract void setIsMage(boolean isMage);
     public abstract void setHighMagicOverride(boolean highMagicOverride);
+    public abstract void loseMorphAbilityFor(LostMorphReason reason);
+    
     public abstract double getHumanity();
     public abstract double getLastHumanity();
     public abstract int getTick();
