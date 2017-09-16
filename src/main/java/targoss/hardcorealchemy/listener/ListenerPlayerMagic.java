@@ -199,15 +199,6 @@ public class ListenerPlayerMagic {
         }
     }
     
-    // A client-side tooltip when hovering over an uncraftable magic item
-    @SubscribeEvent
-    public void onTooltipMagicCrafting(ItemTooltipEvent event) {
-        ItemStack craftResult = event.getItemStack();
-        if (!canUseHighMagic && !isAllowed(MAGIC_ITEM_ALLOW_CRAFT, craftResult)) {
-            event.getToolTip().add(TextFormatting.DARK_GRAY.toString() + new TextComponentTranslation("hardcorealchemy.magic.disabled.crafttooltip").getUnformattedText());
-        }
-    }
-    
     // When a player chooses the path of a spellcaster, they lose the ability to morph
     @Optional.Method(modid = HardcoreAlchemy.ARS_MAGICA_ID)
     @SubscribeEvent

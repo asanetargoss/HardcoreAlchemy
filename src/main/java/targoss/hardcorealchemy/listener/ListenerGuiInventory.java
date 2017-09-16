@@ -1,9 +1,15 @@
 package targoss.hardcorealchemy.listener;
 
+import static targoss.hardcorealchemy.listener.ListenerPlayerMagic.MAGIC_ITEM_ALLOW_CRAFT;
+import static targoss.hardcorealchemy.listener.ListenerPlayerMagic.canUseHighMagic;
+import static targoss.hardcorealchemy.listener.ListenerPlayerMagic.isAllowed;
+
 import java.util.List;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
@@ -35,6 +41,15 @@ public class ListenerGuiInventory {
         if (itemRestriction != null) {
             List<String> tooltips = event.getToolTip();
             tooltips.add(itemRestriction.getFoodTooltip().getFormattedText());
+        }
+    }
+    
+    // A client-side tooltip when hovering over an uncraftable magic item
+    @SubscribeEvent
+    public void onTooltipMagicCrafting(ItemTooltipEvent event) {
+        ItemStack craftResult = event.getItemStack();
+        if (!canUseHighMagic && !isAllowed(MAGIC_ITEM_ALLOW_CRAFT, craftResult)) {
+            event.getToolTip().add(TextFormatting.DARK_GRAY.toString() + new TextComponentTranslation("hardcorealchemy.magic.disabled.crafttooltip").getUnformattedText());
         }
     }
 }
