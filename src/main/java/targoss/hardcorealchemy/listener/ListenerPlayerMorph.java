@@ -115,11 +115,6 @@ public class ListenerPlayerMorph {
 		    return;
 		}
 		
-		// Check if the player's humanity permits acquiring morphs
-		ICapabilityHumanity humanity = event.player.getCapability(HUMANITY_CAPABILITY, null);
-		if (humanity != null && !humanity.canMorph()) {
-		    return;
-		}
 		// Get player capability for kill count
 		ICapabilityKillCount killCount = event.player.getCapability(KILL_COUNT_CAPABILITY, null);
 		if (killCount == null) {
