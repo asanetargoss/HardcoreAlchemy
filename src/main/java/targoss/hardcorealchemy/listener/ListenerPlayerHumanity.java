@@ -8,6 +8,7 @@ import mchorse.metamorph.api.MorphManager;
 import mchorse.metamorph.api.events.MorphEvent;
 import mchorse.metamorph.api.events.SpawnGhostEvent;
 import mchorse.metamorph.api.morphs.AbstractMorph;
+import mchorse.metamorph.api.morphs.EntityMorph;
 import mchorse.metamorph.capabilities.morphing.IMorphing;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
@@ -162,13 +163,12 @@ public class ListenerPlayerHumanity {
                 }
                 else if (item == WITHER_APPLE) {
                     // Uh oh, you're a wither skeleton now!
-                    //TODO: actually make the player become a wither skeleton (This seems to be insufficient)
-                    //      By acquiring the wither skeleton morph normally, I should be able to inspect
-                    //      the NBT data and figure out what makes a wither skeleton morph work
                     NBTTagCompound nbt = new NBTTagCompound();
-                    nbt.setInteger("SkeletonType", 1);
+                    NBTTagCompound nbtEntityData = new NBTTagCompound();
+                    nbt.setTag("EntityData", nbtEntityData);
+                    nbtEntityData.setByte("SkeletonType", (byte)1);
                     forceForm(player, LostMorphReason.LOST_HUMANITY, "Skeleton", nbt);
-                    //TODO: clear the withering effect
+                    //TODO: clear the withering effect if and when I can figure out how to balance it
                 }
             }
         }
@@ -301,7 +301,7 @@ public class ListenerPlayerHumanity {
         if ((currentMorph == null && morph != null) ||
             (currentMorph != null && morph == null) ||
                 (currentMorph != null && morph != null &&
-                 !morphing.getCurrentMorph().name.equals(morph.name))) {
+                 !currentMorph.equals(morph))) {
             success = MorphAPI.morph(player, morph, true);
         }
         
