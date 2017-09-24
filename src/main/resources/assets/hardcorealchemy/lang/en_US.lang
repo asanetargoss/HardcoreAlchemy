@@ -31,3 +31,6 @@ hardcorealchemy.diet.display.unfeeding.upper=Unfeeding
 hardcorealchemy.diet.refuse.carnivore=The idea of eating pacifist weakling food is disgusting to you.
 hardcorealchemy.diet.refuse.vegan=You cannot stand the thought of exploiting another living being for food.
 hardcorealchemy.diet.refuse.unfeeding=You perceive no practical use in this chunk of matter.
+
+# %1$s is the level, displayed as an integer
+hardcorealchemy.level.display=Level: %1$s

@@ -12,6 +12,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
@@ -46,7 +47,11 @@ public class ProviderCombatLevel implements IWailaEntityProvider {
             IWailaConfigHandler config) {
         NBTTagCompound nbtCompound = accessor.getNBTData();
         if (nbtCompound.getBoolean(NBT_LABEL_EXP_DEFINED)) {
-            currenttip.add("Level: " + nbtCompound.getInteger(NBT_LABEL_EXP));
+            String levelDisplay =
+                    new TextComponentTranslation("hardcorealchemy.level.display",
+                    nbtCompound.getInteger(NBT_LABEL_EXP)
+                    ).getFormattedText();
+            currenttip.add(levelDisplay);
         }
         return currenttip;
     }
