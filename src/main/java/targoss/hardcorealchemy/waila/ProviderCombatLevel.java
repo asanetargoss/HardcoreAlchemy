@@ -21,8 +21,8 @@ import targoss.hardcorealchemy.capability.combatlevel.ICapabilityCombatLevel;
 
 public class ProviderCombatLevel implements IWailaEntityProvider {
     
-    public static final String NBT_LABEL_EXP = HardcoreAlchemy.MOD_ID + ":combat_level";
-    public static final String NBT_LABEL_EXP_DEFINED = HardcoreAlchemy.MOD_ID + ":combat_level_defined";
+    public static final String NBT_LABEL_LEVEL = HardcoreAlchemy.MOD_ID + ":combat_level";
+    public static final String NBT_LABEL_LEVEL_DEFINED = HardcoreAlchemy.MOD_ID + ":combat_level_defined";
     
     public static Class getTargetClass() {
         return EntityLiving.class;
@@ -46,10 +46,10 @@ public class ProviderCombatLevel implements IWailaEntityProvider {
     public List<String> getWailaBody(Entity entity, List<String> currenttip, IWailaEntityAccessor accessor,
             IWailaConfigHandler config) {
         NBTTagCompound nbtCompound = accessor.getNBTData();
-        if (nbtCompound.getBoolean(NBT_LABEL_EXP_DEFINED)) {
+        if (nbtCompound.getBoolean(NBT_LABEL_LEVEL_DEFINED)) {
             String levelDisplay =
                     new TextComponentTranslation("hardcorealchemy.level.display",
-                    nbtCompound.getInteger(NBT_LABEL_EXP)
+                    nbtCompound.getInteger(NBT_LABEL_LEVEL)
                     ).getFormattedText();
             currenttip.add(levelDisplay);
         }
@@ -66,8 +66,8 @@ public class ProviderCombatLevel implements IWailaEntityProvider {
     public NBTTagCompound getNBTData(EntityPlayerMP player, Entity ent, NBTTagCompound tag, World world) {
         ICapabilityCombatLevel combatLevel = ent.getCapability(COMBAT_LEVEL_CAPABILITY, null);
         if (combatLevel != null) {
-            tag.setInteger(NBT_LABEL_EXP, combatLevel.getValue());
-            tag.setBoolean(NBT_LABEL_EXP_DEFINED, true);
+            tag.setInteger(NBT_LABEL_LEVEL, combatLevel.getValue());
+            tag.setBoolean(NBT_LABEL_LEVEL_DEFINED, true);
         }
         return tag;
     }
