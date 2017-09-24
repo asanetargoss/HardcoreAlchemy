@@ -8,6 +8,7 @@ import targoss.hardcorealchemy.capability.killcount.CapabilityKillCount;
 import targoss.hardcorealchemy.listener.ListenerPlayerHumanity;
 import targoss.hardcorealchemy.listener.ListenerPlayerMagic;
 import targoss.hardcorealchemy.listener.ListenerPlayerMorph;
+import targoss.hardcorealchemy.listener.ListenerBlock;
 import targoss.hardcorealchemy.listener.ListenerMobAI;
 import targoss.hardcorealchemy.listener.ListenerMobLevel;
 import targoss.hardcorealchemy.listener.ListenerPacketUpdatePlayer;
@@ -24,6 +25,7 @@ public class CommonProxy {
         MinecraftForge.EVENT_BUS.register(new ListenerPlayerDiet());
         MinecraftForge.EVENT_BUS.register(new ListenerMobLevel());
         MinecraftForge.EVENT_BUS.register(new ListenerMobAI());
+        MinecraftForge.EVENT_BUS.register(new ListenerBlock());
     }
     
     public void registerCapabilities() {
