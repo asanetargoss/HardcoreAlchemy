@@ -18,6 +18,7 @@ import net.minecraft.entity.monster.EntitySlime;
 import net.minecraft.entity.monster.EntitySpider;
 import net.minecraft.entity.monster.EntityWitch;
 import net.minecraft.entity.monster.EntityZombie;
+import net.minecraft.entity.passive.EntityBat;
 import net.minecraft.entity.passive.EntityChicken;
 import net.minecraft.entity.passive.EntityCow;
 import net.minecraft.entity.passive.EntityHorse;
@@ -151,6 +152,9 @@ public class MobLists {
         return entityTameables;
     }
     
+    /**
+     * Overworld mobs which spawn in darkness
+     */
     public static Set<String> getNightMobs() {
         Set<String> nightMobs = new HashSet();
         
@@ -162,6 +166,7 @@ public class MobLists {
         nightMobs.add(EntityEnderman.class.getName());
         nightMobs.add(EntitySilverfish.class.getName());
         nightMobs.add(EntitySlime.class.getName());
+        nightMobs.add(EntityBat.class.getName());
         // Deadly Monsters
         nightMobs.add("com.dmonsters.entity.EntityBaby");
         nightMobs.add("com.dmonsters.entity.EntityClimber");
