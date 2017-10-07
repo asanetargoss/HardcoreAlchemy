@@ -12,6 +12,10 @@ import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
+import targoss.hardcorealchemy.command.CommandTest;
+import targoss.hardcorealchemy.test.HardcoreAlchemyTests;
 
 @Mod(modid = HardcoreAlchemy.MOD_ID, version = HardcoreAlchemy.VERSION,
     dependencies = HardcoreAlchemy.DEPENDENCIES, acceptedMinecraftVersions = HardcoreAlchemy.MC_VERSIONS)
@@ -67,5 +71,16 @@ public class HardcoreAlchemy
     @EventHandler
     public void postInit(FMLPostInitializationEvent event) {
         proxy.postInit();
+    }
+    
+    @EventHandler
+    public void serverStarting(FMLServerStartingEvent event) {
+        event.registerServerCommand(new CommandTest());
+        HardcoreAlchemyTests.setServerForEvent(event);
+    }
+    
+    @EventHandler
+    public void serverStopping(FMLServerStoppingEvent event) {
+        HardcoreAlchemyTests.setServerForEvent(event);
     }
 }
