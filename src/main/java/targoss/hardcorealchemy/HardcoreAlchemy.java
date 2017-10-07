@@ -29,17 +29,21 @@ public class HardcoreAlchemy
     
     public static final Logger LOGGER = LogManager.getLogger("Hardcore Alchemy");
     
+    //TODO: move mod constants to their own file
     public static final String DISSOLUTION_ID = "dissolution";
     public static final String NUTRITION_ID = "nutrition";
     public static final String BLOOD_MAGIC_ID = "BloodMagic";
     public static final String ARS_MAGICA_ID = "arsmagica2";
     public static final String PROJECT_E_ID = "ProjectE";
+    public static final String IRON_BACKPACKS_ID = "ironbackpacks";
     public static boolean isDissolutionLoaded = false;
     public static boolean isNutritionLoaded = false;
     public static boolean isBloodMagicLoaded = false;
     public static boolean isArsMagicaLoaded = false;
     public static boolean isProjectELoaded = false;
+    public static boolean isIronBackpacksLoaded = false;
     
+    //TODO: Why isn't this FMLPreInitializationEvent?
     @EventHandler
     public void preInit(FMLInitializationEvent event) {
         Map<String, ModContainer> modMap = Loader.instance().getIndexedModList();
@@ -48,6 +52,7 @@ public class HardcoreAlchemy
         isBloodMagicLoaded = modMap.containsKey(BLOOD_MAGIC_ID);
         isArsMagicaLoaded = modMap.containsKey(ARS_MAGICA_ID);
         isProjectELoaded = modMap.containsKey(PROJECT_E_ID);
+        isIronBackpacksLoaded = modMap.containsKey(IRON_BACKPACKS_ID);
     }
     
     @EventHandler

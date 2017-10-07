@@ -1,5 +1,6 @@
 package targoss.hardcorealchemy;
 
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
 import targoss.hardcorealchemy.capability.combatlevel.CapabilityCombatLevel;
 import targoss.hardcorealchemy.capability.food.CapabilityFood;
@@ -9,6 +10,7 @@ import targoss.hardcorealchemy.listener.ListenerPlayerHumanity;
 import targoss.hardcorealchemy.listener.ListenerPlayerMagic;
 import targoss.hardcorealchemy.listener.ListenerPlayerMorph;
 import targoss.hardcorealchemy.listener.ListenerBlock;
+import targoss.hardcorealchemy.listener.ListenerInventoryFoodRot;
 import targoss.hardcorealchemy.listener.ListenerMobAI;
 import targoss.hardcorealchemy.listener.ListenerMobLevel;
 import targoss.hardcorealchemy.listener.ListenerPacketUpdatePlayer;
@@ -26,6 +28,7 @@ public class CommonProxy {
         MinecraftForge.EVENT_BUS.register(new ListenerMobLevel());
         MinecraftForge.EVENT_BUS.register(new ListenerMobAI());
         MinecraftForge.EVENT_BUS.register(new ListenerBlock());
+        MinecraftForge.EVENT_BUS.register(new ListenerInventoryFoodRot());
     }
     
     public void registerCapabilities() {
