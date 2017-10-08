@@ -190,7 +190,7 @@ public class MorphDiet {
     
     public static class Needs {
         public static final String[] DEFAULT_NUTRIENTS = new String[]{"dairy","fruit","grain","protein","vegetable"};
-        public static final String[] CARNIVORE_NUTRIENTS = new String[]{"dairy","protein"};
+        public static final String[] CARNIVORE_NUTRIENTS = new String[]{"protein"};
         public static final String[] NO_NUTRIENTS = new String[]{};
         
         public final String[] nutrients;
