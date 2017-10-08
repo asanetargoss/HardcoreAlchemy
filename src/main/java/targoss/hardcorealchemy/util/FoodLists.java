@@ -103,6 +103,7 @@ public class FoodLists {
                         carnivore);
             }
         }
+        items.put("harvestcraft:jellyfishrawitem", carnivore);
         
         items.put("harvestcraft:firmtofuitem", vegan);
         items.put("harvestcraft:silkentofuitem", vegan);
