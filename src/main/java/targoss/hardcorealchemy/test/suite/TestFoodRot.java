@@ -211,12 +211,17 @@ public class TestFoodRot implements ITestSuite {
     
     public boolean checkSaveBackpackNbt() {
         ItemStack backpackStack = createBackpackStack();
+        /* I can't reference IInventory methods directly from
+         * an InventoryBackpack instance without breaking compilation,
+         * because the Iron Backpacks jar is obfuscated.
+         */
         InventoryBackpack inventoryBackpack = new InventoryBackpack(backpackStack, true);
+        IInventory iInventoryBackpack = inventoryBackpack;
         int foodSlot = 0;
-        inventoryBackpack.setInventorySlotContents(foodSlot, createFood());
+        iInventoryBackpack.setInventorySlotContents(foodSlot, createFood());
         ListenerInventoryFoodRot.saveIronBackpackNbt(new InvWrapper(inventoryBackpack), backpackStack);
         
-        InventoryBackpack inventoryBackpack2 = new InventoryBackpack(inventoryBackpack.getBackpackStack(), true);
+        IInventory inventoryBackpack2 = new InventoryBackpack(inventoryBackpack.getBackpackStack(), true);
         return inventoryBackpack2.getStackInSlot(foodSlot) != NO_ITEM;
     }
     
