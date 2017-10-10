@@ -43,6 +43,11 @@ Developing/building
         Method #1: Local jars added to classpath via libs/
             The typical way to manage dependencies during both testing and during compilation is to add the mod to libs/
             Can be either dev jars, or regular obfuscated jars provided CodeChickenCore is among them
+                You will almost definitely need CodeChickenCore, as many mods are closed source and it's much more convenient to just have the mod jar in libs/
+                    https://minecraft.curseforge.com/projects/codechicken-core-1-8
+                    https://minecraft.curseforge.com/projects/codechicken-lib-1-8
+                If you do that, it is also strongly recommended you install a decompiler plugin for your IDE so you can view "source code" for the mods:
+                    http://jd.benow.ca/
             Can add any other mods you want to test or quality-of-life mods like JEI
             Pam's Harvestcraft is an especially recommended "soft dependency" for Nutrition and dietary restrictions
             Be sure to call "./gradlew eclipse" or equivalent when you're done to add the mods to your classpath
