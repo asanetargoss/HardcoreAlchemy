@@ -14,6 +14,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIBase;
+import net.minecraft.entity.ai.EntityAIFindEntityNearestPlayer;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAITargetNonTamed;
 import net.minecraft.entity.ai.EntityAITasks;
@@ -27,6 +28,7 @@ import targoss.hardcorealchemy.capability.combatlevel.CapabilityCombatLevel;
 import targoss.hardcorealchemy.capability.combatlevel.ICapabilityCombatLevel;
 import targoss.hardcorealchemy.entity.ai.AIAttackTargetMobOrMorph;
 import targoss.hardcorealchemy.entity.ai.AISpiderTargetMobOrMorph;
+import targoss.hardcorealchemy.entity.ai.AITargetUnmorphedPlayer;
 import targoss.hardcorealchemy.entity.ai.AIUntamedAttackMobOrMorph;
 import targoss.hardcorealchemy.util.MobLists;
 
@@ -59,6 +61,7 @@ public class ListenerMobAI {
             wrapReplaceAttackAI(entityLiving, EntityAINearestAttackableTarget.class, AIAttackTargetMobOrMorph.class);
             wrapReplaceAttackAI(entityLiving, EntityAITargetNonTamed.class, AIUntamedAttackMobOrMorph.class);
             wrapReplaceAttackAI(entityLiving, EntitySpider.AISpiderTarget.class, AISpiderTargetMobOrMorph.class);
+            wrapReplaceAttackAI(entityLiving, EntityAIFindEntityNearestPlayer.class, AITargetUnmorphedPlayer.class);
         }
     }
     
@@ -68,10 +71,10 @@ public class ListenerMobAI {
      * If it doesn't, you will get errors, because reflection.
      */
     private static void wrapReplaceAttackAI(EntityLiving entityLiving,
-            Class<? extends EntityAINearestAttackableTarget> targetClazz,
-            Class<? extends AIAttackTargetMobOrMorph> replaceClazz) {
+            Class<? extends EntityAIBase> targetClazz,
+            Class<? extends EntityAIBase> replaceClazz) {
         try {
-            Constructor<? extends AIAttackTargetMobOrMorph> replaceConstructor = replaceClazz.getConstructor(targetClazz);
+            Constructor<? extends EntityAIBase> replaceConstructor = replaceClazz.getConstructor(targetClazz);
             
             // Find instances of the AI to replace
             EntityAITasks targetTaskList = entityLiving.targetTasks;
@@ -88,7 +91,7 @@ public class ListenerMobAI {
             for (int i=0;i<aisToReplace.size();i++) {
                 targetTaskList.removeTask(aisToReplace.get(i));
                 targetTaskList.addTask(prioritiesToReplace.get(i),
-                            replaceConstructor.newInstance((EntityAINearestAttackableTarget)aisToReplace.get(i))
+                            replaceConstructor.newInstance(aisToReplace.get(i))
                         );
             }
         }
