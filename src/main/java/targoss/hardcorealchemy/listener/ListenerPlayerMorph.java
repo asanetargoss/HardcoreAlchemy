@@ -8,6 +8,7 @@ import java.util.Set;
 import ladysnake.dissolution.common.capabilities.CapabilityIncorporealHandler;
 import ladysnake.dissolution.common.capabilities.IIncorporealHandler;
 import mchorse.metamorph.Metamorph;
+import mchorse.metamorph.api.MorphAPI;
 import mchorse.metamorph.api.events.MorphEvent;
 import mchorse.metamorph.api.events.SpawnGhostEvent;
 import mchorse.metamorph.api.morphs.AbstractMorph;
@@ -162,11 +163,8 @@ public class ListenerPlayerMorph {
     public void onPlayerEnterAfterlife(PlayerRespawnEvent event) {
         EntityPlayer player = event.player;
         if (isIncorporeal(player)) {
-            IMorphing morphing = player.getCapability(MORPHING_CAPABILITY, null);
-            if (morphing != null) {
-                // You're a ghost, so being in a morph doesn't really make sense
-                morphing.demorph(player);
-            }
+            // You're a ghost, so being in a morph doesn't really make sense
+            MorphAPI.morph(player, null, true);
         }
     }
 
