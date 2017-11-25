@@ -3,6 +3,7 @@ package targoss.hardcorealchemy.coremod;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
@@ -16,6 +17,7 @@ import net.minecraftforge.fml.common.ModMetadata;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 import targoss.hardcorealchemy.coremod.transform.TCraftingManager;
+import targoss.hardcorealchemy.coremod.transform.TCrops;
 import targoss.hardcorealchemy.coremod.transform.TEntityLivingBase;
 import targoss.hardcorealchemy.coremod.transform.TProjectEKeyHandler;
 import targoss.hardcorealchemy.coremod.transform.TSlot;
@@ -27,6 +29,7 @@ import targoss.hardcorealchemy.coremod.transform.TSlot;
 public class HardcoreAlchemyCoreMod implements IFMLLoadingPlugin {
     
     public static boolean obfuscated = false;
+    public static boolean TAN_LOADED = false;
     
     public static final Logger LOGGER = LogManager.getLogger("Hardcore Alchemy Coremod");
     
@@ -36,7 +39,8 @@ public class HardcoreAlchemyCoreMod implements IFMLLoadingPlugin {
 				TEntityLivingBase.class.getName(),
 				TSlot.class.getName(),
 				TProjectEKeyHandler.class.getName(),
-				TCraftingManager.class.getName()
+				TCraftingManager.class.getName(),
+				TCrops.class.getName()
 		};
 	}
 

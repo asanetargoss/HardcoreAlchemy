@@ -40,12 +40,14 @@ public class HardcoreAlchemy
     public static final String ARS_MAGICA_ID = "arsmagica2";
     public static final String PROJECT_E_ID = "ProjectE";
     public static final String IRON_BACKPACKS_ID = "ironbackpacks";
+    public static final String TAN_ID = "ToughAsNails";
     public static boolean isDissolutionLoaded = false;
     public static boolean isNutritionLoaded = false;
     public static boolean isBloodMagicLoaded = false;
     public static boolean isArsMagicaLoaded = false;
     public static boolean isProjectELoaded = false;
     public static boolean isIronBackpacksLoaded = false;
+    public static boolean isTanLoaded = false;
     
     //TODO: Why isn't this FMLPreInitializationEvent?
     @EventHandler
@@ -57,6 +59,7 @@ public class HardcoreAlchemy
         isArsMagicaLoaded = modMap.containsKey(ARS_MAGICA_ID);
         isProjectELoaded = modMap.containsKey(PROJECT_E_ID);
         isIronBackpacksLoaded = modMap.containsKey(IRON_BACKPACKS_ID);
+        isTanLoaded = modMap.containsKey(TAN_ID);
     }
     
     @EventHandler

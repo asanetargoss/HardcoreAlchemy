@@ -10,6 +10,7 @@ import targoss.hardcorealchemy.listener.ListenerPlayerHumanity;
 import targoss.hardcorealchemy.listener.ListenerPlayerMagic;
 import targoss.hardcorealchemy.listener.ListenerPlayerMorph;
 import targoss.hardcorealchemy.listener.ListenerBlock;
+import targoss.hardcorealchemy.listener.ListenerCrops;
 import targoss.hardcorealchemy.listener.ListenerInventoryFoodRot;
 import targoss.hardcorealchemy.listener.ListenerMobAI;
 import targoss.hardcorealchemy.listener.ListenerMobLevel;
@@ -29,6 +30,9 @@ public class CommonProxy {
         MinecraftForge.EVENT_BUS.register(new ListenerMobAI());
         MinecraftForge.EVENT_BUS.register(new ListenerBlock());
         MinecraftForge.EVENT_BUS.register(new ListenerInventoryFoodRot());
+        
+        // Quick and dirty; subject to change
+        MinecraftForge.EVENT_BUS.register(new ListenerCrops());
     }
     
     public void registerCapabilities() {
