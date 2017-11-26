@@ -91,6 +91,7 @@ public class ListenerPlayerDiet {
         Map<Nutrient, Float> nutrition = nutritionCapability.get();
         Map<Nutrient, Boolean> enabled = nutritionCapability.getEnabled();
         for (Nutrient nutrient : NutrientList.get()) {
+            // Manage enabled state
             boolean wasEnabled = enabled.get(nutrient);
             boolean isEnabled = needs.containsNutrient(nutrient.name);
             if (!isEnabled) {
@@ -101,7 +102,12 @@ public class ListenerPlayerDiet {
                 nutritionCapability.setEnabled(nutrient, true, false);
                 nutritionCapability.set(nutrient, 50.0F, false);
             }
+            if (isEnabled) {
+                // Have appropriate nutrition depletion for this morph
+                nutritionCapability.setDecay(nutrient, needs.getNutrientDecay(nutrient.name), false);
+            }
         }
+        
         nutritionCapability.resync();
     }
 

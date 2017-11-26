@@ -221,5 +221,13 @@ public class MorphDiet {
         public boolean containsNutrient(String nutrient) {
             return nutrientSet.contains(nutrient);
         }
+        
+        public float getNutrientDecay(String nutrient) {
+            float nutrientCount = (float)(nutrientSet.size());
+            if (nutrientCount == 0 || !nutrientSet.contains(nutrient)) {
+                throw new IllegalArgumentException("Attempted to get decay rate for nutrient not part of needs");
+            }
+            return DEFAULT_NUTRIENTS.length / nutrientCount;
+        }
     }
 }
