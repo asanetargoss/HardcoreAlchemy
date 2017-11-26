@@ -13,13 +13,11 @@ Developing/building
         Also run each time you add mods to libs/ (explained later)
     Then run "./gradlew setupDecompWorkspace" to set up access transformers
         Run this again whenever you want to change access transformers
-    This mod contains coremod patches
-        Don't forget the VM argument -Dfml.coreMods.load=targoss.hardcorealchemy.coremod.HardcoreAlchemyCoreMod
-        Additional coremod class names can be added with commas if needed (eg Metamorph as a source package folder)
+    Don't forget this VM argument to load the coremods:
+        -Dfml.coreMods.load=targoss.hardcorealchemy.coremod.HardcoreAlchemyCoreMod,mchorse.metamorph.src.main.java.mchorse.metamorph.coremod.MetamorphCoremod
+        Dependencies using method #2 (explained later) must have their coremod classes added to this list
     This mod contains access transformers
         See src/main/resources/META-INF/hardcorealchemy_at.cfg
-        If you plan on adding additional mods as source package folders (explained later), and those mods have access transformers, you will need to copy them to the hardcore alchemy access transformer
-        As you can see, the Tough as Nails transformers are there, but adding Tough as Nails as a source package folder is not required
     Dependencies
         The following mod(s) are required dependencies, but require no action due to being fully automated by the build script:
             Wawla: https://github.com/Darkhax-Minecraft/WAWLA
@@ -28,7 +26,6 @@ Developing/building
             These mods use method #2 by default:
                 Nutrition: https://github.com/asanetargoss/Nutrition
                 metamorph: https://github.com/asanetargoss/metamorph
-                See method #2 for how to revert
                 Hopefully I can eventually get these mods off of method #2 so setup is easier
             These mods use method #1:
                 Iron Backpacks: https://minecraft.curseforge.com/projects/iron-backpacks
