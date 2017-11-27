@@ -3,11 +3,9 @@ TO DO: actual markdown
 
 Running with Minecraft
     This mod is for 1.10.2
-    I am still setting things up, so no gameplay documentation
+    See the wiki for documentation for the modpack, which includes this mod
     No license yet (ie do not distribute/all rights reserved)
-    Required dependencies for playing the mod:
-        Latest official Forge
-        Metamorph
+    The mod will be made available by itself at a later time
 Developing/building
     First thing you should probably do is run the gradle script that sets up your workspace, eg "./gradlew eclipse"
         Also run each time you add mods to libs/ (explained later)
@@ -35,6 +33,7 @@ Developing/building
                 Dissolution: https://minecraft.curseforge.com/projects/dissolution
                 Blood Magic: https://minecraft.curseforge.com/projects/blood-magic
                 Tough As Nails: https://minecraft.curseforge.com/projects/tough-as-nails
+            Note: The compiled jar mod only has a hard dependency on Metamorph
         Method #1: Local jars added to classpath via libs/
             The usual method where you add the mods to libs/ and then call ./gradlew eclipse or equivalent
             Works for both testing and compilation
