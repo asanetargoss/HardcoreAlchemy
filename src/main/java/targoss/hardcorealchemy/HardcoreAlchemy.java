@@ -22,7 +22,7 @@ import targoss.hardcorealchemy.test.HardcoreAlchemyTests;
 public class HardcoreAlchemy
 {
     public static final String MOD_ID = "hardcorealchemy";
-    public static final String VERSION = "0.1.0";
+    public static final String VERSION = "0.2.0";
     public static final String DEPENDENCIES = "required-after:metamorph;";
     public static final String MC_VERSIONS = "[1.10.2]";
     public static final String CLIENT_PROXY = "targoss.hardcorealchemy.ClientProxy";
