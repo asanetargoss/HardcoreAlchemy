@@ -94,9 +94,27 @@ public class ListenerPlayerMagic {
         MAGIC_BLOCK_ALLOW_USE = new HashSet<String>();
         MAGIC_BLOCK_ALLOW_USE.add("projecte:alchemical_chest");
         MAGIC_BLOCK_ALLOW_USE.add("arsmagica2:magicians_workbench");
+        // Common blocks from magic mods without a right click usage
+        /*TODO: Use Java reflection to check if blocks being
+         * "clicked" even have a use to begin with, and allow placing 
+         * blocks on them accordingly (including when player is sneaking)
+         */
+        MAGIC_BLOCK_ALLOW_USE.add("astralsorcery:BlockMarble");
+        MAGIC_BLOCK_ALLOW_USE.add("astralsorcery:BlockMarbleStairs");
+        MAGIC_BLOCK_ALLOW_USE.add("astralsorcery:BlockCustomOre");
+        MAGIC_BLOCK_ALLOW_USE.add("astralsorcery:BlockCustomSandOre");
+        MAGIC_BLOCK_ALLOW_USE.add("arsmagica2:desert_nova");
+        MAGIC_BLOCK_ALLOW_USE.add("arsmagica2:cerublossom");
+        MAGIC_BLOCK_ALLOW_USE.add("arsmagica2:wakebloom");
+        MAGIC_BLOCK_ALLOW_USE.add("arsmagica2:aum");
+        MAGIC_BLOCK_ALLOW_USE.add("arsmagica2:witchwood_log");
+        MAGIC_BLOCK_ALLOW_USE.add("arsmagica2:witchwood_leaves");
+        MAGIC_BLOCK_ALLOW_USE.add("arsmagica2:witchwood_sapling");
+        MAGIC_BLOCK_ALLOW_USE.add("arsmagica2:witchwood_planks");
+        MAGIC_BLOCK_ALLOW_USE.add("arsmagica2:witchwood_stairs");
+        MAGIC_BLOCK_ALLOW_USE.add("arsmagica2:witchwood_slab");
+        MAGIC_BLOCK_ALLOW_USE.add("arsmagica2:ore");
     }
-    
-    //TODO: Use Java reflection to check if these items/blocks even have a use to begin with, and only notify chat if that is the case
     
     /*TODO: Prevent using block transmutation feature of Philosopher Stone
      */
