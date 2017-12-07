@@ -47,6 +47,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.capability.humanity.LostMorphReason;
+import targoss.hardcorealchemy.capability.humanity.ForcedMorph;
 import targoss.hardcorealchemy.event.EventTakeStack;
 import targoss.hardcorealchemy.network.MessageHumanity;
 import targoss.hardcorealchemy.network.MessageMagic;
@@ -238,10 +239,10 @@ public class ListenerPlayerMagic {
                  * in the player being stuck as that morph.
                  */
                 if (morph != null && ListenerPlayerHumanity.HIGH_MAGIC_MORPHS.contains(morph.name)) {
-                    ListenerPlayerHumanity.forceForm(player, LostMorphReason.MAGE, morph);
+                    ForcedMorph.forceForm(player, LostMorphReason.MAGE, morph);
                 }
                 else {
-                    ListenerPlayerHumanity.forceForm(player, LostMorphReason.MAGE, (AbstractMorph)null);
+                    ForcedMorph.forceForm(player, LostMorphReason.MAGE, (AbstractMorph)null);
                 }
             }
             Chat.notifyMagical(player, new TextComponentTranslation("hardcorealchemy.magic.becomemage"));

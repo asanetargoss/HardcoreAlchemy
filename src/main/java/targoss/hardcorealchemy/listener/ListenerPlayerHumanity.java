@@ -3,8 +3,6 @@ package targoss.hardcorealchemy.listener;
 import java.util.HashSet;
 import java.util.Set;
 
-import mchorse.metamorph.api.MorphAPI;
-import mchorse.metamorph.api.MorphManager;
 import mchorse.metamorph.api.events.MorphEvent;
 import mchorse.metamorph.api.events.SpawnGhostEvent;
 import mchorse.metamorph.api.morphs.AbstractMorph;
@@ -31,10 +29,10 @@ import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
-import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.capability.humanity.CapabilityHumanity;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.capability.humanity.LostMorphReason;
+import targoss.hardcorealchemy.capability.humanity.ForcedMorph;
 import targoss.hardcorealchemy.capability.humanity.ProviderHumanity;
 import targoss.hardcorealchemy.capability.killcount.ProviderKillCount;
 import targoss.hardcorealchemy.network.MessageHumanity;
@@ -149,15 +147,15 @@ public class ListenerPlayerHumanity {
                     // If you are already in a morph, then congrats, you get to keep that morph!
                     if (morphing.getCurrentMorph() == null) {
                         // Uh oh, you're a zombie now!
-                        forceForm(player, LostMorphReason.LOST_HUMANITY, "Zombie");
+                        ForcedMorph.forceForm(player, LostMorphReason.LOST_HUMANITY, "Zombie");
                     }
                     else {
-                        forceForm(player, LostMorphReason.LOST_HUMANITY, morphing.getCurrentMorph());
+                        ForcedMorph.forceForm(player, LostMorphReason.LOST_HUMANITY, morphing.getCurrentMorph());
                     }
                 }
                 else if (item == CHORUS_FRUIT) {
                     // Uh oh, you're an enderman now!
-                    forceForm(player, LostMorphReason.LOST_HUMANITY, "Enderman");
+                    ForcedMorph.forceForm(player, LostMorphReason.LOST_HUMANITY, "Enderman");
                 }
                 else if (item == WITHER_APPLE) {
                     // Uh oh, you're a wither skeleton now!
@@ -165,7 +163,7 @@ public class ListenerPlayerHumanity {
                     NBTTagCompound nbtEntityData = new NBTTagCompound();
                     nbt.setTag("EntityData", nbtEntityData);
                     nbtEntityData.setByte("SkeletonType", (byte)1);
-                    forceForm(player, LostMorphReason.LOST_HUMANITY, "Skeleton", nbt);
+                    ForcedMorph.forceForm(player, LostMorphReason.LOST_HUMANITY, "Skeleton", nbt);
                     //TODO: clear the withering effect if and when I can figure out how to balance it
                 }
             }
@@ -240,11 +238,11 @@ public class ListenerPlayerHumanity {
                     if (newHumanity <= 0) {
                         AbstractMorph morph = morphing.getCurrentMorph();
                         if (morph != null) {
-                            forceForm(player, LostMorphReason.LOST_HUMANITY, morph);
+                            ForcedMorph.forceForm(player, LostMorphReason.LOST_HUMANITY, morph);
                         }
                         else {
                             // If the player isn't in a morph, give a reasonable default
-                            forceForm(player, LostMorphReason.LOST_HUMANITY, "Zombie");
+                            ForcedMorph.forceForm(player, LostMorphReason.LOST_HUMANITY, "Zombie");
                         }
                     }
                 }
@@ -259,75 +257,6 @@ public class ListenerPlayerHumanity {
         sendHumanityWarnings(player, oldHumanity, newHumanity);
         capabilityHumanity.setHumanity(newHumanity);
         capabilityHumanity.setLastHumanity(newHumanity);
-    }
-    
-    public static boolean forceForm(EntityPlayerMP player, LostMorphReason reason,
-            String morphName) {
-        return forceForm(player, reason, morphName, null);
-    }
-    
-    public static boolean forceForm(EntityPlayerMP player, LostMorphReason reason,
-            String morphName, NBTTagCompound morphProperties) {
-        NBTTagCompound nbt = morphProperties;
-        if (nbt == null) {
-            nbt = new NBTTagCompound();
-        }
-        nbt.setString("Name", morphName);
-        
-        return forceForm(player, reason, MorphManager.INSTANCE.morphFromNBT(nbt));
-    }
-    
-    /**
-     * Forces the player into the given AbstractMorph (null permitted)
-     * with the given reason, and updates the player's needs
-     * Returns true if successful
-     */
-    public static boolean forceForm(EntityPlayerMP player, LostMorphReason reason,
-            AbstractMorph morph) {
-        IMorphing morphing = player.getCapability(MORPHING_CAPABILITY, null);
-        if (morphing == null) {
-            return false;
-        }
-        ICapabilityHumanity capabilityHumanity = player.getCapability(HUMANITY_CAPABILITY, null);
-        if (capabilityHumanity == null) {
-            return false;
-        }
-        
-        boolean success = true;
-        
-        AbstractMorph currentMorph = morphing.getCurrentMorph();
-        if ((currentMorph == null && morph != null) ||
-            (currentMorph != null && morph == null) ||
-                (currentMorph != null && morph != null &&
-                 !currentMorph.equals(morph))) {
-            success = MorphAPI.morph(player, morph, true);
-        }
-        
-        if (success) {
-            capabilityHumanity.loseMorphAbilityFor(reason);
-            double humanity = morph == null ? 20.0D : 0.0D;
-            capabilityHumanity.setHumanity(humanity);
-            if (reason != LostMorphReason.LOST_HUMANITY) {
-                // Prevent showing the player a message that their humanity has changed
-                capabilityHumanity.setLastHumanity(humanity);
-            }
-            capabilityHumanity.setHighMagicOverride(morph == null ? false : HIGH_MAGIC_MORPHS.contains(morph.name));
-            
-            // These morph-specific trait changes only affect players whose form is permanent
-            if (!capabilityHumanity.canUseHighMagic()) {
-                if (HardcoreAlchemy.isArsMagicaLoaded) {
-                    ListenerPlayerMagic.eraseSpellMagic(player);
-                }
-                if (HardcoreAlchemy.isProjectELoaded) {
-                    ListenerPlayerMagic.eraseEMC(player);
-                }
-            }
-            if (HardcoreAlchemy.isNutritionLoaded) {
-                ListenerPlayerDiet.updateMorphDiet(player);
-            }
-        }
-        
-        return success;
     }
     
     private void sendHumanityWarnings(EntityPlayerMP player, double oldHumanity, double newHumanity) {
