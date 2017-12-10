@@ -15,10 +15,11 @@ import org.objectweb.asm.tree.VarInsnNode;
 
 import net.minecraft.launchwrapper.IClassTransformer;
 import targoss.hardcorealchemy.coremod.HardcoreAlchemyCoreMod;
+import targoss.hardcorealchemy.coremod.ObfuscatedName;
 
 public class TSlot implements IClassTransformer {
-    private static String SLOT = "net.minecraft.inventory.Slot";
-    private static String[] CAN_TAKE_STACK = new String[]{"canTakeStack", "func_82869_a"};
+    private static final String SLOT = "net.minecraft.inventory.Slot";
+    private static final ObfuscatedName CAN_TAKE_STACK = new ObfuscatedName("canTakeStack", "func_82869_a");
     
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
@@ -34,7 +35,7 @@ public class TSlot implements IClassTransformer {
         reader.accept(visitor, 0);
         
         for (MethodNode method : visitor.methods) {
-            if (method.name.equals(CAN_TAKE_STACK[obfuscated ? 1 : 0])) {
+            if (method.name.equals(CAN_TAKE_STACK.get())) {
                 ListIterator<AbstractInsnNode> iterator = method.instructions.iterator();
                 while (iterator.hasNext()) {
                     AbstractInsnNode insn = iterator.next();

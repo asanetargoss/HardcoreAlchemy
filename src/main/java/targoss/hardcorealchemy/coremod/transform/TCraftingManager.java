@@ -16,10 +16,11 @@ import org.objectweb.asm.tree.VarInsnNode;
 
 import net.minecraft.launchwrapper.IClassTransformer;
 import targoss.hardcorealchemy.coremod.HardcoreAlchemyCoreMod;
+import targoss.hardcorealchemy.coremod.ObfuscatedName;
 
 public class TCraftingManager implements IClassTransformer {
     private static final String CRAFTING_MANAGER = "net.minecraft.item.crafting.CraftingManager";
-    private static final String[] FIND_MATCHING_RECIPE = new String[]{"findMatchingRecipe", "func_82787_a"};
+    private static final ObfuscatedName FIND_MATCHING_RECIPE = new ObfuscatedName("findMatchingRecipe", "func_82787_a");
     
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
@@ -35,7 +36,7 @@ public class TCraftingManager implements IClassTransformer {
         reader.accept(visitor, 0);
         
         for (MethodNode method : visitor.methods) {
-            if (method.name.equals(FIND_MATCHING_RECIPE[obfuscated ? 1 : 0])) {
+            if (method.name.equals(FIND_MATCHING_RECIPE.get())) {
                 InsnList code = method.instructions;
                 
                 // Locate any and all return statements

@@ -11,11 +11,12 @@ import org.objectweb.asm.tree.VarInsnNode;
 
 import net.minecraft.launchwrapper.IClassTransformer;
 import targoss.hardcorealchemy.coremod.HardcoreAlchemyCoreMod;
+import targoss.hardcorealchemy.coremod.ObfuscatedName;
 
 public class TEntityLivingBase implements IClassTransformer {
 	
-    private String ENTITY_LIVING_BASE = "net.minecraft.entity.EntityLivingBase";
-	private String[] ENTITY_DAMAGE = new String[]{"attackEntityFrom", "func_70097_a"};
+    private static final String ENTITY_LIVING_BASE = "net.minecraft.entity.EntityLivingBase";
+	private static final ObfuscatedName ENTITY_DAMAGE = new ObfuscatedName("attackEntityFrom", "func_70097_a");
 	
 	@Override
 	public byte[] transform(String name, String transformedName, byte[] basicClass) {
@@ -31,7 +32,7 @@ public class TEntityLivingBase implements IClassTransformer {
 	    reader.accept(visitor, 0);
 	    
 	    for (MethodNode method : visitor.methods) {
-	        if (method.name.equals(ENTITY_DAMAGE[0]) || method.name.equals(ENTITY_DAMAGE[1])) {
+	        if (method.name.equals(ENTITY_DAMAGE.get())) {
 	            InsnList instructions = method.instructions;
 	            
 	            InsnList eventHook = new InsnList();
@@ -40,10 +41,6 @@ public class TEntityLivingBase implements IClassTransformer {
 	            eventHook.add(new VarInsnNode(Opcodes.FLOAD, 2));
 	            eventHook.add(new MethodInsnNode(
 	                    Opcodes.INVOKESTATIC, "targoss/hardcorealchemy/event/EventLivingAttack",
-	                    //TODO: obfuscated environment
-	                    // This may actually work in an obfuscated environment, provided we are
-	                    //  dealing with the Searge name phase, since Minecraft classes are fully
-	                    //  deobfuscated at that point
 	                    "onLivingAttack", "(Lnet/minecraft/entity/EntityLivingBase;Lnet/minecraft/util/DamageSource;F)F", false
 	                    ));
 	            eventHook.add(new VarInsnNode(Opcodes.FSTORE, 2));

@@ -17,6 +17,7 @@ import org.objectweb.asm.tree.VarInsnNode;
 
 import net.minecraft.launchwrapper.IClassTransformer;
 import targoss.hardcorealchemy.coremod.HardcoreAlchemyCoreMod;
+import targoss.hardcorealchemy.coremod.ObfuscatedName;
 
 /**
  * Quick and dirty; subject to change
@@ -26,7 +27,7 @@ public class TCrops implements IClassTransformer {
     private static final String MYSICAL_CROP = "com.blakebr0.mysticalagriculture.blocks.crop.BlockMysticalCrop";
     private static final String PAM_FRUIT = "com.pam.harvestcraft.blocks.growables.BlockPamFruit";
     private static final String PAM_FRUIT_LOG = "com.pam.harvestcraft.blocks.growables.BlockPamFruitLog";
-    private static final String[] UPDATE_TICK = new String[]{"updateTick", "func_180650_b"};
+    private static final ObfuscatedName UPDATE_TICK = new ObfuscatedName("updateTick", "func_180650_b");
 
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
@@ -45,7 +46,7 @@ public class TCrops implements IClassTransformer {
         reader.accept(visitor, 0);
         
         for (MethodNode method : visitor.methods) {
-            if (method.name.equals(UPDATE_TICK[obfuscated ? 1 : 0])) {
+            if (method.name.equals(UPDATE_TICK.get())) {
                 InsnList instructions = method.instructions;
                 ListIterator<AbstractInsnNode> iterator = instructions.iterator();
                 while (iterator.hasNext()) {
@@ -84,7 +85,7 @@ public class TCrops implements IClassTransformer {
         reader.accept(visitor, 0);
         
         for (MethodNode method : visitor.methods) {
-            if (method.name.equals(UPDATE_TICK[obfuscated ? 1 : 0])) {
+            if (method.name.equals(UPDATE_TICK.get())) {
                 InsnList instructions = method.instructions;
                 InsnList hook = new InsnList();
                 hook.add(new VarInsnNode(Opcodes.ALOAD, 3)); //IBlockState

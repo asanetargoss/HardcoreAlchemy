@@ -18,11 +18,12 @@ import org.objectweb.asm.tree.MethodNode;
 
 import net.minecraft.launchwrapper.IClassTransformer;
 import targoss.hardcorealchemy.coremod.HardcoreAlchemyCoreMod;
+import targoss.hardcorealchemy.coremod.ObfuscatedName;
 
 public class TProjectEKeyHandler implements IClassTransformer {
     // Anonymous Runnable class inside of Handler, which is an instance of simpleimpl's IMessageHandler
     private static final String HANDLER_CLASS = "moze_intel.projecte.network.packets.KeyPressPKT$Handler$1";
-    private static final String[] PLAYER_ENTITY = new String[]{"playerEntity", "field_147369_b"};
+    private static final ObfuscatedName PLAYER_ENTITY = new ObfuscatedName("playerEntity", "field_147369_b");
 
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
@@ -43,7 +44,7 @@ public class TProjectEKeyHandler implements IClassTransformer {
                 while (iterator.hasNext()) {
                     AbstractInsnNode insn = iterator.next();
                     if (insn instanceof FieldInsnNode &&
-                            ((FieldInsnNode)insn).name.equals(PLAYER_ENTITY[obfuscated ? 1 : 0])) {
+                            ((FieldInsnNode)insn).name.equals(PLAYER_ENTITY.get())) {
                         InsnList insnList = new InsnList();
                         insnList.add(new InsnNode(Opcodes.DUP)); // Get our own copy of EntityPlayer
                         insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
