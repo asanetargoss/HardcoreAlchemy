@@ -1,9 +1,7 @@
 package targoss.hardcorealchemy.test.suite;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import gr8pefish.ironbackpacks.capabilities.IronBackpacksCapabilities;
 import gr8pefish.ironbackpacks.capabilities.player.PlayerWearingBackpackCapabilities;
@@ -11,7 +9,6 @@ import gr8pefish.ironbackpacks.container.backpack.InventoryBackpack;
 import moze_intel.projecte.gameObjs.tiles.AlchChestTile;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntityChest;
@@ -27,13 +24,14 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.listener.ListenerInventoryFoodRot;
 import targoss.hardcorealchemy.test.HardcoreAlchemyTests;
+import targoss.hardcorealchemy.test.api.ITestList;
 import targoss.hardcorealchemy.test.api.ITestSuite;
-import targoss.hardcorealchemy.test.api.Test;
+import targoss.hardcorealchemy.test.api.TestList;
 
 public class TestFoodRot implements ITestSuite {
     @Override
-    public Map<String, Test> getTests() {
-        Map<String, Test> tests = new HashMap<>();
+    public ITestList getTests() {
+        ITestList tests = new TestList();
         
         tests.put("chest insertion check", this::checkInsertChest);
         tests.put("find chest inventory", this::hasInventoryChest);

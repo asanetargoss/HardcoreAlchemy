@@ -100,16 +100,16 @@ public abstract class TestSystem {
         }
         
         if (instance != null) {
-            Map<String, Test> tests = instance.getTests();
-            status.totalTests = tests.size();
+            ITestList suiteTests = instance.getTests();
+            status.totalTests = suiteTests.size();
             
-            for (Map.Entry<String,Test> test : tests.entrySet()) {
-                boolean result = test.getValue().result();
+            for (ITestList.TestEntry test : suiteTests) {
+                boolean result = test.evaluate();
                 if (result) {
                     status.successfulTests++;
                 }
                 else {
-                    status.failedTestName = test.getKey();
+                    status.failedTestName = test.getName();
                     break;
                 }
             }
