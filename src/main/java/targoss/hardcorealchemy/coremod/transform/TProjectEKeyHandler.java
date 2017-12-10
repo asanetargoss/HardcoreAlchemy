@@ -1,10 +1,5 @@
 package targoss.hardcorealchemy.coremod.transform;
 
-import net.minecraft.launchwrapper.IClassTransformer;
-import targoss.hardcorealchemy.coremod.HardcoreAlchemyCoreMod;
-
-import static targoss.hardcorealchemy.coremod.HardcoreAlchemyCoreMod.LOGGER;
-
 import java.util.ListIterator;
 
 import org.objectweb.asm.ClassReader;
@@ -21,6 +16,9 @@ import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
+import net.minecraft.launchwrapper.IClassTransformer;
+import targoss.hardcorealchemy.coremod.HardcoreAlchemyCoreMod;
+
 public class TProjectEKeyHandler implements IClassTransformer {
     // Anonymous Runnable class inside of Handler, which is an instance of simpleimpl's IMessageHandler
     private static final String HANDLER_CLASS = "moze_intel.projecte.network.packets.KeyPressPKT$Handler$1";
@@ -29,7 +27,6 @@ public class TProjectEKeyHandler implements IClassTransformer {
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
         if (transformedName.equals(HANDLER_CLASS)) {
-            LOGGER.debug("Found class " + HANDLER_CLASS);
             return transformClass(transformedName, HardcoreAlchemyCoreMod.obfuscated, basicClass);
         }
         return basicClass;
@@ -42,7 +39,6 @@ public class TProjectEKeyHandler implements IClassTransformer {
         
         for (MethodNode method : visitor.methods) {
             if (method.name.equals("run")) {
-                LOGGER.debug("    Found method run()");
                 ListIterator<AbstractInsnNode> iterator = method.instructions.iterator();
                 while (iterator.hasNext()) {
                     AbstractInsnNode insn = iterator.next();
@@ -75,9 +71,6 @@ public class TProjectEKeyHandler implements IClassTransformer {
         ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
         visitor.accept(writer);
         basicClass = writer.toByteArray();
-        
-        LOGGER.debug("Let's see the damage of our work:");
-        HardcoreAlchemyCoreMod.logBytesToDebug(basicClass);
         
         return basicClass;
     }

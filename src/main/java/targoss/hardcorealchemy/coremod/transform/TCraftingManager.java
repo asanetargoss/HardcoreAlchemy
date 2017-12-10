@@ -1,7 +1,5 @@
 package targoss.hardcorealchemy.coremod.transform;
 
-import static targoss.hardcorealchemy.coremod.HardcoreAlchemyCoreMod.LOGGER;
-
 import java.util.ArrayList;
 import java.util.ListIterator;
 
@@ -26,7 +24,6 @@ public class TCraftingManager implements IClassTransformer {
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
         if (transformedName.equals(CRAFTING_MANAGER)) {
-            LOGGER.debug("Found class " + transformedName);
             return transformClass(transformedName, HardcoreAlchemyCoreMod.obfuscated, basicClass);
         }
         return basicClass;
@@ -37,10 +34,8 @@ public class TCraftingManager implements IClassTransformer {
         ClassNode visitor = new ClassNode();
         reader.accept(visitor, 0);
         
-        //TODO: bytecode injection
         for (MethodNode method : visitor.methods) {
             if (method.name.equals(FIND_MATCHING_RECIPE[obfuscated ? 1 : 0])) {
-                LOGGER.debug("    Found method " + method.name);
                 InsnList code = method.instructions;
                 
                 // Locate any and all return statements
@@ -50,7 +45,6 @@ public class TCraftingManager implements IClassTransformer {
                     AbstractInsnNode insn = iterator.next();
                     if (insn instanceof InsnNode && insn.getOpcode() == Opcodes.ARETURN) {
                         entryPoints.add((InsnNode)insn);
-                        LOGGER.debug("    Found ARETURN entry point");
                     }
                 }
                 
@@ -72,7 +66,6 @@ public class TCraftingManager implements IClassTransformer {
                             false)); // EventCraftPredict event hook call
                     
                     code.insertBefore(entryPoint, hook);
-                    LOGGER.debug("    Patched ARETURN entry point");
                 }
             }
         }
@@ -80,9 +73,6 @@ public class TCraftingManager implements IClassTransformer {
         ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
         visitor.accept(writer);
         basicClass = writer.toByteArray();
-        
-        LOGGER.debug("Let's see the damage of our work:");
-        HardcoreAlchemyCoreMod.logBytesToDebug(basicClass);
         
         return basicClass;
     }
