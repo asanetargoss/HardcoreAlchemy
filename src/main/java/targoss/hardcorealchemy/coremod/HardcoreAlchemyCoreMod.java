@@ -20,6 +20,7 @@ import targoss.hardcorealchemy.coremod.transform.TCraftingManager;
 import targoss.hardcorealchemy.coremod.transform.TDecayingCrops;
 import targoss.hardcorealchemy.coremod.transform.TEntityLivingBase;
 import targoss.hardcorealchemy.coremod.transform.THibernatingCrops;
+import targoss.hardcorealchemy.coremod.transform.TObjectProximityModifier;
 import targoss.hardcorealchemy.coremod.transform.TProjectEKeyHandler;
 import targoss.hardcorealchemy.coremod.transform.TSlot;
 
@@ -42,7 +43,8 @@ public class HardcoreAlchemyCoreMod implements IFMLLoadingPlugin {
 				TProjectEKeyHandler.class.getName(),
 				TCraftingManager.class.getName(),
 				TDecayingCrops.class.getName(),
-				THibernatingCrops.class.getName()
+				THibernatingCrops.class.getName(),
+				TObjectProximityModifier.class.getName()
 		};
 	}
 
