@@ -112,7 +112,7 @@ public class ListenerMobLevel {
         if (defenderIsPlayer) {
             defenderLevel = ((EntityPlayer)defender).experienceLevel;
         }
-        else if (attacker.hasCapability(COMBAT_LEVEL_CAPABILITY, null)) {
+        else if (defender.hasCapability(COMBAT_LEVEL_CAPABILITY, null)) {
             defenderLevel = defender.getCapability(COMBAT_LEVEL_CAPABILITY, null).getValue();
         }
         else {
