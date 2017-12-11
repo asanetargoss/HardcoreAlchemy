@@ -17,8 +17,9 @@ import net.minecraftforge.fml.common.ModMetadata;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 import targoss.hardcorealchemy.coremod.transform.TCraftingManager;
-import targoss.hardcorealchemy.coremod.transform.TCrops;
+import targoss.hardcorealchemy.coremod.transform.TDecayingCrops;
 import targoss.hardcorealchemy.coremod.transform.TEntityLivingBase;
+import targoss.hardcorealchemy.coremod.transform.THibernatingCrops;
 import targoss.hardcorealchemy.coremod.transform.TProjectEKeyHandler;
 import targoss.hardcorealchemy.coremod.transform.TSlot;
 
@@ -40,7 +41,8 @@ public class HardcoreAlchemyCoreMod implements IFMLLoadingPlugin {
 				TSlot.class.getName(),
 				TProjectEKeyHandler.class.getName(),
 				TCraftingManager.class.getName(),
-				TCrops.class.getName()
+				TDecayingCrops.class.getName(),
+				THibernatingCrops.class.getName()
 		};
 	}
 
