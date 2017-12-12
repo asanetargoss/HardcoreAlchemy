@@ -59,7 +59,7 @@ public class HardcoreAlchemyCoreMod implements IFMLLoadingPlugin {
 			ModMetadata meta = getMetadata();
 			meta.modId = "hardcorealchemy-coremod";
 			meta.name = "Hardcore Alchemy Core Mod";
-			meta.version = "0.2.0";
+			meta.version = "0.2.1";
 			meta.credits = "";
 			meta.authorList = Arrays.asList("asanetargoss");
 			meta.description = "The secret sauce.";
