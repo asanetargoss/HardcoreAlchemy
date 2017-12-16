@@ -12,6 +12,7 @@ import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import targoss.hardcorealchemy.command.CommandTest;
@@ -49,9 +50,8 @@ public class HardcoreAlchemy
     public static boolean isIronBackpacksLoaded = false;
     public static boolean isTanLoaded = false;
     
-    //TODO: Why isn't this FMLPreInitializationEvent?
     @EventHandler
-    public void preInit(FMLInitializationEvent event) {
+    public void preInit(FMLPreInitializationEvent event) {
         Map<String, ModContainer> modMap = Loader.instance().getIndexedModList();
         isDissolutionLoaded = modMap.containsKey(DISSOLUTION_ID);
         isNutritionLoaded = modMap.containsKey(NUTRITION_ID);
