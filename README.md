@@ -1,10 +1,13 @@
 # Hardcore Alchemy
+Hardcore Alchemy is two things, a mod and a modpack.
 
-# Running with Minecraft
-* This mod is for 1.10.2
-* See the wiki for documentation for the modpack, which includes this mod
-* No license yet (ie do not distribute/all rights reserved)
-* The mod will be made available by itself at a later time
+About the Hardcore Alchemy modpack:
+* A 1.10.2 hardcore/survival/magic pack
+* [See the wiki](https://github.com/asanetargoss/HardcoreAlchemy/wiki) for more information about the pack
+
+About the Hardcore Alchemy mod:
+* Add miscellaneous survival and cross-mod compatibility features meant to complement the modpack
+* Will be released on its own at a later time. No license yet. (ie do not distribute/all rights reserved)
 
 # Developing/building
 
@@ -13,7 +16,7 @@ Download this zip file and add its contents to /libs:
 
 http://www.mediafire.com/file/271ibuiu85xabo7/HcA_libs_0.2.1.zip
 
-Please note: the following mods in the modpack above are custom forks:
+Please note: the following mods included in the zip file above are custom forks:
 * Nutrition: https://github.com/asanetargoss/Nutrition
 * metamorph: https://github.com/asanetargoss/metamorph
 
