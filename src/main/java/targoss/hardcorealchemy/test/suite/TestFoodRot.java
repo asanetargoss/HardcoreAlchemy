@@ -2,10 +2,6 @@ package targoss.hardcorealchemy.test.suite;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-import java.util.UUID;
-
-import com.mojang.authlib.GameProfile;
 
 import gr8pefish.ironbackpacks.capabilities.IronBackpacksCapabilities;
 import gr8pefish.ironbackpacks.capabilities.player.PlayerWearingBackpackCapabilities;
@@ -30,6 +26,7 @@ import targoss.hardcorealchemy.test.HardcoreAlchemyTests;
 import targoss.hardcorealchemy.test.api.ITestList;
 import targoss.hardcorealchemy.test.api.ITestSuite;
 import targoss.hardcorealchemy.test.api.TestList;
+import targoss.hardcorealchemy.test.api.UniqueFakePlayer;
 
 public class TestFoodRot implements ITestSuite {
     @Override
@@ -162,29 +159,20 @@ public class TestFoodRot implements ITestSuite {
         return worldServer != null;
     }
     
-    private static Random random = new Random();
-    
-    public static FakePlayer createPlayer() {
-        MinecraftServer server = HardcoreAlchemyTests.SERVER_REFERENCE.get();
-        WorldServer worldServer = server.worldServerForDimension(DimensionType.OVERWORLD.getId());
-        
-        return new FakePlayer(worldServer, new GameProfile(UUID.randomUUID(), "HCAFakePlayer_" + String.valueOf(random.nextInt())));
-    }
-    
     public static ItemStack createBackpackStack() {
         return new ItemStack(gr8pefish.ironbackpacks.registry.ItemRegistry.basicBackpack);
     }
     
     @Optional.Method(modid = HardcoreAlchemy.IRON_BACKPACKS_ID)
     public boolean hasInventoryIronBackpack() {
-        FakePlayer player = createPlayer();
+        FakePlayer player = UniqueFakePlayer.create();
         ItemStack backpackStack = createBackpackStack();
         
         return ListenerInventoryFoodRot.getInventories(backpackStack).size() == 1;
     }
     
     public boolean countPlayerInventories() {
-        FakePlayer player = createPlayer();
+        FakePlayer player = UniqueFakePlayer.create();
         
         int numInventories = 2;
         if (HardcoreAlchemy.isProjectELoaded) {
@@ -200,7 +188,7 @@ public class TestFoodRot implements ITestSuite {
     }
     
     public boolean decayPlayerInventory() {
-        FakePlayer player = createPlayer();
+        FakePlayer player = UniqueFakePlayer.create();
         IItemHandler playerInventory = new InvWrapper(player.inventory);
         
         int initialFood = fillSlotsWithFood(playerInventory);
@@ -236,7 +224,7 @@ public class TestFoodRot implements ITestSuite {
         ListenerInventoryFoodRot.saveIronBackpackNbt(inventoryBackpack, backpackStack);
         
         int backpackSlot = 0;
-        FakePlayer player = createPlayer();
+        FakePlayer player = UniqueFakePlayer.create();
         player.inventory.setInventorySlotContents(backpackSlot, backpackStack);
         
         tickInventories(ListenerInventoryFoodRot.getInventories(player));
@@ -255,7 +243,7 @@ public class TestFoodRot implements ITestSuite {
         int initialFood = fillSlotsWithFood(inventoryBackpack);
         ListenerInventoryFoodRot.saveIronBackpackNbt(inventoryBackpack, backpackStack);
         
-        FakePlayer player = createPlayer();
+        FakePlayer player = UniqueFakePlayer.create();
         PlayerWearingBackpackCapabilities backpackCapability = IronBackpacksCapabilities.getWearingBackpackCapability(player);
         backpackCapability.setEquippedBackpack(backpackStack);
         
@@ -271,7 +259,7 @@ public class TestFoodRot implements ITestSuite {
     
     @Optional.Method(modid = HardcoreAlchemy.PROJECT_E_ID)
     public boolean decayAlchemicalBags() {
-        FakePlayer player = createPlayer();
+        FakePlayer player = UniqueFakePlayer.create();
         List<IItemHandler> alchemicalBags = ListenerInventoryFoodRot.getAlchemicalBags(player);
         IItemHandler alchemicalBag = alchemicalBags.get(0);
         
