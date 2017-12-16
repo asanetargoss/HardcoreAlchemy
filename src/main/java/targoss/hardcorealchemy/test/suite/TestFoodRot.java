@@ -2,6 +2,10 @@ package targoss.hardcorealchemy.test.suite;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.UUID;
+
+import com.mojang.authlib.GameProfile;
 
 import gr8pefish.ironbackpacks.capabilities.IronBackpacksCapabilities;
 import gr8pefish.ironbackpacks.capabilities.player.PlayerWearingBackpackCapabilities;
@@ -17,7 +21,6 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -159,11 +162,13 @@ public class TestFoodRot implements ITestSuite {
         return worldServer != null;
     }
     
+    private static Random random = new Random();
+    
     public static FakePlayer createPlayer() {
         MinecraftServer server = HardcoreAlchemyTests.SERVER_REFERENCE.get();
         WorldServer worldServer = server.worldServerForDimension(DimensionType.OVERWORLD.getId());
         
-        return FakePlayerFactory.getMinecraft(worldServer);
+        return new FakePlayer(worldServer, new GameProfile(UUID.randomUUID(), "HCAFakePlayer_" + String.valueOf(random.nextInt())));
     }
     
     public static ItemStack createBackpackStack() {
