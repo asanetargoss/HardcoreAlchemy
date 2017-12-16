@@ -19,7 +19,7 @@ import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.listener.ListenerInventoryFoodRot;
 import targoss.hardcorealchemy.test.HardcoreAlchemyTests;
 import targoss.hardcorealchemy.test.api.ITestList;
@@ -31,8 +31,8 @@ public class TestFoodRot implements ITestSuite {
     @Override
     public ITestList getTests() {
         ITestList tests = new TestList();
-        boolean projecte = HardcoreAlchemy.isProjectELoaded;
-        boolean backpacks = HardcoreAlchemy.isIronBackpacksLoaded;
+        boolean projecte = ModState.isProjectELoaded;
+        boolean backpacks = ModState.isIronBackpacksLoaded;
         
         tests.put("chest insertion check", this::checkInsertChest);
         tests.put("find chest inventory", this::hasInventoryChest);
@@ -159,10 +159,10 @@ public class TestFoodRot implements ITestSuite {
         FakePlayer player = UniqueFakePlayer.create();
         
         int numInventories = 2;
-        if (HardcoreAlchemy.isProjectELoaded) {
+        if (ModState.isProjectELoaded) {
             numInventories += 16;
         }
-        if (HardcoreAlchemy.isIronBackpacksLoaded) {
+        if (ModState.isIronBackpacksLoaded) {
             PlayerWearingBackpackCapabilities backpackCapability = IronBackpacksCapabilities.getWearingBackpackCapability(player);
             backpackCapability.setEquippedBackpack(createBackpackStack());
             numInventories += 1;

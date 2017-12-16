@@ -8,7 +8,7 @@ import mchorse.metamorph.api.morphs.AbstractMorph;
 import mchorse.metamorph.capabilities.morphing.IMorphing;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.listener.ListenerPlayerDiet;
 import targoss.hardcorealchemy.listener.ListenerPlayerHumanity;
 import targoss.hardcorealchemy.listener.ListenerPlayerMagic;
@@ -71,14 +71,14 @@ public class ForcedMorph {
             
             // These morph-specific trait changes only affect players whose form is permanent
             if (!capabilityHumanity.canUseHighMagic()) {
-                if (HardcoreAlchemy.isArsMagicaLoaded) {
+                if (ModState.isArsMagicaLoaded) {
                     ListenerPlayerMagic.eraseSpellMagic(player);
                 }
-                if (HardcoreAlchemy.isProjectELoaded) {
+                if (ModState.isProjectELoaded) {
                     ListenerPlayerMagic.eraseEMC(player);
                 }
             }
-            if (HardcoreAlchemy.isNutritionLoaded) {
+            if (ModState.isNutritionLoaded) {
                 ListenerPlayerDiet.updateMorphDiet(player);
             }
         }

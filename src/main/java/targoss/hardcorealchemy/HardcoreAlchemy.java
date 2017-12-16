@@ -32,40 +32,27 @@ public class HardcoreAlchemy
     @SidedProxy(modId=MOD_ID, clientSide=CLIENT_PROXY, serverSide=COMMON_PROXY)
     public static CommonProxy proxy;
     
-    public static final Logger LOGGER = LogManager.getLogger("Hardcore Alchemy");
-    
-    //TODO: move mod constants to their own file
-    public static final String DISSOLUTION_ID = "dissolution";
-    public static final String NUTRITION_ID = "nutrition";
-    public static final String BLOOD_MAGIC_ID = "BloodMagic";
-    public static final String ARS_MAGICA_ID = "arsmagica2";
-    public static final String PROJECT_E_ID = "ProjectE";
-    public static final String IRON_BACKPACKS_ID = "ironbackpacks";
-    public static final String TAN_ID = "ToughAsNails";
-    public static boolean isDissolutionLoaded = false;
-    public static boolean isNutritionLoaded = false;
-    public static boolean isBloodMagicLoaded = false;
-    public static boolean isArsMagicaLoaded = false;
-    public static boolean isProjectELoaded = false;
-    public static boolean isIronBackpacksLoaded = false;
-    public static boolean isTanLoaded = false;
+    public static Logger LOGGER = null;
     
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
+        LOGGER = event.getModLog();
+                
         Map<String, ModContainer> modMap = Loader.instance().getIndexedModList();
-        isDissolutionLoaded = modMap.containsKey(DISSOLUTION_ID);
-        isNutritionLoaded = modMap.containsKey(NUTRITION_ID);
-        isBloodMagicLoaded = modMap.containsKey(BLOOD_MAGIC_ID);
-        isArsMagicaLoaded = modMap.containsKey(ARS_MAGICA_ID);
-        isProjectELoaded = modMap.containsKey(PROJECT_E_ID);
-        isIronBackpacksLoaded = modMap.containsKey(IRON_BACKPACKS_ID);
-        isTanLoaded = modMap.containsKey(TAN_ID);
+        ModState.isDissolutionLoaded = modMap.containsKey(ModState.DISSOLUTION_ID);
+        ModState.isNutritionLoaded = modMap.containsKey(ModState.NUTRITION_ID);
+        ModState.isBloodMagicLoaded = modMap.containsKey(ModState.BLOOD_MAGIC_ID);
+        ModState.isArsMagicaLoaded = modMap.containsKey(ModState.ARS_MAGICA_ID);
+        ModState.isProjectELoaded = modMap.containsKey(ModState.PROJECT_E_ID);
+        ModState.isIronBackpacksLoaded = modMap.containsKey(ModState.IRON_BACKPACKS_ID);
+        ModState.isTanLoaded = modMap.containsKey(ModState.TAN_ID);
     }
     
     @EventHandler
     public void init(FMLInitializationEvent event)
     {
         LOGGER.info("It's time to get magical.");
+        
         proxy.registerListeners();
         proxy.registerCapabilities();
         proxy.registerNetworking();

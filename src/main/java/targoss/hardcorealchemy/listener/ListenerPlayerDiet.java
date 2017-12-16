@@ -35,7 +35,7 @@ import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.relauncher.Side;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.CapUtil;
 import targoss.hardcorealchemy.capability.food.CapabilityFood;
 import targoss.hardcorealchemy.capability.food.ICapabilityFood;
@@ -62,7 +62,7 @@ public class ListenerPlayerDiet {
             return;
         }
         Entity entity = event.getEntity();
-        if (entity instanceof EntityPlayerMP && HardcoreAlchemy.isNutritionLoaded) {
+        if (entity instanceof EntityPlayerMP && ModState.isNutritionLoaded) {
             updateMorphDiet((EntityPlayerMP)entity);
         }
     }
@@ -70,7 +70,7 @@ public class ListenerPlayerDiet {
     // Utility function to update which player nutrients are enabled based on
     // the current morph
     // Also called by ListenerPlayerHumanity
-    @Optional.Method(modid = HardcoreAlchemy.NUTRITION_ID)
+    @Optional.Method(modid = ModState.NUTRITION_ID)
     public static void updateMorphDiet(EntityPlayerMP player) {
         IMorphing morphing = player.getCapability(MORPHING_CAPABILITY, null);
         CapInterface nutritionCapability = player.getCapability(NUTRITION_CAPABILITY, null);

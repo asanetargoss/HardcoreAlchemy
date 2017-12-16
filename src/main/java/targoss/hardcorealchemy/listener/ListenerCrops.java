@@ -17,7 +17,7 @@ import toughasnails.api.season.SeasonHelper;
 import toughasnails.api.temperature.Temperature;
 import toughasnails.api.temperature.TemperatureHelper;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.ModState;
 
 /**
  * Quick and dirty; subject to change
@@ -31,7 +31,7 @@ public class ListenerCrops {
         hibernators.add("com.pam.harvestcraft.blocks.growables.BlockPamFruitLog");
     }
     
-    @Optional.Method(modid=HardcoreAlchemy.TAN_ID)
+    @Optional.Method(modid=ModState.TAN_ID)
     private static boolean isWinterAt(World world, BlockPos pos) {
         Season season = SeasonHelper.getSeasonData(world).getSubSeason().getSeason();
         if (season != Season.WINTER ||
@@ -48,7 +48,7 @@ public class ListenerCrops {
      * Coremod hook. See TCrops
      */
     public static void checkDecay(IBlockState blockState, World world, BlockPos pos) {
-        if (HardcoreAlchemy.isTanLoaded && isWinterAt(world, pos)) {
+        if (ModState.isTanLoaded && isWinterAt(world, pos)) {
             world.setBlockState(pos, TANBlocks.dead_crops.getDefaultState());
         }
     }
@@ -57,7 +57,7 @@ public class ListenerCrops {
      * Coremod hook. See TCrops
      */
     public static boolean shouldHibernate(IBlockState blockState, World world, BlockPos pos) {
-        if (!HardcoreAlchemy.isTanLoaded ||
+        if (!ModState.isTanLoaded ||
                 !isWinterAt(world, pos)) {
             return false;
         }

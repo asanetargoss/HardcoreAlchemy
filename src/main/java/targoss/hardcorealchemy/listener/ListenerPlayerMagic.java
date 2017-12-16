@@ -44,9 +44,9 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.capability.humanity.LostMorphReason;
+import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.humanity.ForcedMorph;
 import targoss.hardcorealchemy.event.EventTakeStack;
 import targoss.hardcorealchemy.network.MessageHumanity;
@@ -220,7 +220,7 @@ public class ListenerPlayerMagic {
     }
     
     // When a player chooses the path of a spellcaster, they lose the ability to morph
-    @Optional.Method(modid = HardcoreAlchemy.ARS_MAGICA_ID)
+    @Optional.Method(modid = ModState.ARS_MAGICA_ID)
     @SubscribeEvent
     public void onCastFirstSpell(SpellCastEvent.Pre event) {
         EntityLivingBase entity = event.entityLiving;
@@ -271,13 +271,13 @@ public class ListenerPlayerMagic {
     }
     
     public static void eraseAllMortalMagic(EntityPlayerMP player) {
-        if (HardcoreAlchemy.isBloodMagicLoaded) {
+        if (ModState.isBloodMagicLoaded) {
             eraseBloodMagic(player);
         }
-        if (HardcoreAlchemy.isArsMagicaLoaded) {
+        if (ModState.isArsMagicaLoaded) {
             eraseSpellMagic(player);
         }
-        if (HardcoreAlchemy.isProjectELoaded) {
+        if (ModState.isProjectELoaded) {
             eraseEMC(player);
         }
         //TODO: Clear Astral Sorcery passive buffs?
@@ -289,7 +289,7 @@ public class ListenerPlayerMagic {
      * 2) Hopefully stops rituals from running, but I haven't tested that so who knows?
      * 3) For the challenge
      */
-    @Optional.Method(modid = HardcoreAlchemy.BLOOD_MAGIC_ID)
+    @Optional.Method(modid = ModState.BLOOD_MAGIC_ID)
     public static void eraseBloodMagic(EntityPlayerMP player) {
         SoulNetwork network = NetworkHelper.getSoulNetwork(player);
         network.setOrbTier(0);
@@ -303,7 +303,7 @@ public class ListenerPlayerMagic {
      * 2) Sets other aspects of the player's magic to be consistent with that fact
      * 3) Allow for the player to try new specializations
      */
-    @Optional.Method(modid = HardcoreAlchemy.ARS_MAGICA_ID)
+    @Optional.Method(modid = ModState.ARS_MAGICA_ID)
     public static void eraseSpellMagic(EntityPlayerMP player) {
         
         IEntityExtension playerMagicExtension = EntityExtension.For(player);
@@ -352,7 +352,7 @@ public class ListenerPlayerMagic {
      * of EMC across deaths
      * 2) Gently encourage players to not use the transmutation table for long-term storage
      */
-    @Optional.Method(modid = HardcoreAlchemy.PROJECT_E_ID)
+    @Optional.Method(modid = ModState.PROJECT_E_ID)
     public static void eraseEMC(EntityPlayerMP player) {
         IKnowledgeProvider transmutationKnowledge = player.getCapability(ProjectEAPI.KNOWLEDGE_CAPABILITY, null);
         if (transmutationKnowledge != null) {

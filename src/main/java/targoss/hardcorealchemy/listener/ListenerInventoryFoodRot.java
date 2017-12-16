@@ -36,7 +36,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.ModState;
 
 public class ListenerInventoryFoodRot {
     @CapabilityInject(IItemHandler.class)
@@ -255,11 +255,11 @@ public class ListenerInventoryFoodRot {
             }
         }
         // Alchemical bag inventories
-        if (HardcoreAlchemy.isProjectELoaded) {
+        if (ModState.isProjectELoaded) {
             inventories.addAll(getAlchemicalBags(player));
         }
         // Equipped backpack inventory
-        if (HardcoreAlchemy.isIronBackpacksLoaded) {
+        if (ModState.isIronBackpacksLoaded) {
             PlayerWearingBackpackCapabilities backpackCapability = IronBackpacksCapabilities.getWearingBackpackCapability(player);
             if (backpackCapability != null) {
                 ItemStack backpackStack = backpackCapability.getEquippedBackpack();
@@ -273,7 +273,7 @@ public class ListenerInventoryFoodRot {
     }
     
     @Nonnull
-    @Optional.Method(modid = HardcoreAlchemy.PROJECT_E_ID)
+    @Optional.Method(modid = ModState.PROJECT_E_ID)
     public static List<IItemHandler> getAlchemicalBags(@Nonnull EntityPlayer player) {
         List<IItemHandler> inventories = new ArrayList<>();
         

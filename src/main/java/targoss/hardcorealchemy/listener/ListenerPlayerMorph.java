@@ -29,7 +29,7 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.Clone;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.CapUtil;
 import targoss.hardcorealchemy.capability.humanity.CapabilityHumanity;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
@@ -146,7 +146,7 @@ public class ListenerPlayerMorph {
         }
     }
 
-    @Optional.Method(modid = HardcoreAlchemy.DISSOLUTION_ID)
+    @Optional.Method(modid = ModState.DISSOLUTION_ID)
     @SubscribeEvent
     public void onPlayerMorphAsGhost(MorphEvent.Pre event) {
         if (isIncorporeal(event.player) && !event.isDemorphing()) {
@@ -158,7 +158,7 @@ public class ListenerPlayerMorph {
         }
     }
 
-    @Optional.Method(modid = HardcoreAlchemy.DISSOLUTION_ID)
+    @Optional.Method(modid = ModState.DISSOLUTION_ID)
     @SubscribeEvent
     public void onPlayerEnterAfterlife(PlayerRespawnEvent event) {
         EntityPlayer player = event.player;
@@ -168,7 +168,7 @@ public class ListenerPlayerMorph {
         }
     }
 
-    @Optional.Method(modid = HardcoreAlchemy.DISSOLUTION_ID)
+    @Optional.Method(modid = ModState.DISSOLUTION_ID)
     public boolean isIncorporeal(EntityPlayer player) {
         IIncorporealHandler incorporeal = player.getCapability(CapabilityIncorporealHandler.CAPABILITY_INCORPOREAL,
                 null);
