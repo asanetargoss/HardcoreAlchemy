@@ -59,6 +59,7 @@ dependencies {
     //deobfProvided 'com.mod-buildcraft:buildcraft:6.0.8:dev'
     
     deobfCompile 'mcp.mobius.waila:Hwyla:1.8.12-B26_1.10.2'
+    deobfCompile 'info.amerifrance.guideapi:Guide-API:1.10.2-2.0.3-46'
 
     // for more info...
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
