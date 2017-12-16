@@ -25,8 +25,7 @@ Please note: the following mods included in the zip file above are custom forks:
 * Then run "./gradlew setupDecompWorkspace" to set up Minecraft Forge and access transformers. Re-run if you change access transformers (Access transformers are here: "src/main/resources/META-INF/hardcorealchemy_at.cfg")
 * Add this VM argument to your run configuration to load the coremod: "-Dfml.coreMods.load=targoss.hardcorealchemy.coremod.HardcoreAlchemyCoreMod"
 
-## Other tips
-I highly recommend installing these plugins in your IDE:
+## Other resources
 * Decompiler plugin: http://jd.benow.ca/ (Why: Required to view source code for all the mods in /libs, since most do not have dev builds (I may look into cross-compiling later))
 * Bytecode outline for Eclipse: http://andrei.gmxhome.de/bytecode/index.html (Why: Only if you need to coremod. It will help you understand the Java bytecode better. Do not trust the stack feature.)
 * Mod Coder Pack: http://www.modcoderpack.com/ (Why: Comes with the MCP mapping viewer, which is helpful for reflection, access transformers, and coremodding.)
