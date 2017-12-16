@@ -17,7 +17,6 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import targoss.hardcorealchemy.HardcoreAlchemy;
@@ -32,29 +31,29 @@ public class TestFoodRot implements ITestSuite {
     @Override
     public ITestList getTests() {
         ITestList tests = new TestList();
+        boolean projecte = HardcoreAlchemy.isProjectELoaded;
+        boolean backpacks = HardcoreAlchemy.isIronBackpacksLoaded;
         
         tests.put("chest insertion check", this::checkInsertChest);
         tests.put("find chest inventory", this::hasInventoryChest);
         tests.put("decay food in chest", this::decayChest);
         tests.put("decay rate overflow prevention in chest", this::decayChestOverflow);
-        if (HardcoreAlchemy.isProjectELoaded) {
-            tests.put("find alchemical chest inventory", this::hasInventoryChestPE);
-        }
+        
+        tests.putIf("find alchemical chest inventory", this::hasInventoryChestPE, projecte);
+        
         tests.put("check server reference", this::checkServerTestReference);
         tests.put("check overworld available", this::checkOverworldAvailable);
-        if (HardcoreAlchemy.isIronBackpacksLoaded) {
-            tests.put("find iron backpack inventory", this::hasInventoryIronBackpack);
-        }
+        
+        tests.putIf("find iron backpack inventory", this::hasInventoryIronBackpack, backpacks);
+        
         tests.put("get player inventories", this::countPlayerInventories);
         tests.put("decay food in player inventory", this::decayPlayerInventory);
-        if (HardcoreAlchemy.isIronBackpacksLoaded) {
-            tests.put("save iron backpack inventory nbt", this::checkSaveBackpackNbt);
-            tests.put("decay food in backpack in player inventory", this::decayBackpackInPlayerInventory);
-            tests.put("decay food in worn backpack", this::decayWornBackpack);
-        }
-        if (HardcoreAlchemy.isProjectELoaded) {
-            tests.put("decay food in alchemical bags", this::decayAlchemicalBags);
-        }
+        
+        tests.putIf("save iron backpack inventory nbt", this::checkSaveBackpackNbt, backpacks);
+        tests.putIf("decay food in backpack in player inventory", this::decayBackpackInPlayerInventory, backpacks);
+        tests.putIf("decay food in worn backpack", this::decayWornBackpack, backpacks);
+        
+        tests.putIf("decay food in alchemical bags", this::decayAlchemicalBags, projecte);
         
         return tests;
     }
@@ -143,7 +142,6 @@ public class TestFoodRot implements ITestSuite {
         return decayChestAtRate(1.0E30F);
     }
     
-    @Optional.Method(modid = HardcoreAlchemy.PROJECT_E_ID)
     public boolean hasInventoryChestPE() {
         AlchChestTile chest = new AlchChestTile();
         return ListenerInventoryFoodRot.getInventories(chest).size() == 1;
@@ -163,7 +161,6 @@ public class TestFoodRot implements ITestSuite {
         return new ItemStack(gr8pefish.ironbackpacks.registry.ItemRegistry.basicBackpack);
     }
     
-    @Optional.Method(modid = HardcoreAlchemy.IRON_BACKPACKS_ID)
     public boolean hasInventoryIronBackpack() {
         FakePlayer player = UniqueFakePlayer.create();
         ItemStack backpackStack = createBackpackStack();
@@ -235,7 +232,6 @@ public class TestFoodRot implements ITestSuite {
         return finalFood < initialFood;
     }
     
-    @Optional.Method(modid = HardcoreAlchemy.IRON_BACKPACKS_ID)
     public boolean decayWornBackpack() {
         ItemStack backpackStack = createBackpackStack();
         IItemHandler inventoryBackpack = new InvWrapper(new InventoryBackpack(backpackStack, true));
@@ -257,7 +253,6 @@ public class TestFoodRot implements ITestSuite {
         return finalFood < initialFood;
     }
     
-    @Optional.Method(modid = HardcoreAlchemy.PROJECT_E_ID)
     public boolean decayAlchemicalBags() {
         FakePlayer player = UniqueFakePlayer.create();
         List<IItemHandler> alchemicalBags = ListenerInventoryFoodRot.getAlchemicalBags(player);
