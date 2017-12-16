@@ -8,6 +8,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.test.api.ITestSuite;
 import targoss.hardcorealchemy.test.api.TestSystem;
 import targoss.hardcorealchemy.test.suite.TestFakePlayer;
@@ -50,4 +51,6 @@ public class HardcoreAlchemyTests extends TestSystem {
     public static void setServerForEvent(FMLServerStoppingEvent event) {
         SERVER_REFERENCE = null;
     }
+    
+    public static final Configs DEFAULT_CONFIGS = new Configs();
 }

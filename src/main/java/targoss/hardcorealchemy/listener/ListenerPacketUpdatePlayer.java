@@ -9,6 +9,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
+import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.network.MessageHumanity;
 import targoss.hardcorealchemy.network.MessageMagic;
 import targoss.hardcorealchemy.network.PacketHandler;
@@ -18,7 +19,11 @@ import targoss.hardcorealchemy.network.PacketHandler;
  * calculations on the client side. This event listener is responsible for sending
  * the little data that the client needs to function correctly.
  */
-public class ListenerPacketUpdatePlayer {
+public class ListenerPacketUpdatePlayer extends ConfiguredListener {
+    public ListenerPacketUpdatePlayer(Configs configs) {
+        super(configs);
+    }
+    
     @CapabilityInject(ICapabilityHumanity.class)
     public static final Capability<ICapabilityHumanity> HUMANITY_CAPABILITY = null;
     public static final IAttribute MAX_HUMANITY = ICapabilityHumanity.MAX_HUMANITY;
@@ -36,6 +41,7 @@ public class ListenerPacketUpdatePlayer {
         }
     }
     
+    //TODO: fix packets being sent every tick when humanity is null (but should we use client-side prediction?)
     public void sendPlayerUpdatePacket(EntityPlayerMP player) {
         ICapabilityHumanity capabilityHumanity = player.getCapability(HUMANITY_CAPABILITY, null);
         if (capabilityHumanity == null) {

@@ -22,10 +22,15 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.capability.CapUtil;
 import targoss.hardcorealchemy.capability.food.ICapabilityFood;
+import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.util.FoodLists;
 import targoss.hardcorealchemy.util.MorphDiet;
 
-public class ListenerGuiInventory {
+public class ListenerGuiInventory extends ConfiguredListener {
+    public ListenerGuiInventory(Configs configs) {
+        super(configs);
+    }
+
     private final Minecraft mc = Minecraft.getMinecraft();
     
     @CapabilityInject(ICapabilityFood.class)

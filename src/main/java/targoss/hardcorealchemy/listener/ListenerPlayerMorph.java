@@ -37,10 +37,14 @@ import targoss.hardcorealchemy.capability.humanity.ProviderHumanity;
 import targoss.hardcorealchemy.capability.killcount.CapabilityKillCount;
 import targoss.hardcorealchemy.capability.killcount.ICapabilityKillCount;
 import targoss.hardcorealchemy.capability.killcount.ProviderKillCount;
+import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.util.Chat;
 import targoss.hardcorealchemy.util.MobLists;
 
-public class ListenerPlayerMorph {
+public class ListenerPlayerMorph extends ConfiguredListener {
+    public ListenerPlayerMorph(Configs configs) {
+        super(configs);
+    }
 
     public static Map<String, Integer> mapRequiredKills = new HashMap<String, Integer>();
     public static Set<String> morphBlacklist = new HashSet<String>();

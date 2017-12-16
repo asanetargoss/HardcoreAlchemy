@@ -41,11 +41,16 @@ import targoss.hardcorealchemy.capability.food.CapabilityFood;
 import targoss.hardcorealchemy.capability.food.ICapabilityFood;
 import targoss.hardcorealchemy.capability.food.ProviderFood;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
+import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.event.EventCraftPredict;
 import targoss.hardcorealchemy.util.FoodLists;
 import targoss.hardcorealchemy.util.MorphDiet;
 
-public class ListenerPlayerDiet {
+public class ListenerPlayerDiet extends ConfiguredListener {
+    public ListenerPlayerDiet(Configs configs) {
+        super(configs);
+    }
+    
     @CapabilityInject(ICapabilityHumanity.class)
     public static final Capability<ICapabilityHumanity> HUMANITY_CAPABILITY = null;
     @CapabilityInject(ICapabilityFood.class)

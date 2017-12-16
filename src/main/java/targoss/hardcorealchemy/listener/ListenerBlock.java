@@ -9,8 +9,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.config.Configs;
 
-public class ListenerBlock {
+public class ListenerBlock extends ConfiguredListener {
+    public ListenerBlock(Configs configs) {
+        super(configs);
+    }
+
     @SubscribeEvent
     public void onHarvestBed(BlockEvent.HarvestDropsEvent event) {
         if (!(event.getState().getBlock() instanceof BlockBed)) {

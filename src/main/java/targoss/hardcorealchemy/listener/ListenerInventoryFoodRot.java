@@ -37,8 +37,13 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import targoss.hardcorealchemy.ModState;
+import targoss.hardcorealchemy.config.Configs;
 
-public class ListenerInventoryFoodRot {
+public class ListenerInventoryFoodRot extends ConfiguredListener {
+    public ListenerInventoryFoodRot(Configs configs) {
+        super(configs);
+    }
+
     @CapabilityInject(IItemHandler.class)
     public static Capability<IItemHandler> ITEM_HANDLER_CAPABILITY = null;
     

@@ -26,13 +26,18 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import targoss.hardcorealchemy.capability.combatlevel.CapabilityCombatLevel;
 import targoss.hardcorealchemy.capability.combatlevel.ICapabilityCombatLevel;
+import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.entity.ai.AIAttackTargetMobOrMorph;
 import targoss.hardcorealchemy.entity.ai.AISpiderTargetMobOrMorph;
 import targoss.hardcorealchemy.entity.ai.AITargetUnmorphedPlayer;
 import targoss.hardcorealchemy.entity.ai.AIUntamedAttackMobOrMorph;
 import targoss.hardcorealchemy.util.MobLists;
 
-public class ListenerMobAI {
+public class ListenerMobAI extends ConfiguredListener {
+    public ListenerMobAI(Configs configs) {
+        super(configs);
+    }
+
     @CapabilityInject(ICapabilityCombatLevel.class)
     public static Capability<ICapabilityCombatLevel> COMBAT_LEVEL_CAPABILITY = null;
     public static final ResourceLocation COMBAT_LEVEL_RESOURCE_LOCATION = CapabilityCombatLevel.RESOURCE_LOCATION;

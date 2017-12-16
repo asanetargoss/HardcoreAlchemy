@@ -11,8 +11,13 @@ import net.minecraftforge.client.GuiIngameForge;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import targoss.hardcorealchemy.config.Configs;
 
-public class ListenerGuiHud {
+public class ListenerGuiHud extends ConfiguredListener {
+    public ListenerGuiHud(Configs configs) {
+        super(configs);
+    }
+
     private final Minecraft mc = Minecraft.getMinecraft();
     public static final ResourceLocation TILESET = new ResourceLocation("hardcorealchemy:textures/gui/icon_tileset.png");
     

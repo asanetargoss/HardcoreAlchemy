@@ -46,6 +46,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.capability.humanity.LostMorphReason;
+import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.humanity.ForcedMorph;
 import targoss.hardcorealchemy.event.EventTakeStack;
@@ -54,7 +55,11 @@ import targoss.hardcorealchemy.network.MessageMagic;
 import targoss.hardcorealchemy.network.PacketHandler;
 import targoss.hardcorealchemy.util.Chat;
 
-public class ListenerPlayerMagic {
+public class ListenerPlayerMagic extends ConfiguredListener {
+    public ListenerPlayerMagic(Configs configs) {
+        super(configs);
+    }
+    
     /**
      *  Mods of a certain type of magic are forbidden for use by [most] permanent morphs.
      *  Generally these forms of magic are powerful, and human-like due to rigorous

@@ -1,5 +1,7 @@
 package targoss.hardcorealchemy.test.suite;
 
+import static targoss.hardcorealchemy.test.HardcoreAlchemyTests.DEFAULT_CONFIGS;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,7 +73,7 @@ public class TestHumanity implements ITestSuite {
     }
     
     public static void tickPlayerHumanity(EntityPlayer player) {
-        (new ListenerPlayerHumanity()).onPlayerTickMP(new PlayerTickEvent(Phase.START, player));
+        (new ListenerPlayerHumanity(DEFAULT_CONFIGS)).onPlayerTickMP(new PlayerTickEvent(Phase.START, player));
     }
     
     public boolean humanityDecrease() {

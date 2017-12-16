@@ -35,12 +35,16 @@ import targoss.hardcorealchemy.capability.humanity.LostMorphReason;
 import targoss.hardcorealchemy.capability.humanity.ForcedMorph;
 import targoss.hardcorealchemy.capability.humanity.ProviderHumanity;
 import targoss.hardcorealchemy.capability.killcount.ProviderKillCount;
+import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.network.MessageHumanity;
 import targoss.hardcorealchemy.network.MessageMagic;
 import targoss.hardcorealchemy.network.PacketHandler;
 import targoss.hardcorealchemy.util.Chat;
 
-public class ListenerPlayerHumanity {
+public class ListenerPlayerHumanity extends ConfiguredListener {
+    public ListenerPlayerHumanity(Configs configs) {
+        super(configs);
+    }
     @CapabilityInject(ICapabilityHumanity.class)
     public static final Capability<ICapabilityHumanity> HUMANITY_CAPABILITY = null;
     public static final ResourceLocation HUMANITY_RESOURCE_LOCATION = CapabilityHumanity.RESOURCE_LOCATION;

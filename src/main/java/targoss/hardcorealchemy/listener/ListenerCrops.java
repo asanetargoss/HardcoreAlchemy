@@ -18,11 +18,16 @@ import toughasnails.api.temperature.Temperature;
 import toughasnails.api.temperature.TemperatureHelper;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import targoss.hardcorealchemy.ModState;
+import targoss.hardcorealchemy.config.Configs;
 
 /**
  * Quick and dirty; subject to change
  */
-public class ListenerCrops {
+public class ListenerCrops extends ConfiguredListener {
+    public ListenerCrops(Configs configs) {
+        super(configs);
+    }
+
     private static Set<String> hibernators;
     
     static {

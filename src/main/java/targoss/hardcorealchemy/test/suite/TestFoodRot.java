@@ -1,5 +1,7 @@
 package targoss.hardcorealchemy.test.suite;
 
+import static targoss.hardcorealchemy.test.HardcoreAlchemyTests.DEFAULT_CONFIGS;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -100,7 +102,7 @@ public class TestFoodRot implements ITestSuite {
     }
     
     public static void tickInventories(float decayRate, List<IItemHandler> inventories) {
-        ListenerInventoryFoodRot listener = new ListenerInventoryFoodRot();
+        ListenerInventoryFoodRot listener = new ListenerInventoryFoodRot(DEFAULT_CONFIGS);
         for (IItemHandler itemHandler : inventories) {
             listener.tickInventory(itemHandler, decayRate);
         }
