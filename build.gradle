@@ -35,11 +35,6 @@ minecraft {
 }
 
 repositories {
-    flatDir {
-        dirs 'subsources/metamorph/build/libs'
-        dirs 'subsources/Nutrition/build/libs'
-    }
-    
     maven {
         url "http://tehnut.info/maven"
     }
@@ -54,10 +49,6 @@ dependencies {
     // real examples
     //compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'  // adds buildcraft to the dev env
     //compile 'com.googlecode.efficient-java-matrix-library:ejml:0.24' // adds ejml to the dev env
-    
-    // IDE source package folder dependencies
-    compile group : 'mchorse.metamorph', name : 'metamorph', version : '1.1.4-1.10.2'
-    compile group : 'ca.wescook.nutrition', name : 'Nutrition', version : '1.10.2-1.6.0'
     
     // the 'provided' configuration is for optional dependencies that exist at compile-time but might not at runtime.
     //provided 'com.mod-buildcraft:buildcraft:6.0.8:dev'

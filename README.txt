@@ -7,56 +7,22 @@ Running with Minecraft
     No license yet (ie do not distribute/all rights reserved)
     The mod will be made available by itself at a later time
 Developing/building
-    First thing you should probably do is run the gradle script that sets up your workspace, eg "./gradlew eclipse"
-        Also run each time you add mods to libs/ (explained later)
-    Then run "./gradlew setupDecompWorkspace" to set up access transformers
-        Run this again whenever you want to change access transformers
-    Don't forget this VM argument to load the coremods:
-        -Dfml.coreMods.load=targoss.hardcorealchemy.coremod.HardcoreAlchemyCoreMod,mchorse.metamorph.src.main.java.mchorse.metamorph.coremod.MetamorphCoremod
-        Dependencies using method #2 (explained later) must have their coremod classes added to this list
-    This mod contains access transformers
-        See src/main/resources/META-INF/hardcorealchemy_at.cfg
     Dependencies
-        The following mod(s) are required dependencies, but require no action due to being fully automated by the build script:
-            Wawla: https://github.com/Darkhax-Minecraft/WAWLA
-        Other mod(s) must be added as dependencies with one of two methods described later.
-        List of mods which can be dependencies by either method #1 (easy) or method #2 (harder):
-            These mods use method #2 by default:
-                Nutrition: https://github.com/asanetargoss/Nutrition
-                metamorph: https://github.com/asanetargoss/metamorph
-                Hopefully I can eventually get these mods off of method #2 so setup is easier
-            These mods use method #1:
-                Iron Backpacks: https://minecraft.curseforge.com/projects/iron-backpacks
-                ProjectE: https://minecraft.curseforge.com/projects/projecte
-                Ars Magica: https://minecraft.curseforge.com/projects/ars-magica-2
-                Astral Sorcery: https://minecraft.curseforge.com/projects/astral-sorcery
-                Dissolution: https://minecraft.curseforge.com/projects/dissolution
-                Blood Magic: https://minecraft.curseforge.com/projects/blood-magic
-                Tough As Nails: https://minecraft.curseforge.com/projects/tough-as-nails
-            Note: The compiled jar mod only has a hard dependency on Metamorph
-        Method #1: Local jars added to classpath via libs/
-            The usual method where you add the mods to libs/ and then call ./gradlew eclipse or equivalent
-            Works for both testing and compilation
-            We're supposed to use dev jars, but obfuscated jars work when CodeChickenCore is among them
-            You will definitely need CodeChickenCore because most mods don't have dev builds, so add both of these to libs/:
-                https://minecraft.curseforge.com/projects/codechicken-core-1-8
-                https://minecraft.curseforge.com/projects/codechicken-lib-1-8
-            If you do that, it is also strongly recommended you install a decompiler plugin for your IDE so you can view "source code" for the mods:
-                http://jd.benow.ca/
-            Can add any other mods you want to test or quality-of-life mods like JEI
-            Pam's Harvestcraft is an especially recommended "soft dependency" for Nutrition and dietary restrictions
-        Method #2: IDE source package folders
-            I use this method for Nutrition and Metamorph because I need to edit their code a lot without compiling
-            Basically, a CI workspace for each of these mods is located in 'subsources/metamorph' and 'subsources/Nutrition'
-            The Hardcore Alchemy gradle script expects the following jars in the following locations at compile time (unsure if '-dev.jar' or just '.jar'):
-                'subsources/metamorph/build/libs/metamorph-1.1.4-1.10.2.jar'
-                'subsources/Nutrition/build/libs/Nutrition-1.10.2-1.6.0.jar'
-            On the IDE's side, I have manually linked each mod's source folders like so for the dev environment:
-                MDKExample
-                    src/main/java
-                    src/main/resources
-                    subsources/metamorph/src/main/java
-                    subsources/metamorph/src/main/resources
-                    subsources/Nutrition/src/main/java
-                    subsources/Nutrition/src/main/resources
-            It is also possible to add other mods in the workspace in this way which are not dependencies
+        Download this zip file and add its contents to /libs:
+            http://www.mediafire.com/file/271ibuiu85xabo7/HcA_libs_0.2.1.zip
+        Please note: the following mods in the modpack above are custom forks:
+            Nutrition: https://github.com/asanetargoss/Nutrition
+            metamorph: https://github.com/asanetargoss/metamorph
+    Run "./gradlew eclipse" (or equivalent) to set up your workspace
+        Each time you add mods to /libs, you should re-run this command
+    Then run "./gradlew setupDecompWorkspace" to set up Minecraft Forge and access transformers
+        Run this again whenever you want to change access transformers
+        Access transformers are here: "src/main/resources/META-INF/hardcorealchemy_at.cfg"
+    Add this VM argument to your run configuration to load the coremod:
+        -Dfml.coreMods.load=targoss.hardcorealchemy.coremod.HardcoreAlchemyCoreMod
+    Other tips
+        I highly recommend installing these plugins in your IDE:
+            Decompiler plugin: http://jd.benow.ca/
+                Why: Required to view source code for all the mods in /libs, since most do not have dev builds (I may look into cross-compiling later)
+            Bytecode outline for Eclipse: http://andrei.gmxhome.de/bytecode/index.html
+                Why: Only if you need to coremod. It will help you understand the Java bytecode better. Do not trust the stack feature.
