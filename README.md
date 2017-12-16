@@ -6,7 +6,7 @@ About the Hardcore Alchemy modpack:
 * [See the wiki](https://github.com/asanetargoss/HardcoreAlchemy/wiki) for more information about the pack
 
 About the Hardcore Alchemy mod:
-* Add miscellaneous survival and cross-mod compatibility features meant to complement the modpack
+* Adds miscellaneous survival and cross-mod compatibility features meant to complement the modpack
 * Will be released on its own at a later time. No license yet. (ie do not distribute/all rights reserved)
 
 # Developing/building
@@ -29,3 +29,4 @@ Please note: the following mods included in the zip file above are custom forks:
 I highly recommend installing these plugins in your IDE:
 * Decompiler plugin: http://jd.benow.ca/ (Why: Required to view source code for all the mods in /libs, since most do not have dev builds (I may look into cross-compiling later))
 * Bytecode outline for Eclipse: http://andrei.gmxhome.de/bytecode/index.html (Why: Only if you need to coremod. It will help you understand the Java bytecode better. Do not trust the stack feature.)
+* Mod Coder Pack: http://www.modcoderpack.com/ (Why: Comes with the MCP mapping viewer, which is helpful for reflection, access transformers, and coremodding.)
