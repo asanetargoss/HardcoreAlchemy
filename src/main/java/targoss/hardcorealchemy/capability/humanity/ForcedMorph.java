@@ -1,5 +1,7 @@
 package targoss.hardcorealchemy.capability.humanity;
 
+import javax.annotation.Nonnull;
+
 import mchorse.metamorph.api.MorphAPI;
 import mchorse.metamorph.api.MorphManager;
 import mchorse.metamorph.api.morphs.AbstractMorph;
@@ -12,21 +14,23 @@ import targoss.hardcorealchemy.listener.ListenerPlayerHumanity;
 import targoss.hardcorealchemy.listener.ListenerPlayerMagic;
 
 public class ForcedMorph {
-
+    public static AbstractMorph createMorph(String morphName) {
+        return createMorph(morphName, new NBTTagCompound());
+    }
+    
+    public static AbstractMorph createMorph(String morphName, @Nonnull NBTTagCompound morphProperties) {
+        morphProperties.setString("Name", morphName);
+        return MorphManager.INSTANCE.morphFromNBT(morphProperties);
+    }
+    
     public static boolean forceForm(EntityPlayerMP player, LostMorphReason reason,
             String morphName) {
-        return forceForm(player, reason, morphName, null);
+        return forceForm(player, reason, createMorph(morphName));
     }
 
     public static boolean forceForm(EntityPlayerMP player, LostMorphReason reason,
             String morphName, NBTTagCompound morphProperties) {
-        NBTTagCompound nbt = morphProperties;
-        if (nbt == null) {
-            nbt = new NBTTagCompound();
-        }
-        nbt.setString("Name", morphName);
-        
-        return forceForm(player, reason, MorphManager.INSTANCE.morphFromNBT(nbt));
+        return forceForm(player, reason, createMorph(morphName, morphProperties));
     }
 
     /**
