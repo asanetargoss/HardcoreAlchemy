@@ -12,9 +12,9 @@ About the Hardcore Alchemy mod:
 # Developing/building
 
 ## Dependencies
-Download this zip file and add its contents to /libs:
+Download the latest zip file and add its contents to /libs:
 
-http://www.mediafire.com/file/271ibuiu85xabo7/HcA_libs_0.2.1.zip
+http://www.mediafire.com/folder/grwn2vsjr2lce/Hardcore_Alchemy_Libs
 
 Please note: the following mods included in the zip file above are custom forks:
 * Nutrition: https://github.com/asanetargoss/Nutrition
