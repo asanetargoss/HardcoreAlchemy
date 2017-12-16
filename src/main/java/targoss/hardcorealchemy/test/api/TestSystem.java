@@ -16,7 +16,7 @@ import java.util.Map;
  */
 public abstract class TestSystem {
     
-    public abstract Set<Class<? extends ITestSuite>> getTestSuites();
+    public abstract List<Class<? extends ITestSuite>> getTestSuites();
     
     public abstract String getTestSystemName();
     
@@ -76,7 +76,7 @@ public abstract class TestSystem {
      * order until a failed test (boolean false) is reached.
      */
     public Map<Class<? extends ITestSuite>, TestStatus> runAllTestSuites() {
-        Set<Class<? extends ITestSuite>> testSuites = getTestSuites();
+        List<Class<? extends ITestSuite>> testSuites = getTestSuites();
         Map<Class<? extends ITestSuite>, TestStatus> testSuccesses = new HashMap<>();
         for (Class<? extends ITestSuite> testSuite : testSuites) {
             testSuccesses.put(testSuite, runTestSuite(testSuite));

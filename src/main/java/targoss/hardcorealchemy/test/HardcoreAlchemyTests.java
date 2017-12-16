@@ -1,9 +1,8 @@
 package targoss.hardcorealchemy.test;
 
 import java.lang.ref.WeakReference;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
@@ -32,8 +31,8 @@ public class HardcoreAlchemyTests extends TestSystem {
     }
     
     @Override
-    public Set<Class<? extends ITestSuite>> getTestSuites() {
-        Set<Class<? extends ITestSuite>> testSuites = new HashSet<>();
+    public List<Class<? extends ITestSuite>> getTestSuites() {
+        List<Class<? extends ITestSuite>> testSuites = new ArrayList<>();
         
         testSuites.add(TestFakePlayer.class);
         testSuites.add(TestFoodRot.class);
