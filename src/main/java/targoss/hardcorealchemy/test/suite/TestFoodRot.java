@@ -41,9 +41,6 @@ public class TestFoodRot implements ITestSuite {
         
         tests.putIf("find alchemical chest inventory", this::hasInventoryChestPE, projecte);
         
-        tests.put("check server reference", this::checkServerTestReference);
-        tests.put("check overworld available", this::checkOverworldAvailable);
-        
         tests.putIf("find iron backpack inventory", this::hasInventoryIronBackpack, backpacks);
         
         tests.put("get player inventories", this::countPlayerInventories);
@@ -145,16 +142,6 @@ public class TestFoodRot implements ITestSuite {
     public boolean hasInventoryChestPE() {
         AlchChestTile chest = new AlchChestTile();
         return ListenerInventoryFoodRot.getInventories(chest).size() == 1;
-    }
-    
-    public boolean checkServerTestReference() {
-        return HardcoreAlchemyTests.SERVER_REFERENCE != null && HardcoreAlchemyTests.SERVER_REFERENCE.get() != null;
-    }
-    
-    public boolean checkOverworldAvailable() {
-        MinecraftServer server = HardcoreAlchemyTests.SERVER_REFERENCE.get();
-        WorldServer worldServer = server.worldServerForDimension(DimensionType.OVERWORLD.getId());
-        return worldServer != null;
     }
     
     public static ItemStack createBackpackStack() {

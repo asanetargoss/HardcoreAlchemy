@@ -11,8 +11,12 @@ import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.test.api.ITestSuite;
 import targoss.hardcorealchemy.test.api.TestSystem;
+import targoss.hardcorealchemy.test.suite.TestFakePlayer;
 import targoss.hardcorealchemy.test.suite.TestFoodRot;
 
+/**
+ * Server-side tests for Hardcore Alchemy
+ */
 public class HardcoreAlchemyTests extends TestSystem {
     public void runAndLogTests() {
         List<String> resultsToLog = testAndLogAll();
@@ -30,6 +34,7 @@ public class HardcoreAlchemyTests extends TestSystem {
     public Set<Class<? extends ITestSuite>> getTestSuites() {
         Set<Class<? extends ITestSuite>> testSuites = new HashSet<>();
         
+        testSuites.add(TestFakePlayer.class);
         testSuites.add(TestFoodRot.class);
         
         return testSuites;
