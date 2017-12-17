@@ -12,7 +12,7 @@ About the Hardcore Alchemy mod:
 # Developing/building
 
 ## Dependencies
-Download the latest zip file and add its contents to /libs:
+Download the latest zip file and add its contents to /libs (create the folder if it does not exist):
 
 http://www.mediafire.com/folder/grwn2vsjr2lce/Hardcore_Alchemy_Libs
 
