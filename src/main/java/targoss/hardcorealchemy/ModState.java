@@ -8,6 +8,7 @@ public final class ModState {
     public static final String PROJECT_E_ID = "ProjectE";
     public static final String IRON_BACKPACKS_ID = "ironbackpacks";
     public static final String TAN_ID = "ToughAsNails";
+    public static final String GUIDEAPI_ID = "guideapi";
     public static boolean isDissolutionLoaded = false;
     public static boolean isNutritionLoaded = false;
     public static boolean isBloodMagicLoaded = false;
@@ -15,6 +16,7 @@ public final class ModState {
     public static boolean isProjectELoaded = false;
     public static boolean isIronBackpacksLoaded = false;
     public static boolean isTanLoaded = false;
+    public static boolean isGuideapiLoaded = false;
 
     private ModState() { }
 }

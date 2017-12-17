@@ -16,6 +16,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import targoss.hardcorealchemy.command.CommandTest;
+import targoss.hardcorealchemy.modpack.guide.HCAModpackGuide;
 import targoss.hardcorealchemy.test.HardcoreAlchemyTests;
 
 @Mod(modid = HardcoreAlchemy.MOD_ID, version = HardcoreAlchemy.VERSION,
@@ -24,7 +25,14 @@ public class HardcoreAlchemy
 {
     public static final String MOD_ID = "hardcorealchemy";
     public static final String VERSION = "0.2.1";
-    public static final String DEPENDENCIES = "required-after:metamorph;";
+    public static final String DEPENDENCIES = "required-after:metamorph;" +
+            "after:astralsorcery;" +
+            "after:adinferos;" +
+            "after:" + ModState.GUIDEAPI_ID + ";" +
+            "after:" + ModState.BLOOD_MAGIC_ID + ";" +
+            "after:" + ModState.ARS_MAGICA_ID + ";" +
+            "after:" + ModState.PROJECT_E_ID + ";" +
+            "after:" + ModState.ARS_MAGICA_ID + ";";
     public static final String MC_VERSIONS = "[1.10.2]";
     public static final String CLIENT_PROXY = "targoss.hardcorealchemy.ClientProxy";
     public static final String COMMON_PROXY = "targoss.hardcorealchemy.CommonProxy";
@@ -37,7 +45,7 @@ public class HardcoreAlchemy
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         LOGGER = event.getModLog();
-                
+        
         Map<String, ModContainer> modMap = Loader.instance().getIndexedModList();
         ModState.isDissolutionLoaded = modMap.containsKey(ModState.DISSOLUTION_ID);
         ModState.isNutritionLoaded = modMap.containsKey(ModState.NUTRITION_ID);
@@ -46,6 +54,11 @@ public class HardcoreAlchemy
         ModState.isProjectELoaded = modMap.containsKey(ModState.PROJECT_E_ID);
         ModState.isIronBackpacksLoaded = modMap.containsKey(ModState.IRON_BACKPACKS_ID);
         ModState.isTanLoaded = modMap.containsKey(ModState.TAN_ID);
+        ModState.isGuideapiLoaded = modMap.containsKey(ModState.GUIDEAPI_ID);
+        
+        if (ModState.isGuideapiLoaded) {
+            HCAModpackGuide.registerBook();
+        }
     }
     
     @EventHandler
@@ -56,6 +69,10 @@ public class HardcoreAlchemy
         proxy.registerListeners();
         proxy.registerCapabilities();
         proxy.registerNetworking();
+        
+        if (ModState.isGuideapiLoaded) {
+            HCAModpackGuide.registerRecipe();
+        }
     }
     
     @EventHandler
