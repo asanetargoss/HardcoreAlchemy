@@ -24,11 +24,11 @@ import targoss.hardcorealchemy.coremod.transform.TObjectProximityModifier;
 import targoss.hardcorealchemy.coremod.transform.TProjectEKeyHandler;
 import targoss.hardcorealchemy.coremod.transform.TSlot;
 
-@IFMLLoadingPlugin.Name(value = "Hardcore Alchemy Core")
+@IFMLLoadingPlugin.Name(value = "Hardcore Alchemy Coremod")
 @IFMLLoadingPlugin.MCVersion(value = "1.10.2")
 @IFMLLoadingPlugin.TransformerExclusions(value = "targoss.hardcorealchemy.coremod.")
 @IFMLLoadingPlugin.SortingIndex(value = 1001)
-public class HardcoreAlchemyCoreMod implements IFMLLoadingPlugin {
+public class HardcoreAlchemyCoremod implements IFMLLoadingPlugin {
     
     public static boolean obfuscated = false;
     public static boolean TAN_LOADED = false;
@@ -58,7 +58,7 @@ public class HardcoreAlchemyCoreMod implements IFMLLoadingPlugin {
 			super(new ModMetadata());
 			ModMetadata meta = getMetadata();
 			meta.modId = "hardcorealchemy-coremod";
-			meta.name = "Hardcore Alchemy Core Mod";
+			meta.name = "Hardcore Alchemy Coremod";
 			meta.version = "0.2.1";
 			meta.credits = "";
 			meta.authorList = Arrays.asList("asanetargoss");

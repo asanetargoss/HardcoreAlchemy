@@ -10,6 +10,6 @@ public class ObfuscatedName {
     }
     
     public String get() {
-        return HardcoreAlchemyCoreMod.obfuscated ? srgName : mcpName;
+        return HardcoreAlchemyCoremod.obfuscated ? srgName : mcpName;
     }
 }

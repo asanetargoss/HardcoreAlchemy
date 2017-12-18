@@ -32,12 +32,12 @@ public abstract class MethodPatcher implements IClassTransformer {
         byte[] newClass = writer.toByteArray();
         
         if (enableDebug()) {
-            HardcoreAlchemyCoreMod.LOGGER.debug(
+            HardcoreAlchemyCoremod.LOGGER.debug(
                     "Outputting result of patch to class '" +
                     name + "' made by '" +
                     this.getClass().getName() + "'"
                     );
-            HardcoreAlchemyCoreMod.logBytesToDebug(newClass);
+            HardcoreAlchemyCoremod.logBytesToDebug(newClass);
         }
         
         return newClass;
