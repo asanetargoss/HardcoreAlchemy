@@ -20,6 +20,7 @@ public class FoodLists {
     static {
         MorphDiet.Restriction vegan = MorphDiet.Restriction.VEGAN;
         MorphDiet.Restriction carnivore = MorphDiet.Restriction.CARNIVORE;
+        MorphDiet.Restriction omnivore = MorphDiet.Restriction.OMNIVORE;
         Map<String, MorphDiet.Restriction> items = itemRestrictions;
         Map<String, MorphDiet.Restriction> ores = oreDictRestrictions;
         
@@ -44,6 +45,7 @@ public class FoodLists {
         oreDictCraftIgnore.put("listAllpepper", true);
         
         // Vanilla Minecraft
+        
         items.put("minecraft:apple", vegan);
         items.put("minecraft:red_mushroom", vegan);
         items.put("minecraft:brown_mushroom", vegan);
@@ -108,6 +110,52 @@ public class FoodLists {
         items.put("harvestcraft:firmtofuitem", vegan);
         items.put("harvestcraft:silkentofuitem", vegan);
         items.put("harvestcraft:soymilkitem", vegan);
+        
+        // Unique Crops
+        
+        items.put("uniquecrops:generic:6", vegan);
+        items.put("uniquecrops:genericfood.teriyaki", omnivore);
+        items.put("uniquecrops:genericfood.heart", carnivore);
+        items.put("uniquecrops:genericfood.waffle", vegan);
+        
+        // Ad Inferos
+        
+        items.put("adinferos:cooked_flesh", carnivore);
+        items.put("adinferos:purple_mushroom", vegan);
+        items.put("adinferos:cooked_purple_mushroom", vegan);
+        
+        // Village Box
+        
+        items.put("villagebox:grape", vegan);
+        items.put("villagebox:lemon", vegan);
+        items.put("villagebox:orange", vegan);
+        items.put("villagebox:pineapple", vegan);
+        items.put("villagebox:strawberry", vegan);
+        items.put("villagebox:melon", vegan);
+        items.put("villagebox:banana", vegan);
+        items.put("villagebox:tofu", vegan);
+        items.put("villagebox:boiled_egg", carnivore);
+        items.put("villagebox:shrimp", carnivore);
+        items.put("villagebox:crab", carnivore);
+        items.put("villagebox:pork_ramen", omnivore);
+        items.put("villagebox:beef_noodle_soup", omnivore);
+        items.put("villagebox:noodle_soup", vegan);
+        items.put("villagebox:carrot_cake", vegan);
+        items.put("villagebox:hamburger", omnivore);
+        items.put("villagebox:congee", vegan);
+        items.put("villagebox:boiled_fish", carnivore);
+        items.put("villagebox:apple_candy", vegan);
+        items.put("villagebox:creamy_corn", vegan);
+        items.put("villagebox:chocolate_banana", vegan);
+        items.put("villagebox:fries", vegan);
+        items.put("villagebox:mapo_tofu", vegan);
+        items.put("villagebox:canned_oranges", vegan);
+        items.put("villagebox:strawberry_icecream", omnivore);
+        items.put("villagebox:corn_chips", vegan);
+        items.put("villagebox:melon_icecream", vegan);
+        items.put("villagebox:roasted_lamb", vegan);
+        items.put("villagebox:nigiri", carnivore);
+        items.put("villagebox:udon", vegan);
     }
     
     /**
@@ -127,7 +175,15 @@ public class FoodLists {
             return null;
         }
         
-        String itemName = item.getRegistryName().toString();
+        String itemName;
+        if (itemStack.getItemDamage() == 0) {
+            itemName = item.getRegistryName().toString();
+        }
+        else {
+            itemName = item.getRegistryName().toString() + ":" +
+                    Integer.toString(itemStack.getItemDamage());
+        }
+        
         if (itemRestrictions.containsKey(itemName)) {
             return itemRestrictions.get(itemName);
         }
