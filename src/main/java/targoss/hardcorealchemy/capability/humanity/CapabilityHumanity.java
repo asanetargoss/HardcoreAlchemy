@@ -20,8 +20,6 @@ public class CapabilityHumanity implements ICapabilityHumanity {
     private double humanity;
     // Humanity in the previous tick after humanity tick calculations; allows us to see if humanity was changed in other ways
     private double lastHumanity;
-    // Time passed since humanity data last passed to client
-    private int tick;
     private boolean hasLostHumanity;
     private boolean hasLostMorphAbility;
     private boolean isMarried;
@@ -35,7 +33,6 @@ public class CapabilityHumanity implements ICapabilityHumanity {
     public CapabilityHumanity() {
         humanity = DEFAULT_HUMANITY_VALUE;
         lastHumanity = DEFAULT_HUMANITY_VALUE;
-        tick = 0;
         hasLostHumanity = false;
         hasLostMorphAbility = false;
         isMarried = false;
@@ -52,16 +49,6 @@ public class CapabilityHumanity implements ICapabilityHumanity {
     @Override
     public double getHumanity() {
         return this.humanity;
-    }
-    
-    @Override
-    public void setTick(int tick) {
-        this.tick = tick;
-    }
-    
-    @Override
-    public int getTick() {
-        return tick;
     }
     
     @Override

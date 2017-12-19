@@ -8,6 +8,7 @@ import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
+import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.network.MessageHumanity;
@@ -32,35 +33,30 @@ public class ListenerPacketUpdatePlayer extends ConfiguredListener {
     
     @SubscribeEvent
     public void onPlayerTickMP(TickEvent.PlayerTickEvent event) {
-        if (event.player.worldObj.isRemote) {
-            return;
-        }
-        EntityPlayerMP player = (EntityPlayerMP)(event.player);
-        if (event.phase == Phase.END) {
-            sendPlayerUpdatePacket(player);
-        }
-    }
-    
-    //TODO: fix packets being sent every tick when humanity is null (but should we use client-side prediction?)
-    public void sendPlayerUpdatePacket(EntityPlayerMP player) {
-        ICapabilityHumanity capabilityHumanity = player.getCapability(HUMANITY_CAPABILITY, null);
-        if (capabilityHumanity == null) {
-            PacketHandler.INSTANCE.sendTo(new MessageHumanity(false, 0, 0), player);
-            PacketHandler.INSTANCE.sendTo(new MessageMagic(true), player);
+        if (event.player.worldObj.isRemote ||
+                event.phase != Phase.END ||
+                event.player.ticksExisted % PLAYER_UPDATE_TICKS != 0) {
             return;
         }
         
-        int humanityTick = capabilityHumanity.getTick();
-        if (humanityTick >= PLAYER_UPDATE_TICKS) {
-            capabilityHumanity.setTick(0);
-            
-            // Compensate for the max humanity modifier not existing
+        sendPlayerUpdatePacket((EntityPlayerMP)(event.player));
+    }
+    
+    public void sendPlayerUpdatePacket(EntityPlayerMP player) {
+        ICapabilityHumanity capabilityHumanity = player.getCapability(HUMANITY_CAPABILITY, null);
+        
+        if (capabilityHumanity == null) {
+            PacketHandler.INSTANCE.sendTo(new MessageHumanity(false, 0, 0), player);
+            PacketHandler.INSTANCE.sendTo(new MessageMagic(true), player);
+        }
+        else {
             IAttributeInstance humanityInstance = player.getAttributeMap().getAttributeInstance(MAX_HUMANITY);
             double maxHumanity;
             if (humanityInstance != null) {
                 maxHumanity = humanityInstance.getAttributeValue();
             }
             else {
+                // Compensate for the max humanity modifier not existing
                 maxHumanity = 20.0D;
             }
             
@@ -75,10 +71,6 @@ public class ListenerPacketUpdatePlayer extends ConfiguredListener {
             PacketHandler.INSTANCE.sendTo(
                     new MessageMagic(capabilityHumanity.canUseHighMagic()),
                     player);
-            
-        }
-        else {
-            capabilityHumanity.setTick(humanityTick + 1);
         }
     }
 }

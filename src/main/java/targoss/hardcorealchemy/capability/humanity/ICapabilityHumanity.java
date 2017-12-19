@@ -11,7 +11,6 @@ public interface ICapabilityHumanity {
     
     public abstract void setHumanity(double humanity);
     public abstract void setLastHumanity(double lastHumanity);
-    public abstract void setTick(int tick);
     public abstract void setHasLostHumanity(boolean hasLostHumanity);
     public abstract void setHasLostMorphAbility(boolean hasLostMorphAbility);
     public abstract void setIsMarried(boolean isMarried);
@@ -21,7 +20,6 @@ public interface ICapabilityHumanity {
     
     public abstract double getHumanity();
     public abstract double getLastHumanity();
-    public abstract int getTick();
     public abstract boolean getHasLostHumanity();
     public abstract boolean getHasLostMorphAbility();
     public abstract boolean getIsMarried();
