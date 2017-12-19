@@ -47,6 +47,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.capability.humanity.LostMorphReason;
 import targoss.hardcorealchemy.config.Configs;
+import targoss.hardcorealchemy.coremod.CoremodHook;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.humanity.ForcedMorph;
 import targoss.hardcorealchemy.event.EventTakeStack;
@@ -222,6 +223,19 @@ public class ListenerPlayerMagic extends ConfiguredListener {
                 }
             }
         }
+    }
+    
+    @CoremodHook
+    public static boolean canUseProjectEKeybinds(EntityPlayerMP player) {
+        ICapabilityHumanity capabilityHumanity = player.getCapability(HUMANITY_CAPABILITY, null);
+        if (capabilityHumanity == null || capabilityHumanity.canUseHighMagic()) {
+            return true;
+        }
+        if (!capabilityHumanity.getNotifiedMagicFail()) {
+            capabilityHumanity.setNotifiedMagicFail(true);
+            Chat.notify((EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.magic.disabled.projectekeypress"));
+        }
+        return false;
     }
     
     // When a player chooses the path of a spellcaster, they lose the ability to morph

@@ -43,7 +43,7 @@ public class TProjectEKeyHandler extends MethodPatcher {
                     InsnList insnList = new InsnList();
                     insnList.add(new InsnNode(Opcodes.DUP)); // Get our own copy of EntityPlayer
                     insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
-                            "targoss/hardcorealchemy/event/Hooks",
+                            "targoss/hardcorealchemy/listener/ListenerPlayerMagic",
                             "canUseProjectEKeybinds",
                             "(Lnet/minecraft/entity/player/EntityPlayerMP;)Z",
                             false)); // canUseHighMagic boolean hook
