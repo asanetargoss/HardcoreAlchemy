@@ -2,23 +2,29 @@ package targoss.hardcorealchemy.listener;
 
 import java.util.Random;
 
+import mchorse.metamorph.capabilities.morphing.IMorphing;
+import mchorse.metamorph.capabilities.morphing.Morphing;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.GuiIngameForge;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.config.Configs;
+import targoss.hardcorealchemy.coremod.CoremodHook;
+import targoss.hardcorealchemy.util.MorphDiet;
 
 public class ListenerGuiHud extends ConfiguredListener {
     public ListenerGuiHud(Configs configs) {
         super(configs);
     }
 
-    private final Minecraft mc = Minecraft.getMinecraft();
+    private static final Minecraft mc = Minecraft.getMinecraft();
     public static final ResourceLocation TILESET = new ResourceLocation("hardcorealchemy:textures/gui/icon_tileset.png");
     
     public static final int HUMANITY_ICONS = 10;
@@ -73,5 +79,25 @@ public class ListenerGuiHud extends ConfiguredListener {
         GlStateManager.disableBlend();
         mc.getTextureManager().bindTexture(GuiIngameForge.ICONS);
         GuiIngameForge.left_height += 10;
+    }
+    
+    @CoremodHook
+    @Optional.Method(modid = ModState.TAN_ID)
+    public static boolean clientHasThirst() {
+        if (humanity > 0) {
+            return true;
+        }
+        
+        EntityPlayerSP player = mc.thePlayer;
+        if (player == null) {
+            return true;
+        }
+        
+        IMorphing morphing = Morphing.get(player);
+        if (morphing == null) {
+            return true;
+        }
+        
+        return MorphDiet.getNeeds(morphing.getCurrentMorph()).hasThirst;
     }
 }

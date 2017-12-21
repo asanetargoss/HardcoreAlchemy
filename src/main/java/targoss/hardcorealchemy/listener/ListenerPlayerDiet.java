@@ -13,6 +13,8 @@ import mchorse.metamorph.api.events.MorphEvent;
 import mchorse.metamorph.api.morphs.AbstractMorph;
 import mchorse.metamorph.capabilities.morphing.IMorphing;
 import mchorse.metamorph.capabilities.morphing.Morphing;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -34,7 +36,10 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
+import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.CapUtil;
 import targoss.hardcorealchemy.capability.food.CapabilityFood;
@@ -45,6 +50,8 @@ import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.event.EventCraftPredict;
 import targoss.hardcorealchemy.util.FoodLists;
 import targoss.hardcorealchemy.util.MorphDiet;
+import toughasnails.api.TANCapabilities;
+import toughasnails.thirst.ThirstHandler;
 
 public class ListenerPlayerDiet extends ConfiguredListener {
     public ListenerPlayerDiet(Configs configs) {
@@ -197,5 +204,39 @@ public class ListenerPlayerDiet extends ConfiguredListener {
             event.setCanceled(true);
             targoss.hardcorealchemy.util.Chat.notify((EntityPlayerMP)player, needs.restriction.getFoodRefusal());
         }
+    }
+    
+    /**
+     * If a player is stuck in a morph, and the current morph has
+     * no thirst needs, fill thirst so the player never
+     * needs to drink
+     */
+    @SubscribeEvent
+    @Optional.Method(modid = ModState.TAN_ID)
+    public void onPlayerLoseThirst(PlayerTickEvent event) {
+        if (event.phase != Phase.START || event.player.worldObj.isRemote) {
+            return;
+        }
+        
+        EntityPlayer player = event.player;
+        
+        ICapabilityHumanity humanity = player.getCapability(HUMANITY_CAPABILITY, null);
+        if (humanity == null || humanity.canMorph()) {
+            return;
+        }
+        
+        IMorphing morphing = Morphing.get(player);
+        if (morphing == null ||
+                MorphDiet.getNeeds(morphing.getCurrentMorph()).hasThirst) {
+            return;
+        }
+        
+        ThirstHandler thirstStats = (ThirstHandler)player.getCapability(TANCapabilities.THIRST, null);
+        if (thirstStats == null) {
+            return;
+        }
+        
+        thirstStats.addStats(20, 20.0F);
+        thirstStats.setExhaustion(0.0F);
     }
 }
