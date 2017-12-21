@@ -80,11 +80,16 @@ public class MorphDiet {
     }
     
     public static String entityName(Class<? extends Entity> clazz) {
-        return EntityList.CLASS_TO_NAME.get(clazz.getName());
+        return EntityList.CLASS_TO_NAME.get(clazz);
     }
     
     public static String entityName(String className) {
-        return EntityList.CLASS_TO_NAME.get(className);
+        try {
+            return EntityList.CLASS_TO_NAME.get(Class.forName(className));
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
     
     /**
@@ -94,7 +99,7 @@ public class MorphDiet {
         if (morph == null) {
             return PLAYER_NEEDS;
         }
-        Needs needs = morphDiets.get(EntityList.NAME_TO_CLASS.get(morph.name).getName());
+        Needs needs = morphDiets.get(morph.name);
         if (needs == null) {
             return PLAYER_NEEDS;
         }
