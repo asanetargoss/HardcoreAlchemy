@@ -32,7 +32,8 @@ public class HardcoreAlchemy
             "after:" + ModState.BLOOD_MAGIC_ID + ";" +
             "after:" + ModState.ARS_MAGICA_ID + ";" +
             "after:" + ModState.PROJECT_E_ID + ";" +
-            "after:" + ModState.ARS_MAGICA_ID + ";";
+            "after:" + ModState.ARS_MAGICA_ID + ";" +
+            "after:" + ModState.HARVESTCRAFT_ID + ";";
     public static final String MC_VERSIONS = "[1.10.2]";
     public static final String CLIENT_PROXY = "targoss.hardcorealchemy.ClientProxy";
     public static final String COMMON_PROXY = "targoss.hardcorealchemy.CommonProxy";
@@ -55,7 +56,11 @@ public class HardcoreAlchemy
         ModState.isIronBackpacksLoaded = modMap.containsKey(ModState.IRON_BACKPACKS_ID);
         ModState.isTanLoaded = modMap.containsKey(ModState.TAN_ID);
         ModState.isGuideapiLoaded = modMap.containsKey(ModState.GUIDEAPI_ID);
+        ModState.isHarvestCraftLoaded = modMap.containsKey(ModState.HARVESTCRAFT_ID);
         
+        if (ModState.isHarvestCraftLoaded) {
+            proxy.fixPamSeeds();
+        }
         if (ModState.isGuideapiLoaded) {
             HCAModpackGuide.registerBook();
         }
