@@ -19,10 +19,8 @@ import toughasnails.api.temperature.TemperatureHelper;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.config.Configs;
+import targoss.hardcorealchemy.coremod.CoremodHook;
 
-/**
- * Quick and dirty; subject to change
- */
 public class ListenerCrops extends ConfiguredListener {
     public ListenerCrops(Configs configs) {
         super(configs);
@@ -50,8 +48,9 @@ public class ListenerCrops extends ConfiguredListener {
     }
     
     /**
-     * Coremod hook. See TCrops
+     * Coremod hook. See TDecayingCrops
      */
+    @CoremodHook
     public static void checkDecay(IBlockState blockState, World world, BlockPos pos) {
         if (ModState.isTanLoaded && isWinterAt(world, pos)) {
             world.setBlockState(pos, TANBlocks.dead_crops.getDefaultState());
@@ -59,8 +58,9 @@ public class ListenerCrops extends ConfiguredListener {
     }
     
     /**
-     * Coremod hook. See TCrops
+     * Coremod hook. See THibernatingCrops
      */
+    @CoremodHook
     public static boolean shouldHibernate(IBlockState blockState, World world, BlockPos pos) {
         if (!ModState.isTanLoaded ||
                 !isWinterAt(world, pos)) {

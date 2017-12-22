@@ -33,7 +33,7 @@ public class CommonProxy {
         MinecraftForge.EVENT_BUS.register(new ListenerBlock(configs));
         MinecraftForge.EVENT_BUS.register(new ListenerInventoryFoodRot(configs));
         
-        // Quick and dirty; subject to change
+        // 1.10-specific tweaks
         MinecraftForge.EVENT_BUS.register(new ListenerCrops(configs));
     }
     
