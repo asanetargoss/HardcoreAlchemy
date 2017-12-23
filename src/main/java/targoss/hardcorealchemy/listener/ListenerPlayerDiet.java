@@ -207,9 +207,8 @@ public class ListenerPlayerDiet extends ConfiguredListener {
     }
     
     /**
-     * If a player is stuck in a morph, and the current morph has
-     * no thirst needs, fill thirst so the player never
-     * needs to drink
+     * If a player is a ghost, or is stuck in a morph with no thirst needs,
+     * fill thirst so the player never needs to drink
      */
     @SubscribeEvent
     @Optional.Method(modid = ModState.TAN_ID)
@@ -219,24 +218,29 @@ public class ListenerPlayerDiet extends ConfiguredListener {
         }
         
         EntityPlayer player = event.player;
+        boolean preventLosingThirst = false;
         
-        ICapabilityHumanity humanity = player.getCapability(HUMANITY_CAPABILITY, null);
-        if (humanity == null || humanity.canMorph()) {
-            return;
+        if (ModState.isDissolutionLoaded && ListenerPlayerMorph.isIncorporeal(player)) {
+            preventLosingThirst = true;
         }
         
-        IMorphing morphing = Morphing.get(player);
-        if (morphing == null ||
-                MorphDiet.getNeeds(morphing.getCurrentMorph()).hasThirst) {
-            return;
+        if (!preventLosingThirst) {
+            ICapabilityHumanity humanity = player.getCapability(HUMANITY_CAPABILITY, null);
+            if (humanity != null && humanity.canMorph()) {
+                IMorphing morphing = Morphing.get(player);
+                if (morphing != null &&
+                        !MorphDiet.getNeeds(morphing.getCurrentMorph()).hasThirst) {
+                    preventLosingThirst = true;
+                }
+            }
         }
         
-        ThirstHandler thirstStats = (ThirstHandler)player.getCapability(TANCapabilities.THIRST, null);
-        if (thirstStats == null) {
-            return;
+        if (preventLosingThirst) {
+            ThirstHandler thirstStats = (ThirstHandler)player.getCapability(TANCapabilities.THIRST, null);
+            if (thirstStats != null) {
+                thirstStats.addStats(20, 20.0F);
+                thirstStats.setExhaustion(0.0F);
+            }
         }
-        
-        thirstStats.addStats(20, 20.0F);
-        thirstStats.setExhaustion(0.0F);
     }
 }

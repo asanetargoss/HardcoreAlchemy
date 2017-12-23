@@ -173,7 +173,7 @@ public class ListenerPlayerMorph extends ConfiguredListener {
     }
 
     @Optional.Method(modid = ModState.DISSOLUTION_ID)
-    public boolean isIncorporeal(EntityPlayer player) {
+    public static boolean isIncorporeal(EntityPlayer player) {
         IIncorporealHandler incorporeal = player.getCapability(CapabilityIncorporealHandler.CAPABILITY_INCORPOREAL,
                 null);
         if (incorporeal != null && incorporeal.isIncorporeal()) {

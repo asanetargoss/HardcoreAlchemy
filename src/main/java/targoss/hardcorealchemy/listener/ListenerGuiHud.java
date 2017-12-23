@@ -39,6 +39,11 @@ public class ListenerGuiHud extends ConfiguredListener {
         if (event.getType() != ElementType.ARMOR || !render_humanity) {
             return;
         }
+
+        if (ModState.isDissolutionLoaded &&
+                mc.thePlayer != null && ListenerPlayerMorph.isIncorporeal(mc.thePlayer)) {
+            return;
+        }
         
         if (GuiIngameForge.left_height == 37) {
             // The health render code doesn't make a space for itself when health is zero, which causes our icons to overlap with the TaN icons
@@ -84,12 +89,16 @@ public class ListenerGuiHud extends ConfiguredListener {
     @CoremodHook
     @Optional.Method(modid = ModState.TAN_ID)
     public static boolean clientHasThirst() {
-        if (humanity > 0) {
+        EntityPlayerSP player = mc.thePlayer;
+        if (player == null) {
             return true;
         }
         
-        EntityPlayerSP player = mc.thePlayer;
-        if (player == null) {
+        if (ModState.isDissolutionLoaded && ListenerPlayerMorph.isIncorporeal(player)) {
+            return false;
+        }
+        
+        if (humanity > 0) {
             return true;
         }
         
@@ -99,5 +108,14 @@ public class ListenerGuiHud extends ConfiguredListener {
         }
         
         return MorphDiet.getNeeds(morphing.getCurrentMorph()).hasThirst;
+    }
+    
+    @SubscribeEvent
+    public void onRenderArmorInAfterlife(RenderGameOverlayEvent.Pre event) {
+        if (event.getType() == ElementType.ARMOR &&
+                ModState.isDissolutionLoaded &&
+                mc.thePlayer != null && ListenerPlayerMorph.isIncorporeal(mc.thePlayer)) {
+            event.setCanceled(true);
+        }
     }
 }
