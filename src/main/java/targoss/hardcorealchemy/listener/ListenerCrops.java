@@ -4,11 +4,16 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.event.world.BlockEvent.CropGrowEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
 import net.minecraftforge.fml.common.Optional;
-import net.minecraftforge.fml.common.eventhandler.Event.Result;
+import net.minecraftforge.oredict.OreDictionary;
+import targoss.hardcorealchemy.ModState;
+import targoss.hardcorealchemy.config.Configs;
+import targoss.hardcorealchemy.coremod.CoremodHook;
 import toughasnails.api.TANBlocks;
 import toughasnails.api.config.GameplayOption;
 import toughasnails.api.config.SyncedConfig;
@@ -16,10 +21,6 @@ import toughasnails.api.season.Season;
 import toughasnails.api.season.SeasonHelper;
 import toughasnails.api.temperature.Temperature;
 import toughasnails.api.temperature.TemperatureHelper;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import targoss.hardcorealchemy.ModState;
-import targoss.hardcorealchemy.config.Configs;
-import targoss.hardcorealchemy.coremod.CoremodHook;
 
 public class ListenerCrops extends ConfiguredListener {
     public ListenerCrops(Configs configs) {
@@ -67,5 +68,41 @@ public class ListenerCrops extends ConfiguredListener {
             return false;
         }
         return true;
+    }
+    
+    /**
+     * Coremod hook. See TRightClickHarvesting
+     * Returns true unless this is a player holding a stick in their main hand
+     */
+    @CoremodHook
+    public static boolean allowRightClickHarvest(RightClickBlock event) {
+        EntityPlayer player = event.getEntityPlayer();
+        if (player == null) {
+            return true;
+        }
+        
+        if (isStick(player.getHeldItemMainhand()) ||
+                isStick(player.getHeldItemOffhand())) {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    public static boolean isStick(ItemStack stack) {
+        if (stack == null) {
+            return false;
+        }
+        
+        // Is the player holding a stick? (Check the ore dictionary)
+        int[] ores = OreDictionary.getOreIDs(stack);
+        int stick = OreDictionary.getOreID("stickWood");
+        for (int ore : ores) {
+            if (ore == stick) {
+                return true;
+            }
+        }
+        
+        return false;
     }
 }
