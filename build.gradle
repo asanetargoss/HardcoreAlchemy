@@ -90,7 +90,7 @@ processResources
 jar {
     manifest {
         attributes (
-            'FMLCorePlugin': 'targoss.hardcorealchemy.coremod.HardcoreAlchemyCoreMod',
+            'FMLCorePlugin': 'targoss.hardcorealchemy.coremod.HardcoreAlchemyCoremod',
             'FMLCorePluginContainsFMLMod': 'true',
             "FMLAT": 'hardcorealchemy_at.cfg'
         )
