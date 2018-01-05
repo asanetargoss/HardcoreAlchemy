@@ -23,6 +23,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.FoodStats;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.Chat;
 import net.minecraftforge.common.capabilities.Capability;
@@ -242,5 +243,27 @@ public class ListenerPlayerDiet extends ConfiguredListener {
                 thirstStats.setExhaustion(0.0F);
             }
         }
+    }
+    
+    /**
+     * If a player is a ghost, keep hunger filled to spawn level
+     */
+    @SubscribeEvent
+    @Optional.Method(modid = ModState.TAN_ID)
+    public void onPlayerLoseHunger(PlayerTickEvent event) {
+        if (event.phase != Phase.START || event.player.worldObj.isRemote) {
+            return;
+        }
+        
+        EntityPlayer player = event.player;
+        
+        if (!ModState.isDissolutionLoaded || !ListenerPlayerMorph.isIncorporeal(player)) {
+            return;
+        }
+        
+        FoodStats food = player.getFoodStats();
+        food.setFoodLevel(20);
+        food.setFoodSaturationLevel(5.0F);
+        food.addExhaustion(-40.0F);
     }
 }
