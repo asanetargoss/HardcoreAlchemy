@@ -16,6 +16,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import targoss.hardcorealchemy.command.CommandTest;
+import targoss.hardcorealchemy.coremod.HardcoreAlchemyCoremod;
 import targoss.hardcorealchemy.modpack.guide.HCAModpackGuide;
 import targoss.hardcorealchemy.test.HardcoreAlchemyTests;
 
@@ -45,6 +46,13 @@ public class HardcoreAlchemy
     
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
+        if (!HardcoreAlchemyCoremod.isCoremodInitialized()){
+            throw new ModStateException(
+                    "The coremod at '" +
+                    HardcoreAlchemyCoremod.class.getName() +
+                    "' did not run");
+        }
+        
         LOGGER = event.getModLog();
         
         Map<String, ModContainer> modMap = Loader.instance().getIndexedModList();

@@ -31,6 +31,11 @@ import targoss.hardcorealchemy.coremod.transform.TThirstOverlayHandler;
 @IFMLLoadingPlugin.TransformerExclusions(value = "targoss.hardcorealchemy.coremod.")
 @IFMLLoadingPlugin.SortingIndex(value = 1001)
 public class HardcoreAlchemyCoremod implements IFMLLoadingPlugin {
+    private static boolean coremodInitialized = false;
+    
+    public static boolean isCoremodInitialized() {
+        return coremodInitialized;
+    }
     
     public static boolean obfuscated = false;
     public static boolean TAN_LOADED = false;
@@ -39,6 +44,7 @@ public class HardcoreAlchemyCoremod implements IFMLLoadingPlugin {
     
 	@Override
 	public String[] getASMTransformerClass() {
+	    coremodInitialized = true;
 		return new String[]{
 				TEntityLivingBase.class.getName(),
 				TSlot.class.getName(),
