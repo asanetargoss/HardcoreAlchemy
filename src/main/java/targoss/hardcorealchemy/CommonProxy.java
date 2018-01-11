@@ -15,14 +15,17 @@ import net.minecraft.item.Item;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Optional;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import targoss.hardcorealchemy.capability.combatlevel.CapabilityCombatLevel;
 import targoss.hardcorealchemy.capability.food.CapabilityFood;
 import targoss.hardcorealchemy.capability.humanity.CapabilityHumanity;
 import targoss.hardcorealchemy.capability.killcount.CapabilityKillCount;
+import targoss.hardcorealchemy.capability.serverdata.CapabilityServerData;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.listener.ListenerPlayerHumanity;
 import targoss.hardcorealchemy.listener.ListenerPlayerMagic;
 import targoss.hardcorealchemy.listener.ListenerPlayerMorph;
+import targoss.hardcorealchemy.listener.ListenerWorldDifficulty;
 import targoss.hardcorealchemy.listener.ListenerBlock;
 import targoss.hardcorealchemy.listener.ListenerCrops;
 import targoss.hardcorealchemy.listener.ListenerInventoryFoodRot;
@@ -35,6 +38,8 @@ import targoss.hardcorealchemy.network.PacketHandler;
 public class CommonProxy {
     public Configs configs = new Configs();
     
+    private ListenerWorldDifficulty lWorldDifficulty;
+    
     public void registerListeners() {
         MinecraftForge.EVENT_BUS.register(new ListenerPacketUpdatePlayer(configs));
         MinecraftForge.EVENT_BUS.register(new ListenerPlayerMorph(configs));
@@ -45,6 +50,8 @@ public class CommonProxy {
         MinecraftForge.EVENT_BUS.register(new ListenerMobAI(configs));
         MinecraftForge.EVENT_BUS.register(new ListenerBlock(configs));
         MinecraftForge.EVENT_BUS.register(new ListenerInventoryFoodRot(configs));
+        lWorldDifficulty = new ListenerWorldDifficulty(configs);
+        MinecraftForge.EVENT_BUS.register(lWorldDifficulty);
         
         // 1.10-specific tweaks
         MinecraftForge.EVENT_BUS.register(new ListenerCrops(configs));
@@ -55,6 +62,7 @@ public class CommonProxy {
         CapabilityHumanity.register();
         CapabilityCombatLevel.register();
         CapabilityFood.register();
+        CapabilityServerData.register();
     }
     
     public void registerNetworking() {
@@ -66,6 +74,10 @@ public class CommonProxy {
      */
     public void postInit() {
         ListenerPlayerHumanity.postInit();
+    }
+    
+    public void serverStarting(FMLServerStartingEvent event) {
+        lWorldDifficulty.serverStarting(event);
     }
     
     /**

@@ -2,7 +2,6 @@ package targoss.hardcorealchemy;
 
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.minecraftforge.fml.common.Loader;
@@ -96,6 +95,9 @@ public class HardcoreAlchemy
     @EventHandler
     public void serverStarting(FMLServerStartingEvent event) {
         event.registerServerCommand(new CommandTest());
+        
+        proxy.serverStarting(event);
+        
         HardcoreAlchemyTests.setServerForEvent(event);
     }
     
