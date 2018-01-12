@@ -60,8 +60,7 @@ public class HCAModpackGuide {
         
         book.addCategory(CategoryBuilder.withCategory(base + "modpack_info", "sign")
                 .addEntry("about_the_pack", "compass", "1", "2", "3")
-                .addEntry("dry_feature_list", "bucket", numStrings(1, 12))
-                .addEntry("known_issues", "poisonous_potato", numStrings(1, 6))
+                .addEntry("known_issues", "poisonous_potato", numStrings(1, 3))
                 .getCategory());
         
         book.addCategory(CategoryBuilder.withCategory(base + "unexpected_journey", "adinferos:pocket_wormhole")
@@ -73,10 +72,12 @@ public class HCAModpackGuide {
         book.addCategory(CategoryBuilder.withCategory(base + "exploring_the_arcane", "bloodmagic:ItemFluidRouterFilter")
                 .addEntry("intro", "bookshelf", "1")
                 .addEntry("blood_magic", "bloodmagic:ItemBloodShard", "1")
+                .addEntry("embers", "embers:golemEye", "1", "2")
                 .addEntry("ars_magica", "arsmagica2:arcane_compendium", "1")
                 .addEntry("astral_sorcery", "astralsorcery:ItemWand", "1")
                 .addEntry("projecte", "projecte:item.pe_philosophers_stone", "1")
                 .addEntry("alchemic_ash", "AlchemicAsh:VitalCatalyst", "1")
+                .addEntry("unique_crops", "uniquecrops:seednormal", "1")
                 .getCategory());
         
         guide = book;
