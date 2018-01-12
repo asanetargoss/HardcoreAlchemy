@@ -26,6 +26,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
@@ -79,7 +80,8 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
     private static Item GOLDEN_APPLE;
     private static Item WITHER_APPLE;
     
-    public static void postInit() {
+    @Override
+    public void postInit(FMLPostInitializationEvent event) {
         ROTTEN_FLESH = Item.getByNameOrId("minecraft:rotten_flesh");
         CHORUS_FRUIT = Item.getByNameOrId("minecraft:chorus_fruit");
         GOLDEN_APPLE = Item.getByNameOrId("minecraft:golden_apple");

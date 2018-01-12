@@ -24,6 +24,7 @@ public class ListenerWorldDifficulty extends ConfiguredListener {
         super(configs);
     }
     
+    @Override
     public void serverStarting(FMLServerStartingEvent event) {
         MinecraftServer server = event.getServer();
         World world = server.worldServerForDimension(DimensionType.OVERWORLD.getId());

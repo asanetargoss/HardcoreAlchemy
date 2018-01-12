@@ -12,6 +12,8 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import targoss.hardcorealchemy.command.CommandTest;
@@ -28,6 +30,7 @@ public class HardcoreAlchemy
     public static final String DEPENDENCIES = "required-after:metamorph;" +
             "after:astralsorcery;" +
             "after:adinferos;" +
+            "after:uniquecrops;" +
             "after:" + ModState.GUIDEAPI_ID + ";" +
             "after:" + ModState.BLOOD_MAGIC_ID + ";" +
             "after:" + ModState.ARS_MAGICA_ID + ";" +
@@ -65,9 +68,8 @@ public class HardcoreAlchemy
         ModState.isGuideapiLoaded = modMap.containsKey(ModState.GUIDEAPI_ID);
         ModState.isHarvestCraftLoaded = modMap.containsKey(ModState.HARVESTCRAFT_ID);
         
-        if (ModState.isHarvestCraftLoaded) {
-            proxy.fixPamSeeds();
-        }
+        proxy.preInit(event);
+        
         if (ModState.isGuideapiLoaded) {
             HCAModpackGuide.registerBook();
         }
@@ -78,9 +80,11 @@ public class HardcoreAlchemy
     {
         LOGGER.info("It's time to get magical.");
         
-        proxy.registerListeners();
+        proxy.registerListeners(proxy.listeners.values());
         proxy.registerCapabilities();
         proxy.registerNetworking();
+        
+        proxy.init(event);
         
         if (ModState.isGuideapiLoaded) {
             HCAModpackGuide.registerRecipe();
@@ -89,7 +93,12 @@ public class HardcoreAlchemy
     
     @EventHandler
     public void postInit(FMLPostInitializationEvent event) {
-        proxy.postInit();
+        proxy.postInit(event);
+    }
+    
+    @EventHandler
+    public void serverAboutToStart(FMLServerAboutToStartEvent event) {
+        proxy.serverAboutToStart(event);
     }
     
     @EventHandler
@@ -102,7 +111,14 @@ public class HardcoreAlchemy
     }
     
     @EventHandler
+    public void serverStarted(FMLServerStartedEvent event) {
+        proxy.serverStarted(event);
+    }
+    
+    @EventHandler
     public void serverStopping(FMLServerStoppingEvent event) {
+        proxy.serverStopping(event);
+        
         HardcoreAlchemyTests.setServerForEvent(event);
     }
 }

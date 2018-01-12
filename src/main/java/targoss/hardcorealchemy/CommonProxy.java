@@ -1,31 +1,28 @@
 package targoss.hardcorealchemy;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.pam.harvestcraft.blocks.CropRegistry;
-import com.pam.harvestcraft.blocks.growables.BlockPamCrop;
-import com.pam.harvestcraft.config.ConfigHandler;
-import com.pam.harvestcraft.item.ItemRegistry;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
-import net.minecraft.item.Item;
-import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.Optional;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import targoss.hardcorealchemy.capability.combatlevel.CapabilityCombatLevel;
 import targoss.hardcorealchemy.capability.food.CapabilityFood;
 import targoss.hardcorealchemy.capability.humanity.CapabilityHumanity;
 import targoss.hardcorealchemy.capability.killcount.CapabilityKillCount;
 import targoss.hardcorealchemy.capability.serverdata.CapabilityServerData;
 import targoss.hardcorealchemy.config.Configs;
-import targoss.hardcorealchemy.listener.ListenerPlayerHumanity;
-import targoss.hardcorealchemy.listener.ListenerPlayerMagic;
-import targoss.hardcorealchemy.listener.ListenerPlayerMorph;
-import targoss.hardcorealchemy.listener.ListenerWorldDifficulty;
+import targoss.hardcorealchemy.listener.ConfiguredListener;
 import targoss.hardcorealchemy.listener.ListenerBlock;
 import targoss.hardcorealchemy.listener.ListenerCrops;
 import targoss.hardcorealchemy.listener.ListenerInventoryFoodRot;
@@ -33,31 +30,58 @@ import targoss.hardcorealchemy.listener.ListenerMobAI;
 import targoss.hardcorealchemy.listener.ListenerMobLevel;
 import targoss.hardcorealchemy.listener.ListenerPacketUpdatePlayer;
 import targoss.hardcorealchemy.listener.ListenerPlayerDiet;
+import targoss.hardcorealchemy.listener.ListenerPlayerHumanity;
+import targoss.hardcorealchemy.listener.ListenerPlayerMagic;
+import targoss.hardcorealchemy.listener.ListenerPlayerMorph;
+import targoss.hardcorealchemy.listener.ListenerWorldDifficulty;
 import targoss.hardcorealchemy.network.PacketHandler;
 
 public class CommonProxy {
     public Configs configs = new Configs();
     
-    private ListenerWorldDifficulty lWorldDifficulty;
+    public static final ImmutableList<Class<? extends ConfiguredListener>> LISTENER_TYPES = ImmutableList.of(
+                ListenerPacketUpdatePlayer.class,
+                ListenerPlayerMorph.class,
+                ListenerPlayerHumanity.class,
+                ListenerPlayerMagic.class,
+                ListenerPlayerDiet.class,
+                ListenerMobLevel.class,
+                ListenerMobAI.class,
+                ListenerBlock.class,
+                ListenerInventoryFoodRot.class,
+                ListenerWorldDifficulty.class,
+                ListenerCrops.class // 1.10-specific
+            );
     
-    public void registerListeners() {
-        MinecraftForge.EVENT_BUS.register(new ListenerPacketUpdatePlayer(configs));
-        MinecraftForge.EVENT_BUS.register(new ListenerPlayerMorph(configs));
-        MinecraftForge.EVENT_BUS.register(new ListenerPlayerHumanity(configs));
-        MinecraftForge.EVENT_BUS.register(new ListenerPlayerMagic(configs));
-        MinecraftForge.EVENT_BUS.register(new ListenerPlayerDiet(configs));
-        MinecraftForge.EVENT_BUS.register(new ListenerMobLevel(configs));
-        MinecraftForge.EVENT_BUS.register(new ListenerMobAI(configs));
-        MinecraftForge.EVENT_BUS.register(new ListenerBlock(configs));
-        MinecraftForge.EVENT_BUS.register(new ListenerInventoryFoodRot(configs));
-        lWorldDifficulty = new ListenerWorldDifficulty(configs);
-        MinecraftForge.EVENT_BUS.register(lWorldDifficulty);
-        
-        // 1.10-specific tweaks
-        MinecraftForge.EVENT_BUS.register(new ListenerCrops(configs));
+    public ImmutableList<Class<? extends ConfiguredListener>> getListenerTypes() {
+        return LISTENER_TYPES;
     }
     
-    public void registerCapabilities() {
+    public final ImmutableMap<Class<? extends ConfiguredListener>, ConfiguredListener> listeners;
+    
+    public CommonProxy() {
+        // Initialize listeners with CommonProxy.configs as the parameter
+        Map<Class<? extends ConfiguredListener>, ConfiguredListener> listenerBuilder = new HashMap<>();
+        
+        for (Class<? extends ConfiguredListener> listenerClass : getListenerTypes()) {
+            try {
+                listenerBuilder.put(listenerClass, listenerClass.getConstructor(Configs.class).newInstance(configs));
+            } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+                    | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+                e.printStackTrace();
+            }
+        }
+        
+        listeners = ImmutableMap.copyOf(listenerBuilder);
+    }
+    
+    public static final void registerListeners(Collection<ConfiguredListener> listeners) {
+        for (ConfiguredListener listener : listeners) {
+            MinecraftForge.EVENT_BUS.register(listener);
+        }
+    }
+    
+    public static final void registerCapabilities() {
         CapabilityKillCount.register();
         CapabilityHumanity.register();
         CapabilityCombatLevel.register();
@@ -65,58 +89,49 @@ public class CommonProxy {
         CapabilityServerData.register();
     }
     
-    public void registerNetworking() {
+    public static final void registerNetworking() {
         PacketHandler.register();
     }
     
-    /**
-     * TODO: Do not statically call a listener
-     */
-    public void postInit() {
-        ListenerPlayerHumanity.postInit();
+    public void preInit(FMLPreInitializationEvent event) {
+        for (ConfiguredListener listener : listeners.values()) {
+            listener.preInit(event);
+        }
+    }
+    
+    public void init(FMLInitializationEvent event) {
+        for (ConfiguredListener listener : listeners.values()) {
+            listener.init(event);
+        }
+    }
+    
+    public void postInit(FMLPostInitializationEvent event) {
+        for (ConfiguredListener listener : listeners.values()) {
+            listener.postInit(event);
+        }
+    }
+    
+    public void serverAboutToStart(FMLServerAboutToStartEvent event) {
+        for (ConfiguredListener listener : listeners.values()) {
+            listener.serverAboutToStart(event);
+        }
     }
     
     public void serverStarting(FMLServerStartingEvent event) {
-        lWorldDifficulty.serverStarting(event);
+        for (ConfiguredListener listener : listeners.values()) {
+            listener.serverStarting(event);
+        }
     }
     
-    /**
-     * Fixes broken config option for Pam's Harvestcraft,
-     * so the mod's crops can drop seeds when immature.
-     * Called in preInit, so it's before most mod intercompatibility code
-     */
-    @Optional.Method(modid = ModState.HARVESTCRAFT_ID)
-    public void fixPamSeeds() {
-        if (!ConfigHandler.cropsdropSeeds) {
-            return;
+    public void serverStarted(FMLServerStartedEvent event) {
+        for (ConfiguredListener listener : listeners.values()) {
+            listener.serverStarted(event);
         }
-        
-        Map<String, BlockPamCrop> allCrops = CropRegistry.getCrops();
-        Map<String, Item> allSeeds = CropRegistry.getSeeds();
-        
-        try {
-            Method methodGetSeedName = CropRegistry.class.getDeclaredMethod("getSeedName", String.class);
-            methodGetSeedName.setAccessible(true);
-            
-            Field fieldSeed = BlockPamCrop.class.getDeclaredField("seed");
-            fieldSeed.setAccessible(true);
-            
-            for (Map.Entry<String, BlockPamCrop> cropEntry : allCrops.entrySet()) {
-                String cropName = cropEntry.getKey();
-                
-                BlockPamCrop cropBlock = cropEntry.getValue();
-                String actualSeedName = (String)methodGetSeedName.invoke(null, cropName);
-                Item actualSeed = ItemRegistry.items.get(actualSeedName);
-                
-                fieldSeed.set(cropBlock, actualSeed);
-                
-                allSeeds.put(cropName, actualSeed);
-                
-            }
-        }
-        catch (Exception e) {
-            HardcoreAlchemy.LOGGER.error("Failed to modify Harvestcraft to make crops drop seeds");
-            e.printStackTrace();
+    }
+    
+    public void serverStopping(FMLServerStoppingEvent event) {
+        for (ConfiguredListener listener : listeners.values()) {
+            listener.serverStopping(event);
         }
     }
 }

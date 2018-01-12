@@ -1,16 +1,27 @@
 package targoss.hardcorealchemy.listener;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+
+import com.pam.harvestcraft.blocks.CropRegistry;
+import com.pam.harvestcraft.blocks.growables.BlockPamCrop;
+import com.pam.harvestcraft.config.ConfigHandler;
+import com.pam.harvestcraft.item.ItemRegistry;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
 import net.minecraftforge.fml.common.Optional;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.oredict.OreDictionary;
+import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.coremod.CoremodHook;
@@ -33,6 +44,53 @@ public class ListenerCrops extends ConfiguredListener {
         hibernators = new HashSet<>();
         hibernators.add("com.pam.harvestcraft.blocks.growables.BlockPamFruit");
         hibernators.add("com.pam.harvestcraft.blocks.growables.BlockPamFruitLog");
+    }
+    
+    @Override
+    public void preInit(FMLPreInitializationEvent event) {
+        if (ModState.isHarvestCraftLoaded) {
+            fixPamSeeds();
+        }
+    }
+    
+    /**
+     * Fixes broken config option for Pam's Harvestcraft,
+     * so the mod's crops can drop seeds when immature.
+     * Called in preInit, so it's before most mod intercompatibility code
+     */
+    @Optional.Method(modid = ModState.HARVESTCRAFT_ID)
+    public void fixPamSeeds() {
+        if (!ConfigHandler.cropsdropSeeds) {
+            return;
+        }
+        
+        Map<String, BlockPamCrop> allCrops = CropRegistry.getCrops();
+        Map<String, Item> allSeeds = CropRegistry.getSeeds();
+        
+        try {
+            Method methodGetSeedName = CropRegistry.class.getDeclaredMethod("getSeedName", String.class);
+            methodGetSeedName.setAccessible(true);
+            
+            Field fieldSeed = BlockPamCrop.class.getDeclaredField("seed");
+            fieldSeed.setAccessible(true);
+            
+            for (Map.Entry<String, BlockPamCrop> cropEntry : allCrops.entrySet()) {
+                String cropName = cropEntry.getKey();
+                
+                BlockPamCrop cropBlock = cropEntry.getValue();
+                String actualSeedName = (String)methodGetSeedName.invoke(null, cropName);
+                Item actualSeed = ItemRegistry.items.get(actualSeedName);
+                
+                fieldSeed.set(cropBlock, actualSeed);
+                
+                allSeeds.put(cropName, actualSeed);
+                
+            }
+        }
+        catch (Exception e) {
+            HardcoreAlchemy.LOGGER.error("Failed to modify Harvestcraft to make crops drop seeds");
+            e.printStackTrace();
+        }
     }
     
     @Optional.Method(modid=ModState.TAN_ID)
