@@ -7,7 +7,8 @@ About the Hardcore Alchemy modpack:
 
 About the Hardcore Alchemy mod:
 * Adds miscellaneous survival and cross-mod compatibility features meant to complement the modpack
-* Will be released on its own at a later time. No license yet. (ie do not distribute/all rights reserved)
+* Releases [here](https://github.com/asanetargoss/HardcoreAlchemy/releases)
+* License for the mod is LGPL 3
 
 # Developing/building
 
