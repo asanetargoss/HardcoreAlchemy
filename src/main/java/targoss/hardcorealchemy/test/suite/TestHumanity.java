@@ -37,12 +37,12 @@ import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
-import targoss.hardcorealchemy.capability.humanity.ForcedMorph;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.capability.humanity.LostMorphReason;
 import targoss.hardcorealchemy.listener.ListenerPlayerHumanity;
 import targoss.hardcorealchemy.test.HardcoreAlchemyTests;
 import targoss.hardcorealchemy.test.api.UniqueFakePlayer;
+import targoss.hardcorealchemy.util.MorphState;
 import targoss.hardcorealchemy.test.api.ITestList;
 import targoss.hardcorealchemy.test.api.ITestSuite;
 import targoss.hardcorealchemy.test.api.TestList;
@@ -66,7 +66,7 @@ public class TestHumanity implements ITestSuite {
     public static final String DEFAULT_MORPH = "Chicken";
     
     public static AbstractMorph createMorph() {
-        return ForcedMorph.createMorph(DEFAULT_MORPH);
+        return MorphState.createMorph(DEFAULT_MORPH);
     }
     
     public boolean morphPlayer() {
@@ -145,7 +145,7 @@ public class TestHumanity implements ITestSuite {
         MorphAPI.acquire(player, targetMorph);
         
         // Make player become a mage
-        ForcedMorph.forceForm(player, LostMorphReason.MAGE, (AbstractMorph)null);
+        MorphState.forceForm(player, LostMorphReason.MAGE, (AbstractMorph)null);
         
         // Attempt morph
         return !MorphAPI.morph(player, targetMorph, false);

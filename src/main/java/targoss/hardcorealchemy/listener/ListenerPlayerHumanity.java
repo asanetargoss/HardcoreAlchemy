@@ -51,12 +51,12 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.humanity.CapabilityHumanity;
-import targoss.hardcorealchemy.capability.humanity.ForcedMorph;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.capability.humanity.LostMorphReason;
 import targoss.hardcorealchemy.capability.humanity.ProviderHumanity;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.util.Chat;
+import targoss.hardcorealchemy.util.MorphState;
 
 public class ListenerPlayerHumanity extends ConfiguredListener {
     public ListenerPlayerHumanity(Configs configs) {
@@ -169,15 +169,15 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
                     // If you are already in a morph, then congrats, you get to keep that morph!
                     if (morphing.getCurrentMorph() == null) {
                         // Uh oh, you're a zombie now!
-                        ForcedMorph.forceForm(player, LostMorphReason.LOST_HUMANITY, "Zombie");
+                        MorphState.forceForm(player, LostMorphReason.LOST_HUMANITY, "Zombie");
                     }
                     else {
-                        ForcedMorph.forceForm(player, LostMorphReason.LOST_HUMANITY, morphing.getCurrentMorph());
+                        MorphState.forceForm(player, LostMorphReason.LOST_HUMANITY, morphing.getCurrentMorph());
                     }
                 }
                 else if (item == CHORUS_FRUIT) {
                     // Uh oh, you're an enderman now!
-                    ForcedMorph.forceForm(player, LostMorphReason.LOST_HUMANITY, "Enderman");
+                    MorphState.forceForm(player, LostMorphReason.LOST_HUMANITY, "Enderman");
                 }
                 else if (item == WITHER_APPLE) {
                     // Uh oh, you're a wither skeleton now!
@@ -185,7 +185,7 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
                     NBTTagCompound nbtEntityData = new NBTTagCompound();
                     nbt.setTag("EntityData", nbtEntityData);
                     nbtEntityData.setByte("SkeletonType", (byte)1);
-                    ForcedMorph.forceForm(player, LostMorphReason.LOST_HUMANITY, "Skeleton", nbt);
+                    MorphState.forceForm(player, LostMorphReason.LOST_HUMANITY, "Skeleton", nbt);
                     //TODO: clear the withering effect if and when I can figure out how to balance it
                 }
             }
@@ -260,11 +260,11 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
                     if (newHumanity <= 0) {
                         AbstractMorph morph = morphing.getCurrentMorph();
                         if (morph != null) {
-                            ForcedMorph.forceForm(player, LostMorphReason.LOST_HUMANITY, morph);
+                            MorphState.forceForm(player, LostMorphReason.LOST_HUMANITY, morph);
                         }
                         else {
                             // If the player isn't in a morph, give a reasonable default
-                            ForcedMorph.forceForm(player, LostMorphReason.LOST_HUMANITY, "Zombie");
+                            MorphState.forceForm(player, LostMorphReason.LOST_HUMANITY, "Zombie");
                         }
                     }
                 }
@@ -311,7 +311,7 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
     @Optional.Method(modid = ModState.DISSOLUTION_ID)
     @SubscribeEvent
     public void onPlayerMorphAsGhost(MorphEvent.Pre event) {
-        if (ForcedMorph.isIncorporeal(event.player) && !event.isDemorphing()) {
+        if (MorphState.isIncorporeal(event.player) && !event.isDemorphing()) {
             // You're a ghost, so being in a morph doesn't really make sense
             event.setCanceled(true);
             if (event.player instanceof EntityPlayerMP) {
@@ -324,7 +324,7 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
     @SubscribeEvent
     public void onPlayerEnterAfterlife(PlayerRespawnEvent event) {
         EntityPlayer player = event.player;
-        if (ForcedMorph.isIncorporeal(player)) {
+        if (MorphState.isIncorporeal(player)) {
             // You're a ghost, so being in a morph doesn't really make sense
             MorphAPI.morph(player, null, true);
         }

@@ -16,7 +16,7 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.capability.humanity;
+package targoss.hardcorealchemy.util;
 
 import javax.annotation.Nonnull;
 
@@ -32,11 +32,13 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.Optional.Method;
 import targoss.hardcorealchemy.ModState;
+import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
+import targoss.hardcorealchemy.capability.humanity.LostMorphReason;
 import targoss.hardcorealchemy.listener.ListenerPlayerDiet;
 import targoss.hardcorealchemy.listener.ListenerPlayerHumanity;
 import targoss.hardcorealchemy.listener.ListenerPlayerMagic;
 
-public class ForcedMorph {
+public class MorphState {
     public static AbstractMorph createMorph(String morphName) {
         return createMorph(morphName, new NBTTagCompound());
     }
