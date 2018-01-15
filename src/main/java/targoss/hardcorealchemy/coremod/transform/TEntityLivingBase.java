@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017-2018 asanetargoss
  * 
  * This file is part of Hardcore Alchemy.
