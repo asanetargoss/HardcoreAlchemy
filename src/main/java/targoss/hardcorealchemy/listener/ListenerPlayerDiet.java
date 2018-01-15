@@ -239,7 +239,7 @@ public class ListenerPlayerDiet extends ConfiguredListener {
         EntityPlayer player = event.player;
         boolean preventLosingThirst = false;
         
-        if (ModState.isDissolutionLoaded && ListenerPlayerMorph.isIncorporeal(player)) {
+        if (ModState.isDissolutionLoaded && ListenerPlayerMorphs.isIncorporeal(player)) {
             preventLosingThirst = true;
         }
         
@@ -275,7 +275,7 @@ public class ListenerPlayerDiet extends ConfiguredListener {
         
         EntityPlayer player = event.player;
         
-        if (!ModState.isDissolutionLoaded || !ListenerPlayerMorph.isIncorporeal(player)) {
+        if (!ModState.isDissolutionLoaded || !ListenerPlayerMorphs.isIncorporeal(player)) {
             return;
         }
         

@@ -50,7 +50,7 @@ import targoss.hardcorealchemy.listener.ListenerPacketUpdatePlayer;
 import targoss.hardcorealchemy.listener.ListenerPlayerDiet;
 import targoss.hardcorealchemy.listener.ListenerPlayerHumanity;
 import targoss.hardcorealchemy.listener.ListenerPlayerMagic;
-import targoss.hardcorealchemy.listener.ListenerPlayerMorph;
+import targoss.hardcorealchemy.listener.ListenerPlayerMorphs;
 import targoss.hardcorealchemy.listener.ListenerWorldDifficulty;
 import targoss.hardcorealchemy.network.PacketHandler;
 
@@ -59,7 +59,7 @@ public class CommonProxy {
     
     public static final ImmutableList<Class<? extends ConfiguredListener>> LISTENER_TYPES = ImmutableList.of(
                 ListenerPacketUpdatePlayer.class,
-                ListenerPlayerMorph.class,
+                ListenerPlayerMorphs.class,
                 ListenerPlayerHumanity.class,
                 ListenerPlayerMagic.class,
                 ListenerPlayerDiet.class,

@@ -59,7 +59,7 @@ public class ListenerGuiHud extends ConfiguredListener {
         }
 
         if (ModState.isDissolutionLoaded &&
-                mc.thePlayer != null && ListenerPlayerMorph.isIncorporeal(mc.thePlayer)) {
+                mc.thePlayer != null && ListenerPlayerMorphs.isIncorporeal(mc.thePlayer)) {
             return;
         }
         
@@ -112,7 +112,7 @@ public class ListenerGuiHud extends ConfiguredListener {
             return true;
         }
         
-        if (ModState.isDissolutionLoaded && ListenerPlayerMorph.isIncorporeal(player)) {
+        if (ModState.isDissolutionLoaded && ListenerPlayerMorphs.isIncorporeal(player)) {
             return false;
         }
         
@@ -132,7 +132,7 @@ public class ListenerGuiHud extends ConfiguredListener {
     public void onRenderArmorInAfterlife(RenderGameOverlayEvent.Pre event) {
         if (event.getType() == ElementType.ARMOR &&
                 ModState.isDissolutionLoaded &&
-                mc.thePlayer != null && ListenerPlayerMorph.isIncorporeal(mc.thePlayer)) {
+                mc.thePlayer != null && ListenerPlayerMorphs.isIncorporeal(mc.thePlayer)) {
             event.setCanceled(true);
         }
     }

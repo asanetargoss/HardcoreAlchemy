@@ -59,8 +59,8 @@ import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.util.Chat;
 import targoss.hardcorealchemy.util.MobLists;
 
-public class ListenerPlayerMorph extends ConfiguredListener {
-    public ListenerPlayerMorph(Configs configs) {
+public class ListenerPlayerMorphs extends ConfiguredListener {
+    public ListenerPlayerMorphs(Configs configs) {
         super(configs);
     }
 
