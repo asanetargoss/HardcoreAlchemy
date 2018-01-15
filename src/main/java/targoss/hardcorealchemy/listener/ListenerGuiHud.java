@@ -33,6 +33,7 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import targoss.hardcorealchemy.ModState;
+import targoss.hardcorealchemy.capability.humanity.ForcedMorph;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.coremod.CoremodHook;
 import targoss.hardcorealchemy.util.MorphDiet;
@@ -59,7 +60,7 @@ public class ListenerGuiHud extends ConfiguredListener {
         }
 
         if (ModState.isDissolutionLoaded &&
-                mc.thePlayer != null && ListenerPlayerMorphs.isIncorporeal(mc.thePlayer)) {
+                mc.thePlayer != null && ForcedMorph.isIncorporeal(mc.thePlayer)) {
             return;
         }
         
@@ -112,7 +113,7 @@ public class ListenerGuiHud extends ConfiguredListener {
             return true;
         }
         
-        if (ModState.isDissolutionLoaded && ListenerPlayerMorphs.isIncorporeal(player)) {
+        if (ModState.isDissolutionLoaded && ForcedMorph.isIncorporeal(player)) {
             return false;
         }
         
@@ -132,7 +133,7 @@ public class ListenerGuiHud extends ConfiguredListener {
     public void onRenderArmorInAfterlife(RenderGameOverlayEvent.Pre event) {
         if (event.getType() == ElementType.ARMOR &&
                 ModState.isDissolutionLoaded &&
-                mc.thePlayer != null && ListenerPlayerMorphs.isIncorporeal(mc.thePlayer)) {
+                mc.thePlayer != null && ForcedMorph.isIncorporeal(mc.thePlayer)) {
             event.setCanceled(true);
         }
     }

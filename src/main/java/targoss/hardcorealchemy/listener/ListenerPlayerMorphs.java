@@ -23,11 +23,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import ladysnake.dissolution.common.capabilities.CapabilityIncorporealHandler;
-import ladysnake.dissolution.common.capabilities.IIncorporealHandler;
 import mchorse.metamorph.Metamorph;
-import mchorse.metamorph.api.MorphAPI;
-import mchorse.metamorph.api.events.MorphEvent;
 import mchorse.metamorph.api.events.SpawnGhostEvent;
 import mchorse.metamorph.api.morphs.AbstractMorph;
 import mchorse.metamorph.capabilities.morphing.IMorphing;
@@ -35,28 +31,18 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
-import net.minecraftforge.common.capabilities.ICapabilitySerializable;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.Clone;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.CapUtil;
-import targoss.hardcorealchemy.capability.humanity.CapabilityHumanity;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
-import targoss.hardcorealchemy.capability.humanity.ProviderHumanity;
 import targoss.hardcorealchemy.capability.killcount.CapabilityKillCount;
 import targoss.hardcorealchemy.capability.killcount.ICapabilityKillCount;
 import targoss.hardcorealchemy.capability.killcount.ProviderKillCount;
 import targoss.hardcorealchemy.config.Configs;
-import targoss.hardcorealchemy.util.Chat;
 import targoss.hardcorealchemy.util.MobLists;
 
 public class ListenerPlayerMorphs extends ConfiguredListener {
@@ -166,37 +152,5 @@ public class ListenerPlayerMorphs extends ConfiguredListener {
             EntityPlayer playerOld = event.getOriginal();
             CapUtil.copyOldToNew(KILL_COUNT_CAPABILITY, playerOld, player);
         }
-    }
-
-    @Optional.Method(modid = ModState.DISSOLUTION_ID)
-    @SubscribeEvent
-    public void onPlayerMorphAsGhost(MorphEvent.Pre event) {
-        if (isIncorporeal(event.player) && !event.isDemorphing()) {
-            // You're a ghost, so being in a morph doesn't really make sense
-            event.setCanceled(true);
-            if (event.player instanceof EntityPlayerMP) {
-                Chat.notify((EntityPlayerMP) (event.player), new TextComponentTranslation("hardcorealchemy.morph.disabled.dead"));
-            }
-        }
-    }
-
-    @Optional.Method(modid = ModState.DISSOLUTION_ID)
-    @SubscribeEvent
-    public void onPlayerEnterAfterlife(PlayerRespawnEvent event) {
-        EntityPlayer player = event.player;
-        if (isIncorporeal(player)) {
-            // You're a ghost, so being in a morph doesn't really make sense
-            MorphAPI.morph(player, null, true);
-        }
-    }
-
-    @Optional.Method(modid = ModState.DISSOLUTION_ID)
-    public static boolean isIncorporeal(EntityPlayer player) {
-        IIncorporealHandler incorporeal = player.getCapability(CapabilityIncorporealHandler.CAPABILITY_INCORPOREAL,
-                null);
-        if (incorporeal != null && incorporeal.isIncorporeal()) {
-            return true;
-        }
-        return false;
     }
 }

@@ -21,16 +21,15 @@ package targoss.hardcorealchemy.listener;
 import java.util.HashSet;
 import java.util.Set;
 
+import mchorse.metamorph.api.MorphAPI;
 import mchorse.metamorph.api.events.MorphEvent;
 import mchorse.metamorph.api.events.SpawnGhostEvent;
 import mchorse.metamorph.api.morphs.AbstractMorph;
-import mchorse.metamorph.api.morphs.EntityMorph;
 import mchorse.metamorph.capabilities.morphing.IMorphing;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
-import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
@@ -44,20 +43,19 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
+import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.humanity.CapabilityHumanity;
+import targoss.hardcorealchemy.capability.humanity.ForcedMorph;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.capability.humanity.LostMorphReason;
-import targoss.hardcorealchemy.capability.humanity.ForcedMorph;
 import targoss.hardcorealchemy.capability.humanity.ProviderHumanity;
-import targoss.hardcorealchemy.capability.killcount.ProviderKillCount;
 import targoss.hardcorealchemy.config.Configs;
-import targoss.hardcorealchemy.network.MessageHumanity;
-import targoss.hardcorealchemy.network.MessageMagic;
-import targoss.hardcorealchemy.network.PacketHandler;
 import targoss.hardcorealchemy.util.Chat;
 
 public class ListenerPlayerHumanity extends ConfiguredListener {
@@ -307,6 +305,28 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
                 // Display 3 minutes left message
                 Chat.notify((EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.humanity.warn1.variant1"));
             }
+        }
+    }
+
+    @Optional.Method(modid = ModState.DISSOLUTION_ID)
+    @SubscribeEvent
+    public void onPlayerMorphAsGhost(MorphEvent.Pre event) {
+        if (ForcedMorph.isIncorporeal(event.player) && !event.isDemorphing()) {
+            // You're a ghost, so being in a morph doesn't really make sense
+            event.setCanceled(true);
+            if (event.player instanceof EntityPlayerMP) {
+                Chat.notify((EntityPlayerMP) (event.player), new TextComponentTranslation("hardcorealchemy.morph.disabled.dead"));
+            }
+        }
+    }
+
+    @Optional.Method(modid = ModState.DISSOLUTION_ID)
+    @SubscribeEvent
+    public void onPlayerEnterAfterlife(PlayerRespawnEvent event) {
+        EntityPlayer player = event.player;
+        if (ForcedMorph.isIncorporeal(player)) {
+            // You're a ghost, so being in a morph doesn't really make sense
+            MorphAPI.morph(player, null, true);
         }
     }
 }

@@ -20,12 +20,17 @@ package targoss.hardcorealchemy.capability.humanity;
 
 import javax.annotation.Nonnull;
 
+import ladysnake.dissolution.common.capabilities.CapabilityIncorporealHandler;
+import ladysnake.dissolution.common.capabilities.IIncorporealHandler;
 import mchorse.metamorph.api.MorphAPI;
 import mchorse.metamorph.api.MorphManager;
 import mchorse.metamorph.api.morphs.AbstractMorph;
 import mchorse.metamorph.capabilities.morphing.IMorphing;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fml.common.Optional;
+import net.minecraftforge.fml.common.Optional.Method;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.listener.ListenerPlayerDiet;
 import targoss.hardcorealchemy.listener.ListenerPlayerHumanity;
@@ -102,6 +107,16 @@ public class ForcedMorph {
         }
         
         return success;
+    }
+
+    @Optional.Method(modid = ModState.DISSOLUTION_ID)
+    public static boolean isIncorporeal(EntityPlayer player) {
+        IIncorporealHandler incorporeal = player.getCapability(CapabilityIncorporealHandler.CAPABILITY_INCORPOREAL,
+                null);
+        if (incorporeal != null && incorporeal.isIncorporeal()) {
+            return true;
+        }
+        return false;
     }
 
 }

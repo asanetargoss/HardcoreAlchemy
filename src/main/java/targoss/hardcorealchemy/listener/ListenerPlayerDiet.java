@@ -64,6 +64,7 @@ import targoss.hardcorealchemy.capability.CapUtil;
 import targoss.hardcorealchemy.capability.food.CapabilityFood;
 import targoss.hardcorealchemy.capability.food.ICapabilityFood;
 import targoss.hardcorealchemy.capability.food.ProviderFood;
+import targoss.hardcorealchemy.capability.humanity.ForcedMorph;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.event.EventCraftPredict;
@@ -239,7 +240,7 @@ public class ListenerPlayerDiet extends ConfiguredListener {
         EntityPlayer player = event.player;
         boolean preventLosingThirst = false;
         
-        if (ModState.isDissolutionLoaded && ListenerPlayerMorphs.isIncorporeal(player)) {
+        if (ModState.isDissolutionLoaded && ForcedMorph.isIncorporeal(player)) {
             preventLosingThirst = true;
         }
         
@@ -275,7 +276,7 @@ public class ListenerPlayerDiet extends ConfiguredListener {
         
         EntityPlayer player = event.player;
         
-        if (!ModState.isDissolutionLoaded || !ListenerPlayerMorphs.isIncorporeal(player)) {
+        if (!ModState.isDissolutionLoaded || !ForcedMorph.isIncorporeal(player)) {
             return;
         }
         
