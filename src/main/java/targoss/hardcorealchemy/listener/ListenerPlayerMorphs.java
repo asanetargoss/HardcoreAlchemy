@@ -22,13 +22,19 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import mchorse.metamorph.Metamorph;
+import mchorse.metamorph.api.events.AcquireMorphEvent;
 import mchorse.metamorph.api.events.SpawnGhostEvent;
 import mchorse.metamorph.api.morphs.AbstractMorph;
+import mchorse.metamorph.api.morphs.EntityMorph;
 import mchorse.metamorph.capabilities.morphing.IMorphing;
+import mchorse.metamorph.capabilities.morphing.Morphing;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
@@ -36,7 +42,10 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.Clone;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
+import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.capability.CapUtil;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.capability.killcount.CapabilityKillCount;
@@ -52,12 +61,20 @@ public class ListenerPlayerMorphs extends ConfiguredListener {
 
     public static Map<String, Integer> mapRequiredKills = new HashMap<String, Integer>();
     public static Set<String> morphBlacklist = new HashSet<String>();
+    /* Required morph counts for each max humanity upgrade.
+     * +2 humanity per goal reached, up to a maximum of
+     * 20 max humanity. Since the starting max humanity is
+     * 6, this means 7 upgrades.
+     */
+    private static int[] morphThresholds = new int[]{3,6,9,12,15,20,25};
 
     @CapabilityInject(ICapabilityKillCount.class)
     public static final Capability<ICapabilityKillCount> KILL_COUNT_CAPABILITY = null;
     public static final ResourceLocation KILL_COUNT_RESOURCE_LOCATION = CapabilityKillCount.RESOURCE_LOCATION;
     @CapabilityInject(ICapabilityHumanity.class)
     public static final Capability<ICapabilityHumanity> HUMANITY_CAPABILITY = null;
+    public static final UUID MORPH_COUNT_BONUS = UUID.fromString("aaca31f4-1778-4c54-9a2f-02c95912b012");
+    public static final String MORPH_COUNT_BONUS_NAME = HardcoreAlchemy.MOD_ID + ":morphCountBonus";
 
     // The capability from Metamorph itself
     @CapabilityInject(IMorphing.class)
@@ -151,6 +168,56 @@ public class ListenerPlayerMorphs extends ConfiguredListener {
             EntityPlayer player = event.getEntityPlayer();
             EntityPlayer playerOld = event.getOriginal();
             CapUtil.copyOldToNew(KILL_COUNT_CAPABILITY, playerOld, player);
+        }
+    }
+    
+    public static void updateMaxHumanity(EntityPlayer player) {
+        double bonusCap = 0.0D;
+        
+        IMorphing morphing = Morphing.get(player);
+        if (morphing != null) {
+            // Count all the player's acquired entity morphs (screen out variants)
+            Set<String> creatureNames = new HashSet<>();
+            for (AbstractMorph morph : morphing.getAcquiredMorphs()) {
+                if (morph instanceof EntityMorph) {
+                    creatureNames.add(morph.name);
+                }
+            }
+            
+            int count = creatureNames.size();
+            for (int threshold : morphThresholds) {
+                if (threshold <= count) {
+                    bonusCap += 2;
+                }
+                else {
+                    break;
+                }
+            }
+        }
+        
+        IAttributeInstance maxHumanity = player.getEntityAttribute(ICapabilityHumanity.MAX_HUMANITY);
+        AttributeModifier existingModifier = maxHumanity.getModifier(MORPH_COUNT_BONUS);
+        if (existingModifier != null) {
+            maxHumanity.removeModifier(existingModifier);
+        }
+        maxHumanity.applyModifier(new AttributeModifier(MORPH_COUNT_BONUS, MORPH_COUNT_BONUS_NAME, bonusCap, 0));
+    }
+    
+    @SubscribeEvent
+    public void onPlayerAcquireMorph(AcquireMorphEvent.Post event) {
+        updateMaxHumanity(event.player);
+    }
+    
+    @SubscribeEvent(priority = EventPriority.LOW)
+    public void onPlayerRespawn(PlayerRespawnEvent event) {
+        EntityPlayer player = event.player;
+        
+        double oldCap = player.getEntityAttribute(ICapabilityHumanity.MAX_HUMANITY).getAttributeValue();
+        updateMaxHumanity(player);
+        double newCap = player.getEntityAttribute(ICapabilityHumanity.MAX_HUMANITY).getAttributeValue();
+        ICapabilityHumanity humanity = player.getCapability(HUMANITY_CAPABILITY, null);
+        if (humanity != null && newCap > oldCap) {
+            humanity.setHumanity(humanity.getHumanity() + newCap - oldCap);
         }
     }
 }

@@ -108,13 +108,14 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
     @SubscribeEvent
     public void onAttachCapability(AttachCapabilitiesEvent<Entity> event) {
         Entity entity = event.getObject();
-        if (!(entity instanceof EntityPlayerMP)) {
-            return;
-        }
-        event.addCapability(HUMANITY_RESOURCE_LOCATION, new ProviderHumanity());
-        AbstractAttributeMap attributeMap = ((EntityPlayer)entity).getAttributeMap();
-        if (attributeMap.getAttributeInstance(MAX_HUMANITY) == null) {
-            attributeMap.registerAttribute(MAX_HUMANITY);
+        if (entity instanceof EntityPlayer) {
+            if (!entity.worldObj.isRemote) {
+                event.addCapability(HUMANITY_RESOURCE_LOCATION, new ProviderHumanity());
+            }
+            AbstractAttributeMap attributeMap = ((EntityPlayer)entity).getAttributeMap();
+            if (attributeMap.getAttributeInstance(MAX_HUMANITY) == null) {
+                attributeMap.registerAttribute(MAX_HUMANITY);
+            }
         }
     }
     
