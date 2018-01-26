@@ -23,8 +23,8 @@ Please note: the following mods included in the zip file above are custom forks:
 * metamorph: https://github.com/asanetargoss/metamorph
 
 ## Setup
-* Run "./gradlew eclipse" (or equivalent) to set up your workspace. Re-run each time you add mods to /libs, or otherwise update dependencies.
-* Then run "./gradlew setupDecompWorkspace" to set up Minecraft Forge and access transformers. Re-run if you change access transformers (Access transformers are here: "src/main/resources/META-INF/hardcorealchemy_at.cfg")
+* Run "./gradlew setupDecompWorkspace" to set up Minecraft Forge and access transformers. Re-run if you change access transformers (Access transformers are here: "src/main/resources/META-INF/hardcorealchemy_at.cfg")
+* Then run "./gradlew eclipse" (or equivalent) to set up your workspace. Re-run each time you add mods to /libs, or otherwise update dependencies.
 * Add this VM argument to your run configuration to load the coremod: "-Dfml.coreMods.load=targoss.hardcorealchemy.coremod.HardcoreAlchemyCoremod"
 
 ## Other resources
