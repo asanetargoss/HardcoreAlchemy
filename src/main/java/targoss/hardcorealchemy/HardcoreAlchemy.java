@@ -36,6 +36,7 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import targoss.hardcorealchemy.command.CommandTest;
 import targoss.hardcorealchemy.coremod.HardcoreAlchemyCoremod;
+import targoss.hardcorealchemy.item.Items;
 import targoss.hardcorealchemy.modpack.guide.HCAModpackGuide;
 import targoss.hardcorealchemy.test.HardcoreAlchemyTests;
 
@@ -98,6 +99,9 @@ public class HardcoreAlchemy
         
         proxy.preInit(event);
         
+        Items.registerItems();
+        Items.registerPotions();
+        
         if (ModState.isGuideapiLoaded) {
             HCAModpackGuide.registerBook();
         }
@@ -113,6 +117,8 @@ public class HardcoreAlchemy
         proxy.registerNetworking();
         
         proxy.init(event);
+        
+        Items.registerRecipes();
         
         if (ModState.isGuideapiLoaded) {
             HCAModpackGuide.registerRecipe();

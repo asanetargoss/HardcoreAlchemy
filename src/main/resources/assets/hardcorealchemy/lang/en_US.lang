@@ -53,3 +53,13 @@ hardcorealchemy.diet.refuse.unfeeding=You perceive no practical use in this chun
 
 # %1$s is the level, displayed as an integer
 hardcorealchemy.level.display=Level: %1$s
+
+# Items, Potions
+
+item.hardcorealchemy:essence_mage.name=Mage Essence
+
+potion.hardcorealchemy:allow_magic=Unhindered Magic
+potion.effect.hardcorealchemy:allow_magic=Potion of Unhindered Magic
+splash_potion.effect.hardcorealchemy:allow_magic=Splash Potion of Unhindered Magic
+lingering_potion.effect.hardcorealchemy:allow_magic=Lingering Potion of Unhindered Magic
+tipped_arrow.effect.hardcorealchemy:allow_magic=Arrow of Unhindered Magic
