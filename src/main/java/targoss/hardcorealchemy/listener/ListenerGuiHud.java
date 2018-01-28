@@ -36,6 +36,9 @@ import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.coremod.CoremodHook;
@@ -43,13 +46,14 @@ import targoss.hardcorealchemy.util.MorphState;
 import toughasnails.handler.thirst.ThirstOverlayHandler;
 import targoss.hardcorealchemy.util.MorphDiet;
 
+@SideOnly(Side.CLIENT)
 public class ListenerGuiHud extends ConfiguredListener {
     public ListenerGuiHud(Configs configs) {
         super(configs);
     }
-
+    
     private static final Minecraft mc = Minecraft.getMinecraft();
-    public static final ResourceLocation TILESET = new ResourceLocation("hardcorealchemy:textures/gui/icon_tileset.png");
+    public static final ResourceLocation TILESET = new ResourceLocation(HardcoreAlchemy.MOD_ID, "textures/gui/icon_tileset.png");
     
     public static final int HUMANITY_ICONS = 10;
     private static double HUMANITY_3MIN_LEFT = ListenerPlayerHumanity.HUMANITY_3MIN_LEFT;
