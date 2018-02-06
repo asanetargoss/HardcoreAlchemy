@@ -79,7 +79,7 @@ public class ListenerMobAI extends ConfiguredListener {
     public void onEntityJoinWorld(EntityJoinWorldEvent event) {
         // Persuade entities that morphs aren't human, unless said entity knows better
         Entity entity = event.getEntity();
-        if (entity instanceof EntityLiving && !mobAIMorphBlacklist.contains(entity.getClass().getName())) {
+        if (entity instanceof EntityLiving && !mobAIMorphBlacklist.contains(entity.getName())) {
             EntityLiving entityLiving = (EntityLiving)entity;
             wrapReplaceAttackAI(entityLiving, EntityAINearestAttackableTarget.class, AIAttackTargetMobOrMorph.class);
             wrapReplaceAttackAI(entityLiving, EntityAITargetNonTamed.class, AIUntamedAttackMobOrMorph.class);

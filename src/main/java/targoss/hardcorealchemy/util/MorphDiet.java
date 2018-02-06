@@ -60,41 +60,33 @@ public class MorphDiet {
         /* With some exceptions, hostile mobs and tameables are carnivores,
          * and Nether mobs are also thirstless.
          * Passive mobs are vegans and eat wheat.
-         * Exceptions/uncategorized mobs are at the top, and will not be overridden.
+         * Exceptions/uncategorized mobs override the lists
          */
+        
+        for (String nightMob : MobLists.getNightMobs()) {
+            morphDiets.put(nightMob, NIGHT_MOB_NEEDS);
+        }
+        for (String tameable : MobLists.getEntityTameables()) {
+            morphDiets.put(tameable, NIGHT_MOB_NEEDS);
+        }
+        for (String netherMob : MobLists.getNetherMobs()) {
+            morphDiets.put(netherMob, NETHER_MOB_NEEDS);
+        }
+        for (String passiveMob : MobLists.getPassiveMobs()) {
+            morphDiets.put(passiveMob, GRAZER_NEEDS);
+        }
         
         morphDiets.put(entityName(EntityCreeper.class), IDEALIST_VEGAN_NEEDS);
         morphDiets.put(entityName(EntitySlime.class), PLAYER_NEEDS);
         morphDiets.put(entityName(EntityChicken.class), IDEALIST_VEGAN_NEEDS);
         morphDiets.put(entityName(EntityPig.class), IDEALIST_VEGAN_NEEDS);
-        morphDiets.put("net.torocraft.toroquest.entities.EntityToro", GRAZER_NEEDS);
+        morphDiets.put("toroquest.toro", GRAZER_NEEDS);
         morphDiets.put(entityName(EntityEnderman.class), new Needs(Needs.DEFAULT_NUTRIENTS, Restriction.OMNIVORE, false));
         morphDiets.put(entityName(EntityEndermite.class), new Needs(Needs.NO_NUTRIENTS, Restriction.OMNIVORE, false));
         morphDiets.put(entityName(EntitySquid.class), new Needs(Needs.CARNIVORE_NUTRIENTS, Restriction.OMNIVORE, false));
         morphDiets.put(entityName(EntityGuardian.class), new Needs(Needs.CARNIVORE_NUTRIENTS, Restriction.OMNIVORE, false));
         morphDiets.put(entityName(EntityShulker.class), new Needs(Needs.NO_NUTRIENTS, Restriction.UNFEEDING, false));
         morphDiets.put(entityName(EntityPolarBear.class), new Needs(Needs.CARNIVORE_NUTRIENTS, Restriction.OMNIVORE));
-        
-        for (String nightMob : MobLists.getNightMobs()) {
-            if (!morphDiets.containsKey(nightMob)) {
-                morphDiets.put(nightMob, NIGHT_MOB_NEEDS);
-            }
-        }
-        for (String tameable : MobLists.getEntityTameables()) {
-            if (!morphDiets.containsKey(tameable)) {
-                morphDiets.put(tameable, NIGHT_MOB_NEEDS);
-            }
-        }
-        for (String netherMob : MobLists.getNetherMobs()) {
-            if (!morphDiets.containsKey(netherMob)) {
-                morphDiets.put(netherMob, NETHER_MOB_NEEDS);
-            }
-        }
-        for (String passiveMob : MobLists.getPassiveMobs()) {
-            if (!morphDiets.containsKey(passiveMob)) {
-                morphDiets.put(passiveMob, GRAZER_NEEDS);
-            }
-        }
     }
     
     public static String entityName(Class<? extends Entity> clazz) {

@@ -75,7 +75,7 @@ public class ListenerMobLevel extends ConfiguredListener {
                 return;
             }
             EntityLivingBase entityLiving = (EntityLivingBase)entity;
-            if (!levelBlacklist.contains(entityLiving.getClass().getName())) {
+            if (!levelBlacklist.contains(entityLiving.getName())) {
                 event.addCapability(COMBAT_LEVEL_RESOURCE_LOCATION, new ProviderCombatLevel());
                 }
         }
