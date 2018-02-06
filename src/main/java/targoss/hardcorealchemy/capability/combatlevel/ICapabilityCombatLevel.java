@@ -21,7 +21,9 @@ package targoss.hardcorealchemy.capability.combatlevel;
 /**
  * Combat level determines how much damage mobs give and receive with players
  * 
- * To be used by non-player monsters only
+ * To reduce networking, this capability only exists on the server.
+ * 
+ * To be used by non-player monsters only (Players use Player.experienceLevel instead)
  */
 public interface ICapabilityCombatLevel {
     public abstract int getValue();

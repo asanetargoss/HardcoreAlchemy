@@ -85,6 +85,7 @@ public class ListenerMobLevel extends ConfiguredListener {
         if (combatLevel != null && !combatLevel.getHasCombatLevel()) {
             combatLevel.setHasCombatLevel(true);
             MobLevelRange levelRange = MobLevelRange.getRange(entity.dimension, entity.posY);
+            //TODO: better random level algorithm
             int level = levelRange.getRandomLevel(entity.posX, entity.posZ, entity.worldObj.getSeed());
             combatLevel.setValue(level);
             }
@@ -140,5 +141,5 @@ public class ListenerMobLevel extends ConfiguredListener {
         
         float hurtMultiplier = CapabilityCombatLevel.getDamageMultiplier(attackerLevel, defenderLevel);
         event.amount = event.amount * hurtMultiplier;
-        }
+    }
 }
