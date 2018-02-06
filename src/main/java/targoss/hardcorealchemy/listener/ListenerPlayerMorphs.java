@@ -20,6 +20,7 @@ package targoss.hardcorealchemy.listener;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -66,7 +67,7 @@ public class ListenerPlayerMorphs extends ConfiguredListener {
         super(configs);
     }
 
-    public static Map<String, Integer> mapRequiredKills = new HashMap<String, Integer>();
+    public static final Map<String, Integer> mapRequiredKills = Collections.synchronizedMap(new HashMap<String, Integer>());
     /* Required morph counts for each max humanity upgrade.
      * +2 humanity per goal reached, up to a maximum of
      * 20 max humanity. Since the starting max humanity is
@@ -133,7 +134,7 @@ public class ListenerPlayerMorphs extends ConfiguredListener {
     @SubscribeEvent
     public void onAttachCapability(AttachCapabilitiesEvent<Entity> event) {
         Entity entity = event.getObject();
-        if (!(entity instanceof EntityPlayerMP)) {
+        if (!(entity instanceof EntityPlayer)) {
             return;
         }
         event.addCapability(KILL_COUNT_RESOURCE_LOCATION, new ProviderKillCount());
@@ -141,11 +142,11 @@ public class ListenerPlayerMorphs extends ConfiguredListener {
 
     @SubscribeEvent
 	public void onSpawnGhost(SpawnGhostEvent.Pre event) {
-	    // Get morph
+	    // Get morph. If it's not an entity morph ghost, it's not really a kill count.
 		AbstractMorph morph = event.morph;
-		if (morph == null) {
+		if (morph == null || !(morph instanceof EntityMorph)) {
 		    return;
-		}		
+		}
 		String morphName = morph.name;
 		if (morphName == null || morphName.equals("")) {
 		    return;

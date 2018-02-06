@@ -18,6 +18,7 @@
 
 package targoss.hardcorealchemy.capability.killcount;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,11 +30,7 @@ public class CapabilityKillCount implements ICapabilityKillCount {
     
     public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(HardcoreAlchemy.MOD_ID, "kill_count");
     
-    public Map<String, Integer> killCounts;
-    
-    public CapabilityKillCount() {
-        killCounts = new HashMap<String, Integer>();
-    }
+    public Map<String, Integer> killCounts = Collections.synchronizedMap(new HashMap<String, Integer>());
     
     public static void register() {
         CapabilityManager.INSTANCE.register(ICapabilityKillCount.class, new StorageKillCount(), CapabilityKillCount.class);

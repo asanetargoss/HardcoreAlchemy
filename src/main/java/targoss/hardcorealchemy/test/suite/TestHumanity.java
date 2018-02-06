@@ -91,7 +91,7 @@ public class TestHumanity implements ITestSuite {
     }
     
     public static void tickPlayerHumanity(EntityPlayer player) {
-        (new ListenerPlayerHumanity(DEFAULT_CONFIGS)).onPlayerTickMP(new PlayerTickEvent(Phase.START, player));
+        (new ListenerPlayerHumanity(DEFAULT_CONFIGS)).onPlayerTick(new PlayerTickEvent(Phase.START, player));
     }
     
     public boolean humanityDecrease() {

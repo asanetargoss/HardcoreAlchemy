@@ -18,19 +18,18 @@
 
 package targoss.hardcorealchemy.listener;
 
-import net.minecraft.entity.ai.attributes.IAttribute;
-import net.minecraft.entity.ai.attributes.IAttributeInstance;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
-import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
+import targoss.hardcorealchemy.capability.killcount.ICapabilityKillCount;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.network.MessageHumanity;
-import targoss.hardcorealchemy.network.MessageMagic;
+import targoss.hardcorealchemy.network.MessageKillCount;
 import targoss.hardcorealchemy.network.PacketHandler;
 
 /**
@@ -45,50 +44,46 @@ public class ListenerPacketUpdatePlayer extends ConfiguredListener {
     
     @CapabilityInject(ICapabilityHumanity.class)
     public static final Capability<ICapabilityHumanity> HUMANITY_CAPABILITY = null;
-    public static final IAttribute MAX_HUMANITY = ICapabilityHumanity.MAX_HUMANITY;
+    @CapabilityInject(ICapabilityKillCount.class)
+    public static final Capability<ICapabilityKillCount> KILL_COUNT_CAPABILITY = null;
     
     private static final int PLAYER_UPDATE_TICKS = 7;
     
+    /**
+     * Send packets to player about their capabilities
+     */
     @SubscribeEvent
-    public void onPlayerTickMP(TickEvent.PlayerTickEvent event) {
-        if (event.player.worldObj.isRemote ||
-                event.phase != Phase.END ||
-                event.player.ticksExisted % PLAYER_UPDATE_TICKS != 0) {
+    public void onPlayerJoinMP(EntityJoinWorldEvent event) {
+        if (!(event.getEntity() instanceof EntityPlayer)) {
             return;
         }
         
-        sendPlayerUpdatePacket((EntityPlayerMP)(event.player));
+        EntityPlayer player = (EntityPlayer)(event.getEntity());
+        if (player.worldObj.isRemote) {
+            return;
+        }
+        
+        syncFullCapabilities((EntityPlayerMP)player);
     }
     
-    public void sendPlayerUpdatePacket(EntityPlayerMP player) {
-        ICapabilityHumanity capabilityHumanity = player.getCapability(HUMANITY_CAPABILITY, null);
-        
-        if (capabilityHumanity == null) {
-            PacketHandler.INSTANCE.sendTo(new MessageHumanity(false, 0, 0), player);
-            PacketHandler.INSTANCE.sendTo(new MessageMagic(true), player);
+    @SubscribeEvent
+    public void onPlayerRespawnMP(PlayerRespawnEvent event) {
+        if (event.player.worldObj.isRemote) {
+            return;
         }
-        else {
-            IAttributeInstance humanityInstance = player.getAttributeMap().getAttributeInstance(MAX_HUMANITY);
-            double maxHumanity;
-            if (humanityInstance != null) {
-                maxHumanity = humanityInstance.getAttributeValue();
-            }
-            else {
-                // Compensate for the max humanity modifier not existing
-                maxHumanity = 20.0D;
-            }
-            
-            // Update client humanity GUI
-            PacketHandler.INSTANCE.sendTo(
-                    new MessageHumanity(capabilityHumanity.shouldDisplayHumanity(),
-                            capabilityHumanity.getHumanity(),
-                            maxHumanity),
-                    player);
-            
-            // Update client magic usage prediction
-            PacketHandler.INSTANCE.sendTo(
-                    new MessageMagic(capabilityHumanity.canUseHighMagic()),
-                    player);
+        
+        syncFullCapabilities((EntityPlayerMP)(event.player));
+    }
+    
+    public void syncFullCapabilities(EntityPlayerMP player) {
+        ICapabilityHumanity humanity = player.getCapability(HUMANITY_CAPABILITY, null);
+        if (humanity != null) {
+            PacketHandler.INSTANCE.sendTo(new MessageHumanity(humanity), (EntityPlayerMP)player);
+        }
+        
+        ICapabilityKillCount killCount = player.getCapability(KILL_COUNT_CAPABILITY, null);
+        if (killCount != null) {
+            PacketHandler.INSTANCE.sendTo(new MessageKillCount(killCount), (EntityPlayerMP)player);
         }
     }
 }

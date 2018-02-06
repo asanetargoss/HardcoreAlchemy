@@ -28,10 +28,15 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.entity.ai.attributes.IAttribute;
+import net.minecraft.entity.ai.attributes.IAttributeInstance;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.GuiIngameForge;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -40,11 +45,13 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.ModState;
+import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.coremod.CoremodHook;
 import targoss.hardcorealchemy.util.MorphState;
 import toughasnails.handler.thirst.ThirstOverlayHandler;
 import targoss.hardcorealchemy.util.MorphDiet;
+import targoss.hardcorealchemy.util.MorphState;
 
 @SideOnly(Side.CLIENT)
 public class ListenerGuiHud extends ConfiguredListener {
@@ -55,23 +62,39 @@ public class ListenerGuiHud extends ConfiguredListener {
     private static final Minecraft mc = Minecraft.getMinecraft();
     public static final ResourceLocation TILESET = new ResourceLocation(HardcoreAlchemy.MOD_ID, "textures/gui/icon_tileset.png");
     
+    @CapabilityInject(ICapabilityHumanity.class)
+    public static final Capability<ICapabilityHumanity> HUMANITY_CAPABILITY = null;
+    public static final IAttribute MAX_HUMANITY = ICapabilityHumanity.MAX_HUMANITY;
+    
     public static final int HUMANITY_ICONS = 10;
     private static double HUMANITY_3MIN_LEFT = ListenerPlayerHumanity.HUMANITY_3MIN_LEFT;
-    public static boolean render_humanity = true;
-    public static double humanity = 0.0D;
-    public static double max_humanity = 0.0D;
     private Random rand = new Random();
     
+
     @SubscribeEvent(priority=EventPriority.HIGHEST,receiveCanceled=true)
-    public void onRenderOverlayPre(RenderGameOverlayEvent.Pre event) {
-        if (event.getType() != ElementType.ARMOR || !render_humanity) {
+    public void onRenderHumanity(RenderGameOverlayEvent.Pre event) {
+        if (event.getType() != ElementType.ARMOR) {
+            return;
+        }
+        
+        EntityPlayer player = mc.thePlayer;
+        
+        if (ModState.isDissolutionLoaded && MorphState.isIncorporeal(player)) {
+            return;
+        }
+        
+        ICapabilityHumanity humanityCap = player.getCapability(HUMANITY_CAPABILITY, null);
+        if (humanityCap == null || !humanityCap.shouldDisplayHumanity()) {
+            return;
+        }
+        
+        IAttributeInstance maxHumanityAttribute = player.getEntityAttribute(MAX_HUMANITY);
+        if (maxHumanityAttribute == null) {
             return;
         }
 
-        if (ModState.isDissolutionLoaded &&
-                mc.thePlayer != null && MorphState.isIncorporeal(mc.thePlayer)) {
-            return;
-        }
+        double humanity = humanityCap.getHumanity();
+        double maxHumanity = maxHumanityAttribute.getAttributeValue();
         
         if (GuiIngameForge.left_height == 37) {
             // The health render code doesn't make a space for itself when health is zero, which causes our icons to overlap with the TaN icons
@@ -88,9 +111,9 @@ public class ListenerGuiHud extends ConfiguredListener {
         for (int i = 1; i <= HUMANITY_ICONS; i++) {
             int y = top;
             if (humanity <= HUMANITY_3MIN_LEFT) {
+                //TODO: Freeze shaking in place when the game is paused
                 y += rand.nextInt(2);
             }
-            //TODO: BUG: 10 gets graphically interpreted as 9 (Not sure if the bug still exists. We'll see!)
             if (i*2 <= humanity) {
                 // Render full icon
                 mc.ingameGUI.drawTexturedModalRect(left + (i-1)*8, y, 0, 0, 9, 9);
@@ -99,7 +122,7 @@ public class ListenerGuiHud extends ConfiguredListener {
                 // Render partial icon
                 mc.ingameGUI.drawTexturedModalRect(left + (i-1)*8, y, 9, 0, 9, 9);
             }
-            else if (i*2 <= max_humanity) {
+            else if (i*2 <= maxHumanity) {
                 // Render empty icon
                 mc.ingameGUI.drawTexturedModalRect(left + (i-1)*8, y, 18, 0, 9, 9);
             }
@@ -117,7 +140,7 @@ public class ListenerGuiHud extends ConfiguredListener {
     @CoremodHook
     @Optional.Method(modid = ModState.TAN_ID)
     public static boolean clientHasThirst() {
-        EntityPlayerSP player = mc.thePlayer;
+        EntityPlayer player = mc.thePlayer;
         if (player == null) {
             return true;
         }
@@ -126,7 +149,8 @@ public class ListenerGuiHud extends ConfiguredListener {
             return false;
         }
         
-        if (humanity > 0) {
+        ICapabilityHumanity humanityCap = player.getCapability(HUMANITY_CAPABILITY, null);
+        if (humanityCap == null || humanityCap.getHumanity() > 0) {
             return true;
         }
         

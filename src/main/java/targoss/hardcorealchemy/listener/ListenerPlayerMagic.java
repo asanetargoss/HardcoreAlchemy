@@ -34,8 +34,6 @@ import am2.api.skill.SkillPoint;
 import am2.extensions.AffinityData;
 import am2.extensions.EntityExtension;
 import am2.extensions.SkillData;
-import am2.spell.ContingencyType;
-import mchorse.metamorph.api.MorphAPI;
 import mchorse.metamorph.api.morphs.AbstractMorph;
 import mchorse.metamorph.capabilities.morphing.IMorphing;
 import mchorse.metamorph.capabilities.morphing.Morphing;
@@ -43,18 +41,13 @@ import moze_intel.projecte.api.ProjectEAPI;
 import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.SlotCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
-import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -62,15 +55,12 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.capability.humanity.LostMorphReason;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.coremod.CoremodHook;
-import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.event.EventTakeStack;
-import targoss.hardcorealchemy.network.MessageHumanity;
-import targoss.hardcorealchemy.network.MessageMagic;
-import targoss.hardcorealchemy.network.PacketHandler;
 import targoss.hardcorealchemy.util.Chat;
 import targoss.hardcorealchemy.util.MorphState;
 
@@ -150,9 +140,6 @@ public class ListenerPlayerMagic extends ConfiguredListener {
             return;
         }
         EntityPlayer player = event.player;
-        if (player.worldObj.isRemote) {
-            return;
-        }
         ICapabilityHumanity capabilityHumanity = player.getCapability(HUMANITY_CAPABILITY, null);
         if (capabilityHumanity != null) {
             capabilityHumanity.setNotifiedMagicFail(false);
@@ -162,24 +149,16 @@ public class ListenerPlayerMagic extends ConfiguredListener {
     @SubscribeEvent
     public void onRightClickItem(PlayerInteractEvent.RightClickItem event) {
         EntityPlayer player = event.getEntityPlayer();
-        if (player.worldObj.isRemote) {
-            if (canUseHighMagic) {
-                return;
-            }
-            if (!isAllowed(MAGIC_ITEM_ALLOW_USE, event.getItemStack())) {
-                event.setCanceled(true);
-            }
+        ICapabilityHumanity capabilityHumanity = player.getCapability(HUMANITY_CAPABILITY, null);
+        if (capabilityHumanity == null || capabilityHumanity.canUseHighMagic()) {
+            return;
         }
-        else {
-            ICapabilityHumanity capabilityHumanity = player.getCapability(HUMANITY_CAPABILITY, null);
-            if (capabilityHumanity == null || capabilityHumanity.canUseHighMagic()) {
-                return;
-            }
-            if (!isAllowed(MAGIC_ITEM_ALLOW_USE, event.getItemStack())) {
-                event.setCanceled(true);
-                if (!capabilityHumanity.getNotifiedMagicFail()) {
-                    capabilityHumanity.setNotifiedMagicFail(true);
-                    Chat.notify((EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.magic.disabled.item"));
+        if (!isAllowed(MAGIC_ITEM_ALLOW_USE, event.getItemStack())) {
+            event.setCanceled(true);
+            if (!capabilityHumanity.getNotifiedMagicFail()) {
+                capabilityHumanity.setNotifiedMagicFail(true);
+                if (player.worldObj.isRemote) {
+                    Chat.notifySP(new TextComponentTranslation("hardcorealchemy.magic.disabled.item"));
                 }
             }
         }
@@ -187,27 +166,18 @@ public class ListenerPlayerMagic extends ConfiguredListener {
     
     @SubscribeEvent
     public void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
-        World world = event.getWorld();
-        Block block = world.getBlockState(event.getPos()).getBlock();
+        Block block = event.getWorld().getBlockState(event.getPos()).getBlock();
         EntityPlayer player = event.getEntityPlayer();
-        if (world.isRemote) {
-            if (canUseHighMagic) {
-                return;
-            }
-            if (!isAllowed(MAGIC_BLOCK_ALLOW_USE, block)) {
-                event.setCanceled(true);
-            }
+        ICapabilityHumanity capabilityHumanity = player.getCapability(HUMANITY_CAPABILITY, null);
+        if (capabilityHumanity == null || capabilityHumanity.canUseHighMagic()) {
+            return;
         }
-        else {
-            ICapabilityHumanity capabilityHumanity = player.getCapability(HUMANITY_CAPABILITY, null);
-            if (capabilityHumanity == null || capabilityHumanity.canUseHighMagic()) {
-                return;
-            }
-            if (!isAllowed(MAGIC_BLOCK_ALLOW_USE, block)) {
-                event.setCanceled(true);
-                if (!capabilityHumanity.getNotifiedMagicFail()) {
-                    capabilityHumanity.setNotifiedMagicFail(true);
-                    Chat.notify((EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.magic.disabled.block"));
+        if (!isAllowed(MAGIC_BLOCK_ALLOW_USE, block)) {
+            event.setCanceled(true);
+            if (!capabilityHumanity.getNotifiedMagicFail()) {
+                capabilityHumanity.setNotifiedMagicFail(true);
+                if (player.worldObj.isRemote) {
+                    Chat.notifySP(new TextComponentTranslation("hardcorealchemy.magic.disabled.block"));
                 }
             }
         }
@@ -224,34 +194,31 @@ public class ListenerPlayerMagic extends ConfiguredListener {
         }
         
         EntityPlayer player = event.player;
-        if (player.worldObj.isRemote) {
-            if (!canUseHighMagic && !isAllowed(MAGIC_ITEM_ALLOW_CRAFT, craftResult)) {
-                event.setCanceled(true);
-            }
-        }
-        else {
-            ICapabilityHumanity capabilityHumanity = player.getCapability(HUMANITY_CAPABILITY, null);
-            if (capabilityHumanity != null &&
-                    !capabilityHumanity.canUseHighMagic() &&
-                    !isAllowed(MAGIC_ITEM_ALLOW_CRAFT, craftResult)) {
-                event.setCanceled(true);
-                if (!capabilityHumanity.getNotifiedMagicFail()) {
-                    capabilityHumanity.setNotifiedMagicFail(true);
-                    Chat.notify((EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.magic.disabled.craft"));
+        ICapabilityHumanity capabilityHumanity = player.getCapability(HUMANITY_CAPABILITY, null);
+        if (capabilityHumanity != null &&
+                !capabilityHumanity.canUseHighMagic() &&
+                !isAllowed(MAGIC_ITEM_ALLOW_CRAFT, craftResult)) {
+            event.setCanceled(true);
+            if (!capabilityHumanity.getNotifiedMagicFail()) {
+                capabilityHumanity.setNotifiedMagicFail(true);
+                if (player.worldObj.isRemote) {
+                    Chat.notifySP(new TextComponentTranslation("hardcorealchemy.magic.disabled.craft"));
                 }
             }
         }
     }
     
     @CoremodHook
-    public static boolean canUseProjectEKeybinds(EntityPlayerMP player) {
+    public static boolean canUseProjectEKeybinds(EntityPlayer player) {
         ICapabilityHumanity capabilityHumanity = player.getCapability(HUMANITY_CAPABILITY, null);
         if (capabilityHumanity == null || capabilityHumanity.canUseHighMagic()) {
             return true;
         }
         if (!capabilityHumanity.getNotifiedMagicFail()) {
             capabilityHumanity.setNotifiedMagicFail(true);
-            Chat.notify((EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.magic.disabled.projectekeypress"));
+            if (player.worldObj.isRemote) {
+                Chat.notifySP(new TextComponentTranslation("hardcorealchemy.magic.disabled.projectekeypress"));
+            }
         }
         return false;
     }
@@ -261,10 +228,10 @@ public class ListenerPlayerMagic extends ConfiguredListener {
     @SubscribeEvent
     public void onCastFirstSpell(SpellCastEvent.Pre event) {
         EntityLivingBase entity = event.entityLiving;
-        if (entity.worldObj.isRemote || !(entity instanceof EntityPlayerMP)) {
+        if (!(entity instanceof EntityPlayer)) {
             return;
         }
-        EntityPlayerMP player = (EntityPlayerMP)entity;
+        EntityPlayer player = (EntityPlayer)entity;
         ICapabilityHumanity humanityCapability = player.getCapability(HUMANITY_CAPABILITY, null);
         if (humanityCapability != null && !humanityCapability.getIsMage()) {
             IMorphing morphing = Morphing.get(player);
@@ -282,17 +249,15 @@ public class ListenerPlayerMagic extends ConfiguredListener {
                     MorphState.forceForm(player, LostMorphReason.MAGE, (AbstractMorph)null);
                 }
             }
-            Chat.notifyMagical(player, new TextComponentTranslation("hardcorealchemy.magic.becomemage"));
+            if (player.worldObj.isRemote) {
+                Chat.notifyMagicalSP(new TextComponentTranslation("hardcorealchemy.magic.becomemage"));
+            }
         }
     }
     
     @SubscribeEvent
     public void onMageDie(PlayerRespawnEvent event) {
-        if (event.player.worldObj.isRemote) {
-            return;
-        }
-        
-        eraseAllMortalMagic((EntityPlayerMP)(event.player));
+        eraseAllMortalMagic(event.player);
     }
     
     public static boolean isAllowed(Set<String> whitelist, ItemStack itemStack) {
@@ -307,7 +272,7 @@ public class ListenerPlayerMagic extends ConfiguredListener {
                     whitelist.contains(blockResource.toString());
     }
     
-    public static void eraseAllMortalMagic(EntityPlayerMP player) {
+    public static void eraseAllMortalMagic(EntityPlayer player) {
         if (ModState.isBloodMagicLoaded) {
             eraseBloodMagic(player);
         }
@@ -327,7 +292,7 @@ public class ListenerPlayerMagic extends ConfiguredListener {
      * 3) For the challenge
      */
     @Optional.Method(modid = ModState.BLOOD_MAGIC_ID)
-    public static void eraseBloodMagic(EntityPlayerMP player) {
+    public static void eraseBloodMagic(EntityPlayer player) {
         SoulNetwork network = NetworkHelper.getSoulNetwork(player);
         network.setOrbTier(0);
         network.setCurrentEssence(0);
@@ -341,17 +306,10 @@ public class ListenerPlayerMagic extends ConfiguredListener {
      * 3) Allow for the player to try new specializations
      */
     @Optional.Method(modid = ModState.ARS_MAGICA_ID)
-    public static void eraseSpellMagic(EntityPlayerMP player) {
+    public static void eraseSpellMagic(EntityPlayer player) {
         
         IEntityExtension playerMagicExtension = EntityExtension.For(player);
         if (playerMagicExtension != null) {
-            /* Ars Magica seems to randomly forget to send players their magic level
-             * when you die. (took me a while to figure out it wasn't this method's code)
-             * Not good!
-             * Workaround: Cast enough spells to raise your magic level
-             * TODO: Test Ars Magica by itself to verify it is a bug from that
-             * mod specifically
-             */
             playerMagicExtension.setMagicLevelWithMana(1);
             playerMagicExtension.setCurrentXP(0.0F);
             
@@ -390,7 +348,7 @@ public class ListenerPlayerMagic extends ConfiguredListener {
      * 2) Gently encourage players to not use the transmutation table for long-term storage
      */
     @Optional.Method(modid = ModState.PROJECT_E_ID)
-    public static void eraseEMC(EntityPlayerMP player) {
+    public static void eraseEMC(EntityPlayer player) {
         IKnowledgeProvider transmutationKnowledge = player.getCapability(ProjectEAPI.KNOWLEDGE_CAPABILITY, null);
         if (transmutationKnowledge != null) {
             transmutationKnowledge.setEmc(0.0D);

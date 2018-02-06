@@ -19,62 +19,107 @@
 package targoss.hardcorealchemy.network;
 
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.listener.ListenerGuiHud;
 
 public class MessageHumanity extends MessageToClient {
     
     public MessageHumanity() {}
     
-    public boolean render_humanity;
     public double humanity;
-    public double max_humanity;
+    public double lastHumanity;
+    public boolean hasLostHumanity;
+    public boolean hasLostMorphAbility;
+    public boolean isMarried;
+    public boolean isMage;
+    public boolean highMagicOverride;
     
-    public MessageHumanity(boolean render_humanity, double humanity, double max_humanity) {
-        this.render_humanity = render_humanity;
-        this.humanity = humanity;
-        this.max_humanity = max_humanity;
+    public MessageHumanity(ICapabilityHumanity humanity) {
+        this.humanity = humanity.getHumanity();
+        this.lastHumanity = humanity.getLastHumanity();
+        this.hasLostHumanity = humanity.getHasLostHumanity();
+        this.hasLostMorphAbility = humanity.getHasLostMorphAbility();
+        this.isMarried = humanity.getIsMarried();
+        this.isMage = humanity.getIsMage();
+        this.highMagicOverride = humanity.getHighMagicOverride();
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        buf.writeBoolean(render_humanity);
         buf.writeDouble(humanity);
-        buf.writeDouble(max_humanity);
+        buf.writeDouble(lastHumanity);
+        buf.writeBoolean(hasLostHumanity);
+        buf.writeBoolean(hasLostMorphAbility);
+        buf.writeBoolean(isMarried);
+        buf.writeBoolean(isMage);
+        buf.writeBoolean(highMagicOverride);
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        render_humanity = buf.readBoolean();
         humanity = buf.readDouble();
-        max_humanity = buf.readDouble();
+        lastHumanity = buf.readDouble();
+        hasLostHumanity = buf.readBoolean();
+        hasLostMorphAbility = buf.readBoolean();
+        isMarried = buf.readBoolean();
+        isMage = buf.readBoolean();
+        highMagicOverride = buf.readBoolean();
     }
     
     public static class ReceiveAction implements Runnable {
-        private boolean render_humanity;
-        private double humanity;
-        private double max_humanity;
+        @CapabilityInject(ICapabilityHumanity.class)
+        public static final Capability<ICapabilityHumanity> HUMANITY_CAPABILITY = null;
         
-        public ReceiveAction(boolean render_humanity, double humanity, double max_humanity) {
-            this.render_humanity = render_humanity;
+        private double humanity;
+        private double lastHumanity;
+        private boolean hasLostHumanity;
+        private boolean hasLostMorphAbility;
+        private boolean isMarried;
+        private boolean isMage;
+        private boolean highMagicOverride;
+        
+        public ReceiveAction(double humanity, double lastHumanity, boolean hasLostHumanity,
+                boolean hasLostMorphAbility, boolean isMarried, boolean isMage,
+                boolean highMagicOverride) {
             this.humanity = humanity;
-            this.max_humanity = max_humanity;
+            this.lastHumanity = lastHumanity;
+            this.hasLostHumanity = hasLostHumanity;
+            this.hasLostMorphAbility = hasLostMorphAbility;
+            this.isMarried = isMarried;
+            this.highMagicOverride = highMagicOverride;
         }
         
         @Override
         public void run() {
-            ListenerGuiHud.render_humanity = render_humanity;
-            ListenerGuiHud.humanity = humanity;
-            ListenerGuiHud.max_humanity = max_humanity;
+            ICapabilityHumanity humanity = Minecraft.getMinecraft().thePlayer.getCapability(HUMANITY_CAPABILITY, null);
+            if (humanity != null) {
+                humanity.setHumanity(this.humanity);
+                humanity.setLastHumanity(this.lastHumanity);
+                humanity.setHasLostHumanity(this.hasLostHumanity);
+                humanity.setHasLostMorphAbility(this.hasLostMorphAbility);
+                humanity.setIsMarried(this.isMarried);
+                humanity.setIsMage(this.isMage);
+                humanity.setHighMagicOverride(this.highMagicOverride);
+            }
         }
     }
     
     public static class Handler implements IMessageHandler<MessageHumanity, IMessage> {
         @Override
         public IMessage onMessage(MessageHumanity message, MessageContext ctx) {
-            message.getThreadListener().addScheduledTask(new ReceiveAction(message.render_humanity, message.humanity, message.max_humanity));
+            message.getThreadListener().addScheduledTask(
+                    new ReceiveAction(
+                            message.humanity, message.lastHumanity, message.hasLostHumanity,
+                            message.hasLostMorphAbility, message.isMarried, message.isMage,
+                            message.highMagicOverride
+                            )
+                    );
             return null;
         }
     }

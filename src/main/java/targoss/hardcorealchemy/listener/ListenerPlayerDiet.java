@@ -103,7 +103,7 @@ public class ListenerPlayerDiet extends ConfiguredListener {
     // the current morph
     // Also called by ListenerPlayerHumanity
     @Optional.Method(modid = ModState.NUTRITION_ID)
-    public static void updateMorphDiet(EntityPlayerMP player) {
+    public static void updateMorphDiet(EntityPlayer player) {
         IMorphing morphing = player.getCapability(MORPHING_CAPABILITY, null);
         CapInterface nutritionCapability = player.getCapability(NUTRITION_CAPABILITY, null);
         if (nutritionCapability == null) {
@@ -189,10 +189,6 @@ public class ListenerPlayerDiet extends ConfiguredListener {
 
     @SubscribeEvent
     public void beforeConsumeFood(PlayerInteractEvent.RightClickItem event) {
-        if (event.getWorld().isRemote) {
-            return;
-        }
-
         ItemStack itemStack = event.getItemStack();
         if (!(itemStack.getItem() instanceof ItemFood)) {
             return;
@@ -221,8 +217,14 @@ public class ListenerPlayerDiet extends ConfiguredListener {
         }
 
         if (!needs.restriction.canEat(itemRestriction)) {
+            /*TODO: Add a client-side silence period that gets reset
+             * each time right click is called, to prevent chat spam,
+             * (can use ticksExisted)
+             */
             event.setCanceled(true);
-            targoss.hardcorealchemy.util.Chat.notify((EntityPlayerMP)player, needs.restriction.getFoodRefusal());
+            if (player.worldObj.isRemote) {
+                targoss.hardcorealchemy.util.Chat.notifySP(needs.restriction.getFoodRefusal());
+            }
         }
     }
     

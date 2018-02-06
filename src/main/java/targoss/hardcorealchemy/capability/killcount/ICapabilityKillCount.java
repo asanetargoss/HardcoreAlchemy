@@ -21,8 +21,24 @@ package targoss.hardcorealchemy.capability.killcount;
 import java.util.Map;
 
 public interface ICapabilityKillCount {
+    /**
+     * Given the name of an entity morph, get the
+     * count of kills associated with the corresponding entity.
+     */
     public abstract int getNumKills(String morphName);
+    /**
+     * Given the name of an entity morph, increment the
+     * count of kills associated with the corresponding entity.
+     */
     public abstract void addKill(String morphName);
+    /**
+     * Gets map (not a copy) between entity morph
+     * names and the number of kills of mobs representing that morph.
+     */
     public abstract Map<String, Integer> getKillCounts();
+    /**
+     * Sets map between entity morph names and the number of
+     * kills of mobs representing that morph.
+     */
     public abstract void setKillCounts(Map<String, Integer> killCounts);
 }

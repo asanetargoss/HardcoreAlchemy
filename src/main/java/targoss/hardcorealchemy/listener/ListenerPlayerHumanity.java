@@ -109,9 +109,7 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
     public void onAttachCapability(AttachCapabilitiesEvent<Entity> event) {
         Entity entity = event.getObject();
         if (entity instanceof EntityPlayer) {
-            if (!entity.worldObj.isRemote) {
-                event.addCapability(HUMANITY_RESOURCE_LOCATION, new ProviderHumanity());
-            }
+            event.addCapability(HUMANITY_RESOURCE_LOCATION, new ProviderHumanity());
             AbstractAttributeMap attributeMap = ((EntityPlayer)entity).getAttributeMap();
             if (attributeMap.getAttributeInstance(MAX_HUMANITY) == null) {
                 attributeMap.registerAttribute(MAX_HUMANITY);
@@ -120,23 +118,19 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
     }
     
     @SubscribeEvent
-    public void onPlayerTickMP(TickEvent.PlayerTickEvent event) {
-        if (event.player.worldObj.isRemote) {
-            return;
-        }
-        EntityPlayerMP player = (EntityPlayerMP)(event.player);
+    public void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (event.phase == Phase.START) {
-            calculateHumanity(player);
+            calculateHumanity(event.player);
         }
     }
     
     @SubscribeEvent
     public void onPlayerEat(LivingEntityUseItemEvent.Finish event) {
         Entity entity = event.getEntity();
-        if (!(entity instanceof EntityPlayerMP)) {
+        if (!(entity instanceof EntityPlayer)) {
             return;
         }
-        EntityPlayerMP player = (EntityPlayerMP)entity;
+        EntityPlayer player = (EntityPlayer)entity;
         ItemStack itemStack = event.getItem();
         if (itemStack == null) {
             return;
@@ -198,10 +192,12 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
         if (event.force || event.isCanceled()) {
             return;
         }
+        
         EntityPlayer player = event.player;
         if (player.worldObj.isRemote) {
             return;
         }
+        
         ICapabilityHumanity capabilityHumanity = player.getCapability(HUMANITY_CAPABILITY, null);
         if (capabilityHumanity == null) {
             return;
@@ -214,13 +210,9 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
     
     @SubscribeEvent
     public void onPlayerPostMorph(MorphEvent.Post event) {
-        EntityPlayer player = event.player;
-        if (player.worldObj.isRemote) {
-            return;
-        }
         // Morphing costs one hunger shank unless you're morphing back into a player
         if (!event.isDemorphing() && !event.force) {
-            FoodStats foodStats = player.getFoodStats();
+            FoodStats foodStats = event.player.getFoodStats();
             foodStats.setFoodLevel(foodStats.getFoodLevel() - 2);
         }
     }
@@ -236,7 +228,7 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
         }
     }
     
-    private void calculateHumanity(EntityPlayerMP player) {
+    private void calculateHumanity(EntityPlayer player) {
         IAttributeInstance maxHumanity = player.getEntityAttribute(MAX_HUMANITY);
         if (maxHumanity == null) {
             return;
@@ -277,12 +269,14 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
             }
         }
         // Notify player via chat if humanity reaches a certain threshold or is lost entirely
-        sendHumanityWarnings(player, oldHumanity, newHumanity);
+        if (player.worldObj.isRemote) {
+            sendHumanityWarnings(player, oldHumanity, newHumanity);
+        }
         capabilityHumanity.setHumanity(newHumanity);
         capabilityHumanity.setLastHumanity(newHumanity);
     }
     
-    private void sendHumanityWarnings(EntityPlayerMP player, double oldHumanity, double newHumanity) {
+    private void sendHumanityWarnings(EntityPlayer player, double oldHumanity, double newHumanity) {
         // We are only interested if humanity decreases
         if (newHumanity >= oldHumanity) {
             return;
@@ -291,20 +285,20 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
         // If humanity passes a critical threshold, display message (most urgent one first)
         if (newHumanity <= 0) {
             // Display lost humanity message
-            Chat.notify((EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.humanity.lost"));
+            Chat.notifySP(new TextComponentTranslation("hardcorealchemy.humanity.lost"));
         }
         else if (newHumanity <= HUMANITY_3MIN_LEFT) {
             if (newHumanity <= HUMANITY_1MIN_LEFT && oldHumanity > HUMANITY_1MIN_LEFT) {
                 // Display 1 minute left message
-                Chat.alarm((EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.humanity.warn3.variant1"));
+                Chat.alarmSP(new TextComponentTranslation("hardcorealchemy.humanity.warn3.variant1"));
             }
             else if (newHumanity <= HUMANITY_2MIN_LEFT && oldHumanity > HUMANITY_2MIN_LEFT) {
                 // Display 2 minutes left message
-                Chat.notify((EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.humanity.warn2.variant1"));
+                Chat.notifySP(new TextComponentTranslation("hardcorealchemy.humanity.warn2.variant1"));
             }
             else if (oldHumanity > HUMANITY_3MIN_LEFT) {
                 // Display 3 minutes left message
-                Chat.notify((EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.humanity.warn1.variant1"));
+                Chat.notifySP(new TextComponentTranslation("hardcorealchemy.humanity.warn1.variant1"));
             }
         }
     }
@@ -315,8 +309,8 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
         if (MorphState.isIncorporeal(event.player) && !event.isDemorphing()) {
             // You're a ghost, so being in a morph doesn't really make sense
             event.setCanceled(true);
-            if (event.player instanceof EntityPlayerMP) {
-                Chat.notify((EntityPlayerMP) (event.player), new TextComponentTranslation("hardcorealchemy.morph.disabled.dead"));
+            if (event.player.worldObj.isRemote) {
+                Chat.notifySP(new TextComponentTranslation("hardcorealchemy.morph.disabled.dead"));
             }
         }
     }

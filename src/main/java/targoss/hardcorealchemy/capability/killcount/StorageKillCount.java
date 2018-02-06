@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import net.minecraft.entity.EntityList;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -51,8 +52,6 @@ public class StorageKillCount implements Capability.IStorage<ICapabilityKillCoun
     @Override
     public void readNBT(Capability<ICapabilityKillCount> capability, ICapabilityKillCount instance, EnumFacing side, NBTBase nbt) {
         Map<String, Integer> killCounts = new HashMap<String, Integer>();
-        // Hurray for pointers!
-        instance.setKillCounts(killCounts);
         if (nbt.hasNoTags() || !(nbt instanceof NBTTagCompound)) {
             return;
         }
@@ -63,8 +62,11 @@ public class StorageKillCount implements Capability.IStorage<ICapabilityKillCoun
                 // Empty string not allowed!
                 continue;
             }
-            killCounts.put(key, nbtKills.getInteger(key));
+            if (EntityList.NAME_TO_CLASS.containsKey(key)) {
+                killCounts.put(key, nbtKills.getInteger(key));
+            }
         }
+        instance.setKillCounts(killCounts);
     }
 
 }

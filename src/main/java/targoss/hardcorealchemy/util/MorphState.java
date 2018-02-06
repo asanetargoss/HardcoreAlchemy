@@ -50,12 +50,12 @@ public class MorphState {
         return MorphManager.INSTANCE.morphFromNBT(morphProperties);
     }
     
-    public static boolean forceForm(EntityPlayerMP player, LostMorphReason reason,
+    public static boolean forceForm(EntityPlayer player, LostMorphReason reason,
             String morphName) {
         return forceForm(player, reason, createMorph(morphName));
     }
 
-    public static boolean forceForm(EntityPlayerMP player, LostMorphReason reason,
+    public static boolean forceForm(EntityPlayer player, LostMorphReason reason,
             String morphName, NBTTagCompound morphProperties) {
         return forceForm(player, reason, createMorph(morphName, morphProperties));
     }
@@ -65,7 +65,7 @@ public class MorphState {
      * with the given reason, and updates the player's needs
      * Returns true if successful
      */
-    public static boolean forceForm(EntityPlayerMP player, LostMorphReason reason,
+    public static boolean forceForm(EntityPlayer player, LostMorphReason reason,
             AbstractMorph morph) {
         IMorphing morphing = player.getCapability(ListenerPlayerHumanity.MORPHING_CAPABILITY, null);
         if (morphing == null) {

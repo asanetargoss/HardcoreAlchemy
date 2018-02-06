@@ -18,11 +18,14 @@
 
 package targoss.hardcorealchemy.util;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class Chat {
     
@@ -52,5 +55,20 @@ public class Chat {
     
     public static void alarm(EntityPlayerMP player, ITextComponent message) {
         player.addChatMessage(message.setStyle(RED_ITALIC));
+    }
+    
+    @SideOnly(Side.CLIENT)
+    public static void notifySP(ITextComponent message) {
+        Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(message.setStyle(LIGHT_GREY_ITALIC));
+    }
+    
+    @SideOnly(Side.CLIENT)
+    public static void notifyMagicalSP(ITextComponent message) {
+        Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(message.setStyle(BLUE_ITALIC));
+    }
+    
+    @SideOnly(Side.CLIENT)
+    public static void alarmSP(ITextComponent message) {
+        Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(message.setStyle(RED_ITALIC));
     }
 }
