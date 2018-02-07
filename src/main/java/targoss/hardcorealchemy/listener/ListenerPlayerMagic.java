@@ -82,9 +82,6 @@ public class ListenerPlayerMagic extends ConfiguredListener {
     @CapabilityInject(ICapabilityHumanity.class)
     public static final Capability<ICapabilityHumanity> HUMANITY_CAPABILITY = null;
     
-    // Client-side flag. The humanity capability is not used on the client-side, so this value is authoritative.
-    public static boolean canUseHighMagic = false;
-    
     static {
         HIGH_MAGIC_MODS = new HashSet<String>();
         HIGH_MAGIC_MODS.add("arsmagica2");

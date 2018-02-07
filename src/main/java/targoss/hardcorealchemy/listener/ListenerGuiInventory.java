@@ -19,7 +19,6 @@
 package targoss.hardcorealchemy.listener;
 
 import static targoss.hardcorealchemy.listener.ListenerPlayerMagic.MAGIC_ITEM_ALLOW_CRAFT;
-import static targoss.hardcorealchemy.listener.ListenerPlayerMagic.canUseHighMagic;
 import static targoss.hardcorealchemy.listener.ListenerPlayerMagic.isAllowed;
 
 import java.util.List;
@@ -40,6 +39,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.capability.CapUtil;
 import targoss.hardcorealchemy.capability.food.ICapabilityFood;
+import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.util.FoodLists;
 import targoss.hardcorealchemy.util.MorphDiet;
@@ -50,6 +50,9 @@ public class ListenerGuiInventory extends ConfiguredListener {
     }
 
     private final Minecraft mc = Minecraft.getMinecraft();
+    
+    @CapabilityInject(ICapabilityHumanity.class)
+    public static final Capability<ICapabilityHumanity> HUMANITY_CAPABILITY = null;
     
     @CapabilityInject(ICapabilityFood.class)
     public static final Capability<ICapabilityFood> FOOD_CAPABILITY = null;
@@ -84,8 +87,14 @@ public class ListenerGuiInventory extends ConfiguredListener {
                 !(((GuiContainer)gui).theSlot instanceof SlotCrafting)) {
             return;
         }
+        
+        ICapabilityHumanity humanity = mc.thePlayer.getCapability(HUMANITY_CAPABILITY, null);
+        if (humanity == null || humanity.canUseHighMagic()) {
+            return;
+        }
+        
         ItemStack craftResult = event.getItemStack();
-        if (!canUseHighMagic && !isAllowed(MAGIC_ITEM_ALLOW_CRAFT, craftResult)) {
+        if (!isAllowed(MAGIC_ITEM_ALLOW_CRAFT, craftResult)) {
             event.getToolTip().add(TextFormatting.DARK_GRAY.toString() + new TextComponentTranslation("hardcorealchemy.magic.disabled.crafttooltip").getUnformattedText());
         }
     }
