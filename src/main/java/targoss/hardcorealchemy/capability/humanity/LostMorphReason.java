@@ -27,9 +27,7 @@ public enum LostMorphReason {
     NO_ABILITY,
     /** When a player spends too much time as a morph */
     LOST_HUMANITY,
-    MARRIED,
-    /** When a player uses high magic for the first time */
-    MAGE
+    MARRIED
     ;
     
     private static Map<String, LostMorphReason> stringMap;

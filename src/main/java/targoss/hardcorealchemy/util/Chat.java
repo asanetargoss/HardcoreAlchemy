@@ -31,7 +31,6 @@ public class Chat {
     
     public static Style LIGHT_GREY_ITALIC;
     public static Style RED_ITALIC;
-    public static Style BLUE_ITALIC;
     
     static {
         LIGHT_GREY_ITALIC = new Style();
@@ -40,17 +39,10 @@ public class Chat {
         RED_ITALIC = new Style();
         RED_ITALIC.setItalic(true);
         RED_ITALIC.setColor(TextFormatting.DARK_RED);
-        BLUE_ITALIC = new Style();
-        BLUE_ITALIC.setItalic(true);
-        BLUE_ITALIC.setColor(TextFormatting.DARK_AQUA);
     }
     
     public static void notify(EntityPlayerMP player, ITextComponent message) {
         player.addChatMessage(message.setStyle(LIGHT_GREY_ITALIC));
-    }
-    
-    public static void notifyMagical(EntityPlayerMP player, ITextComponent message) {
-        player.addChatMessage(message.setStyle(BLUE_ITALIC));
     }
     
     public static void alarm(EntityPlayerMP player, ITextComponent message) {
@@ -60,11 +52,6 @@ public class Chat {
     @SideOnly(Side.CLIENT)
     public static void notifySP(ITextComponent message) {
         Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(message.setStyle(LIGHT_GREY_ITALIC));
-    }
-    
-    @SideOnly(Side.CLIENT)
-    public static void notifyMagicalSP(ITextComponent message) {
-        Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(message.setStyle(BLUE_ITALIC));
     }
     
     @SideOnly(Side.CLIENT)

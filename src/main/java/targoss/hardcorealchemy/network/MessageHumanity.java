@@ -37,8 +37,6 @@ public class MessageHumanity extends MessageToClient {
     public boolean hasLostHumanity;
     public boolean hasLostMorphAbility;
     public boolean isMarried;
-    public boolean isMage;
-    public boolean highMagicOverride;
     
     public MessageHumanity(ICapabilityHumanity humanity) {
         this.humanity = humanity.getHumanity();
@@ -46,8 +44,6 @@ public class MessageHumanity extends MessageToClient {
         this.hasLostHumanity = humanity.getHasLostHumanity();
         this.hasLostMorphAbility = humanity.getHasLostMorphAbility();
         this.isMarried = humanity.getIsMarried();
-        this.isMage = humanity.getIsMage();
-        this.highMagicOverride = humanity.getHighMagicOverride();
     }
 
     @Override
@@ -57,8 +53,6 @@ public class MessageHumanity extends MessageToClient {
         buf.writeBoolean(hasLostHumanity);
         buf.writeBoolean(hasLostMorphAbility);
         buf.writeBoolean(isMarried);
-        buf.writeBoolean(isMage);
-        buf.writeBoolean(highMagicOverride);
     }
 
     @Override
@@ -68,8 +62,6 @@ public class MessageHumanity extends MessageToClient {
         hasLostHumanity = buf.readBoolean();
         hasLostMorphAbility = buf.readBoolean();
         isMarried = buf.readBoolean();
-        isMage = buf.readBoolean();
-        highMagicOverride = buf.readBoolean();
     }
     
     public static class ReceiveAction implements Runnable {
@@ -81,18 +73,14 @@ public class MessageHumanity extends MessageToClient {
         private boolean hasLostHumanity;
         private boolean hasLostMorphAbility;
         private boolean isMarried;
-        private boolean isMage;
-        private boolean highMagicOverride;
         
         public ReceiveAction(double humanity, double lastHumanity, boolean hasLostHumanity,
-                boolean hasLostMorphAbility, boolean isMarried, boolean isMage,
-                boolean highMagicOverride) {
+                boolean hasLostMorphAbility, boolean isMarried) {
             this.humanity = humanity;
             this.lastHumanity = lastHumanity;
             this.hasLostHumanity = hasLostHumanity;
             this.hasLostMorphAbility = hasLostMorphAbility;
             this.isMarried = isMarried;
-            this.highMagicOverride = highMagicOverride;
         }
         
         @Override
@@ -104,8 +92,6 @@ public class MessageHumanity extends MessageToClient {
                 humanity.setHasLostHumanity(this.hasLostHumanity);
                 humanity.setHasLostMorphAbility(this.hasLostMorphAbility);
                 humanity.setIsMarried(this.isMarried);
-                humanity.setIsMage(this.isMage);
-                humanity.setHighMagicOverride(this.highMagicOverride);
             }
         }
     }
@@ -116,9 +102,7 @@ public class MessageHumanity extends MessageToClient {
             message.getThreadListener().addScheduledTask(
                     new ReceiveAction(
                             message.humanity, message.lastHumanity, message.hasLostHumanity,
-                            message.hasLostMorphAbility, message.isMarried, message.isMage,
-                            message.highMagicOverride
-                            )
+                            message.hasLostMorphAbility, message.isMarried)
                     );
             return null;
         }

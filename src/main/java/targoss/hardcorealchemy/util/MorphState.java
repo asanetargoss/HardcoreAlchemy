@@ -26,19 +26,26 @@ import mchorse.metamorph.api.MorphAPI;
 import mchorse.metamorph.api.MorphManager;
 import mchorse.metamorph.api.morphs.AbstractMorph;
 import mchorse.metamorph.capabilities.morphing.IMorphing;
+import mchorse.metamorph.capabilities.morphing.Morphing;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.Optional.Method;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.capability.humanity.LostMorphReason;
+import targoss.hardcorealchemy.item.Items;
 import targoss.hardcorealchemy.listener.ListenerPlayerDiet;
 import targoss.hardcorealchemy.listener.ListenerPlayerHumanity;
 import targoss.hardcorealchemy.listener.ListenerPlayerMagic;
 
 public class MorphState {
+    @CapabilityInject(ICapabilityHumanity.class)
+    public static final Capability<ICapabilityHumanity> HUMANITY_CAPABILITY = null;
+
     public static float[] PLAYER_WIDTH_HEIGHT = new float[]{ 0.6F, 1.8F };
     
     public static AbstractMorph createMorph(String morphName) {
@@ -94,23 +101,36 @@ public class MorphState {
                 // Prevent showing the player a message that their humanity has changed
                 capabilityHumanity.setLastHumanity(humanity);
             }
-            capabilityHumanity.setHighMagicOverride(morph == null ? false : ListenerPlayerHumanity.HIGH_MAGIC_MORPHS.contains(morph.name));
             
             // These morph-specific trait changes only affect players whose form is permanent
-            if (!capabilityHumanity.canUseHighMagic()) {
-                if (ModState.isArsMagicaLoaded) {
-                    ListenerPlayerMagic.eraseSpellMagic(player);
-                }
-                if (ModState.isProjectELoaded) {
-                    ListenerPlayerMagic.eraseEMC(player);
-                }
-            }
+            /*TODO: Make it so a permanent morph's Ars Magica affinitys are
+             * "suppressed" (ie stored elsewhere and replaced with zeros)
+             * unless a player is under the effect of the allow_magic potion
+             */
             if (ModState.isNutritionLoaded) {
                 ListenerPlayerDiet.updateMorphDiet(player);
             }
         }
         
         return success;
+    }
+    
+    public static boolean canUseHighMagic(EntityPlayer player) {
+        IMorphing morphing = Morphing.get(player);
+        if (morphing == null || morphing.getCurrentMorph() == null) {
+            return true;
+        }
+        
+        ICapabilityHumanity humanity = player.getCapability(HUMANITY_CAPABILITY, null);
+        if (humanity == null || humanity.canMorph()) {
+            return true;
+        }
+        
+        if (player.getActivePotionEffect(Items.POTION_ALLOW_MAGIC) != null) {
+            return true;
+        }
+        
+        return false;
     }
 
     @Optional.Method(modid = ModState.DISSOLUTION_ID)

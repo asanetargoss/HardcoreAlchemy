@@ -43,6 +43,7 @@ import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.util.FoodLists;
 import targoss.hardcorealchemy.util.MorphDiet;
+import targoss.hardcorealchemy.util.MorphState;
 
 public class ListenerGuiInventory extends ConfiguredListener {
     public ListenerGuiInventory(Configs configs) {
@@ -88,8 +89,7 @@ public class ListenerGuiInventory extends ConfiguredListener {
             return;
         }
         
-        ICapabilityHumanity humanity = mc.thePlayer.getCapability(HUMANITY_CAPABILITY, null);
-        if (humanity == null || humanity.canUseHighMagic()) {
+        if (MorphState.canUseHighMagic(mc.thePlayer)) {
             return;
         }
         

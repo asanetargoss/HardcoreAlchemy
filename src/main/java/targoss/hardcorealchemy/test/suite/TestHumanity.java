@@ -58,7 +58,6 @@ public class TestHumanity implements ITestSuite {
         tests.put("humanity decrease", this::humanityDecrease);
         tests.put("humanity restore", this::humanityRestore);
         tests.put("humanity loss stops morphing", this::humanityLost);
-        tests.put("becoming mage stops morphing", this::mageCantMorph);
         
         return tests;
     }
@@ -136,18 +135,5 @@ public class TestHumanity implements ITestSuite {
         
         // The player should fail to morph
         return !MorphAPI.morph(player, null, false);
-    }
-    
-    public boolean mageCantMorph() {
-        FakePlayer player = UniqueFakePlayer.create();
-        // Give player a potential morph
-        AbstractMorph targetMorph = createMorph();
-        MorphAPI.acquire(player, targetMorph);
-        
-        // Make player become a mage
-        MorphState.forceForm(player, LostMorphReason.MAGE, (AbstractMorph)null);
-        
-        // Attempt morph
-        return !MorphAPI.morph(player, targetMorph, false);
     }
 }

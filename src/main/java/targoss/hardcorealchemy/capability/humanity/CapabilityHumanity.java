@@ -41,8 +41,6 @@ public class CapabilityHumanity implements ICapabilityHumanity {
     private boolean hasLostHumanity;
     private boolean hasLostMorphAbility;
     private boolean isMarried;
-    private boolean isMage;
-    private boolean highMagicOverride;
     
     public static void register() {
         CapabilityManager.INSTANCE.register(ICapabilityHumanity.class, new StorageHumanity(), CapabilityHumanity.class);
@@ -54,8 +52,6 @@ public class CapabilityHumanity implements ICapabilityHumanity {
         hasLostHumanity = false;
         hasLostMorphAbility = false;
         isMarried = false;
-        isMage = false;
-        highMagicOverride = false;
         notifiedMagicFail = false;
     }
     
@@ -80,25 +76,12 @@ public class CapabilityHumanity implements ICapabilityHumanity {
     }
     
     @Override
-    public void setIsMage(boolean isMage) {
-        this.isMage = isMage;
-    }
-    
-    @Override
-    public void setHighMagicOverride(boolean highMagicOverride) {
-        this.highMagicOverride = highMagicOverride;
-    }
-    
-    @Override
     public void loseMorphAbilityFor(LostMorphReason reason) {
         switch (reason) {
         case LOST_HUMANITY:
             this.hasLostHumanity = true;
             this.isMarried = false;
             this.hasLostMorphAbility = false;
-            break;
-        case MAGE:
-            this.isMage = true;
             break;
         case MARRIED:
             this.isMarried = true;
@@ -108,7 +91,6 @@ public class CapabilityHumanity implements ICapabilityHumanity {
         case NO_ABILITY:
             this.hasLostMorphAbility = true;
             this.isMarried = false;
-            this.isMage = false;
             this.hasLostHumanity = false;
             break;
         default:
@@ -127,28 +109,13 @@ public class CapabilityHumanity implements ICapabilityHumanity {
     }
     
     @Override
-    public boolean getIsMage() {
-        return isMage;
-    }
-    
-    @Override
-    public boolean getHighMagicOverride() {
-        return highMagicOverride;
-    }
-    
-    @Override
     public boolean canMorph() {
-        return !(hasLostHumanity || hasLostMorphAbility || isMarried || isMage);
-    }
-    
-    @Override
-    public boolean canUseHighMagic() {
-        return !(hasLostHumanity || hasLostMorphAbility) || highMagicOverride;
+        return !(hasLostHumanity || hasLostMorphAbility || isMarried);
     }
     
     @Override
     public boolean shouldDisplayHumanity() {
-        return humanity > 0 && !(hasLostHumanity || hasLostMorphAbility || isMarried || isMage);
+        return humanity > 0 && !(hasLostHumanity || hasLostMorphAbility || isMarried);
     }
     
     @Override
@@ -161,9 +128,6 @@ public class CapabilityHumanity implements ICapabilityHumanity {
         }
         if (isMarried) {
             return new TextComponentTranslation("hardcorealchemy.morph.disabled.marriage");
-        }
-        if (isMage) {
-            return new TextComponentTranslation("hardcorealchemy.morph.disabled.mage");
         }
         return new TextComponentString("");
     }

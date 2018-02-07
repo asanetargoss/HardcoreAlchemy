@@ -32,8 +32,6 @@ public interface ICapabilityHumanity {
     public abstract void setHasLostHumanity(boolean hasLostHumanity);
     public abstract void setHasLostMorphAbility(boolean hasLostMorphAbility);
     public abstract void setIsMarried(boolean isMarried);
-    public abstract void setIsMage(boolean isMage);
-    public abstract void setHighMagicOverride(boolean highMagicOverride);
     public abstract void loseMorphAbilityFor(LostMorphReason reason);
     
     public abstract double getHumanity();
@@ -41,10 +39,7 @@ public interface ICapabilityHumanity {
     public abstract boolean getHasLostHumanity();
     public abstract boolean getHasLostMorphAbility();
     public abstract boolean getIsMarried();
-    public abstract boolean getIsMage();
-    public abstract boolean getHighMagicOverride();
     public abstract boolean canMorph();
-    public abstract boolean canUseHighMagic();
     public abstract ITextComponent explainWhyCantMorph();
     public abstract boolean shouldDisplayHumanity();
     

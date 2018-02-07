@@ -81,16 +81,6 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
     @CapabilityInject(IMorphing.class)
     public static final Capability<IMorphing> MORPHING_CAPABILITY = null;
     
-    // Players stuck in these morphs will still be capable of all forms of magic
-    public static final Set<String> HIGH_MAGIC_MORPHS = new HashSet<String>();
-    
-    static {
-        HIGH_MAGIC_MORPHS.add("Skeleton");
-        HIGH_MAGIC_MORPHS.add("PigZombie");
-        HIGH_MAGIC_MORPHS.add("Blaze");
-        HIGH_MAGIC_MORPHS.add("Enderman");
-    }
-    
     private static Item ROTTEN_FLESH;
     private static Item CHORUS_FRUIT;
     private static Item GOLDEN_APPLE;

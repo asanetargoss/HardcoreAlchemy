@@ -148,7 +148,7 @@ public class ListenerPlayerMagic extends ConfiguredListener {
     public void onRightClickItem(PlayerInteractEvent.RightClickItem event) {
         EntityPlayer player = event.getEntityPlayer();
         ICapabilityHumanity capabilityHumanity = player.getCapability(HUMANITY_CAPABILITY, null);
-        if (capabilityHumanity == null || capabilityHumanity.canUseHighMagic()) {
+        if (capabilityHumanity == null || MorphState.canUseHighMagic(player)) {
             return;
         }
         if (!isAllowed(MAGIC_ITEM_ALLOW_USE, event.getItemStack())) {
@@ -167,7 +167,7 @@ public class ListenerPlayerMagic extends ConfiguredListener {
         Block block = event.getWorld().getBlockState(event.getPos()).getBlock();
         EntityPlayer player = event.getEntityPlayer();
         ICapabilityHumanity capabilityHumanity = player.getCapability(HUMANITY_CAPABILITY, null);
-        if (capabilityHumanity == null || capabilityHumanity.canUseHighMagic()) {
+        if (capabilityHumanity == null || MorphState.canUseHighMagic(player)) {
             return;
         }
         if (!isAllowed(MAGIC_BLOCK_ALLOW_USE, block)) {
@@ -194,7 +194,7 @@ public class ListenerPlayerMagic extends ConfiguredListener {
         EntityPlayer player = event.player;
         ICapabilityHumanity capabilityHumanity = player.getCapability(HUMANITY_CAPABILITY, null);
         if (capabilityHumanity != null &&
-                !capabilityHumanity.canUseHighMagic() &&
+                !MorphState.canUseHighMagic(player) &&
                 !isAllowed(MAGIC_ITEM_ALLOW_CRAFT, craftResult)) {
             event.setCanceled(true);
             if (!capabilityHumanity.getNotifiedMagicFail()) {
@@ -209,7 +209,7 @@ public class ListenerPlayerMagic extends ConfiguredListener {
     @CoremodHook
     public static boolean canUseProjectEKeybinds(EntityPlayerMP player) {
         ICapabilityHumanity capabilityHumanity = player.getCapability(HUMANITY_CAPABILITY, null);
-        if (capabilityHumanity == null || capabilityHumanity.canUseHighMagic()) {
+        if (capabilityHumanity == null || MorphState.canUseHighMagic(player)) {
             return true;
         }
         if (!capabilityHumanity.getNotifiedMagicFail()) {
@@ -217,38 +217,6 @@ public class ListenerPlayerMagic extends ConfiguredListener {
             Chat.notify(player, new TextComponentTranslation("hardcorealchemy.magic.disabled.projectekeypress"));
         }
         return false;
-    }
-    
-    // When a player chooses the path of a spellcaster, they lose the ability to morph
-    @Optional.Method(modid = ModState.ARS_MAGICA_ID)
-    @SubscribeEvent
-    public void onCastFirstSpell(SpellCastEvent.Pre event) {
-        EntityLivingBase entity = event.entityLiving;
-        if (!(entity instanceof EntityPlayer)) {
-            return;
-        }
-        EntityPlayer player = (EntityPlayer)entity;
-        ICapabilityHumanity humanityCapability = player.getCapability(HUMANITY_CAPABILITY, null);
-        if (humanityCapability != null && !humanityCapability.getIsMage()) {
-            IMorphing morphing = Morphing.get(player);
-            if (morphing != null) {
-                AbstractMorph morph = morphing.getCurrentMorph();
-                /* Casting a spell makes you lose the ability to morph.
-                 * Normally, this makes you stuck as a human.
-                 * However, some morphs can still use spells, resulting
-                 * in the player being stuck as that morph.
-                 */
-                if (morph != null && ListenerPlayerHumanity.HIGH_MAGIC_MORPHS.contains(morph.name)) {
-                    MorphState.forceForm(player, LostMorphReason.MAGE, morph);
-                }
-                else {
-                    MorphState.forceForm(player, LostMorphReason.MAGE, (AbstractMorph)null);
-                }
-            }
-            if (player.worldObj.isRemote) {
-                Chat.notifyMagicalSP(new TextComponentTranslation("hardcorealchemy.magic.becomemage"));
-            }
-        }
     }
     
     @SubscribeEvent
