@@ -42,6 +42,7 @@ import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.SlotCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -206,16 +207,14 @@ public class ListenerPlayerMagic extends ConfiguredListener {
     }
     
     @CoremodHook
-    public static boolean canUseProjectEKeybinds(EntityPlayer player) {
+    public static boolean canUseProjectEKeybinds(EntityPlayerMP player) {
         ICapabilityHumanity capabilityHumanity = player.getCapability(HUMANITY_CAPABILITY, null);
         if (capabilityHumanity == null || capabilityHumanity.canUseHighMagic()) {
             return true;
         }
         if (!capabilityHumanity.getNotifiedMagicFail()) {
             capabilityHumanity.setNotifiedMagicFail(true);
-            if (player.worldObj.isRemote) {
-                Chat.notifySP(new TextComponentTranslation("hardcorealchemy.magic.disabled.projectekeypress"));
-            }
+            Chat.notify(player, new TextComponentTranslation("hardcorealchemy.magic.disabled.projectekeypress"));
         }
         return false;
     }
