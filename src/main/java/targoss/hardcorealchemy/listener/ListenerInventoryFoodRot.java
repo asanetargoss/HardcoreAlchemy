@@ -46,7 +46,6 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -193,10 +192,9 @@ public class ListenerInventoryFoodRot extends ConfiguredListener {
             }
         }
         // Check if this inventory is a backpack item from IronBackpacks, and if so update the item nbt
-        //TODO: Figure out what to do if this is a backpack on a player's back
         if (inventory.getClass() == InvWrapper.class) {
             IInventory iInventory = ((InvWrapper)inventory).getInv();
-            if (iInventory instanceof InventoryBackpack) {
+            if (ModState.isIronBackpacksLoaded && iInventory instanceof InventoryBackpack) {
                 ItemStack backpackStack = ((InventoryBackpack)iInventory).getBackpackStack();
                 saveIronBackpackNbt(inventory, backpackStack);
             }
@@ -240,7 +238,7 @@ public class ListenerInventoryFoodRot extends ConfiguredListener {
             }
         }
         // Check if this is a backpack itemstack from the iron backpacks mod
-        if (itemStack.getItem() instanceof ItemBackpack) {
+        if (ModState.isIronBackpacksLoaded && itemStack.getItem() instanceof ItemBackpack) {
             inventories.add(new InvWrapper(new InventoryBackpack(itemStack, true)));
         }
         
