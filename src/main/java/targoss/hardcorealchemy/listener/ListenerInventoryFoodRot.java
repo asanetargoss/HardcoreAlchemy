@@ -44,13 +44,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.ForgeChunkManager;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import targoss.hardcorealchemy.ModState;
@@ -60,9 +59,6 @@ public class ListenerInventoryFoodRot extends ConfiguredListener {
     public ListenerInventoryFoodRot(Configs configs) {
         super(configs);
     }
-
-    @CapabilityInject(IItemHandler.class)
-    public static Capability<IItemHandler> ITEM_HANDLER_CAPABILITY = null;
     
     // Half life of food in ticks (20 days)
     public static final float FOOD_DECAY_HALF_LIFE = 24000.0F * 20.0F;
@@ -232,7 +228,7 @@ public class ListenerInventoryFoodRot extends ConfiguredListener {
         
         // Check if the stack has the item handler capability
         {
-            IItemHandler inventory = itemStack.getCapability(ITEM_HANDLER_CAPABILITY, null);
+            IItemHandler inventory = itemStack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
             if (inventory != null) {
                 inventories.add(inventory);
             }
@@ -249,7 +245,7 @@ public class ListenerInventoryFoodRot extends ConfiguredListener {
     public static List<IItemHandler> getInventories(@Nonnull TileEntity tileEntity) {
         List<IItemHandler> inventories = new ArrayList<>();
         
-        IItemHandler inventory = tileEntity.getCapability(ITEM_HANDLER_CAPABILITY, null);
+        IItemHandler inventory = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
         if (inventory != null) {
             inventories.add(inventory);
         }

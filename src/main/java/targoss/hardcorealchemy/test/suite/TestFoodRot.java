@@ -30,18 +30,13 @@ import moze_intel.projecte.gameObjs.tiles.AlchChestTile;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.world.DimensionType;
-import net.minecraft.world.WorldServer;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.listener.ListenerInventoryFoodRot;
-import targoss.hardcorealchemy.test.HardcoreAlchemyTests;
 import targoss.hardcorealchemy.test.api.ITestList;
 import targoss.hardcorealchemy.test.api.ITestSuite;
 import targoss.hardcorealchemy.test.api.TestList;
@@ -75,8 +70,6 @@ public class TestFoodRot implements ITestSuite {
         return tests;
     }
     
-    @CapabilityInject(IItemHandler.class)
-    public static Capability<IItemHandler> ITEM_HANDLER_CAPABILITY = null;
     public static final ItemStack NO_ITEM = null;
     
     public static ItemStack createFood() {
@@ -85,7 +78,7 @@ public class TestFoodRot implements ITestSuite {
     
     public boolean checkInsertChest() {
         TileEntityChest chest = new TileEntityChest();
-        IItemHandler inventory = chest.getCapability(ITEM_HANDLER_CAPABILITY, null);
+        IItemHandler inventory = chest.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
         int slots = inventory.getSlots();
         
         for (int i=0; i<slots; i++) {
@@ -139,7 +132,7 @@ public class TestFoodRot implements ITestSuite {
     
     public static boolean decayChestAtRate(float decayRate) {
         TileEntityChest chest = new TileEntityChest();
-        IItemHandler inventory = chest.getCapability(ITEM_HANDLER_CAPABILITY, null);
+        IItemHandler inventory = chest.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
         int slots = inventory.getSlots();
         
         int initialFood = fillSlotsWithFood(inventory);
