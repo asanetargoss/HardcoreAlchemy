@@ -46,9 +46,6 @@ public class ProviderCombatLevel implements IWailaEntityProvider {
         return EntityLiving.class;
     }
     
-    @CapabilityInject(ICapabilityCombatLevel.class)
-    public static final Capability<ICapabilityCombatLevel> COMBAT_LEVEL_CAPABILITY = null;
-    
     @Override
     public Entity getWailaOverride(IWailaEntityAccessor accessor, IWailaConfigHandler config) {
         return null;
@@ -82,7 +79,9 @@ public class ProviderCombatLevel implements IWailaEntityProvider {
 
     @Override
     public NBTTagCompound getNBTData(EntityPlayerMP player, Entity ent, NBTTagCompound tag, World world) {
-        ICapabilityCombatLevel combatLevel = ent.getCapability(COMBAT_LEVEL_CAPABILITY, null);
+        ICapabilityCombatLevel combatLevel = ent.getCapability(
+                targoss.hardcorealchemy.capability.combatlevel.ProviderCombatLevel.COMBAT_LEVEL_CAPABILITY,
+                null);
         if (combatLevel != null) {
             tag.setInteger(NBT_LABEL_LEVEL, combatLevel.getValue());
             tag.setBoolean(NBT_LABEL_LEVEL_DEFINED, true);
