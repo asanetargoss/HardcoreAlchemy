@@ -42,10 +42,6 @@ public class CapabilityHumanity implements ICapabilityHumanity {
     private boolean hasLostMorphAbility;
     private boolean isMarried;
     
-    public static void register() {
-        CapabilityManager.INSTANCE.register(ICapabilityHumanity.class, new StorageHumanity(), CapabilityHumanity.class);
-    }
-    
     public CapabilityHumanity() {
         humanity = DEFAULT_HUMANITY_VALUE;
         lastHumanity = DEFAULT_HUMANITY_VALUE;

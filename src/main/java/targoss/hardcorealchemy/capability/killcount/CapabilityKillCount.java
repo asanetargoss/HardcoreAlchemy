@@ -32,10 +32,6 @@ public class CapabilityKillCount implements ICapabilityKillCount {
     
     public Map<String, Integer> killCounts = Collections.synchronizedMap(new HashMap<String, Integer>());
     
-    public static void register() {
-        CapabilityManager.INSTANCE.register(ICapabilityKillCount.class, new StorageKillCount(), CapabilityKillCount.class);
-    }
-    
     @Override
     public int getNumKills(String morphName) {
         Integer kills = killCounts.get(morphName);

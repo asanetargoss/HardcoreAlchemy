@@ -27,6 +27,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -34,11 +35,22 @@ import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
+import targoss.hardcorealchemy.capability.CapUtil;
 import targoss.hardcorealchemy.capability.combatlevel.CapabilityCombatLevel;
+import targoss.hardcorealchemy.capability.combatlevel.ICapabilityCombatLevel;
+import targoss.hardcorealchemy.capability.combatlevel.StorageCombatLevel;
 import targoss.hardcorealchemy.capability.food.CapabilityFood;
+import targoss.hardcorealchemy.capability.food.ICapabilityFood;
+import targoss.hardcorealchemy.capability.food.StorageFood;
 import targoss.hardcorealchemy.capability.humanity.CapabilityHumanity;
+import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
+import targoss.hardcorealchemy.capability.humanity.StorageHumanity;
 import targoss.hardcorealchemy.capability.killcount.CapabilityKillCount;
+import targoss.hardcorealchemy.capability.killcount.ICapabilityKillCount;
+import targoss.hardcorealchemy.capability.killcount.StorageKillCount;
 import targoss.hardcorealchemy.capability.serverdata.CapabilityServerData;
+import targoss.hardcorealchemy.capability.serverdata.ICapabilityServerData;
+import targoss.hardcorealchemy.capability.serverdata.StorageServerData;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.listener.ConfiguredListener;
 import targoss.hardcorealchemy.listener.ListenerSmallTweaks;
@@ -100,11 +112,12 @@ public class CommonProxy {
     }
     
     public static final void registerCapabilities() {
-        CapabilityKillCount.register();
-        CapabilityHumanity.register();
-        CapabilityCombatLevel.register();
-        CapabilityFood.register();
-        CapabilityServerData.register();
+        CapabilityManager.INSTANCE.register(ICapabilityKillCount.class, new StorageKillCount(), CapabilityKillCount.class);
+        CapabilityManager.INSTANCE.register(ICapabilityHumanity.class, new StorageHumanity(), CapabilityHumanity.class);
+        CapabilityManager.INSTANCE.register(ICapabilityCombatLevel.class, new StorageCombatLevel(), CapabilityCombatLevel.class);
+        CapabilityManager.INSTANCE.register(ICapabilityFood.class, new StorageFood(), CapabilityFood.class);
+        CapUtil.registerVirtualCapability(CapabilityFood.RESOURCE_LOCATION, CapabilityFood.FOOD_CAPABILITY);
+        CapabilityManager.INSTANCE.register(ICapabilityServerData.class, new StorageServerData(), CapabilityServerData.class);
     }
     
     public static final void registerNetworking() {

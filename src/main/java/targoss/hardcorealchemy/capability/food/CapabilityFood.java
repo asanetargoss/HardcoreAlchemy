@@ -35,11 +35,6 @@ public class CapabilityFood implements ICapabilityFood {
     
     private MorphDiet.Restriction restriction;
     
-    public static void register() {
-        CapabilityManager.INSTANCE.register(ICapabilityFood.class, new StorageFood(), CapabilityFood.class);
-        CapUtil.registerVirtualCapability(RESOURCE_LOCATION, FOOD_CAPABILITY);
-    }
-    
     public CapabilityFood() {
         this.restriction = null;
     }

@@ -37,10 +37,6 @@ public class CapabilityCombatLevel implements ICapabilityCombatLevel {
         this.hasCombatLevel = false;
     }
     
-    public static void register() {
-        CapabilityManager.INSTANCE.register(ICapabilityCombatLevel.class, new StorageCombatLevel(), CapabilityCombatLevel.class);
-    }
-    
     @Override
     public int getValue() {
         return combatLevel;
