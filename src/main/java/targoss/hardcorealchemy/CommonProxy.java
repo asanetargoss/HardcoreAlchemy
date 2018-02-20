@@ -45,6 +45,9 @@ import targoss.hardcorealchemy.capability.food.StorageFood;
 import targoss.hardcorealchemy.capability.humanity.CapabilityHumanity;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.capability.humanity.StorageHumanity;
+import targoss.hardcorealchemy.capability.inactive.IInactiveCapabilities;
+import targoss.hardcorealchemy.capability.inactive.InactiveCapabilities;
+import targoss.hardcorealchemy.capability.inactive.StorageInactiveCapabilities;
 import targoss.hardcorealchemy.capability.killcount.CapabilityKillCount;
 import targoss.hardcorealchemy.capability.killcount.ICapabilityKillCount;
 import targoss.hardcorealchemy.capability.killcount.StorageKillCount;
@@ -62,6 +65,7 @@ import targoss.hardcorealchemy.listener.ListenerPacketUpdatePlayer;
 import targoss.hardcorealchemy.listener.ListenerPlayerDiet;
 import targoss.hardcorealchemy.listener.ListenerPlayerHumanity;
 import targoss.hardcorealchemy.listener.ListenerPlayerMagic;
+import targoss.hardcorealchemy.listener.ListenerPlayerMagicState;
 import targoss.hardcorealchemy.listener.ListenerPlayerMorphs;
 import targoss.hardcorealchemy.listener.ListenerWorldDifficulty;
 import targoss.hardcorealchemy.network.PacketHandler;
@@ -80,6 +84,7 @@ public class CommonProxy {
                 ListenerSmallTweaks.class,
                 ListenerInventoryFoodRot.class,
                 ListenerWorldDifficulty.class,
+                ListenerPlayerMagicState.class,
                 ListenerCrops.class // 1.10-specific
             );
     
@@ -118,6 +123,7 @@ public class CommonProxy {
         CapabilityManager.INSTANCE.register(ICapabilityFood.class, new StorageFood(), CapabilityFood.class);
         CapUtil.registerVirtualCapability(CapabilityFood.RESOURCE_LOCATION, CapabilityFood.FOOD_CAPABILITY);
         CapabilityManager.INSTANCE.register(ICapabilityServerData.class, new StorageServerData(), CapabilityServerData.class);
+        CapabilityManager.INSTANCE.register(IInactiveCapabilities.class, new StorageInactiveCapabilities(), InactiveCapabilities.class);
     }
     
     public static final void registerNetworking() {

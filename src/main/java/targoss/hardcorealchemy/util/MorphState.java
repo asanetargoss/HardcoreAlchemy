@@ -102,11 +102,6 @@ public class MorphState {
                 capabilityHumanity.setLastHumanity(humanity);
             }
             
-            // These morph-specific trait changes only affect players whose form is permanent
-            /*TODO: Make it so a permanent morph's Ars Magica affinitys are
-             * "suppressed" (ie stored elsewhere and replaced with zeros)
-             * unless a player is under the effect of the allow_magic potion
-             */
             if (ModState.isNutritionLoaded) {
                 ListenerPlayerDiet.updateMorphDiet(player);
             }
