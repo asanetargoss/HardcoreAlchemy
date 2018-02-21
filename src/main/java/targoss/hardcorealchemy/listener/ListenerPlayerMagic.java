@@ -156,7 +156,7 @@ public class ListenerPlayerMagic extends ConfiguredListener {
             if (!capabilityHumanity.getNotifiedMagicFail()) {
                 capabilityHumanity.setNotifiedMagicFail(true);
                 if (player.worldObj.isRemote) {
-                    Chat.notifySP(new TextComponentTranslation("hardcorealchemy.magic.disabled.item"));
+                    Chat.notifySP(player, new TextComponentTranslation("hardcorealchemy.magic.disabled.item"));
                 }
             }
         }
@@ -175,7 +175,7 @@ public class ListenerPlayerMagic extends ConfiguredListener {
             if (!capabilityHumanity.getNotifiedMagicFail()) {
                 capabilityHumanity.setNotifiedMagicFail(true);
                 if (player.worldObj.isRemote) {
-                    Chat.notifySP(new TextComponentTranslation("hardcorealchemy.magic.disabled.block"));
+                    Chat.notifySP(player, new TextComponentTranslation("hardcorealchemy.magic.disabled.block"));
                 }
             }
         }
@@ -200,7 +200,7 @@ public class ListenerPlayerMagic extends ConfiguredListener {
             if (!capabilityHumanity.getNotifiedMagicFail()) {
                 capabilityHumanity.setNotifiedMagicFail(true);
                 if (player.worldObj.isRemote) {
-                    Chat.notifySP(new TextComponentTranslation("hardcorealchemy.magic.disabled.craft"));
+                    Chat.notifySP(player, new TextComponentTranslation("hardcorealchemy.magic.disabled.craft"));
                 }
             }
         }

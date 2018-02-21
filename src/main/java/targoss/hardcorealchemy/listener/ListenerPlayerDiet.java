@@ -223,7 +223,7 @@ public class ListenerPlayerDiet extends ConfiguredListener {
              */
             event.setCanceled(true);
             if (player.worldObj.isRemote) {
-                targoss.hardcorealchemy.util.Chat.notifySP(needs.restriction.getFoodRefusal());
+                targoss.hardcorealchemy.util.Chat.notifySP(player, needs.restriction.getFoodRefusal());
             }
         }
     }

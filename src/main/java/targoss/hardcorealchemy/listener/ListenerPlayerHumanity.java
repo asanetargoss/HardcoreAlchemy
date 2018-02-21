@@ -275,20 +275,20 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
         // If humanity passes a critical threshold, display message (most urgent one first)
         if (newHumanity <= 0) {
             // Display lost humanity message
-            Chat.notifySP(new TextComponentTranslation("hardcorealchemy.humanity.lost"));
+            Chat.notifySP(player, new TextComponentTranslation("hardcorealchemy.humanity.lost"));
         }
         else if (newHumanity <= HUMANITY_3MIN_LEFT) {
             if (newHumanity <= HUMANITY_1MIN_LEFT && oldHumanity > HUMANITY_1MIN_LEFT) {
                 // Display 1 minute left message
-                Chat.alarmSP(new TextComponentTranslation("hardcorealchemy.humanity.warn3.variant1"));
+                Chat.alarmSP(player, new TextComponentTranslation("hardcorealchemy.humanity.warn3.variant1"));
             }
             else if (newHumanity <= HUMANITY_2MIN_LEFT && oldHumanity > HUMANITY_2MIN_LEFT) {
                 // Display 2 minutes left message
-                Chat.notifySP(new TextComponentTranslation("hardcorealchemy.humanity.warn2.variant1"));
+                Chat.notifySP(player, new TextComponentTranslation("hardcorealchemy.humanity.warn2.variant1"));
             }
             else if (oldHumanity > HUMANITY_3MIN_LEFT) {
                 // Display 3 minutes left message
-                Chat.notifySP(new TextComponentTranslation("hardcorealchemy.humanity.warn1.variant1"));
+                Chat.notifySP(player, new TextComponentTranslation("hardcorealchemy.humanity.warn1.variant1"));
             }
         }
     }
@@ -300,7 +300,7 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
             // You're a ghost, so being in a morph doesn't really make sense
             event.setCanceled(true);
             if (event.player.worldObj.isRemote) {
-                Chat.notifySP(new TextComponentTranslation("hardcorealchemy.morph.disabled.dead"));
+                Chat.notifySP(event.player, new TextComponentTranslation("hardcorealchemy.morph.disabled.dead"));
             }
         }
     }
