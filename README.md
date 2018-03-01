@@ -6,7 +6,8 @@ About the Hardcore Alchemy modpack:
 * [See the wiki](https://github.com/asanetargoss/HardcoreAlchemy/wiki) for more information about the pack
 
 About the Hardcore Alchemy mod:
-* Adds miscellaneous survival and cross-mod compatibility features meant to complement the modpack
+* Adds survival and cross-mod compatibility features meant to complement Metamorph and other magic/survival mods
+* Information about the features of the latest release is available at the [Dry Feature List](https://github.com/asanetargoss/HardcoreAlchemy/wiki/Dry-Feature-List) on the wiki
 * Releases [here](https://github.com/asanetargoss/HardcoreAlchemy/releases)
 * License for the mod is LGPL 3
 
