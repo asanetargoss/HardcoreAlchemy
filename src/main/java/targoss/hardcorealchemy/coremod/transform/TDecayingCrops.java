@@ -32,13 +32,14 @@ import targoss.hardcorealchemy.coremod.MethodPatcher;
 import targoss.hardcorealchemy.coremod.ObfuscatedName;
 
 public class TDecayingCrops extends MethodPatcher {
+    private static final String STEM_CROP = "net.minecraft.block.BlockStem";
     private static final String PAM_CROP = "com.pam.harvestcraft.blocks.growables.BlockPamCrop";
     private static final String MYSICAL_CROP = "com.blakebr0.mysticalagriculture.blocks.crop.BlockMysticalCrop";
     private static final ObfuscatedName UPDATE_TICK = new ObfuscatedName("updateTick", "func_180650_b");
 
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
-        if (transformedName.equals(PAM_CROP) || transformedName.equals(MYSICAL_CROP)) {
+        if (transformedName.equals(STEM_CROP) || transformedName.equals(PAM_CROP) || transformedName.equals(MYSICAL_CROP)) {
             return transformClass(transformedName, basicClass, ClassWriter.COMPUTE_MAXS);
         }
         return basicClass;
