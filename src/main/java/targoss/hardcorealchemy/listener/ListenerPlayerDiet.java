@@ -283,6 +283,5 @@ public class ListenerPlayerDiet extends ConfiguredListener {
         FoodStats food = player.getFoodStats();
         food.setFoodLevel(20);
         food.setFoodSaturationLevel(5.0F);
-        food.addExhaustion(-40.0F);
     }
 }
