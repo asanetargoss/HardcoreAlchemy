@@ -138,6 +138,7 @@ public class ListenerPlayerMorphs extends ConfiguredListener {
 		
 		// Prevent acquiring human-like morph
 		if (morphBlacklist.contains(morphName)) {
+		    event.setCanceled(true);
 		    return;
 		}
 		
