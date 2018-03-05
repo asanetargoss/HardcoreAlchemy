@@ -46,6 +46,11 @@ public class HardcoreAlchemy
     public static final String MOD_ID = "hardcorealchemy";
     public static final String VERSION = "0.3.2";
     public static final String DEPENDENCIES = "required-after:metamorph;" +
+         /* If/when TaN for 1.10 updates to version 4.x.x, 
+          * remove crop decay code, NPE fix, and thirst overlay fix.
+          * Then, the version specifier should be updated to require 4.x.x
+          */
+            "after:" + ModState.TAN_ID + "@1.1.1.19;" +
             "after:astralsorcery;" +
             "after:adinferos;" +
             "after:uniquecrops;" +
