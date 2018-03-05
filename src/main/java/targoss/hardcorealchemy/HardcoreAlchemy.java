@@ -51,6 +51,11 @@ public class HardcoreAlchemy
           * Then, the version specifier should be updated to require 4.x.x
           */
             "after:" + ModState.TAN_ID + "@1.1.1.19;" +
+          /* Workaround for Potion Core canceling the armor render and
+           * re-rendering it way too early (this ensures the humanity
+           * bar is rendered first)
+           */
+            "before:potioncore;" +
             "after:astralsorcery;" +
             "after:adinferos;" +
             "after:uniquecrops;" +

@@ -58,7 +58,7 @@ public class ListenerGuiHud extends ConfiguredListener {
     public static double max_humanity = 0.0D;
     private Random rand = new Random();
     
-    @SubscribeEvent
+    @SubscribeEvent(priority=EventPriority.HIGHEST,receiveCanceled=true)
     public void onRenderOverlayPre(RenderGameOverlayEvent.Pre event) {
         if (event.getType() != ElementType.ARMOR || !render_humanity) {
             return;
