@@ -44,7 +44,7 @@ import targoss.hardcorealchemy.test.HardcoreAlchemyTests;
 public class HardcoreAlchemy
 {
     public static final String MOD_ID = "hardcorealchemy";
-    public static final String VERSION = "0.3.2";
+    public static final String VERSION = "0.3.3";
     public static final String DEPENDENCIES = "required-after:metamorph;" +
          /* If/when TaN for 1.10 updates to version 4.x.x, 
           * remove crop decay code, NPE fix, and thirst overlay fix.
