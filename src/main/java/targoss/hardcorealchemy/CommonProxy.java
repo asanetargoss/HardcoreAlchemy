@@ -41,7 +41,7 @@ import targoss.hardcorealchemy.capability.killcount.CapabilityKillCount;
 import targoss.hardcorealchemy.capability.serverdata.CapabilityServerData;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.listener.ConfiguredListener;
-import targoss.hardcorealchemy.listener.ListenerBlock;
+import targoss.hardcorealchemy.listener.ListenerSmallTweaks;
 import targoss.hardcorealchemy.listener.ListenerCrops;
 import targoss.hardcorealchemy.listener.ListenerInventoryFoodRot;
 import targoss.hardcorealchemy.listener.ListenerMobAI;
@@ -65,7 +65,7 @@ public class CommonProxy {
                 ListenerPlayerDiet.class,
                 ListenerMobLevel.class,
                 ListenerMobAI.class,
-                ListenerBlock.class,
+                ListenerSmallTweaks.class,
                 ListenerInventoryFoodRot.class,
                 ListenerWorldDifficulty.class,
                 ListenerCrops.class // 1.10-specific

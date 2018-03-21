@@ -24,13 +24,21 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Enchantments;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.event.entity.living.ZombieEvent;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.fml.common.Optional;
+import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.config.Configs;
 
-public class ListenerBlock extends ConfiguredListener {
-    public ListenerBlock(Configs configs) {
+/**
+ * An event listener for miscellaneous changes that
+ * don't fit anywhere in particular
+ */
+public class ListenerSmallTweaks extends ConfiguredListener {
+    public ListenerSmallTweaks(Configs configs) {
         super(configs);
     }
 
@@ -59,6 +67,20 @@ public class ListenerBlock extends ConfiguredListener {
         if (!heldItem.getToolClasses(heldStack).contains("axe")) {
             event.setDropChance(0.0F);
             return;
+        }
+    }
+    
+    /**
+     * The Obsidian Sheepman from Ad Inferos overrides
+     * the Zombie class. This is all fine and dandy until
+     * you realize that attacking sheepmen will cause zombies
+     * to spawn, which doesn't make sense.
+     */
+    @SubscribeEvent
+    @Optional.Method(modid=ModState.ADINFEROS_ID)
+    public void onReinforceObsidianSheepman(ZombieEvent.SummonAidEvent event) {
+        if (event.getEntity().getName().equals("ObsidianSheepman")) {
+            event.setResult(Result.DENY);
         }
     }
 }

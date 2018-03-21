@@ -28,6 +28,7 @@ public final class ModState {
     public static final String TAN_ID = "ToughAsNails";
     public static final String GUIDEAPI_ID = "guideapi";
     public static final String HARVESTCRAFT_ID = "harvestcraft";
+    public static final String ADINFEROS_ID = "adinferos";
     public static boolean isDissolutionLoaded = false;
     public static boolean isNutritionLoaded = false;
     public static boolean isBloodMagicLoaded = false;
