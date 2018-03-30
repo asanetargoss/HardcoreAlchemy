@@ -39,6 +39,8 @@ import targoss.hardcorealchemy.listener.ListenerPlayerHumanity;
 import targoss.hardcorealchemy.listener.ListenerPlayerMagic;
 
 public class MorphState {
+    public static float[] PLAYER_WIDTH_HEIGHT = new float[]{ 0.6F, 1.8F };
+    
     public static AbstractMorph createMorph(String morphName) {
         return createMorph(morphName, new NBTTagCompound());
     }

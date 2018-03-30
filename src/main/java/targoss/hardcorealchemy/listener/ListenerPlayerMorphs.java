@@ -18,6 +18,8 @@
 
 package targoss.hardcorealchemy.listener;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -26,18 +28,20 @@ import java.util.UUID;
 
 import mchorse.metamorph.Metamorph;
 import mchorse.metamorph.api.events.AcquireMorphEvent;
+import mchorse.metamorph.api.events.MorphEvent;
 import mchorse.metamorph.api.events.SpawnGhostEvent;
 import mchorse.metamorph.api.morphs.AbstractMorph;
 import mchorse.metamorph.api.morphs.EntityMorph;
 import mchorse.metamorph.capabilities.morphing.IMorphing;
 import mchorse.metamorph.capabilities.morphing.Morphing;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityList;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
@@ -52,7 +56,9 @@ import targoss.hardcorealchemy.capability.killcount.CapabilityKillCount;
 import targoss.hardcorealchemy.capability.killcount.ICapabilityKillCount;
 import targoss.hardcorealchemy.capability.killcount.ProviderKillCount;
 import targoss.hardcorealchemy.config.Configs;
+import targoss.hardcorealchemy.util.Chat;
 import targoss.hardcorealchemy.util.MobLists;
+import targoss.hardcorealchemy.util.MorphState;
 
 public class ListenerPlayerMorphs extends ConfiguredListener {
     public ListenerPlayerMorphs(Configs configs) {
@@ -220,5 +226,48 @@ public class ListenerPlayerMorphs extends ConfiguredListener {
         if (humanity != null && newCap > oldCap) {
             humanity.setHumanity(humanity.getHumanity() + newCap - oldCap);
         }
+    }
+    
+    private static void updatePlayerSize(EntityPlayer player, AbstractMorph morph) {
+        if (morph == null) {
+            player.width = MorphState.PLAYER_WIDTH_HEIGHT[0];
+            player.height = MorphState.PLAYER_WIDTH_HEIGHT[1];
+            player.eyeHeight = player.height * 0.9F;
+        }
+        else {
+            if ((morph instanceof EntityMorph)) {
+                EntityLivingBase morphEntity = ((EntityMorph) morph).getEntity(player.worldObj);
+                // EntityMorph.updateSize() via reflection
+                try {
+                    Method updateSizeMethod = EntityMorph.class.getDeclaredMethod(
+                            "updateSize", EntityLivingBase.class, float.class, float.class);
+                    updateSizeMethod.setAccessible(true);
+                    updateSizeMethod.invoke((EntityMorph)morph, player, morphEntity.width, morphEntity.height);
+                } catch (NoSuchMethodException | SecurityException | IllegalAccessException |
+                        IllegalArgumentException | InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+            }
+            // Don't know how to handle other morphs right now
+        }
+    }
+    
+    /**
+     * Prevents unexpected suffocation damage by canceling
+     * morphing if there is insufficient space.
+     */
+    @SubscribeEvent
+    public void onMorphCheckSpace(MorphEvent.Pre event) {
+        EntityPlayer player = event.player;
+        updatePlayerSize(player, event.morph);
+        
+        if (player.isEntityInsideOpaqueBlock()) {
+            event.setCanceled(true);
+            if (!player.worldObj.isRemote) {
+                Chat.notify((EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.morph.suffocation_risk"));
+            }
+        }
+        
+        updatePlayerSize(player, Morphing.get(player).getCurrentMorph());
     }
 }
