@@ -259,6 +259,21 @@ public class ListenerPlayerMorphs extends ConfiguredListener {
     @SubscribeEvent
     public void onMorphCheckSpace(MorphEvent.Pre event) {
         EntityPlayer player = event.player;
+        
+        if (player.noClip) {
+            // No suffocation damage to worry about
+            return;
+        }
+        if (event.force) {
+            // Don't want to prevent a forced morph
+            //TODO: Temporary suffocation immunity
+            return;
+        }
+        if (player.isEntityInsideOpaqueBlock()) {
+            // No point in preventing the player from morphing if they're already suffocating
+            return;
+        }
+        
         updatePlayerSize(player, event.morph);
         
         if (player.isEntityInsideOpaqueBlock()) {
