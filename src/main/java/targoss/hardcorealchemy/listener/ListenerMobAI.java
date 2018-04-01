@@ -64,13 +64,8 @@ public class ListenerMobAI extends ConfiguredListener {
     public static Set<String> mobAIIgnoreMorphList = new HashSet();
     
     static {
-        MobLists mobLists = new MobLists();
-        for (String mob : mobLists.getBosses()) {
-            mobAIIgnoreMorphList.add(mob);
-        }
-        for (String mob : mobLists.getNonMobs()) {
-            mobAIIgnoreMorphList.add(mob);
-        }
+        mobAIIgnoreMorphList.addAll(MobLists.getBosses());
+        mobAIIgnoreMorphList.addAll(MobLists.getNonMobs());
     }
     
     @SubscribeEvent

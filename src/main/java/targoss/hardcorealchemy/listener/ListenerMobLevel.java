@@ -58,16 +58,9 @@ public class ListenerMobLevel extends ConfiguredListener {
     public static Set<String> levelBlacklist = new HashSet();
     
     static {
-        MobLists mobLists = new MobLists();
-        for (String mob : mobLists.getBosses()) {
-            levelBlacklist.add(mob);
-        }
-        for (String mob : mobLists.getNonMobs()) {
-            levelBlacklist.add(mob);
-        }
-        for (String mob : mobLists.getHumans()) {
-            levelBlacklist.add(mob);
-        }
+        levelBlacklist.addAll(MobLists.getBosses());
+        levelBlacklist.addAll(MobLists.getNonMobs());
+        levelBlacklist.addAll(MobLists.getHumans());
     }
     
     @SubscribeEvent
