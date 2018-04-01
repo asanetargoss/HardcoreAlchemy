@@ -29,6 +29,7 @@ import java.util.Set;
 import org.apache.logging.log4j.core.Logger;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIBase;
@@ -60,18 +61,15 @@ public class ListenerMobAI extends ConfiguredListener {
     public static Capability<ICapabilityCombatLevel> COMBAT_LEVEL_CAPABILITY = null;
     public static final ResourceLocation COMBAT_LEVEL_RESOURCE_LOCATION = CapabilityCombatLevel.RESOURCE_LOCATION;
     
-    public static Set<String> mobAIMorphBlacklist = new HashSet();
-    public static Set<String> mobAIIgnoreBlacklist = new HashSet();
+    public static Set<String> mobAIIgnoreMorphList = new HashSet();
     
     static {
         MobLists mobLists = new MobLists();
         for (String mob : mobLists.getBosses()) {
-            mobAIMorphBlacklist.add(mob);
-            mobAIIgnoreBlacklist.add(mob);
+            mobAIIgnoreMorphList.add(mob);
         }
         for (String mob : mobLists.getNonMobs()) {
-            mobAIMorphBlacklist.add(mob);
-            mobAIIgnoreBlacklist.add(mob);
+            mobAIIgnoreMorphList.add(mob);
         }
     }
     
@@ -79,7 +77,7 @@ public class ListenerMobAI extends ConfiguredListener {
     public void onEntityJoinWorld(EntityJoinWorldEvent event) {
         // Persuade entities that morphs aren't human, unless said entity knows better
         Entity entity = event.getEntity();
-        if (entity instanceof EntityLiving && !mobAIMorphBlacklist.contains(entity.getName())) {
+        if (entity instanceof EntityLiving && !mobAIIgnoreMorphList.contains(EntityList.getEntityString(entity))) {
             EntityLiving entityLiving = (EntityLiving)entity;
             wrapReplaceAttackAI(entityLiving, EntityAINearestAttackableTarget.class, AIAttackTargetMobOrMorph.class);
             wrapReplaceAttackAI(entityLiving, EntityAITargetNonTamed.class, AIUntamedAttackMobOrMorph.class);

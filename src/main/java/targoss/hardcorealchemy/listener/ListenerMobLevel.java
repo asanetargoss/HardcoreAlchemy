@@ -25,6 +25,7 @@ import java.util.Set;
 
 import mchorse.metamorph.entity.EntityMorph;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.player.EntityPlayer;
@@ -64,6 +65,9 @@ public class ListenerMobLevel extends ConfiguredListener {
         for (String mob : mobLists.getNonMobs()) {
             levelBlacklist.add(mob);
         }
+        for (String mob : mobLists.getHumans()) {
+            levelBlacklist.add(mob);
+        }
     }
     
     @SubscribeEvent
@@ -74,8 +78,7 @@ public class ListenerMobLevel extends ConfiguredListener {
             if (world != null && world.isRemote) {
                 return;
             }
-            EntityLivingBase entityLiving = (EntityLivingBase)entity;
-            if (!levelBlacklist.contains(entityLiving.getName())) {
+            if (!levelBlacklist.contains(EntityList.getEntityString(entity))) {
                 event.addCapability(COMBAT_LEVEL_RESOURCE_LOCATION, new ProviderCombatLevel());
                 }
         }
