@@ -29,6 +29,7 @@ import java.util.UUID;
 import mchorse.metamorph.Metamorph;
 import mchorse.metamorph.api.events.AcquireMorphEvent;
 import mchorse.metamorph.api.events.MorphEvent;
+import mchorse.metamorph.api.events.RegisterBlacklistEvent;
 import mchorse.metamorph.api.events.SpawnGhostEvent;
 import mchorse.metamorph.api.morphs.AbstractMorph;
 import mchorse.metamorph.api.morphs.EntityMorph;
@@ -66,7 +67,6 @@ public class ListenerPlayerMorphs extends ConfiguredListener {
     }
 
     public static Map<String, Integer> mapRequiredKills = new HashMap<String, Integer>();
-    public static Set<String> morphBlacklist = new HashSet<String>();
     /* Required morph counts for each max humanity upgrade.
      * +2 humanity per goal reached, up to a maximum of
      * 20 max humanity. Since the starting max humanity is
@@ -115,10 +115,19 @@ public class ListenerPlayerMorphs extends ConfiguredListener {
         mapRequiredKills.put("LavaSlime", 14);
         mapRequiredKills.put("Blaze", 40);
         mapRequiredKills.put("Ghast", 8);
-
-        for (String human : MobLists.getHumans()) {
-            morphBlacklist.add(human);
-        }
+    }
+    
+    /**
+     * Prevent acquiring human-like morphs, bosses, and stuff
+     * that shouldn't be morphs in the first place
+     */
+    @SubscribeEvent
+    public void onRegisterMorphBlacklist(RegisterBlacklistEvent event) {
+        Set<String> morphBlacklist = event.blacklist;
+        
+        morphBlacklist.addAll(MobLists.getHumans());
+        morphBlacklist.addAll(MobLists.getNonMobs());
+        morphBlacklist.addAll(MobLists.getBosses());
     }
 
     @SubscribeEvent
@@ -139,12 +148,6 @@ public class ListenerPlayerMorphs extends ConfiguredListener {
 		}		
 		String morphName = morph.name;
 		if (morphName == null || morphName.equals("")) {
-		    return;
-		}
-		
-		// Prevent acquiring human-like morph
-		if (morphBlacklist.contains(morphName)) {
-		    event.setCanceled(true);
 		    return;
 		}
 		
