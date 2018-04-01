@@ -55,6 +55,10 @@ hardcorealchemy.diet.refuse.unfeeding=You perceive no practical use in this chun
 # %1$s is the level, displayed as an integer
 hardcorealchemy.level.display=Level: %1$s
 
+# Entities, Mobs
+
+entity.hardcorealchemy.fish_swarm.name=Fish Swarm
+
 # Items, Potions
 
 item.hardcorealchemy:essence_mage.name=Mage Essence
