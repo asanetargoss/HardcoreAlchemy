@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.apache.logging.log4j.Logger;
 
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -34,9 +35,12 @@ import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
+import net.minecraftforge.fml.relauncher.Side;
 import targoss.hardcorealchemy.command.CommandTest;
 import targoss.hardcorealchemy.coremod.HardcoreAlchemyCoremod;
+import targoss.hardcorealchemy.entity.Entities;
 import targoss.hardcorealchemy.item.Items;
+import targoss.hardcorealchemy.metamorph.HcAMetamorphPack;
 import targoss.hardcorealchemy.modpack.guide.HCAModpackGuide;
 import targoss.hardcorealchemy.test.HardcoreAlchemyTests;
 
@@ -70,6 +74,9 @@ public class HardcoreAlchemy
     public static final String CLIENT_PROXY = "targoss.hardcorealchemy.ClientProxy";
     public static final String COMMON_PROXY = "targoss.hardcorealchemy.CommonProxy";
     
+    @Mod.Instance(HardcoreAlchemy.MOD_ID)
+    public static HardcoreAlchemy INSTANCE;
+    
     @SidedProxy(modId=MOD_ID, clientSide=CLIENT_PROXY, serverSide=COMMON_PROXY)
     public static CommonProxy proxy;
     
@@ -99,8 +106,16 @@ public class HardcoreAlchemy
         
         proxy.preInit(event);
         
+        /*TODO: Refactor registry stuff into the proxies
+         * to get rid of side checking here and inside
+         * the registry classes?
+         */
         Items.registerItems();
         Items.registerPotions();
+        Entities.registerEntities();
+        if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
+            Entities.registerEntityRenderers();
+        }
         
         if (ModState.isGuideapiLoaded) {
             HCAModpackGuide.registerBook();
@@ -119,6 +134,7 @@ public class HardcoreAlchemy
         proxy.init(event);
         
         Items.registerRecipes();
+        HcAMetamorphPack.registerAbilities();
         
         if (ModState.isGuideapiLoaded) {
             HCAModpackGuide.registerRecipe();

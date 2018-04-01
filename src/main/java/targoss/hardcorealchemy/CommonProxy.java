@@ -51,6 +51,9 @@ import targoss.hardcorealchemy.capability.inactive.StorageInactiveCapabilities;
 import targoss.hardcorealchemy.capability.killcount.CapabilityKillCount;
 import targoss.hardcorealchemy.capability.killcount.ICapabilityKillCount;
 import targoss.hardcorealchemy.capability.killcount.StorageKillCount;
+import targoss.hardcorealchemy.capability.morphstate.ICapabilityMorphState;
+import targoss.hardcorealchemy.capability.morphstate.CapabilityMorphState;
+import targoss.hardcorealchemy.capability.morphstate.StorageMorphState;
 import targoss.hardcorealchemy.capability.serverdata.CapabilityServerData;
 import targoss.hardcorealchemy.capability.serverdata.ICapabilityServerData;
 import targoss.hardcorealchemy.capability.serverdata.StorageServerData;
@@ -66,6 +69,7 @@ import targoss.hardcorealchemy.listener.ListenerPlayerDiet;
 import targoss.hardcorealchemy.listener.ListenerPlayerHumanity;
 import targoss.hardcorealchemy.listener.ListenerPlayerMagic;
 import targoss.hardcorealchemy.listener.ListenerPlayerMagicState;
+import targoss.hardcorealchemy.listener.ListenerPlayerMorphState;
 import targoss.hardcorealchemy.listener.ListenerPlayerMorphs;
 import targoss.hardcorealchemy.listener.ListenerWorldDifficulty;
 import targoss.hardcorealchemy.network.PacketHandler;
@@ -85,6 +89,7 @@ public class CommonProxy {
                 ListenerInventoryFoodRot.class,
                 ListenerWorldDifficulty.class,
                 ListenerPlayerMagicState.class,
+                ListenerPlayerMorphState.class,
                 ListenerCrops.class // 1.10-specific
             );
     
@@ -124,6 +129,7 @@ public class CommonProxy {
         CapUtil.registerVirtualCapability(CapabilityFood.RESOURCE_LOCATION, CapabilityFood.FOOD_CAPABILITY);
         CapabilityManager.INSTANCE.register(ICapabilityServerData.class, new StorageServerData(), CapabilityServerData.class);
         CapabilityManager.INSTANCE.register(IInactiveCapabilities.class, new StorageInactiveCapabilities(), InactiveCapabilities.class);
+        CapabilityManager.INSTANCE.register(ICapabilityMorphState.class, new StorageMorphState(), CapabilityMorphState.class);
     }
     
     public static final void registerNetworking() {

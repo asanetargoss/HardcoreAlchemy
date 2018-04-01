@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import mchorse.metamorph.entity.EntityMorph;
+import net.minecraft.entity.EntityList;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.monster.EntityBlaze;
@@ -45,6 +46,8 @@ import net.minecraft.entity.passive.EntityPig;
 import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.passive.EntityWolf;
+import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.entity.Entities;
 
 /**
  * Various mob lists, mainly used for deciding which
@@ -93,6 +96,8 @@ public class MobLists {
     public static Set<String> getNonMobs() {
         Set<String> nonMobs = new HashSet();
         
+        // Hardcore Alchemy
+        nonMobs.add(Entities.FISH_SWARM);
         // Metamorph
         nonMobs.add("metamorph.Morph");
         // Ars Magica

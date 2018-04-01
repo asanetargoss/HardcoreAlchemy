@@ -34,6 +34,10 @@ hardcorealchemy.morph.disabled.nohumanity=Your humanity is gone. Your mind is co
 hardcorealchemy.morph.disabled.marriage=Your humanity is strengthened by the power of love. You cannot find it in you to become a beast.
 hardcorealchemy.morph.disabled.dead=Your soul shall always be human.
 
+hardcorealchemy.ability.fishing.beginhunt=You begin the hunt.
+hardcorealchemy.ability.fishing.endhunt=You end the hunt.
+hardcorealchemy.ability.fishing.error.notinwater=You must be in water to begin the hunt.
+
 hardcorealchemy.magic.disabled.item=Your inhuman form prevents you from comprehending this magical item.
 hardcorealchemy.magic.disabled.block=Your inhuman form prevents you from comprehending this magical object.
 hardcorealchemy.magic.disabled.craft=Your inhuman form prevents you from crafting this magical object.
