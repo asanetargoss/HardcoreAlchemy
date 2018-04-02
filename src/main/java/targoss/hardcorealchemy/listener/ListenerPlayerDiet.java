@@ -246,7 +246,7 @@ public class ListenerPlayerDiet extends ConfiguredListener {
         
         if (!preventLosingThirst) {
             ICapabilityHumanity humanity = player.getCapability(HUMANITY_CAPABILITY, null);
-            if (humanity != null && humanity.canMorph()) {
+            if (humanity != null && !humanity.canMorph()) {
                 IMorphing morphing = Morphing.get(player);
                 if (morphing != null &&
                         !MorphDiet.getNeeds(morphing.getCurrentMorph()).hasThirst) {
