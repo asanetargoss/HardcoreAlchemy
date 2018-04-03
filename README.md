@@ -36,6 +36,6 @@ Please note: the following mods included in the zip file above are custom forks:
 * To compile, run "./gradlew assemble". Output will be in build/libs/. The jar name will be hardcorealchemy-[version].jar where [version] is defined in build.gradle.
 
 ## Other resources
-* Decompiler plugin: http://jd.benow.ca/ (Why: Required to view source code for all the mods in /libs, since most do not have dev builds (I may look into cross-compiling later))
+* Decompiler plugin: http://jd.benow.ca/ (Why: Required to view source code for all the mods in /libs, since most do not have dev builds)
 * Mod Coder Pack: http://www.modcoderpack.com/ (Why: Use MCP mapping viewer to figure out the meaning of func_12345 and their ilk, and translate to them when needed in a release environment)
 * Bytecode outline for Eclipse: http://andrei.gmxhome.de/bytecode/index.html (Why: Only if you need to coremod. It will help you understand the Java bytecode better. Do not trust the stack feature.)
