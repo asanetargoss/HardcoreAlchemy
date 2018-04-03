@@ -24,9 +24,16 @@ Please note: the following mods included in the zip file above are custom forks:
 
 ## Setup
 * Run "./gradlew setupDecompWorkspace" to set up Minecraft Forge and access transformers.
-* Then run "./gradlew eclipse" (or equivalent) to set up your workspace. Re-run each time you add mods to /libs, or otherwise update dependencies.
+* Then run "./gradlew eclipse" (or the equivalent for IntelliJ Idea as given in the [Forge Gradle docs](https://forgegradle.readthedocs.io/en/latest/))
 * Add this VM argument to your run configuration to load the coremod: "-Dfml.coreMods.load=targoss.hardcorealchemy.coremod.HardcoreAlchemyCoremod"
+
+## Developing
+* If you add new mods to libs/, or otherwise update dependencies, you will need to re-run "./gradlew eclipse" or equivalent
 * If you change the access transformers (found at "src/main/resources/META-INF/hardcorealchemy_at.cfg") you will need to re-run the gradle setup commands.
+* Successfully used gradle commands before but they aren't working anymore because your internet is down? No problem! Just add the "-offline" flag to your gradle command and it should work normally again.
+
+## Compiling
+* To compile, run "./gradlew assemble". Output will be in build/libs/. The jar name will be hardcorealchemy-[version].jar where [version] is defined in build.gradle.
 
 ## Other resources
 * Decompiler plugin: http://jd.benow.ca/ (Why: Required to view source code for all the mods in /libs, since most do not have dev builds (I may look into cross-compiling later))
