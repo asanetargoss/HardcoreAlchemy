@@ -82,7 +82,7 @@ public class ListenerMobAI extends ConfiguredListener {
     }
     
     /**
-     * Replace an instance of the AI EntityAINearestAttackableTarget. Assume the
+     * Replace an instance of the AI EntityAIBase. Assume the
      * replacement AI's constructor takes the old AI instance as a parameter.
      * If it doesn't, you will get errors, because reflection.
      */
