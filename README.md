@@ -23,7 +23,6 @@ Please note: the following mods included in the zip file above are custom forks:
 * metamorph: https://github.com/asanetargoss/metamorph
 * Dissolution ([permission](https://i.imgur.com/b7sN6lL.png))
 * Iberia: https://github.com/asanetargoss/iberia
-* Survival Tweaks: https://github.com/asanetargoss/Survival-Tweaks
 
 ## Setup
 * Run "./gradlew setupDecompWorkspace" to set up Minecraft Forge and access transformers.
