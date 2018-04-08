@@ -14,13 +14,16 @@ About the Hardcore Alchemy mod:
 # Developing/building
 
 ## Dependencies
-This branch targets the 0.3.x version of the modpack. Download the 0.3.0 zip file from the link below and add its contents to /libs (create the folder if it does not exist):
+This branch targets the 0.4.x version of the modpack. Download the 0.4.0 zip file from the link below and add its contents to /libs (create the folder if it does not exist):
 
 http://www.mediafire.com/folder/grwn2vsjr2lce/Hardcore_Alchemy_Libs
 
 Please note: the following mods included in the zip file above are custom forks:
 * Nutrition: https://github.com/asanetargoss/Nutrition
 * metamorph: https://github.com/asanetargoss/metamorph
+* Dissolution ([permission](https://i.imgur.com/b7sN6lL.png))
+* Iberia: https://github.com/asanetargoss/iberia
+* Survival Tweaks: https://github.com/asanetargoss/Survival-Tweaks
 
 ## Setup
 * Run "./gradlew setupDecompWorkspace" to set up Minecraft Forge and access transformers.
