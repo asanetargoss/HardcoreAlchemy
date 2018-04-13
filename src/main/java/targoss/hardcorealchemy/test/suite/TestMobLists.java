@@ -18,12 +18,25 @@
 
 package targoss.hardcorealchemy.test.suite;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Map;
 
+import com.superdextor.adinferos.entity.monster.EntityObsidianSheepman;
+
 import net.minecraft.entity.EntityList;
+import net.minecraft.entity.monster.EntityZombie;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.DimensionType;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.event.entity.living.ZombieEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.common.eventhandler.Event.Result;
+import targoss.hardcorealchemy.ModState;
+import targoss.hardcorealchemy.listener.ListenerSmallTweaks;
+import targoss.hardcorealchemy.test.HardcoreAlchemyTests;
 import targoss.hardcorealchemy.test.api.ITestList;
 import targoss.hardcorealchemy.test.api.ITestSuite;
 import targoss.hardcorealchemy.test.api.TestList;
@@ -50,6 +63,11 @@ public class TestMobLists implements ITestSuite {
         tests.put("list integrity: tame-ables", this::checkTameableList);
         tests.put("list integrity: night mobs", this::checkNightMobList);
         tests.put("list integrity: nether mobs", this::checkNetherMobList);
+        
+        boolean adInferos = Loader.instance().getIndexedModList().containsKey(ModState.ADINFEROS_ID);
+        
+        tests.putIf("test zombie reinforcements (Ad Inferos present)", this::testZombieReinforcements, adInferos);
+        tests.putIf("test obsidian sheepman reinforcements", this::testSheepmanReinforcements, adInferos);
         
         return tests;
     }
@@ -111,5 +129,42 @@ public class TestMobLists implements ITestSuite {
     
     public boolean checkNetherMobList() {
         return checkEntityList(MobLists.getNetherMobs());
+    }
+    
+    public boolean reinforcementAllowed(String zombieEntityName) {
+        MinecraftServer server = HardcoreAlchemyTests.SERVER_REFERENCE.get();
+        WorldServer worldServer = server.worldServerForDimension(DimensionType.OVERWORLD.getId());
+        EntityZombie zombie = (EntityZombie)EntityList.createEntityByName(zombieEntityName, worldServer);
+        
+        ZombieEvent.SummonAidEvent event = new ZombieEvent.SummonAidEvent(zombie, zombie.worldObj, 0, 0, 0, null, zombie.getEntityAttribute(EntityZombie.SPAWN_REINFORCEMENTS_CHANCE).getAttributeValue());
+        (new ListenerSmallTweaks(HardcoreAlchemyTests.DEFAULT_CONFIGS)).onReinforceObsidianSheepman(event);
+        
+        return event.getResult() != Result.DENY;
+    }
+    
+    public boolean testZombieReinforcements() {
+        boolean result = false;
+        try {
+            result = reinforcementAllowed("Zombie");
+        }
+        catch (Exception e) {
+            result = false;
+            e.printStackTrace();
+        }
+        
+        return result;
+    }
+    
+    public boolean testSheepmanReinforcements() {
+        boolean result = false;
+        try {
+            result = !reinforcementAllowed(ModState.ADINFEROS_ID + ".ObsidianSheepman");
+        }
+        catch (Exception e) {
+            result = false;
+            e.printStackTrace();
+        }
+        
+        return result;
     }
 }

@@ -20,6 +20,7 @@ package targoss.hardcorealchemy.listener;
 
 import net.minecraft.block.BlockBed;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.EntityList;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Enchantments;
 import net.minecraft.item.Item;
@@ -79,7 +80,7 @@ public class ListenerSmallTweaks extends ConfiguredListener {
     @SubscribeEvent
     @Optional.Method(modid=ModState.ADINFEROS_ID)
     public void onReinforceObsidianSheepman(ZombieEvent.SummonAidEvent event) {
-        if (event.getEntity().getName().equals("ObsidianSheepman")) {
+        if (EntityList.getEntityString(event.getEntity()).equals(ModState.ADINFEROS_ID + ".ObsidianSheepman")) {
             event.setResult(Result.DENY);
         }
     }
