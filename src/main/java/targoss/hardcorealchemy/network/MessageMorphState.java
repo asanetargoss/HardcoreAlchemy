@@ -64,7 +64,7 @@ public class MessageMorphState extends MessageToClient {
         
         @Override
         public void run() {
-            ICapabilityMorphState morphState = Minecraft.getMinecraft().thePlayer.getCapability(MORPH_STATE_CAPABILITY, null);
+            ICapabilityMorphState morphState = Minecraft.getMinecraft().player.getCapability(MORPH_STATE_CAPABILITY, null);
             if (morphState != null) {
                 morphState.setIsFishingUnderwater(this.isFishingUnderwater);
                 morphState.setFishingTimer(this.fishingTimer);

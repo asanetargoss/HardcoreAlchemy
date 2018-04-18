@@ -143,10 +143,10 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
             double newHumanity = capabilityHumanity.getHumanity();
             if (item == GOLDEN_APPLE) {
                 // A testing item, but I guess it's balanced enough for regular gameplay
-                newHumanity = MathHelper.clamp_double(newHumanity+HUMANITY_3MIN_LEFT, 0.0D, maxHumanity.getAttributeValue());
+                newHumanity = MathHelper.clamp(newHumanity+HUMANITY_3MIN_LEFT, 0.0D, maxHumanity.getAttributeValue());
             }
             else {
-                newHumanity = MathHelper.clamp_double(newHumanity-1.0D, 0.0D, maxHumanity.getAttributeValue());
+                newHumanity = MathHelper.clamp(newHumanity-1.0D, 0.0D, maxHumanity.getAttributeValue());
             }
             capabilityHumanity.setHumanity(newHumanity);
             if (newHumanity == 0) {
@@ -184,7 +184,7 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
         }
         
         EntityPlayer player = event.player;
-        if (player.worldObj.isRemote) {
+        if (player.world.isRemote) {
             return;
         }
         
@@ -237,7 +237,7 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
                 // No sense in reducing humanity if the player can't morph
                 if (capabilityHumanity.canMorph()) {
                     // Drain humanity when the player is voluntarily in a morph
-                    newHumanity = MathHelper.clamp_double(newHumanity-HUMANITY_LOSS_RATE, 0.0D, maxHumanity.getAttributeValue());
+                    newHumanity = MathHelper.clamp(newHumanity-HUMANITY_LOSS_RATE, 0.0D, maxHumanity.getAttributeValue());
                     capabilityHumanity.setHumanity(newHumanity);
                     // If humanity reaches zero, make player stuck in a morph
                     if (newHumanity <= 0) {
@@ -255,11 +255,11 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
             else {
                 // Restore humanity
                 newHumanity = newHumanity + HUMANITY_GAIN_RATE;
-                newHumanity = MathHelper.clamp_double(newHumanity, 0.0D, maxHumanity.getAttributeValue());
+                newHumanity = MathHelper.clamp(newHumanity, 0.0D, maxHumanity.getAttributeValue());
             }
         }
         // Notify player via chat if humanity reaches a certain threshold or is lost entirely
-        if (player.worldObj.isRemote) {
+        if (player.world.isRemote) {
             sendHumanityWarnings(player, oldHumanity, newHumanity);
         }
         capabilityHumanity.setHumanity(newHumanity);
@@ -299,7 +299,7 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
         if (MorphState.isIncorporeal(event.player) && !event.isDemorphing()) {
             // You're a ghost, so being in a morph doesn't really make sense
             event.setCanceled(true);
-            if (event.player.worldObj.isRemote) {
+            if (event.player.world.isRemote) {
                 Chat.notifySP(event.player, new TextComponentTranslation("hardcorealchemy.morph.disabled.dead"));
             }
         }

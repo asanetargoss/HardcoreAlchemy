@@ -44,5 +44,5 @@ public class UniqueFakePlayer extends FakePlayer {
     }
     
     @Override
-    public void addChatMessage(ITextComponent component) { }
+    public void sendMessage(ITextComponent component) { }
 }

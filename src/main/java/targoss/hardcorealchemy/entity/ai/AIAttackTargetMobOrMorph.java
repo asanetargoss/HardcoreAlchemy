@@ -96,8 +96,8 @@ public class AIAttackTargetMobOrMorph<T extends EntityLivingBase> extends Entity
         }
         if (this.targetClass != EntityPlayer.class && this.targetClass != EntityPlayerMP.class)
         {
-            List<T> list = this.taskOwner.worldObj.<T>getEntitiesWithinAABB(this.targetClass, this.getTargetableArea(this.getTargetDistance()), this.targetEntitySelector);
-            List<EntityPlayer> playerList = this.taskOwner.worldObj.<EntityPlayer>getEntitiesWithinAABB(EntityPlayer.class, this.getTargetableArea(this.getTargetDistance()), this.targetPlayerEntitySelector);
+            List<T> list = this.taskOwner.world.<T>getEntitiesWithinAABB(this.targetClass, this.getTargetableArea(this.getTargetDistance()), this.targetEntitySelector);
+            List<EntityPlayer> playerList = this.taskOwner.world.<EntityPlayer>getEntitiesWithinAABB(EntityPlayer.class, this.getTargetableArea(this.getTargetDistance()), this.targetPlayerEntitySelector);
             
             if (list.isEmpty() && playerList.isEmpty())
             {
@@ -130,7 +130,7 @@ public class AIAttackTargetMobOrMorph<T extends EntityLivingBase> extends Entity
         }
         else
         {
-            this.targetEntityNotStrict = (T)this.taskOwner.worldObj.getNearestAttackablePlayer(this.taskOwner.posX, this.taskOwner.posY + (double)this.taskOwner.getEyeHeight(), this.taskOwner.posZ, this.getTargetDistance(), this.getTargetDistance(), new Function<EntityPlayer, Double>()
+            this.targetEntityNotStrict = (T)this.taskOwner.world.getNearestAttackablePlayer(this.taskOwner.posX, this.taskOwner.posY + (double)this.taskOwner.getEyeHeight(), this.taskOwner.posZ, this.getTargetDistance(), this.getTargetDistance(), new Function<EntityPlayer, Double>()
             {
                 @Nullable
                 public Double apply(@Nullable EntityPlayer p_apply_1_)

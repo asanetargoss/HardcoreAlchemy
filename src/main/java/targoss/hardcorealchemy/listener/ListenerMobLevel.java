@@ -67,7 +67,7 @@ public class ListenerMobLevel extends ConfiguredListener {
     public void onAttachCapability(AttachCapabilitiesEvent<Entity> event) {
         Entity entity = event.getObject();
         if (entity instanceof EntityLivingBase && !(entity instanceof EntityPlayer)) {
-            World world = entity.worldObj;
+            World world = entity.world;
             if (world != null && world.isRemote) {
                 return;
             }
@@ -86,7 +86,7 @@ public class ListenerMobLevel extends ConfiguredListener {
             combatLevel.setHasCombatLevel(true);
             MobLevelRange levelRange = MobLevelRange.getRange(entity.dimension, entity.posY);
             //TODO: better random level algorithm
-            int level = levelRange.getRandomLevel(entity.posX, entity.posZ, entity.worldObj.getSeed());
+            int level = levelRange.getRandomLevel(entity.posX, entity.posZ, entity.world.getSeed());
             combatLevel.setValue(level);
             }
     }
@@ -100,7 +100,7 @@ public class ListenerMobLevel extends ConfiguredListener {
             // ¯\_(ツ)_/¯
             return;
         }
-        World world = entity.worldObj;
+        World world = entity.world;
         if (world != null && world.isRemote) {
             return;
         }

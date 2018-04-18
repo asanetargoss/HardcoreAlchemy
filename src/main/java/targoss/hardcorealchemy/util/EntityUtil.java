@@ -31,10 +31,10 @@ public class EntityUtil {
     
     // Adapted from ItemMonsterPlacer.spawnCreature
     public static void createLivingEntityAt(EntityLiving entityLiving, float x, float y, float z) {
-        entityLiving.setLocationAndAngles(x, y, z, MathHelper.wrapDegrees(entityLiving.worldObj.rand.nextFloat() * 360.0F), 0.0F);
+        entityLiving.setLocationAndAngles(x, y, z, MathHelper.wrapDegrees(entityLiving.world.rand.nextFloat() * 360.0F), 0.0F);
         entityLiving.rotationYawHead = entityLiving.rotationYaw;
         entityLiving.renderYawOffset = entityLiving.rotationYaw;
-        entityLiving.onInitialSpawn(entityLiving.worldObj.getDifficultyForLocation(new BlockPos(entityLiving)), null);
-        entityLiving.worldObj.spawnEntityInWorld(entityLiving);
+        entityLiving.onInitialSpawn(entityLiving.world.getDifficultyForLocation(new BlockPos(entityLiving)), null);
+        entityLiving.world.spawnEntity(entityLiving);
     }
 }

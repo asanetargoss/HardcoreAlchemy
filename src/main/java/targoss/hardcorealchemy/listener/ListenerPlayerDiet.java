@@ -222,7 +222,7 @@ public class ListenerPlayerDiet extends ConfiguredListener {
              * (can use ticksExisted)
              */
             event.setCanceled(true);
-            if (player.worldObj.isRemote) {
+            if (player.world.isRemote) {
                 targoss.hardcorealchemy.util.Chat.notifySP(player, needs.restriction.getFoodRefusal());
             }
         }
@@ -235,7 +235,7 @@ public class ListenerPlayerDiet extends ConfiguredListener {
     @SubscribeEvent
     @Optional.Method(modid = ModState.TAN_ID)
     public void onPlayerLoseThirst(PlayerTickEvent event) {
-        if (event.phase != Phase.START || event.player.worldObj.isRemote) {
+        if (event.phase != Phase.START || event.player.world.isRemote) {
             return;
         }
         
@@ -272,7 +272,7 @@ public class ListenerPlayerDiet extends ConfiguredListener {
     @SubscribeEvent
     @Optional.Method(modid = ModState.TAN_ID)
     public void onPlayerLoseHunger(PlayerTickEvent event) {
-        if (event.phase != Phase.START || event.player.worldObj.isRemote) {
+        if (event.phase != Phase.START || event.player.world.isRemote) {
             return;
         }
         

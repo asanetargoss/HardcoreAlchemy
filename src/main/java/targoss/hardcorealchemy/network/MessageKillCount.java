@@ -106,7 +106,7 @@ public class MessageKillCount extends MessageToClient {
         
         @Override
         public void run() {
-            EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+            EntityPlayer player = Minecraft.getMinecraft().player;
             ICapabilityKillCount killCountCap = player.getCapability(KILL_COUNT_CAPABILITY, null);
             if (killCountCap == null) {
                 return;

@@ -136,7 +136,7 @@ public class TestMobLists implements ITestSuite {
         WorldServer worldServer = server.worldServerForDimension(DimensionType.OVERWORLD.getId());
         EntityZombie zombie = (EntityZombie)EntityList.createEntityByName(zombieEntityName, worldServer);
         
-        ZombieEvent.SummonAidEvent event = new ZombieEvent.SummonAidEvent(zombie, zombie.worldObj, 0, 0, 0, null, zombie.getEntityAttribute(EntityZombie.SPAWN_REINFORCEMENTS_CHANCE).getAttributeValue());
+        ZombieEvent.SummonAidEvent event = new ZombieEvent.SummonAidEvent(zombie, zombie.world, 0, 0, 0, null, zombie.getEntityAttribute(EntityZombie.SPAWN_REINFORCEMENTS_CHANCE).getAttributeValue());
         (new ListenerSmallTweaks(HardcoreAlchemyTests.DEFAULT_CONFIGS)).onReinforceObsidianSheepman(event);
         
         return event.getResult() != Result.DENY;

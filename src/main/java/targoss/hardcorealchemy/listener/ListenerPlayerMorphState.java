@@ -98,7 +98,7 @@ public class ListenerPlayerMorphState extends ConfiguredListener {
             // Player must be in water to continue the hunt
             if (!player.isInWater()) {
                 morphState.setIsFishingUnderwater(false);
-                if (player.worldObj.isRemote) {
+                if (player.world.isRemote) {
                     Chat.notifySP(player, new TextComponentTranslation("hardcorealchemy.ability.fishing.endhunt"));
                 }
                 morphState.setFishingTimer(0);
@@ -107,7 +107,7 @@ public class ListenerPlayerMorphState extends ConfiguredListener {
                 // Fish swarm spawn timer
                 int timer = morphState.getFishingTimer();
                 
-                if (!player.worldObj.isRemote) {
+                if (!player.world.isRemote) {
                     if (timer >= FISH_WAIT_PERIOD && (timer-FISH_WAIT_PERIOD) % FISH_SPAWN_INTERVAL == 0) {
                         // Find a spot to spawn a fish swarm entity (or if not, give up)
                         for (int i = 0; i < 15; i++) {
@@ -124,8 +124,8 @@ public class ListenerPlayerMorphState extends ConfiguredListener {
                             
                             BlockPos spawnPos = new BlockPos(player.posX+distanceX, player.posY+distanceY, player.posZ+distanceZ);
                             
-                            if (player.worldObj.getBlockState(spawnPos).getMaterial() == Material.WATER) {
-                                EntityFishSwarm fishSwarm = new EntityFishSwarm(player.worldObj);
+                            if (player.world.getBlockState(spawnPos).getMaterial() == Material.WATER) {
+                                EntityFishSwarm fishSwarm = new EntityFishSwarm(player.world);
                                 EntityUtil.createLivingEntityAt(fishSwarm, spawnPos.getX(), spawnPos.getY(), spawnPos.getZ());
                                 break;
                             }

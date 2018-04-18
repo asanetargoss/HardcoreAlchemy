@@ -63,7 +63,7 @@ public class ListenerPacketUpdatePlayer extends ConfiguredListener {
         }
         
         EntityPlayer player = (EntityPlayer)(event.getEntity());
-        if (player.worldObj.isRemote) {
+        if (player.world.isRemote) {
             return;
         }
         
@@ -72,7 +72,7 @@ public class ListenerPacketUpdatePlayer extends ConfiguredListener {
     
     @SubscribeEvent
     public void onPlayerRespawnMP(PlayerRespawnEvent event) {
-        if (event.player.worldObj.isRemote) {
+        if (event.player.world.isRemote) {
             return;
         }
         

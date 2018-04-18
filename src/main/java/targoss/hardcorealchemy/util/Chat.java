@@ -43,23 +43,23 @@ public class Chat {
     }
     
     public static void notify(EntityPlayerMP player, ITextComponent message) {
-        player.addChatMessage(message.setStyle(LIGHT_GREY_ITALIC));
+        player.sendMessage(message.setStyle(LIGHT_GREY_ITALIC));
     }
     
     public static void alarm(EntityPlayerMP player, ITextComponent message) {
-        player.addChatMessage(message.setStyle(RED_ITALIC));
+        player.sendMessage(message.setStyle(RED_ITALIC));
     }
     
     @SideOnly(Side.CLIENT)
     public static void notifySP(EntityPlayer player, ITextComponent message) {
-        if (player == Minecraft.getMinecraft().thePlayer) {
+        if (player == Minecraft.getMinecraft().player) {
             Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(message.setStyle(LIGHT_GREY_ITALIC));
         }
     }
     
     @SideOnly(Side.CLIENT)
     public static void alarmSP(EntityPlayer player, ITextComponent message) {
-        if (player == Minecraft.getMinecraft().thePlayer) {
+        if (player == Minecraft.getMinecraft().player) {
             Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(message.setStyle(RED_ITALIC));
         }
     }

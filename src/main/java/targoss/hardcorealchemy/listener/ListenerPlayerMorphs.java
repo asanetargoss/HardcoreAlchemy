@@ -240,7 +240,7 @@ public class ListenerPlayerMorphs extends ConfiguredListener {
         }
         else {
             if ((morph instanceof EntityMorph)) {
-                EntityLivingBase morphEntity = ((EntityMorph) morph).getEntity(player.worldObj);
+                EntityLivingBase morphEntity = ((EntityMorph) morph).getEntity(player.world);
                 // EntityMorph.updateSize() via reflection
                 try {
                     Method updateSizeMethod = EntityMorph.class.getDeclaredMethod(
@@ -282,7 +282,7 @@ public class ListenerPlayerMorphs extends ConfiguredListener {
         
         if (player.isEntityInsideOpaqueBlock()) {
             event.setCanceled(true);
-            if (!player.worldObj.isRemote) {
+            if (!player.world.isRemote) {
                 Chat.notify((EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.morph.suffocation_risk"));
             }
         }

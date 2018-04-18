@@ -89,7 +89,7 @@ public class ListenerGuiInventory extends ConfiguredListener {
             return;
         }
         
-        if (MorphState.canUseHighMagic(mc.thePlayer)) {
+        if (MorphState.canUseHighMagic(mc.player)) {
             return;
         }
         

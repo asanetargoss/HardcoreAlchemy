@@ -77,7 +77,7 @@ public class ListenerGuiHud extends ConfiguredListener {
             return;
         }
         
-        EntityPlayer player = mc.thePlayer;
+        EntityPlayer player = mc.player;
         
         if (ModState.isDissolutionLoaded && MorphState.isIncorporeal(player)) {
             return;
@@ -140,7 +140,7 @@ public class ListenerGuiHud extends ConfiguredListener {
     @CoremodHook
     @Optional.Method(modid = ModState.TAN_ID)
     public static boolean clientHasThirst() {
-        EntityPlayer player = mc.thePlayer;
+        EntityPlayer player = mc.player;
         if (player == null) {
             return true;
         }
@@ -166,7 +166,7 @@ public class ListenerGuiHud extends ConfiguredListener {
     public void onRenderArmorInAfterlife(RenderGameOverlayEvent.Pre event) {
         if (event.getType() == ElementType.ARMOR &&
                 ModState.isDissolutionLoaded &&
-                mc.thePlayer != null && MorphState.isIncorporeal(mc.thePlayer)) {
+                mc.player != null && MorphState.isIncorporeal(mc.player)) {
             event.setCanceled(true);
         }
     }
@@ -220,7 +220,7 @@ public class ListenerGuiHud extends ConfiguredListener {
                         toughasnails.api.config.GameplayOption.ENABLE_THIRST) &&
                 mc.playerController.gameIsSurvivalOrAdventure())
         {
-            EntityPlayerSP player = mc.thePlayer;
+            EntityPlayerSP player = mc.player;
             toughasnails.thirst.ThirstHandler thirstStats =
                     (toughasnails.thirst.ThirstHandler)(player
                     .getCapability(toughasnails.api.TANCapabilities.THIRST, null));

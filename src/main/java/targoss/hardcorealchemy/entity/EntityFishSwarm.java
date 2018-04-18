@@ -149,14 +149,14 @@ public class EntityFishSwarm extends EntityMob {
         float bubbleSizeFraction = (float)this.ticksExisted / 200.0F;
         float bubbleCount = bubbleSizeFraction*0.5F;
         for (; bubbleCount > 1.0F; bubbleCount--) {
-            this.worldObj.spawnParticle(EnumParticleTypes.WATER_BUBBLE,
+            this.world.spawnParticle(EnumParticleTypes.WATER_BUBBLE,
                     this.posX + (this.rand.nextFloat()-0.5F)*this.width,
                     this.posY + (this.rand.nextFloat()-0.5F)*this.height,
                     this.posZ + (this.rand.nextFloat()-0.5F)*this.width,
                     0.0D, 0.0D, 0.0D);
         }
         if (this.rand.nextFloat() < bubbleCount) {
-            this.worldObj.spawnParticle(EnumParticleTypes.WATER_BUBBLE,
+            this.world.spawnParticle(EnumParticleTypes.WATER_BUBBLE,
                     this.posX + (this.rand.nextFloat()-0.5F)*this.width,
                     this.posY + (this.rand.nextFloat()-0.5F)*this.height,
                     this.posZ + (this.rand.nextFloat()-0.5F)*this.width,
@@ -174,7 +174,7 @@ public class EntityFishSwarm extends EntityMob {
     }
     
     public EntityLivingBase getSuccessfulHunter() {
-        List<Entity> possibleHunters = this.worldObj.getEntitiesInAABBexcluding(this, this.getEntityBoundingBox(), EntitySelectors.<Entity>getTeamCollisionPredicate(this));
+        List<Entity> possibleHunters = this.world.getEntitiesInAABBexcluding(this, this.getEntityBoundingBox(), EntitySelectors.<Entity>getTeamCollisionPredicate(this));
         
         for (Entity possibleHunter : possibleHunters) {
             if ((possibleHunter instanceof EntityLivingBase) && isHunter((EntityLivingBase)possibleHunter)) {
@@ -194,33 +194,33 @@ public class EntityFishSwarm extends EntityMob {
         
         if (isHunter((EntityLivingBase)hunter)) {
             if (hunter instanceof EntityPlayer) {
-                this.worldObj.spawnEntityInWorld(
-                        new EntityXPOrb(this.worldObj, this.posX, this.posY, this.posZ,
+                this.world.spawnEntity(
+                        new EntityXPOrb(this.world, this.posX, this.posY, this.posZ,
                                 this.getExperiencePoints((EntityPlayer)hunter)
                                 )
                         );
             }
             
-            LootContext.Builder lootBuilder = new LootContext.Builder((WorldServer)this.worldObj);
+            LootContext.Builder lootBuilder = new LootContext.Builder((WorldServer)this.world);
             if (hunter instanceof EntityPlayer) {
                     lootBuilder = lootBuilder.withLuck(
                             (float)EnchantmentHelper.getLuckOfSeaModifier((EntityPlayer)hunter) +
                             ((EntityPlayer)hunter).getLuck());
             }
             
-            LootTable lootTable = this.worldObj.getLootTableManager().getLootTableFromLocation(LootTableList.GAMEPLAY_FISHING);
+            LootTable lootTable = this.world.getLootTableManager().getLootTableFromLocation(LootTableList.GAMEPLAY_FISHING);
             for (ItemStack itemstack : lootTable.generateLootForPools(this.rand, lootBuilder.build()))
             {
-                EntityItem lootItem = new EntityItem(this.worldObj, this.posX, this.posY, this.posZ, itemstack);
+                EntityItem lootItem = new EntityItem(this.world, this.posX, this.posY, this.posZ, itemstack);
                 double dX = hunter.posX - this.posX;
                 double dY = hunter.posY - this.posY;
                 double dZ = hunter.posZ - this.posZ;
-                double dR = (double)MathHelper.sqrt_double(dX * dX + dY * dY + dZ * dZ);
+                double dR = (double)MathHelper.sqrt(dX * dX + dY * dY + dZ * dZ);
                 double speedMultiplier = 0.1D;
                 lootItem.motionX = dX * speedMultiplier;
                 lootItem.motionY = dY * speedMultiplier;
                 lootItem.motionZ = dZ * speedMultiplier;
-                this.worldObj.spawnEntityInWorld(lootItem);
+                this.world.spawnEntity(lootItem);
             }
         }
     }
@@ -229,7 +229,7 @@ public class EntityFishSwarm extends EntityMob {
     @Override
     protected int getExperiencePoints(EntityPlayer player)
     {
-        return 1 + this.worldObj.rand.nextInt(3);
+        return 1 + this.world.rand.nextInt(3);
     }
 
     // Taken from EntityWaterMob
@@ -268,7 +268,7 @@ public class EntityFishSwarm extends EntityMob {
     // Taken from EntityGuardian
     public float getBlockPathWeight(BlockPos pos)
     {
-        return this.worldObj.getBlockState(pos).getMaterial() == Material.WATER ? 10.0F + this.worldObj.getLightBrightness(pos) - 0.5F : super.getBlockPathWeight(pos);
+        return this.world.getBlockState(pos).getMaterial() == Material.WATER ? 10.0F + this.world.getLightBrightness(pos) - 0.5F : super.getBlockPathWeight(pos);
     }
     
     @Override

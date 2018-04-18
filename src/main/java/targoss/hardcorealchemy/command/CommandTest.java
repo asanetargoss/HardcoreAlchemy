@@ -29,18 +29,18 @@ import targoss.hardcorealchemy.test.HardcoreAlchemyTests;
 public class CommandTest extends CommandBase {
 
     @Override
-    public String getCommandName() {
+    public String getName() {
         return "hcatest";
     }
 
     @Override
-    public String getCommandUsage(ICommandSender sender) {
+    public String getUsage(ICommandSender sender) {
         return "hcatest";
     }
     
     @Override
     public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
-        return !server.isDedicatedServer() || sender.canCommandSenderUseCommand(server.getOpPermissionLevel(), this.getCommandName());
+        return !server.isDedicatedServer() || sender.canUseCommand(server.getOpPermissionLevel(), this.getName());
     }
 
     @Override
@@ -50,9 +50,9 @@ public class CommandTest extends CommandBase {
          * and ambiguity in technical assistance should be avoided,
          * so no translations here.
          */
-        sender.addChatMessage(new TextComponentString("Running tests..."));
+        sender.sendMessage(new TextComponentString("Running tests..."));
         tests.runAndLogTests();
-        sender.addChatMessage(new TextComponentString("Tests finished and logged to logs/fml-client-latest.log"));
+        sender.sendMessage(new TextComponentString("Tests finished and logged to logs/fml-client-latest.log"));
     }
     
 }

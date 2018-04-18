@@ -85,7 +85,7 @@ public class MessageHumanity extends MessageToClient {
         
         @Override
         public void run() {
-            ICapabilityHumanity humanity = Minecraft.getMinecraft().thePlayer.getCapability(HUMANITY_CAPABILITY, null);
+            ICapabilityHumanity humanity = Minecraft.getMinecraft().player.getCapability(HUMANITY_CAPABILITY, null);
             if (humanity != null) {
                 humanity.setHumanity(this.humanity);
                 humanity.setLastHumanity(this.lastHumanity);
