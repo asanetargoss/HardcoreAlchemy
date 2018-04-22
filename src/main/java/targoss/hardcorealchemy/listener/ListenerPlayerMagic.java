@@ -89,6 +89,7 @@ public class ListenerPlayerMagic extends ConfiguredListener {
         HIGH_MAGIC_MODS.add("ProjectE");
         HIGH_MAGIC_MODS.add("projecte");
         HIGH_MAGIC_MODS.add("astralsorcery");
+        HIGH_MAGIC_MODS.add(ModState.THAUMCRAFT_ID);
         
         MAGIC_ITEM_ALLOW_USE = new HashSet<String>();
         MAGIC_ITEM_ALLOW_USE.add("projecte:item.pe_alchemical_bag");

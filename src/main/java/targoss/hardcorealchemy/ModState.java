@@ -29,6 +29,7 @@ public final class ModState {
     public static final String GUIDEAPI_ID = "guideapi";
     public static final String HARVESTCRAFT_ID = "harvestcraft";
     public static final String ADINFEROS_ID = "adinferos";
+    public static final String THAUMCRAFT_ID = "thaumcraft";
     public static boolean isDissolutionLoaded = false;
     public static boolean isNutritionLoaded = false;
     public static boolean isBloodMagicLoaded = false;
@@ -38,6 +39,7 @@ public final class ModState {
     public static boolean isTanLoaded = false;
     public static boolean isGuideapiLoaded = false;
     public static boolean isHarvestCraftLoaded = false;
+    public static boolean isThaumcraftLoaded = false;
 
     private ModState() { }
 }

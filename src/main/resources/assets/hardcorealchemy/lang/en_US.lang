@@ -44,6 +44,8 @@ hardcorealchemy.magic.disabled.craft=Your inhuman form prevents you from craftin
 hardcorealchemy.magic.disabled.crafttooltip=Your form prevents crafting this
 hardcorealchemy.magic.disabled.projectekeypress=Your inhuman form prevents you from manipulating alchemical constructs.
 
+hardcorealchemy.magic.recall_thaumcraft=Memories from a past life come flooding back to you.
+
 hardcorealchemy.diet.display.omnivore.upper=Omnivore
 hardcorealchemy.diet.display.carnivore.upper=Carnivore
 hardcorealchemy.diet.display.vegan.upper=Vegan

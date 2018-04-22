@@ -39,6 +39,7 @@ public class PacketHandler {
         (new MessageHumanity()).register();
         (new MessageKillCount()).register();
         (new MessageMorphState()).register();
+        (new MessageInactiveCapabilities()).register();
     }
     
 }

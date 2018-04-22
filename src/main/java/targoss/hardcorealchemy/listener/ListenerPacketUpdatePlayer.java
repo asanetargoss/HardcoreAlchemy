@@ -26,10 +26,12 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
+import targoss.hardcorealchemy.capability.inactive.IInactiveCapabilities;
 import targoss.hardcorealchemy.capability.killcount.ICapabilityKillCount;
 import targoss.hardcorealchemy.capability.morphstate.ICapabilityMorphState;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.network.MessageHumanity;
+import targoss.hardcorealchemy.network.MessageInactiveCapabilities;
 import targoss.hardcorealchemy.network.MessageKillCount;
 import targoss.hardcorealchemy.network.MessageMorphState;
 import targoss.hardcorealchemy.network.PacketHandler;
@@ -50,6 +52,8 @@ public class ListenerPacketUpdatePlayer extends ConfiguredListener {
     public static final Capability<ICapabilityKillCount> KILL_COUNT_CAPABILITY = null;
     @CapabilityInject(ICapabilityMorphState.class)
     public static final Capability<ICapabilityMorphState> MORPH_STATE_CAPABILITY = null;
+    @CapabilityInject(IInactiveCapabilities.class)
+    public static final Capability<IInactiveCapabilities> INACTIVE_CAPABILITIES = null;
     
     private static final int PLAYER_UPDATE_TICKS = 7;
     
@@ -93,6 +97,11 @@ public class ListenerPacketUpdatePlayer extends ConfiguredListener {
         ICapabilityMorphState morphState = player.getCapability(MORPH_STATE_CAPABILITY, null);
         if (morphState != null) {
             PacketHandler.INSTANCE.sendTo(new MessageMorphState(morphState), (EntityPlayerMP)player);
+        }
+        
+        IInactiveCapabilities inactives = player.getCapability(INACTIVE_CAPABILITIES, null);
+        if (morphState != null) {
+            PacketHandler.INSTANCE.sendTo(new MessageInactiveCapabilities(inactives), (EntityPlayerMP)player);
         }
     }
 }

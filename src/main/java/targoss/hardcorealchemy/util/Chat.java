@@ -32,6 +32,7 @@ public class Chat {
     
     public static Style LIGHT_GREY_ITALIC;
     public static Style RED_ITALIC;
+    public static Style PURPLE;
     
     static {
         LIGHT_GREY_ITALIC = new Style();
@@ -40,6 +41,8 @@ public class Chat {
         RED_ITALIC = new Style();
         RED_ITALIC.setItalic(true);
         RED_ITALIC.setColor(TextFormatting.DARK_RED);
+        PURPLE = new Style();
+        PURPLE.setColor(TextFormatting.DARK_PURPLE);
     }
     
     public static void notify(EntityPlayerMP player, ITextComponent message) {
@@ -48,6 +51,10 @@ public class Chat {
     
     public static void alarm(EntityPlayerMP player, ITextComponent message) {
         player.sendMessage(message.setStyle(RED_ITALIC));
+    }
+    
+    public static void notifyThaumic(EntityPlayerMP player, ITextComponent message) {
+        player.sendMessage(message.setStyle(PURPLE));
     }
     
     @SideOnly(Side.CLIENT)
@@ -61,6 +68,13 @@ public class Chat {
     public static void alarmSP(EntityPlayer player, ITextComponent message) {
         if (player == Minecraft.getMinecraft().player) {
             Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(message.setStyle(RED_ITALIC));
+        }
+    }
+    
+    @SideOnly(Side.CLIENT)
+    public static void notifyThaumicSP(EntityPlayer player, ITextComponent message) {
+        if (player == Minecraft.getMinecraft().player) {
+            Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(message.setStyle(PURPLE));
         }
     }
 }
