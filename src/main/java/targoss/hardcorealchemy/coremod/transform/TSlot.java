@@ -34,7 +34,7 @@ import targoss.hardcorealchemy.coremod.ObfuscatedName;
 
 public class TSlot extends MethodPatcher {
     private static final String SLOT = "net.minecraft.inventory.Slot";
-    private static final ObfuscatedName CAN_TAKE_STACK = new ObfuscatedName("canTakeStack", "func_82869_a");
+    private static final ObfuscatedName CAN_TAKE_STACK = new ObfuscatedName("func_82869_a" /*canTakeStack*/);
     
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {

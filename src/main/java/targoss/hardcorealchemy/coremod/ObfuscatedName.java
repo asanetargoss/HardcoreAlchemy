@@ -19,15 +19,21 @@
 package targoss.hardcorealchemy.coremod;
 
 public class ObfuscatedName {
-    String mcpName;
-    String srgName;
+    private final String srgName;
+    private String mcpName = null;
     
-    public ObfuscatedName(String mcpName, String srgName) {
-        this.mcpName = mcpName;
+    public ObfuscatedName(String srgName) {
         this.srgName = srgName;
     }
     
     public String get() {
-        return HardcoreAlchemyCoremod.obfuscated ? srgName : mcpName;
+        return HardcoreAlchemyCoremod.obfuscated ? srgName : getMcpName();
+    }
+    
+    private String getMcpName() {
+        if (mcpName == null) {
+            mcpName = DevMappings.get(srgName);
+        }
+        return mcpName;
     }
 }

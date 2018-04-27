@@ -35,7 +35,7 @@ import targoss.hardcorealchemy.coremod.ObfuscatedName;
 
 public class TCraftingManager extends MethodPatcher {
     private static final String CRAFTING_MANAGER = "net.minecraft.item.crafting.CraftingManager";
-    private static final ObfuscatedName FIND_MATCHING_RECIPE = new ObfuscatedName("findMatchingRecipe", "func_82787_a");
+    private static final ObfuscatedName FIND_MATCHING_RECIPE = new ObfuscatedName("func_82787_a" /*findMatchingRecipe*/);
     
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {

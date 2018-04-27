@@ -29,7 +29,7 @@ import targoss.hardcorealchemy.coremod.ObfuscatedName;
 
 public class TEntityLivingBase extends MethodPatcher {
     private static final String ENTITY_LIVING_BASE = "net.minecraft.entity.EntityLivingBase";
-	private static final ObfuscatedName ENTITY_DAMAGE = new ObfuscatedName("attackEntityFrom", "func_70097_a");
+	private static final ObfuscatedName ENTITY_DAMAGE = new ObfuscatedName("func_70097_a" /*attackEntityFrom*/);
 	
 	@Override
 	public byte[] transform(String name, String transformedName, byte[] basicClass) {

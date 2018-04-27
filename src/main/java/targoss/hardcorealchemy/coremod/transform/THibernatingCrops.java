@@ -34,7 +34,7 @@ import targoss.hardcorealchemy.coremod.ObfuscatedName;
 public class THibernatingCrops extends MethodPatcher {
     private static final String PAM_FRUIT = "com.pam.harvestcraft.blocks.growables.BlockPamFruit";
     private static final String PAM_FRUIT_LOG = "com.pam.harvestcraft.blocks.growables.BlockPamFruitLog";
-    private static final ObfuscatedName UPDATE_TICK = new ObfuscatedName("updateTick", "func_180650_b");
+    private static final ObfuscatedName UPDATE_TICK = new ObfuscatedName("func_180650_b" /*updateTick*/);
 
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {

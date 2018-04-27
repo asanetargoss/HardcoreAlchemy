@@ -35,7 +35,7 @@ public class TDecayingCrops extends MethodPatcher {
     private static final String STEM_CROP = "net.minecraft.block.BlockStem";
     private static final String PAM_CROP = "com.pam.harvestcraft.blocks.growables.BlockPamCrop";
     private static final String MYSICAL_CROP = "com.blakebr0.mysticalagriculture.blocks.crop.BlockMysticalCrop";
-    private static final ObfuscatedName UPDATE_TICK = new ObfuscatedName("updateTick", "func_180650_b");
+    private static final ObfuscatedName UPDATE_TICK = new ObfuscatedName("func_180650_b" /*updateTick*/);
 
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {

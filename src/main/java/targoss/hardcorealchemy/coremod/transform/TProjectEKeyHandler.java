@@ -40,7 +40,7 @@ import targoss.hardcorealchemy.coremod.ObfuscatedName;
 public class TProjectEKeyHandler extends MethodPatcher {
     // Anonymous Runnable class inside of Handler, which is an instance of simpleimpl's IMessageHandler
     private static final String HANDLER_CLASS = "moze_intel.projecte.network.packets.KeyPressPKT$Handler$1";
-    private static final ObfuscatedName PLAYER_ENTITY = new ObfuscatedName("playerEntity", "field_147369_b");
+    private static final ObfuscatedName PLAYER_ENTITY = new ObfuscatedName("field_147369_b" /*playerEntity*/);
 
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
