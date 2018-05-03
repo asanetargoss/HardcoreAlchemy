@@ -35,6 +35,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
@@ -186,6 +187,14 @@ public class ListenerPlayerMagicState extends ConfiguredListener {
         
         ResourceLocation blockResource = block.getRegistryName();
         if (!blockResource.getResourceDomain().equals(ModState.THAUMCRAFT_ID)) {
+            return;
+        }
+        
+        if (event.getUseBlock() != Result.ALLOW && event.getEntityPlayer().isSneaking() &&
+                event.getItemStack() != null && (event.getItemStack().getItem() instanceof ItemBlock)) {
+            /* The player is trying to place a block near here,
+             * not actually use the Thaumic block itself.
+             */
             return;
         }
         
