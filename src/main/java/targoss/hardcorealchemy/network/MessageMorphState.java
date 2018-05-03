@@ -26,6 +26,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import targoss.hardcorealchemy.capability.morphstate.ICapabilityMorphState;
+import targoss.hardcorealchemy.util.MiscVanilla;
 
 public class MessageMorphState extends MessageToClient {
     public MessageMorphState() { }
@@ -64,7 +65,7 @@ public class MessageMorphState extends MessageToClient {
         
         @Override
         public void run() {
-            ICapabilityMorphState morphState = Minecraft.getMinecraft().player.getCapability(MORPH_STATE_CAPABILITY, null);
+            ICapabilityMorphState morphState = MiscVanilla.getTheMinecraftPlayer().getCapability(MORPH_STATE_CAPABILITY, null);
             if (morphState != null) {
                 morphState.setIsFishingUnderwater(this.isFishingUnderwater);
                 morphState.setFishingTimer(this.fishingTimer);

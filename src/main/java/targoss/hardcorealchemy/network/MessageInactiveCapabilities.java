@@ -32,6 +32,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import targoss.hardcorealchemy.capability.inactive.IInactiveCapabilities;
 import targoss.hardcorealchemy.capability.inactive.IInactiveCapabilities.Cap;
+import targoss.hardcorealchemy.util.MiscVanilla;
 import targoss.hardcorealchemy.capability.inactive.ProviderInactiveCapabilities;
 
 public class MessageInactiveCapabilities extends MessageToClient {
@@ -87,7 +88,7 @@ public class MessageInactiveCapabilities extends MessageToClient {
         
         @Override
         public void run() {
-            EntityPlayer player = Minecraft.getMinecraft().player;
+            EntityPlayer player = MiscVanilla.getTheMinecraftPlayer();
             IInactiveCapabilities inactives = player.getCapability(ProviderInactiveCapabilities.INACTIVE_CAPABILITIES, null);
             if (inactives == null) {
                 return;

@@ -32,7 +32,6 @@ import com.google.common.collect.Sets;
 import am2.api.affinity.Affinity;
 import am2.api.extensions.IAffinityData;
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
@@ -52,8 +51,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.CapUtil;
@@ -63,6 +60,7 @@ import targoss.hardcorealchemy.capability.inactive.ProviderInactiveCapabilities;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.coremod.CoremodHook;
 import targoss.hardcorealchemy.util.Chat;
+import targoss.hardcorealchemy.util.MiscVanilla;
 import targoss.hardcorealchemy.util.MorphState;
 import thaumcraft.api.capabilities.IPlayerKnowledge;
 import thaumcraft.api.capabilities.IPlayerKnowledge.EnumKnowledgeType;
@@ -221,16 +219,10 @@ public class ListenerPlayerMagicState extends ConfiguredListener {
         }
         
         recallThaumicKnowledgeAndWarp(player);
-        if (player.world.isRemote && isTheMinecraftPlayer(player)) {
+        if (player.world.isRemote && MiscVanilla.isTheMinecraftPlayer(player)) {
             Chat.notifyThaumicSP(player, new TextComponentTranslation("hardcorealchemy.magic.recall_thaumcraft"));
             player.playSound(SoundsTC.whispers, 0.5F, 1.0F);
         }
-    }
-    
-    //TODO: Move to client-only utility class and have it more widely referenced
-    @SideOnly(Side.CLIENT)
-    public static boolean isTheMinecraftPlayer(EntityPlayer player) {
-        return Minecraft.getMinecraft().player == player;
     }
     
     @SubscribeEvent

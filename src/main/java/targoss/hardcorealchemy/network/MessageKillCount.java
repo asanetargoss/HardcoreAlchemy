@@ -34,6 +34,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import targoss.hardcorealchemy.capability.killcount.ICapabilityKillCount;
+import targoss.hardcorealchemy.util.MiscVanilla;
 
 public class MessageKillCount extends MessageToClient {
     
@@ -106,7 +107,7 @@ public class MessageKillCount extends MessageToClient {
         
         @Override
         public void run() {
-            EntityPlayer player = Minecraft.getMinecraft().player;
+            EntityPlayer player = MiscVanilla.getTheMinecraftPlayer();
             ICapabilityKillCount killCountCap = player.getCapability(KILL_COUNT_CAPABILITY, null);
             if (killCountCap == null) {
                 return;

@@ -27,6 +27,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.listener.ListenerGuiHud;
+import targoss.hardcorealchemy.util.MiscVanilla;
 
 public class MessageHumanity extends MessageToClient {
     
@@ -85,7 +86,7 @@ public class MessageHumanity extends MessageToClient {
         
         @Override
         public void run() {
-            ICapabilityHumanity humanity = Minecraft.getMinecraft().player.getCapability(HUMANITY_CAPABILITY, null);
+            ICapabilityHumanity humanity = MiscVanilla.getTheMinecraftPlayer().getCapability(HUMANITY_CAPABILITY, null);
             if (humanity != null) {
                 humanity.setHumanity(this.humanity);
                 humanity.setLastHumanity(this.lastHumanity);
