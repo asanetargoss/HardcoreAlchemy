@@ -18,22 +18,41 @@
 
 package targoss.hardcorealchemy.coremod;
 
+import javax.annotation.Nonnull;
+
+/**
+ * Object for storing and retrieving a method/function name.
+ * Useful when working with Minecraft methods and fields, whose
+ * value can be a srgname in a release environment but an MCP
+ * name in a development environment.
+ */
 public class ObfuscatedName {
     private final String srgName;
+    /** Initially null. Given cached value when get()
+     * is called in a development environment */
     private String mcpName = null;
     
-    public ObfuscatedName(String srgName) {
+    public ObfuscatedName(@Nonnull String srgName) {
         this.srgName = srgName;
     }
     
-    public String get() {
-        return HardcoreAlchemyCoremod.obfuscated ? srgName : getMcpName();
-    }
-    
-    private String getMcpName() {
-        if (mcpName == null) {
-            mcpName = DevMappings.get(srgName);
+    /**
+     * Get name relevant for current environment.
+     * In development environment, default to srgName
+     * if mcpName is not present in the mapping.
+     */
+    public @Nonnull String get() {
+        if (HardcoreAlchemyCoremod.obfuscated) {
+            return srgName;
         }
-        return mcpName;
+        else {
+            if (mcpName == null) {
+                mcpName = DevMappings.get(srgName);
+                if (mcpName == null) {
+                    mcpName = srgName;
+                }
+            }
+            return mcpName;
+        }
     }
 }
