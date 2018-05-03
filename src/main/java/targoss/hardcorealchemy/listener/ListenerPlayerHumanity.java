@@ -56,6 +56,7 @@ import targoss.hardcorealchemy.capability.humanity.LostMorphReason;
 import targoss.hardcorealchemy.capability.humanity.ProviderHumanity;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.util.Chat;
+import targoss.hardcorealchemy.util.MiscVanilla;
 import targoss.hardcorealchemy.util.MorphState;
 
 public class ListenerPlayerHumanity extends ConfiguredListener {
@@ -122,7 +123,7 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
         }
         EntityPlayer player = (EntityPlayer)entity;
         ItemStack itemStack = event.getItem();
-        if (itemStack == null) {
+        if (MiscVanilla.isEmptyItemStack(itemStack)) {
             return;
         }
         Item item = itemStack.getItem();

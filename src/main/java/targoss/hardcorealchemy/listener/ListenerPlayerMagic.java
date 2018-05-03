@@ -74,6 +74,7 @@ import targoss.hardcorealchemy.event.EventTakeStack;
 import targoss.hardcorealchemy.util.Chat;
 import targoss.hardcorealchemy.util.Interaction;
 import targoss.hardcorealchemy.util.InvokeUtil;
+import targoss.hardcorealchemy.util.MiscVanilla;
 import targoss.hardcorealchemy.util.MorphState;
 
 public class ListenerPlayerMagic extends ConfiguredListener {
@@ -185,7 +186,7 @@ public class ListenerPlayerMagic extends ConfiguredListener {
             return;
         }
         ItemStack craftResult = event.slot.getStack();
-        if (craftResult == null || !(event.slot instanceof SlotCrafting)) {
+        if (MiscVanilla.isEmptyItemStack(craftResult) || !(event.slot instanceof SlotCrafting)) {
             return;
         }
         

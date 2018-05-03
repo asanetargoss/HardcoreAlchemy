@@ -43,6 +43,7 @@ import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.coremod.CoremodHook;
+import targoss.hardcorealchemy.util.MiscVanilla;
 import toughasnails.api.TANBlocks;
 import toughasnails.api.config.GameplayOption;
 import toughasnails.api.config.SyncedConfig;
@@ -166,7 +167,7 @@ public class ListenerCrops extends ConfiguredListener {
     }
     
     public static boolean isStick(ItemStack stack) {
-        if (stack == null) {
+        if (MiscVanilla.isEmptyItemStack(stack)) {
             return false;
         }
         

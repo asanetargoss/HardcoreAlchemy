@@ -54,6 +54,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.config.Configs;
+import targoss.hardcorealchemy.util.MiscVanilla;
 
 public class ListenerInventoryFoodRot extends ConfiguredListener {
     public ListenerInventoryFoodRot(Configs configs) {
@@ -71,7 +72,6 @@ public class ListenerInventoryFoodRot extends ConfiguredListener {
     // Average amount that food decays each time it is checked in a tile entity inventory slot
     public static final float FOOD_DECAY_TILE_SLOT;
     public static final float FOOD_DECAY_PLAYER_SLOT;
-    public static final ItemStack NO_ITEM = null;
     public static final int MAX_STACK = 64;
     
     static {
@@ -165,7 +165,7 @@ public class ListenerInventoryFoodRot extends ConfiguredListener {
         for (int i = 0; i < inventorySize; i++) {
             ItemStack itemStack = inventory.getStackInSlot(i);
             
-            if (itemStack == null) {
+            if (MiscVanilla.isEmptyItemStack(itemStack)) {
                 continue;
             }
             
@@ -213,7 +213,7 @@ public class ListenerInventoryFoodRot extends ConfiguredListener {
         int slots = inventory.getSlots();
         for (int i = 0; i < slots; i++) {
             ItemStack item = inventory.getStackInSlot(i);
-            if (item != NO_ITEM) {
+            if (!MiscVanilla.isEmptyItemStack(item)) {
                 NBTTagCompound itemNbt = new NBTTagCompound();
                 itemNbt.setByte("Slot", (byte)i);
                 item.writeToNBT(itemNbt);

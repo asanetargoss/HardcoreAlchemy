@@ -33,6 +33,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.config.Configs;
+import targoss.hardcorealchemy.util.MiscVanilla;
 
 /**
  * An event listener for miscellaneous changes that
@@ -56,7 +57,7 @@ public class ListenerSmallTweaks extends ConfiguredListener {
         }
         
         ItemStack heldStack = player.getHeldItemMainhand();
-        if (heldStack == null) {
+        if (MiscVanilla.isEmptyItemStack(heldStack)) {
             event.setDropChance(0.0F);
             return;
         }

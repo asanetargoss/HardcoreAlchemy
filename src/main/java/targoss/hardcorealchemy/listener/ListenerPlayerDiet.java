@@ -68,6 +68,7 @@ import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.event.EventCraftPredict;
 import targoss.hardcorealchemy.util.FoodLists;
+import targoss.hardcorealchemy.util.MiscVanilla;
 import targoss.hardcorealchemy.util.MorphState;
 import targoss.hardcorealchemy.util.MorphDiet;
 import toughasnails.api.TANCapabilities;
@@ -147,7 +148,7 @@ public class ListenerPlayerDiet extends ConfiguredListener {
     public void onCheckFoodCrafting(EventCraftPredict event) {
         IInventory craftInventory = event.craftGrid;
         ItemStack itemStack = event.craftResult;
-        if (itemStack == null) {
+        if (MiscVanilla.isEmptyItemStack(itemStack)) {
             return;
         }
         
@@ -161,7 +162,7 @@ public class ListenerPlayerDiet extends ConfiguredListener {
         int slotCount = craftInventory.getSizeInventory();
         for (int i = 0; i < slotCount; i++) {
             ItemStack inputStack = craftInventory.getStackInSlot(i);
-            if (inputStack == null) {
+            if (MiscVanilla.isEmptyItemStack(inputStack)) {
                 continue;
             }
             if (!FoodLists.getIgnoresCrafting(inputStack)) {
