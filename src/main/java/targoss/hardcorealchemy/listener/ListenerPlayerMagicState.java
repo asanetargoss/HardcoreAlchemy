@@ -45,6 +45,7 @@ import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.Clone;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.Optional;
+import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
@@ -135,11 +136,16 @@ public class ListenerPlayerMagicState extends ConfiguredListener {
     
     /**
      * On using item, make player recall thaumic knowledge and warp from past life
-     * (but only if the player can use high magic (implied by event priority))
+     * (but only if the player can use high magic)
+     * 
+     * We assume that by the time this event listener is called,
+     * all event canceling has already occurred, due to the low priority.
      */
     @SubscribeEvent(priority=EventPriority.LOWEST)
     @Optional.Method(modid=ModState.THAUMCRAFT_ID)
     public void onPlayerUseThaumicItem(PlayerInteractEvent.RightClickItem event) {
+        // No need to check event.isCanceled()==true since that would mean this method is never called
+        
         ResourceLocation itemResource = event.getItemStack().getItem().getRegistryName();
         if (!itemResource.getResourceDomain().equals(ModState.THAUMCRAFT_ID)) {
             return;
@@ -147,8 +153,9 @@ public class ListenerPlayerMagicState extends ConfiguredListener {
         
         if (ListenerPlayerMagic.isAllowed(ListenerPlayerMagic.MAGIC_ITEM_ALLOW_USE, event.getItemStack()) ||
                 event.getItemStack().getItem() == ItemsTC.salisMundus) {
-            /* If the item doesn't have a "use" or can be used without
-             * high magic ability. Also, disclude salis mundus usage
+            /* If the item is usable without high magic knowledge, there's
+             * no reason it should trigger a memory flashback.
+             * Also, this discludes salis mundus usage
              * as a way to recall Thaumcraft (makes opening the
              * Thauminomicon the dramatic moment)
              */
@@ -160,11 +167,18 @@ public class ListenerPlayerMagicState extends ConfiguredListener {
     
     /**
      * On using block, make player recall thaumic knowledge and warp from past life
-     * (but only if the player can use high magic (implied by event priority))
+     * (but only if the player can use high magic)
+     * 
+     * We assume that by the time this event listener is called,
+     * all event canceling/denying has already occurred, due to the low priority.
      */
     @SubscribeEvent(priority=EventPriority.LOWEST)
     @Optional.Method(modid=ModState.THAUMCRAFT_ID)
     public void onPlayerUseThaumicBlock(PlayerInteractEvent.RightClickBlock event) {
+        if (event.getUseBlock() == Result.DENY) {
+            return;
+        }
+        
         Block block = event.getWorld().getBlockState(event.getPos()).getBlock();
         if (block == null) {
             return;
@@ -176,7 +190,9 @@ public class ListenerPlayerMagicState extends ConfiguredListener {
         }
         
         if (ListenerPlayerMagic.isAllowed(ListenerPlayerMagic.MAGIC_BLOCK_ALLOW_USE, block)) {
-            // If the block doesn't have a "use" or can be used without high magic ability
+            /* If the block is usable without high magic knowledge, there's
+             * no reason it should trigger a memory flashback.
+             */
             return;
         }
 

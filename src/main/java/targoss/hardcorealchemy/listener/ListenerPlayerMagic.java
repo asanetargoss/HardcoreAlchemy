@@ -21,11 +21,13 @@ package targoss.hardcorealchemy.listener;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
+import javax.annotation.Nullable;
 
 import WayofTime.bloodmagic.api.saving.SoulNetwork;
 import WayofTime.bloodmagic.api.util.helper.NetworkHelper;
 import am2.api.affinity.Affinity;
-import am2.api.event.SpellCastEvent;
 import am2.api.extensions.IAffinityData;
 import am2.api.extensions.IEntityExtension;
 import am2.api.extensions.ISkillData;
@@ -34,23 +36,30 @@ import am2.api.skill.SkillPoint;
 import am2.extensions.AffinityData;
 import am2.extensions.EntityExtension;
 import am2.extensions.SkillData;
-import mchorse.metamorph.api.morphs.AbstractMorph;
-import mchorse.metamorph.capabilities.morphing.IMorphing;
-import mchorse.metamorph.capabilities.morphing.Morphing;
 import moze_intel.projecte.api.ProjectEAPI;
 import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.SlotCrafting;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.Optional;
+import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -58,11 +67,13 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
-import targoss.hardcorealchemy.capability.humanity.LostMorphReason;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.coremod.CoremodHook;
+import targoss.hardcorealchemy.coremod.ObfuscatedName;
 import targoss.hardcorealchemy.event.EventTakeStack;
 import targoss.hardcorealchemy.util.Chat;
+import targoss.hardcorealchemy.util.Interaction;
+import targoss.hardcorealchemy.util.InvokeUtil;
 import targoss.hardcorealchemy.util.MorphState;
 
 public class ListenerPlayerMagic extends ConfiguredListener {
@@ -84,9 +95,15 @@ public class ListenerPlayerMagic extends ConfiguredListener {
     public static final Capability<ICapabilityHumanity> HUMANITY_CAPABILITY = null;
     
     static {
+        /* Note: There is no need to add ItemBlocks, ItemFoods,
+         * or blocks and items without right click uses to
+         * these whitelists. They will be detected automatically.
+         */
+        
         HIGH_MAGIC_MODS = new HashSet<String>();
-        HIGH_MAGIC_MODS.add("arsmagica2");
-        HIGH_MAGIC_MODS.add("ProjectE");
+        HIGH_MAGIC_MODS.add(ModState.ARS_MAGICA_ID);
+        // Yes, ProjectE is here with two different spellings. That's intentional.
+        HIGH_MAGIC_MODS.add(ModState.PROJECT_E_ID);
         HIGH_MAGIC_MODS.add("projecte");
         HIGH_MAGIC_MODS.add("astralsorcery");
         HIGH_MAGIC_MODS.add(ModState.THAUMCRAFT_ID);
@@ -108,26 +125,6 @@ public class ListenerPlayerMagic extends ConfiguredListener {
         MAGIC_BLOCK_ALLOW_USE = new HashSet<String>();
         MAGIC_BLOCK_ALLOW_USE.add("projecte:alchemical_chest");
         MAGIC_BLOCK_ALLOW_USE.add("arsmagica2:magicians_workbench");
-        // Common blocks from magic mods without a right click usage
-        /*TODO: Use Java reflection to check if blocks being
-         * "clicked" even have a use to begin with, and allow placing 
-         * blocks on them accordingly (including when player is sneaking)
-         */
-        MAGIC_BLOCK_ALLOW_USE.add("astralsorcery:BlockMarble");
-        MAGIC_BLOCK_ALLOW_USE.add("astralsorcery:BlockMarbleStairs");
-        MAGIC_BLOCK_ALLOW_USE.add("astralsorcery:BlockCustomOre");
-        MAGIC_BLOCK_ALLOW_USE.add("astralsorcery:BlockCustomSandOre");
-        MAGIC_BLOCK_ALLOW_USE.add("arsmagica2:desert_nova");
-        MAGIC_BLOCK_ALLOW_USE.add("arsmagica2:cerublossom");
-        MAGIC_BLOCK_ALLOW_USE.add("arsmagica2:wakebloom");
-        MAGIC_BLOCK_ALLOW_USE.add("arsmagica2:aum");
-        MAGIC_BLOCK_ALLOW_USE.add("arsmagica2:witchwood_log");
-        MAGIC_BLOCK_ALLOW_USE.add("arsmagica2:witchwood_leaves");
-        MAGIC_BLOCK_ALLOW_USE.add("arsmagica2:witchwood_sapling");
-        MAGIC_BLOCK_ALLOW_USE.add("arsmagica2:witchwood_planks");
-        MAGIC_BLOCK_ALLOW_USE.add("arsmagica2:witchwood_stairs");
-        MAGIC_BLOCK_ALLOW_USE.add("arsmagica2:witchwood_slab");
-        MAGIC_BLOCK_ALLOW_USE.add("arsmagica2:ore");
     }
     
     /*TODO: Prevent using block transmutation feature of Philosopher Stone
@@ -172,7 +169,7 @@ public class ListenerPlayerMagic extends ConfiguredListener {
             return;
         }
         if (!isAllowed(MAGIC_BLOCK_ALLOW_USE, block)) {
-            event.setCanceled(true);
+            event.setUseBlock(Result.DENY);
             if (!capabilityHumanity.getNotifiedMagicFail()) {
                 capabilityHumanity.setNotifiedMagicFail(true);
                 if (player.world.isRemote) {
@@ -226,12 +223,22 @@ public class ListenerPlayerMagic extends ConfiguredListener {
     }
     
     public static boolean isAllowed(Set<String> whitelist, ItemStack itemStack) {
-        ResourceLocation itemResource = itemStack.getItem().getRegistryName();
+        Item item = itemStack.getItem();
+        
+        if (!Interaction.hasSpecialUse(item)) {
+            return true;
+        }
+        
+        ResourceLocation itemResource = item.getRegistryName();
         return !HIGH_MAGIC_MODS.contains(itemResource.getResourceDomain()) ||
                     whitelist.contains(itemResource.toString());
     }
     
     public static boolean isAllowed(Set<String> whitelist, Block block) {
+        if (!Interaction.hasSpecialUse(block)) {
+            return true;
+        }
+        
         ResourceLocation blockResource = block.getRegistryName();
         return !HIGH_MAGIC_MODS.contains(blockResource.getResourceDomain()) ||
                     whitelist.contains(blockResource.toString());
@@ -265,8 +272,7 @@ public class ListenerPlayerMagic extends ConfiguredListener {
     
     /*
      * What it does: Resets magic level, skill allocations, and affinities
-     * Why it does it: 1) Prevents affinity effects from persisting across lives or
-     * (In the case of ListenerPlayerHumanity) into permanent morphs
+     * Why it does it: 1) Prevents affinity effects from persisting across lives
      * 2) Sets other aspects of the player's magic to be consistent with that fact
      * 3) Allow for the player to try new specializations
      */
