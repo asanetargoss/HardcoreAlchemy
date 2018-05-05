@@ -59,21 +59,21 @@ public class Chat {
     
     @SideOnly(Side.CLIENT)
     public static void notifySP(EntityPlayer player, ITextComponent message) {
-        if (MiscVanilla.isTheMinecraftPlayer(player)) {
+        if (Minecraft.getMinecraft().player == player) {
             Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(message.setStyle(LIGHT_GREY_ITALIC));
         }
     }
     
     @SideOnly(Side.CLIENT)
     public static void alarmSP(EntityPlayer player, ITextComponent message) {
-        if (MiscVanilla.isTheMinecraftPlayer(player)) {
+        if (Minecraft.getMinecraft().player == player) {
             Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(message.setStyle(RED_ITALIC));
         }
     }
     
     @SideOnly(Side.CLIENT)
     public static void notifyThaumicSP(EntityPlayer player, ITextComponent message) {
-        if (MiscVanilla.isTheMinecraftPlayer(player)) {
+        if (Minecraft.getMinecraft().player == player) {
             Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(message.setStyle(PURPLE));
         }
     }
