@@ -18,16 +18,12 @@
 
 package targoss.hardcorealchemy.listener;
 
-import static targoss.hardcorealchemy.HardcoreAlchemy.LOGGER;
-
 import java.util.HashSet;
 import java.util.Set;
 
-import mchorse.metamorph.entity.EntityMorph;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
@@ -35,9 +31,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.capability.combatlevel.CapabilityCombatLevel;
 import targoss.hardcorealchemy.capability.combatlevel.ICapabilityCombatLevel;
 import targoss.hardcorealchemy.capability.combatlevel.ProviderCombatLevel;
@@ -79,16 +74,21 @@ public class ListenerMobLevel extends ConfiguredListener {
     }
     
     @SubscribeEvent
-    public void onLivingUpdate(LivingEvent.LivingUpdateEvent event) {
-        EntityLivingBase entity = event.getEntityLiving();
-        ICapabilityCombatLevel combatLevel = entity.getCapability(COMBAT_LEVEL_CAPABILITY, null);
+    public void onCheckMobHasLevel(EntityJoinWorldEvent event) {
+        Entity entity = event.getEntity();
+        if (!(entity instanceof EntityLivingBase)) {
+            return;
+        }
+        EntityLivingBase entityLiving = (EntityLivingBase)entity;
+        
+        ICapabilityCombatLevel combatLevel = entityLiving.getCapability(COMBAT_LEVEL_CAPABILITY, null);
         if (combatLevel != null && !combatLevel.getHasCombatLevel()) {
             combatLevel.setHasCombatLevel(true);
-            MobLevelRange levelRange = MobLevelRange.getRange(entity.dimension, entity.posY);
+            MobLevelRange levelRange = MobLevelRange.getRange(entityLiving.dimension, entityLiving.posY);
             //TODO: better random level algorithm
-            int level = levelRange.getRandomLevel(entity.posX, entity.posZ, entity.world.getSeed());
+            int level = levelRange.getRandomLevel(entityLiving.posX, entityLiving.posZ, entityLiving.world.getSeed());
             combatLevel.setValue(level);
-            }
+        }
     }
     
     
