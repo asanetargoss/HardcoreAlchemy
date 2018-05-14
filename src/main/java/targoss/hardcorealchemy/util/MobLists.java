@@ -117,7 +117,6 @@ public class MobLists {
         
         // Vanilla
         humans.add("Villager");
-        humans.add("Witch");
         // Ars Magica
         humans.add("arsmagica2.Dryad");
         humans.add("arsmagica2.LightMage");
@@ -133,6 +132,8 @@ public class MobLists {
         humans.add("toroquest.sentry");
         humans.add("toroquest.shopkeeper");
         humans.add("toroquest.village_lord");
+        // Village Box
+        humans.add("villagebox.villager");
         
         return humans;
     }
