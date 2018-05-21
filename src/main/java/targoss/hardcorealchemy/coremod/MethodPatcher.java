@@ -18,91 +18,22 @@
 
 package targoss.hardcorealchemy.coremod;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
-import net.minecraft.launchwrapper.IClassTransformer;
-
-public abstract class MethodPatcher implements IClassTransformer {
-    /**
-     * @param name
-     * Name of class to be transformed. Used in debug.
-     * @param basicClass
-     * Input bytes
-     * @param flags
-     * ClassWriter flag int. Generally ClassWriter.COMPUTE_MAXS, or 0 for simple patches.
-     * @return
-     * Output bytes
-     */
-    public final byte[] transformClass(String name, byte[] basicClass, int flags) {
-        if (enableDebug()) {
-            HardcoreAlchemyCoremod.LOGGER.debug("Attempting to patch class '" +
-                    name + "' made by '" +
-                    this.getClass().getName() + "'");
-        }
-        
-        try {
-            ClassReader reader = new ClassReader(basicClass);
-            ClassNode visitor = new ClassNode();
-            reader.accept(visitor, 0);
-            
-            for (MethodNode method : visitor.methods) {
-                transformMethod(method);
-            }
-            
-            ClassWriter writer = new ClassWriter(flags);
-            visitor.accept(writer);
-            byte[] newClass = writer.toByteArray();
-            
-            if (enableDebug()) {
-                HardcoreAlchemyCoremod.LOGGER.debug(
-                        "Outputting result of patch to class '" +
-                        name + "' made by '" +
-                        this.getClass().getName() + "'"
-                        );
-                HardcoreAlchemyCoremod.logBytesToDebug(newClass);
-            }
-
-            return newClass;
-        }
-        catch (Exception e) {
-            StringWriter stringWriter = new StringWriter();
-            PrintWriter wrapper = new PrintWriter(stringWriter);
-            e.printStackTrace(wrapper);
-            
-            HardcoreAlchemyCoremod.LOGGER.error(
-                    "Error occurred when attempting to patch class '" +
-                    name + "' using '" +
-                    this.getClass().getName() + "'." +
-                    "The patch has been aborted.");
-            if (enableDebug()) {
-                HardcoreAlchemyCoremod.LOGGER.debug(
-                        "Debug is enabled. The bytecode of the unpatched " +
-                        "class will follow the stack trace.");
-            };
-            HardcoreAlchemyCoremod.LOGGER.error(stringWriter.toString());
-            
-            if (enableDebug()) {
-                HardcoreAlchemyCoremod.LOGGER.debug(
-                        "Outputting unpatched class '" +
-                        name + "'");
-                HardcoreAlchemyCoremod.logBytesToDebug(basicClass);
-            }
-        }
-        
-        return basicClass;
-    }
-    
+public abstract class MethodPatcher extends ClassPatcher {    
     /**
      * Whether to print the transformed class bytes to the console.
      */
     public boolean enableDebug() {
         return false;
+    }
+
+    @Override
+    public final void transformClassNode(ClassNode classNode) {
+        for (MethodNode method : classNode.methods) {
+            transformMethod(method);
+        }
     }
     
     /**
