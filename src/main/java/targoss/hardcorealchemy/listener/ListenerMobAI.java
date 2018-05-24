@@ -42,7 +42,9 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.combatlevel.CapabilityCombatLevel;
 import targoss.hardcorealchemy.capability.combatlevel.ICapabilityCombatLevel;
 import targoss.hardcorealchemy.config.Configs;
@@ -68,6 +70,17 @@ public class ListenerMobAI extends ConfiguredListener {
         mobAIIgnoreMorphList.addAll(MobLists.getNonMobs());
     }
     
+    private static Class<? extends EntityAIBase> DEADLY_MONSTERS_CLIMBER_AI = null;
+    static {
+        if (Loader.instance().getIndexedModList().containsKey(ModState.DEADLY_MONSTERS_ID) ) {
+            try {
+                DEADLY_MONSTERS_CLIMBER_AI = (Class<? extends EntityAIBase>)Class.forName("com.dmonsters.entity.EntityClimber$AISpiderTarget");
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    
     @SubscribeEvent
     public void onEntityJoinWorld(EntityJoinWorldEvent event) {
         // Persuade entities that morphs aren't human, unless said entity knows better
@@ -78,19 +91,31 @@ public class ListenerMobAI extends ConfiguredListener {
             wrapReplaceAttackAI(entityLiving, EntityAITargetNonTamed.class, AIUntamedAttackMobOrMorph.class);
             wrapReplaceAttackAI(entityLiving, EntitySpider.AISpiderTarget.class, AISpiderTargetMobOrMorph.class);
             wrapReplaceAttackAI(entityLiving, EntityAIFindEntityNearestPlayer.class, AITargetUnmorphedPlayer.class);
+            
+            if (DEADLY_MONSTERS_CLIMBER_AI != null) {
+                wrapReplaceAttackAI(entityLiving, DEADLY_MONSTERS_CLIMBER_AI, AIAttackTargetMobOrMorph.class, EntityAINearestAttackableTarget.class);
+            }
         }
+    }
+    
+    private static void wrapReplaceAttackAI(EntityLiving entityLiving,
+            Class<? extends EntityAIBase> targetClazz,
+            Class<? extends EntityAIBase> replaceClazz) {
+        wrapReplaceAttackAI(entityLiving, targetClazz, replaceClazz, targetClazz);
     }
     
     /**
      * Replace an instance of the AI EntityAIBase. Assume the
-     * replacement AI's constructor takes the old AI instance as a parameter.
+     * replacement AI's constructor takes the old AI instance
+     * upcasted to delegateClazz as a parameter.
      * If it doesn't, you will get errors, because reflection.
      */
     private static void wrapReplaceAttackAI(EntityLiving entityLiving,
             Class<? extends EntityAIBase> targetClazz,
-            Class<? extends EntityAIBase> replaceClazz) {
+            Class<? extends EntityAIBase> replaceClazz,
+            Class<? extends EntityAIBase> delegateClazz) {
         try {
-            Constructor<? extends EntityAIBase> replaceConstructor = replaceClazz.getConstructor(targetClazz);
+            Constructor<? extends EntityAIBase> replaceConstructor = replaceClazz.getConstructor(delegateClazz);
             
             // Find instances of the AI to replace
             EntityAITasks targetTaskList = entityLiving.targetTasks;
