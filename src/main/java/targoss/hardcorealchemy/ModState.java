@@ -18,6 +18,9 @@
 
 package targoss.hardcorealchemy;
 
+/**
+ * Note: Not all ids have a corresponding boolean
+ */
 public final class ModState {
     public static final String DISSOLUTION_ID = "dissolution";
     public static final String NUTRITION_ID = "nutrition";
@@ -29,6 +32,7 @@ public final class ModState {
     public static final String GUIDEAPI_ID = "guideapi";
     public static final String HARVESTCRAFT_ID = "harvestcraft";
     public static final String ADINFEROS_ID = "adinferos";
+    public static final String DEADLY_MONSTERS_ID = "dmonsters";
     public static boolean isDissolutionLoaded = false;
     public static boolean isNutritionLoaded = false;
     public static boolean isBloodMagicLoaded = false;
