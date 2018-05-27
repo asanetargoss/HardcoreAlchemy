@@ -18,21 +18,79 @@
 
 package targoss.hardcorealchemy.util;
 
+
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 
+import com.google.common.base.Predicate;
+
+import mchorse.metamorph.api.morphs.AbstractMorph;
+import mchorse.metamorph.api.morphs.EntityMorph;
+import mchorse.metamorph.capabilities.morphing.IMorphing;
+import mchorse.metamorph.capabilities.morphing.Morphing;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.passive.EntityAnimal;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.LoaderState;
 import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.ModStateException;
 
+/**
+ * Functions for working with living entities
+ */
 public class EntityUtil {
-    public static String getEntityNameFromId(int id) {
-        return EntityList.CLASS_TO_NAME.get(EntityList.ID_TO_CLASS.get(id));
+    public static Set<Class> humanEntities = new HashSet<>();
+    
+    static {
+        if (!Loader.instance().hasReachedState(LoaderState.AVAILABLE)) {
+            throw new ModStateException(
+                    "The EntityUtil class should not be used until all mods and their respective entities are registered"
+                    );
+        }
+        
+        for (String humanEntityStrings : MobLists.getHumans()) {
+            Class clazz = EntityList.NAME_TO_CLASS.get(humanEntityStrings);
+            if (clazz != null) {
+                humanEntities.add(clazz);
+            }
+        }
+    }
+    
+    private static Map<Class<? extends EntityLivingBase>, ITextComponent> customEntityStrings = new HashMap<>();
+    static {
+        customEntityStrings.put(EntityLivingBase.class, new TextComponentTranslation("entity.Mob.name"));
+        // These three are added in the Hardcore Alchemy lang file
+        customEntityStrings.put(EntityCreature.class, new TextComponentTranslation("entity.Creature.name"));
+        customEntityStrings.put(EntityAnimal.class, new TextComponentTranslation("entity.Animal.name"));
+        customEntityStrings.put(EntityPlayer.class, new TextComponentTranslation("entity.Player.name"));
+    }
+    
+    public static ITextComponent getEntityName(Class<? extends EntityLivingBase> entityClass) {
+        if (customEntityStrings.containsKey(entityClass)) {
+            return customEntityStrings.get(entityClass);
+        }
+        String entityString = EntityList.CLASS_TO_NAME.get(entityClass);
+        if (entityString == null) {
+            entityString = "generic";
+        }
+        return new TextComponentTranslation("entity." + entityString + ".name");
     }
     
     public static @Nullable <T extends Entity> T createEntity(Class<T> entityClass) {
@@ -64,5 +122,68 @@ public class EntityUtil {
         entityLiving.renderYawOffset = entityLiving.rotationYaw;
         entityLiving.onInitialSpawn(entityLiving.world.getDifficultyForLocation(new BlockPos(entityLiving)), null);
         entityLiving.world.spawnEntity(entityLiving);
+    }
+    
+    /**
+     * Gets living entities and morphed players who resemble the given entity class
+     */
+    public static <T extends EntityLivingBase> List<T> getEntitiesAndMorphs(World world, Class<? extends T> entityClass, AxisAlignedBB aabb) {
+        if (entityClass.isInstance(EntityPlayer.class)) {
+            return (List<T>)world.getEntitiesWithinAABB((Class<? extends EntityPlayer>)entityClass, aabb, EntityUtil::isUnmorphed);
+        }
+        else {
+            List<T> likeEntities = world.getEntitiesWithinAABB(entityClass, aabb, null);
+            List<EntityPlayer> morphedPlayers = world.getEntitiesWithinAABB(EntityPlayer.class, aabb, new Predicate<EntityPlayer>() {
+                    @Override public boolean apply(EntityPlayer player) { return isMorphedAs(player, entityClass); }
+                });
+            likeEntities.addAll((List<T>)morphedPlayers);
+            return likeEntities;
+        }
+    }
+
+    /**
+     * Gets living entities and morphed players who resemble the given entity class,
+     * excluding the given entity.
+     */
+    public static <T extends EntityLivingBase> List<T> getEntitiesAndMorphsExcluding(EntityLivingBase excludingEntity, World world, Class <? extends T> entityClass, AxisAlignedBB aabb) {
+        List<T> foundEntities = getEntitiesAndMorphs(world, entityClass, aabb);
+        foundEntities.remove(excludingEntity);
+        return foundEntities;
+    }
+    
+    /**
+     * Whether this entity looks like the given entityClass.
+     */
+    public static boolean isEntityLike(EntityLivingBase entity, Class<? extends EntityLivingBase> entityClass) {
+        if (entity instanceof EntityPlayer) {
+            return isMorphedAs((EntityPlayer)entity, entityClass);
+        }
+        else {
+            return entityClass.isInstance(entity);
+        }
+    }
+
+    public static boolean isUnmorphed(EntityPlayer player) {
+        IMorphing morphing = Morphing.get(player);
+        if (morphing == null) {
+            return true;
+        }
+        return morphing.getCurrentMorph() == null;
+    }
+    
+    public static boolean isMorphedAs(EntityPlayer player, Class<? extends EntityLivingBase> entityClass) {
+        IMorphing morphing = Morphing.get(player);
+        if (morphing == null) {
+            return player.getClass().isInstance(entityClass);
+        }
+        AbstractMorph morph = morphing.getCurrentMorph();
+        if (morph == null) {
+            return player.getClass().isInstance(entityClass);
+        }
+        if (!(morph instanceof EntityMorph)) {
+            return false;
+        }
+        EntityLivingBase morphEntity = ((EntityMorph)morph).getEntity(player.world);
+        return morphEntity.getClass().isInstance(entityClass);
     }
 }
