@@ -18,19 +18,22 @@
 
 package targoss.hardcorealchemy.test.suite;
 
+import net.minecraft.entity.monster.EntityZombie;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.test.api.ITestList;
 import targoss.hardcorealchemy.test.api.ITestSuite;
 import targoss.hardcorealchemy.test.api.TestList;
+import targoss.hardcorealchemy.util.EntityUtil;
 import targoss.hardcorealchemy.util.MiscVanilla;
 
-public class TestFakePlayer implements ITestSuite {
+public class TestWorldReference implements ITestSuite {
     @Override
     public ITestList getTests() {
         ITestList tests = new TestList();
         
         tests.put("check server reference", this::checkServerTestReference);
         tests.put("check world available", this::checkWorldAvailable);
+        tests.put("check worldless entity creation", this::checkEntityCreation);
         
         return tests;
     }
@@ -42,5 +45,8 @@ public class TestFakePlayer implements ITestSuite {
     public boolean checkWorldAvailable() {
         return MiscVanilla.getWorld() != null;
     }
-
+    
+    public boolean checkEntityCreation() {
+        return EntityUtil.createEntity(EntityZombie.class) != null;
+    }
 }

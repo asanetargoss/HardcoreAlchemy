@@ -30,7 +30,7 @@ import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.test.api.ITestSuite;
 import targoss.hardcorealchemy.test.api.TestSystem;
 import targoss.hardcorealchemy.test.suite.TestMobLists;
-import targoss.hardcorealchemy.test.suite.TestFakePlayer;
+import targoss.hardcorealchemy.test.suite.TestWorldReference;
 import targoss.hardcorealchemy.test.suite.TestFoodRot;
 import targoss.hardcorealchemy.test.suite.TestHumanity;
 
@@ -54,7 +54,7 @@ public class HardcoreAlchemyTests extends TestSystem {
     public List<Class<? extends ITestSuite>> getTestSuites() {
         List<Class<? extends ITestSuite>> testSuites = new ArrayList<>();
         
-        testSuites.add(TestFakePlayer.class);
+        testSuites.add(TestWorldReference.class);
         testSuites.add(TestFoodRot.class);
         testSuites.add(TestHumanity.class);
         testSuites.add(TestMobLists.class);

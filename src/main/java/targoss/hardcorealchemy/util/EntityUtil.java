@@ -18,15 +18,43 @@
 
 package targoss.hardcorealchemy.util;
 
+import java.lang.reflect.InvocationTargetException;
+
+import javax.annotation.Nullable;
+
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.World;
+import targoss.hardcorealchemy.HardcoreAlchemy;
 
 public class EntityUtil {
     public static String getEntityNameFromId(int id) {
         return EntityList.CLASS_TO_NAME.get(EntityList.ID_TO_CLASS.get(id));
+    }
+    
+    public static @Nullable <T extends Entity> T createEntity(Class<T> entityClass) {
+        World entityWorld = MiscVanilla.getWorld();
+        if (entityWorld == null) {
+            HardcoreAlchemy.LOGGER.error("Attempted to create entity of type '" +
+                    entityClass.getName() + "', but there is no world to initialize in.");
+            return null;
+        }
+        
+        T entity;
+        try {
+             entity = entityClass.getConstructor(World.class).newInstance(entityWorld);
+        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+                | NoSuchMethodException | SecurityException e) {
+            HardcoreAlchemy.LOGGER.error("Attempted to create entity of type '" +
+                    entityClass.getName() + "', but could not initialize.");
+            e.printStackTrace();
+            return null;
+        }
+        
+        return entity;
     }
     
     // Adapted from ItemMonsterPlacer.spawnCreature
