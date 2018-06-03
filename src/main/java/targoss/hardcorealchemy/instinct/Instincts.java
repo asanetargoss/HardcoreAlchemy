@@ -39,6 +39,8 @@ public class Instincts {
             .setIDRange(0, 1024)
             .create();
     
+    public static final InstinctFactory ATTACK_PREY_ONLY = instinct("attack_prey_only", InstinctAttackPreyOnly.class);
+    
     public static class InstinctFactory extends IForgeRegistryEntry.Impl<InstinctFactory> {
         public final Class<? extends IInstinct> instinctClass;
         public final IInstinct instinctObject;
