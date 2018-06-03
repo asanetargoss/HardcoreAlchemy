@@ -18,22 +18,19 @@
 
 package targoss.hardcorealchemy.test.suite;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Map;
-
-import com.superdextor.adinferos.entity.monster.EntityObsidianSheepman;
 
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.DimensionType;
-import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.event.entity.living.ZombieEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
+import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.listener.ListenerSmallTweaks;
 import targoss.hardcorealchemy.test.HardcoreAlchemyTests;
@@ -132,7 +129,7 @@ public class TestMobLists implements ITestSuite {
     }
     
     public boolean reinforcementAllowed(String zombieEntityName) {
-        MinecraftServer server = HardcoreAlchemyTests.SERVER_REFERENCE.get();
+        MinecraftServer server = HardcoreAlchemy.SERVER_REFERENCE.get();
         WorldServer worldServer = server.worldServerForDimension(DimensionType.OVERWORLD.getId());
         EntityZombie zombie = (EntityZombie)EntityList.createEntityByName(zombieEntityName, worldServer);
         

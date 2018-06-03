@@ -18,10 +18,12 @@
 
 package targoss.hardcorealchemy;
 
+import java.lang.ref.WeakReference;
 import java.util.Map;
 
 import org.apache.logging.log4j.Logger;
 
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
@@ -148,6 +150,8 @@ public class HardcoreAlchemy
         proxy.postInit(event);
     }
     
+    public static WeakReference<MinecraftServer> SERVER_REFERENCE = null;
+    
     @EventHandler
     public void serverAboutToStart(FMLServerAboutToStartEvent event) {
         proxy.serverAboutToStart(event);
@@ -159,7 +163,7 @@ public class HardcoreAlchemy
         
         proxy.serverStarting(event);
         
-        HardcoreAlchemyTests.setServerForEvent(event);
+        SERVER_REFERENCE = new WeakReference(event.getServer());
     }
     
     @EventHandler
@@ -171,6 +175,6 @@ public class HardcoreAlchemy
     public void serverStopping(FMLServerStoppingEvent event) {
         proxy.serverStopping(event);
         
-        HardcoreAlchemyTests.setServerForEvent(event);
+        SERVER_REFERENCE = null;
     }
 }

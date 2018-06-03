@@ -62,15 +62,5 @@ public class HardcoreAlchemyTests extends TestSystem {
         return testSuites;
     }
     
-    public static WeakReference<MinecraftServer> SERVER_REFERENCE = null;
-    
-    public static void setServerForEvent(FMLServerStartingEvent event) {
-        SERVER_REFERENCE = new WeakReference(event.getServer());
-    }
-    
-    public static void setServerForEvent(FMLServerStoppingEvent event) {
-        SERVER_REFERENCE = null;
-    }
-    
     public static final Configs DEFAULT_CONFIGS = new Configs();
 }

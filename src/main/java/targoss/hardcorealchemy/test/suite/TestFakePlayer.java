@@ -18,13 +18,11 @@
 
 package targoss.hardcorealchemy.test.suite;
 
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.DimensionType;
-import net.minecraft.world.WorldServer;
-import targoss.hardcorealchemy.test.HardcoreAlchemyTests;
+import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.test.api.ITestList;
 import targoss.hardcorealchemy.test.api.ITestSuite;
 import targoss.hardcorealchemy.test.api.TestList;
+import targoss.hardcorealchemy.util.MiscVanilla;
 
 public class TestFakePlayer implements ITestSuite {
     @Override
@@ -32,19 +30,17 @@ public class TestFakePlayer implements ITestSuite {
         ITestList tests = new TestList();
         
         tests.put("check server reference", this::checkServerTestReference);
-        tests.put("check overworld available", this::checkOverworldAvailable);
+        tests.put("check world available", this::checkWorldAvailable);
         
         return tests;
     }
 
     public boolean checkServerTestReference() {
-        return HardcoreAlchemyTests.SERVER_REFERENCE != null && HardcoreAlchemyTests.SERVER_REFERENCE.get() != null;
+        return HardcoreAlchemy.SERVER_REFERENCE != null && HardcoreAlchemy.SERVER_REFERENCE.get() != null;
     }
 
-    public boolean checkOverworldAvailable() {
-        MinecraftServer server = HardcoreAlchemyTests.SERVER_REFERENCE.get();
-        WorldServer worldServer = server.worldServerForDimension(DimensionType.OVERWORLD.getId());
-        return worldServer != null;
+    public boolean checkWorldAvailable() {
+        return MiscVanilla.getWorld() != null;
     }
 
 }

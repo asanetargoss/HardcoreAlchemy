@@ -21,8 +21,13 @@ package targoss.hardcorealchemy.util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.DimensionType;
+import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import targoss.hardcorealchemy.HardcoreAlchemy;
 
 /**
  * Miscellaneous utility class for vanilla Minecraft
@@ -40,5 +45,37 @@ public class MiscVanilla {
     
     public static boolean isEmptyItemStack(ItemStack itemStack) {
         return itemStack == null;
+    }
+    
+    /**
+     * Gets a World instance.
+     */
+    public static World getWorld() {
+        FMLCommonHandler fmlCommonHandler = FMLCommonHandler.instance();
+        World world = null;
+        if (fmlCommonHandler.getSide() == Side.SERVER ||
+                fmlCommonHandler.getEffectiveSide() == Side.SERVER) {
+            world = getWorldServer();
+        }
+        else {
+            world = getWorldClient();
+        }
+        return world;
+    }
+    
+    public static World getWorldServer() {
+        if (HardcoreAlchemy.SERVER_REFERENCE == null) {
+            return null;
+        }
+        MinecraftServer server = HardcoreAlchemy.SERVER_REFERENCE.get();
+        if (server == null) {
+            return null;
+        }
+        return server.worldServerForDimension(DimensionType.OVERWORLD.getId());
+    }
+    
+    @SideOnly(Side.CLIENT)
+    public static World getWorldClient() {
+        return Minecraft.getMinecraft().player.world;
     }
 }
