@@ -7,6 +7,7 @@ About the Hardcore Alchemy modpack:
 
 About the Hardcore Alchemy mod:
 * Adds survival and cross-mod compatibility features meant to complement Metamorph and other magic/survival mods
+* Currently requires, at minimum, [Metamorph](https://github.com/asanetargoss/metamorph/releases), [Nutrition](https://github.com/asanetargoss/Nutrition), [Wawla](https://minecraft.curseforge.com/projects/wawla-what-are-we-looking-at), and some sort of mod with a random respawn mechanic, such as [Iberia](https://github.com/asanetargoss/iberia/releases) or [Better with Mods](https://minecraft.curseforge.com/projects/better-with-mods). See the links provided, as some are required custom builds.
 * Information about the features of the latest release is available at the [Dry Feature List](https://github.com/asanetargoss/HardcoreAlchemy/wiki/Dry-Feature-List) on the wiki
 * Releases [here](https://github.com/asanetargoss/HardcoreAlchemy/releases)
 * License for the mod is LGPL 3
