@@ -20,6 +20,7 @@ package targoss.hardcorealchemy.util;
 
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -39,6 +40,7 @@ import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -51,6 +53,7 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.LoaderState;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.ModStateException;
+import targoss.hardcorealchemy.coremod.ObfuscatedName;
 
 /**
  * Functions for working with living entities
@@ -113,6 +116,62 @@ public class EntityUtil {
         }
         
         return entity;
+    }
+    
+    private static final ObfuscatedName INIT_ENTITY_AI = new ObfuscatedName("func_184651_r" /*initEntityAI*/);
+    
+    private static void forceInitEntityAI(EntityLiving entity) {
+        try {
+            //Method method = InvokeUtil.getPrivateMethod(true, entity.getClass(), EntityLiving.class, INIT_ENTITY_AI.get());
+            Method method = entity.getClass().getDeclaredMethod(INIT_ENTITY_AI.get());
+            method.setAccessible(true);
+            method.invoke(entity);
+        } catch (NoSuchMethodException | SecurityException | IllegalAccessException |
+                IllegalArgumentException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Gets what the entity's AI tasks would be if you were on server-side.
+     * May be the original or a copy depending on the situation.
+     * Uses reflection.
+     */
+    public static Set<EntityAITasks.EntityAITaskEntry> getAiTasks(EntityLiving entity) {
+        Set<EntityAITasks.EntityAITaskEntry> aiTasksOriginal = entity.tasks.taskEntries;
+        if (!aiTasksOriginal.isEmpty()) {
+            // Normally we would check isRemote, but some mod authors
+            // populate AI in the constructor rather than initEntityAI()
+            return aiTasksOriginal;
+        }
+        else {
+            Set<EntityAITasks.EntityAITaskEntry> aiTasksCopy = new HashSet<>();
+            forceInitEntityAI(entity);
+            aiTasksCopy.addAll(aiTasksOriginal);
+            aiTasksOriginal.clear();
+            return aiTasksCopy;
+        }
+    }
+    
+    /**
+     * Gets what the entity's AI target tasks would be if you were on server-side.
+     * May be the original or a copy depending on the situation.
+     * Uses reflection.
+     */
+    public static Set<EntityAITasks.EntityAITaskEntry> getAiTargetTasks(EntityLiving entity) {
+        Set<EntityAITasks.EntityAITaskEntry> aiTargetTasksOriginal = entity.targetTasks.taskEntries;
+        if (!entity.world.isRemote) {
+            // Normally we would check isRemote, but some mod authors
+            // populate AI in the constructor rather than initEntityAI()
+            return aiTargetTasksOriginal;
+        }
+        else {
+            Set<EntityAITasks.EntityAITaskEntry> aiTargetTasksCopy = new HashSet<>();
+            forceInitEntityAI(entity);
+            aiTargetTasksCopy.addAll(aiTargetTasksOriginal);
+            aiTargetTasksOriginal.clear();
+            return aiTargetTasksCopy;
+        }
     }
     
     // Adapted from ItemMonsterPlacer.spawnCreature
