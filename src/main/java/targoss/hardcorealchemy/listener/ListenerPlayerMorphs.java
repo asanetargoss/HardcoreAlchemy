@@ -174,7 +174,7 @@ public class ListenerPlayerMorphs extends ConfiguredListener {
 
     @SubscribeEvent
     public void onPlayerClone(Clone event) {
-        if (event.isWasDeath() && Metamorph.proxy.config.keep_morphs) {
+        if (!event.isWasDeath() || Metamorph.proxy.config.keep_morphs) {
             // Keep kill count if morphs are kept
             EntityPlayer player = event.getEntityPlayer();
             EntityPlayer playerOld = event.getOriginal();
