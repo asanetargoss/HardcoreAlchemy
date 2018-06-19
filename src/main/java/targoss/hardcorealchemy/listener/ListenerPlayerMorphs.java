@@ -50,6 +50,7 @@ import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.Clone;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerChangedDimensionEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.capability.CapUtil;
@@ -179,7 +180,16 @@ public class ListenerPlayerMorphs extends ConfiguredListener {
             EntityPlayer player = event.getEntityPlayer();
             EntityPlayer playerOld = event.getOriginal();
             CapUtil.copyOldToNew(KILL_COUNT_CAPABILITY, playerOld, player);
+            updateMaxHumanity(player);
         }
+    }
+    
+    @SubscribeEvent
+    public void onPlayerChangeDimension(PlayerChangedDimensionEvent event) {
+        // Fix removal of the humanity modifier when switching dimensions
+        // I'm not sure why Minecraft insists on clearing modifiers on change dimension,
+        // but no use arguing with it.
+        updateMaxHumanity(event.player);
     }
     
     public static void updateMaxHumanity(EntityPlayer player) {
@@ -205,27 +215,19 @@ public class ListenerPlayerMorphs extends ConfiguredListener {
                 }
             }
         }
-        
+
         IAttributeInstance maxHumanity = player.getEntityAttribute(ICapabilityHumanity.MAX_HUMANITY);
+
+        double oldCap = maxHumanity.getAttributeValue();
+
         AttributeModifier existingModifier = maxHumanity.getModifier(MORPH_COUNT_BONUS);
         if (existingModifier != null) {
             maxHumanity.removeModifier(existingModifier);
         }
         maxHumanity.applyModifier(new AttributeModifier(MORPH_COUNT_BONUS, MORPH_COUNT_BONUS_NAME, bonusCap, 0));
-    }
-    
-    @SubscribeEvent
-    public void onPlayerAcquireMorph(AcquireMorphEvent.Post event) {
-        updateMaxHumanity(event.player);
-    }
-    
-    @SubscribeEvent(priority = EventPriority.LOW)
-    public void onPlayerRespawn(PlayerRespawnEvent event) {
-        EntityPlayer player = event.player;
         
-        double oldCap = player.getEntityAttribute(ICapabilityHumanity.MAX_HUMANITY).getAttributeValue();
-        updateMaxHumanity(player);
-        double newCap = player.getEntityAttribute(ICapabilityHumanity.MAX_HUMANITY).getAttributeValue();
+        double newCap = maxHumanity.getAttributeValue();
+        
         ICapabilityHumanity humanity = player.getCapability(HUMANITY_CAPABILITY, null);
         if (humanity != null && newCap > oldCap) {
             humanity.setHumanity(humanity.getHumanity() + newCap - oldCap);
