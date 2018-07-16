@@ -48,7 +48,7 @@ public class MiscVanilla {
     }
     
     /**
-     * Gets a World instance.
+     * Gets the World instance on the current side.
      */
     public static World getWorld() {
         FMLCommonHandler fmlCommonHandler = FMLCommonHandler.instance();
@@ -76,6 +76,14 @@ public class MiscVanilla {
     
     @SideOnly(Side.CLIENT)
     public static World getWorldClient() {
-        return Minecraft.getMinecraft().player.world;
+        Minecraft mc = Minecraft.getMinecraft();
+        if (mc == null) {
+            return null;
+        }
+        EntityPlayer player = mc.player;
+        if (player == null) {
+            return null;
+        }
+        return player.world;
     }
 }
