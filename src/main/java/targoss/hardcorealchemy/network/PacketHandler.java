@@ -40,6 +40,8 @@ public class PacketHandler {
         (new MessageKillCount()).register();
         (new MessageMorphState()).register();
         (new MessageInactiveCapabilities()).register();
+        (new MessageInstinct()).register();
+        (new MessageInstinctActive()).register();
     }
     
 }

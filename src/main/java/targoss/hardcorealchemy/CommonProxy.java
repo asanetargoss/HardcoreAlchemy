@@ -36,6 +36,9 @@ import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import targoss.hardcorealchemy.capability.CapUtil;
+import targoss.hardcorealchemy.capability.NoStorage;
+import targoss.hardcorealchemy.capability.cache.ClientEntityCache;
+import targoss.hardcorealchemy.capability.cache.IClientEntityCache;
 import targoss.hardcorealchemy.capability.combatlevel.CapabilityCombatLevel;
 import targoss.hardcorealchemy.capability.combatlevel.ICapabilityCombatLevel;
 import targoss.hardcorealchemy.capability.combatlevel.StorageCombatLevel;
@@ -48,6 +51,9 @@ import targoss.hardcorealchemy.capability.humanity.StorageHumanity;
 import targoss.hardcorealchemy.capability.inactive.IInactiveCapabilities;
 import targoss.hardcorealchemy.capability.inactive.InactiveCapabilities;
 import targoss.hardcorealchemy.capability.inactive.StorageInactiveCapabilities;
+import targoss.hardcorealchemy.capability.instincts.CapabilityInstinct;
+import targoss.hardcorealchemy.capability.instincts.ICapabilityInstinct;
+import targoss.hardcorealchemy.capability.instincts.StorageInstinct;
 import targoss.hardcorealchemy.capability.killcount.CapabilityKillCount;
 import targoss.hardcorealchemy.capability.killcount.ICapabilityKillCount;
 import targoss.hardcorealchemy.capability.killcount.StorageKillCount;
@@ -67,6 +73,7 @@ import targoss.hardcorealchemy.listener.ListenerMobLevel;
 import targoss.hardcorealchemy.listener.ListenerPacketUpdatePlayer;
 import targoss.hardcorealchemy.listener.ListenerPlayerDiet;
 import targoss.hardcorealchemy.listener.ListenerPlayerHumanity;
+import targoss.hardcorealchemy.listener.ListenerPlayerInstinct;
 import targoss.hardcorealchemy.listener.ListenerPlayerMagic;
 import targoss.hardcorealchemy.listener.ListenerPlayerMagicState;
 import targoss.hardcorealchemy.listener.ListenerPlayerMorphState;
@@ -90,6 +97,7 @@ public class CommonProxy {
                 ListenerWorldDifficulty.class,
                 ListenerPlayerMagicState.class,
                 ListenerPlayerMorphState.class,
+                ListenerPlayerInstinct.class,
                 ListenerCrops.class // 1.10-specific
             );
     
@@ -130,6 +138,10 @@ public class CommonProxy {
         CapabilityManager.INSTANCE.register(ICapabilityServerData.class, new StorageServerData(), CapabilityServerData.class);
         CapabilityManager.INSTANCE.register(IInactiveCapabilities.class, new StorageInactiveCapabilities(), InactiveCapabilities.class);
         CapabilityManager.INSTANCE.register(ICapabilityMorphState.class, new StorageMorphState(), CapabilityMorphState.class);
+        CapabilityManager.INSTANCE.register(ICapabilityInstinct.class, new StorageInstinct(), CapabilityInstinct.class);
+        
+        // Client-only
+        CapabilityManager.INSTANCE.register(IClientEntityCache.class, new NoStorage<IClientEntityCache>(), ClientEntityCache.class);
     }
     
     public static final void registerNetworking() {

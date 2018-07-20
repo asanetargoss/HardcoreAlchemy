@@ -41,6 +41,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import targoss.hardcorealchemy.command.CommandTest;
 import targoss.hardcorealchemy.coremod.HardcoreAlchemyCoremod;
 import targoss.hardcorealchemy.entity.Entities;
+import targoss.hardcorealchemy.instinct.Instincts;
 import targoss.hardcorealchemy.item.Items;
 import targoss.hardcorealchemy.metamorph.HcAMetamorphPack;
 import targoss.hardcorealchemy.modpack.guide.HCAModpackGuide;
@@ -139,6 +140,7 @@ public class HardcoreAlchemy
         
         Items.registerRecipes();
         HcAMetamorphPack.registerAbilities();
+        Instincts.registerInstincts();
         
         if (ModState.isGuideapiLoaded) {
             HCAModpackGuide.registerRecipe();

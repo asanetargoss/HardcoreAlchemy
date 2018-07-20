@@ -27,11 +27,13 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.capability.inactive.IInactiveCapabilities;
+import targoss.hardcorealchemy.capability.instincts.ICapabilityInstinct;
 import targoss.hardcorealchemy.capability.killcount.ICapabilityKillCount;
 import targoss.hardcorealchemy.capability.morphstate.ICapabilityMorphState;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.network.MessageHumanity;
 import targoss.hardcorealchemy.network.MessageInactiveCapabilities;
+import targoss.hardcorealchemy.network.MessageInstinct;
 import targoss.hardcorealchemy.network.MessageKillCount;
 import targoss.hardcorealchemy.network.MessageMorphState;
 import targoss.hardcorealchemy.network.PacketHandler;
@@ -54,7 +56,10 @@ public class ListenerPacketUpdatePlayer extends ConfiguredListener {
     public static final Capability<ICapabilityMorphState> MORPH_STATE_CAPABILITY = null;
     @CapabilityInject(IInactiveCapabilities.class)
     public static final Capability<IInactiveCapabilities> INACTIVE_CAPABILITIES = null;
+    @CapabilityInject(ICapabilityInstinct.class)
+    public static final Capability<ICapabilityInstinct> INSTINCT_CAPABILITY = null;
     
+    /** Currently unused. */
     private static final int PLAYER_UPDATE_TICKS = 7;
     
     /**
@@ -102,6 +107,11 @@ public class ListenerPacketUpdatePlayer extends ConfiguredListener {
         IInactiveCapabilities inactives = player.getCapability(INACTIVE_CAPABILITIES, null);
         if (morphState != null) {
             PacketHandler.INSTANCE.sendTo(new MessageInactiveCapabilities(inactives), (EntityPlayerMP)player);
+        }
+        
+        ICapabilityInstinct instinct = player.getCapability(INSTINCT_CAPABILITY, null);
+        if (instinct != null) {
+            PacketHandler.INSTANCE.sendTo(new MessageInstinct(instinct), (EntityPlayerMP)player);
         }
     }
 }

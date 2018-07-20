@@ -25,26 +25,34 @@ import ladysnake.dissolution.common.capabilities.IIncorporealHandler;
 import mchorse.metamorph.api.MorphAPI;
 import mchorse.metamorph.api.MorphManager;
 import mchorse.metamorph.api.morphs.AbstractMorph;
+import mchorse.metamorph.api.morphs.EntityMorph;
 import mchorse.metamorph.capabilities.morphing.IMorphing;
 import mchorse.metamorph.capabilities.morphing.Morphing;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.fml.common.Optional;
-import net.minecraftforge.fml.common.Optional.Method;
+import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.capability.humanity.LostMorphReason;
+import targoss.hardcorealchemy.capability.instincts.ICapabilityInstinct;
+import targoss.hardcorealchemy.instinct.InstinctAttackPreyOnly;
+import targoss.hardcorealchemy.instinct.Instincts;
+import targoss.hardcorealchemy.instinct.Instincts.InstinctFactory;
 import targoss.hardcorealchemy.item.Items;
 import targoss.hardcorealchemy.listener.ListenerPlayerDiet;
 import targoss.hardcorealchemy.listener.ListenerPlayerHumanity;
-import targoss.hardcorealchemy.listener.ListenerPlayerMagic;
 
 public class MorphState {
     @CapabilityInject(ICapabilityHumanity.class)
     public static final Capability<ICapabilityHumanity> HUMANITY_CAPABILITY = null;
+    
+    @CapabilityInject(ICapabilityInstinct.class)
+    public static final Capability<ICapabilityInstinct> INSTINCT_CAPABILITY = null;
 
     public static float[] PLAYER_WIDTH_HEIGHT = new float[]{ 0.6F, 1.8F };
     
@@ -66,10 +74,14 @@ public class MorphState {
             String morphName, NBTTagCompound morphProperties) {
         return forceForm(player, reason, createMorph(morphName, morphProperties));
     }
-
+    
+    /*TODO: Consider making forceForm server-side authoritative, and
+     * send special packets to the client, to avoid desyncs at a critical
+     * state transition.
+     */
     /**
      * Forces the player into the given AbstractMorph (null permitted)
-     * with the given reason, and updates the player's needs
+     * with the given reason, and updates the player's needs and instincts
      * Returns true if successful
      */
     public static boolean forceForm(EntityPlayer player, LostMorphReason reason,
@@ -105,10 +117,18 @@ public class MorphState {
             if (ModState.isNutritionLoaded) {
                 ListenerPlayerDiet.updateMorphDiet(player);
             }
+            
+            ICapabilityInstinct instincts = player.getCapability(INSTINCT_CAPABILITY, null);
+            if (instincts != null && (morph instanceof EntityMorph)) {
+                instincts.setInstinct(ICapabilityInstinct.DEFAULT_INSTINCT_VALUE);
+                MorphState.buildInstincts(instincts, ((EntityMorph)morph).getEntity(player.world));
+            }
         }
         
         return success;
     }
+    
+    //TODO: canMorph utility function
     
     public static boolean canUseHighMagic(EntityPlayer player) {
         IMorphing morphing = Morphing.get(player);
@@ -136,6 +156,22 @@ public class MorphState {
             return true;
         }
         return false;
+    }
+
+    public static void buildInstincts(ICapabilityInstinct instincts, EntityLivingBase morphEntity) {
+        instincts.clearInstincts();
+        
+        if (morphEntity == null || !(morphEntity instanceof EntityLiving)) {
+            return;
+        }
+        EntityLiving morphedLiving = (EntityLiving)morphEntity;
+        
+        for (InstinctFactory instinctFactory : Instincts.REGISTRY.getValues()) {
+            // No caching right now. Not many instincts to deal with.
+            if (instinctFactory.instinctObject.doesMorphEntityHaveInstinct(morphEntity)) {
+                instincts.addInstinct(instinctFactory, morphEntity);
+            }
+        }
     }
 
 }
