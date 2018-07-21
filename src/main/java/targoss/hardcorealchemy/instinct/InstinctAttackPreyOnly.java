@@ -320,6 +320,11 @@ public class InstinctAttackPreyOnly implements IInstinct {
 
     @Override
     public boolean canAttack(EntityPlayer player, EntityLivingBase entity) {
+        // Allow attacking if this entity wants to attack you
+        if ((entity instanceof EntityLiving) && ((EntityLiving)entity).getAttackTarget() == player) {
+            return true;
+        }
+        
         if (EntityUtil.isEntityLike(entity, ownEntityClass) && !targetEntityClasses.contains(entity.getClass())) {
             if (player.world.isRemote) {
                 Chat.notifySP(player, new TextComponentTranslation("hardcorealchemy.instinct.attack_prey.preserve_own_kind"));
@@ -332,11 +337,6 @@ public class InstinctAttackPreyOnly implements IInstinct {
                 if (player.world.isRemote) {
                     HardcoreAlchemy.LOGGER.error("No known instinct prey. Entity class: " + ownEntityClass.getName());
                 }
-                return true;
-            }
-            
-            // Allow attacking if this entity wants to attack you
-            if ((entity instanceof EntityLiving) && ((EntityLiving)entity).getAttackTarget() == player) {
                 return true;
             }
             
