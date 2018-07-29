@@ -20,6 +20,7 @@ package targoss.hardcorealchemy.entity.ai;
 
 import com.google.common.base.Predicate;
 
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAITargetNonTamed;
@@ -31,9 +32,9 @@ import net.minecraft.entity.passive.EntityTameable;
 public class AIUntamedAttackMobOrMorph<T extends EntityLivingBase> extends AIAttackTargetMobOrMorph<T> {
     public final EntityTameable theTameable;
 
-    public AIUntamedAttackMobOrMorph(EntityAITargetNonTamed<T> aiIgnoringMorph)
+    public AIUntamedAttackMobOrMorph(EntityAITargetNonTamed<T> aiIgnoringMorph, EntityLiving entity)
     {
-        super(aiIgnoringMorph);
+        super(aiIgnoringMorph, entity);
         this.theTameable = aiIgnoringMorph.theTameable;
     }
 

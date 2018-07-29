@@ -27,14 +27,19 @@ import mchorse.metamorph.capabilities.morphing.IMorphing;
 import mchorse.metamorph.capabilities.morphing.MorphingProvider;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIFindEntityNearestPlayer;
 import net.minecraft.entity.ai.EntityAITarget;
 import net.minecraft.entity.player.EntityPlayer;
+import targoss.hardcorealchemy.util.EntityUtil;
 
 public class AITargetUnmorphedPlayer extends EntityAIFindEntityNearestPlayer {
-    public AITargetUnmorphedPlayer(EntityAIFindEntityNearestPlayer ai) {
+    public EntityLiving entity;
+    
+    public AITargetUnmorphedPlayer(EntityAIFindEntityNearestPlayer ai, EntityLiving entity) {
         super(ai.entityLiving);
+        this.entity = entity;
         this.predicate = new Predicate<Entity>()
         {
             public boolean apply(@Nullable Entity p_apply_1_)
@@ -70,18 +75,9 @@ public class AITargetUnmorphedPlayer extends EntityAIFindEntityNearestPlayer {
 
                     return (double)p_apply_1_.getDistanceToEntity(AITargetUnmorphedPlayer.this.entityLiving) > d0 ? false :
                         (EntityAITarget.isSuitableTarget(AITargetUnmorphedPlayer.this.entityLiving, (EntityLivingBase)p_apply_1_, false, true)
-                        && isPlayerUnmorphed((EntityPlayer)p_apply_1_));
+                        && EntityUtil.isUnmorphed((EntityPlayer)p_apply_1_));
                 }
             }
         };
-    }
-    
-    public static boolean isPlayerUnmorphed(EntityPlayer player) {
-        IMorphing morphing = player.getCapability(MorphingProvider.MORPHING_CAP, null);
-        if (morphing == null) {
-            return true;
-        }
-        AbstractMorph morph = morphing.getCurrentMorph();
-        return morph == null;
     }
 }

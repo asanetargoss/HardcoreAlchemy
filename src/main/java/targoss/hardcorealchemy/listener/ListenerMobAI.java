@@ -107,7 +107,8 @@ public class ListenerMobAI extends ConfiguredListener {
     /**
      * Replace an instance of the AI EntityAIBase. Assume the
      * replacement AI's constructor takes the old AI instance
-     * upcasted to delegateClazz as a parameter.
+     * upcasted to delegateClazz as a first parameter, and the
+     * AI entity as a second parameter.
      * If it doesn't, you will get errors, because reflection.
      */
     private static void wrapReplaceAttackAI(EntityLiving entityLiving,
@@ -115,7 +116,7 @@ public class ListenerMobAI extends ConfiguredListener {
             Class<? extends EntityAIBase> replaceClazz,
             Class<? extends EntityAIBase> delegateClazz) {
         try {
-            Constructor<? extends EntityAIBase> replaceConstructor = replaceClazz.getConstructor(delegateClazz);
+            Constructor<? extends EntityAIBase> replaceConstructor = replaceClazz.getConstructor(delegateClazz, EntityLiving.class);
             
             // Find instances of the AI to replace
             EntityAITasks targetTaskList = entityLiving.targetTasks;
@@ -129,10 +130,10 @@ public class ListenerMobAI extends ConfiguredListener {
             }
             
             // Replace the AIs with new AIs that take morphs into account, while maintaining the same AI priority
-            for (int i=0;i<aisToReplace.size();i++) {
+            for (int i = 0; i < aisToReplace.size(); i++) {
                 targetTaskList.removeTask(aisToReplace.get(i));
                 targetTaskList.addTask(prioritiesToReplace.get(i),
-                            replaceConstructor.newInstance(aisToReplace.get(i))
+                            replaceConstructor.newInstance(aisToReplace.get(i), entityLiving)
                         );
             }
         }

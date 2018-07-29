@@ -18,13 +18,14 @@
 
 package targoss.hardcorealchemy.entity.ai;
 
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntitySpider;
 
 public class AISpiderTargetMobOrMorph<T extends EntityLivingBase> extends AIAttackTargetMobOrMorph<T> {
 
-    public AISpiderTargetMobOrMorph(EntitySpider.AISpiderTarget<T> AIIgnoringMorph) {
-        super(AIIgnoringMorph);
+    public AISpiderTargetMobOrMorph(EntitySpider.AISpiderTarget<T> AIIgnoringMorph, EntityLiving entity) {
+        super(AIIgnoringMorph, entity);
     }
     
     public boolean shouldExecute()

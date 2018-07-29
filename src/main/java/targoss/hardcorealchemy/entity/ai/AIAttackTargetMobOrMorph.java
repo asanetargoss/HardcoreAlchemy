@@ -34,6 +34,7 @@ import mchorse.metamorph.capabilities.morphing.IMorphing;
 import mchorse.metamorph.capabilities.morphing.MorphingProvider;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.monster.EntityCreeper;
@@ -46,17 +47,19 @@ import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EntitySelectors;
+import targoss.hardcorealchemy.util.EntityUtil;
 
 /**
  * Should only be used to replace its superclass.
  */
 public class AIAttackTargetMobOrMorph<T extends EntityLivingBase> extends EntityAINearestAttackableTarget<T> {
     // This would be heckuva lot easier if it weren't for those stinkin' generics! But I digress...
-    
+
+    public EntityLiving entity;
     public Predicate <? super EntityPlayer> targetPlayerEntitySelector;
     public EntityLivingBase targetEntityNotStrict;
     
-    public AIAttackTargetMobOrMorph(EntityAINearestAttackableTarget<T> AIIgnoringMorph) {
+    public AIAttackTargetMobOrMorph(EntityAINearestAttackableTarget<T> AIIgnoringMorph, EntityLiving entity) {
         super(AIIgnoringMorph.taskOwner, AIIgnoringMorph.targetClass, AIIgnoringMorph.targetChance,
                 AIIgnoringMorph.shouldCheckSight, AIIgnoringMorph.nearbyOnly, null);
         this.targetEntitySelector = AIIgnoringMorph.targetEntitySelector;
@@ -67,24 +70,11 @@ public class AIAttackTargetMobOrMorph<T extends EntityLivingBase> extends Entity
                 return p_apply_1_ == null ? false :(!EntitySelectors.NOT_SPECTATING.apply(p_apply_1_) ? false : isSuitableTarget(p_apply_1_, false));
             }
         };
+        this.entity = entity;
     }
     
-    public boolean isPlayerLikeEntity(EntityPlayer player, Class<? extends EntityLivingBase> someEntity) {
-        IMorphing morphing = player.getCapability(MorphingProvider.MORPHING_CAP, null);
-        if (morphing == null) {
-            return someEntity.isInstance(player);
-        }
-        AbstractMorph morph = morphing.getCurrentMorph();
-        if (morph == null) {
-            return someEntity.isInstance(player);
-        }
-        Class<? extends Entity> morphAsEntityClass = EntityList.NAME_TO_CLASS.get(morph.name);
-        if (someEntity.isAssignableFrom(morphAsEntityClass)) {
-            return true;
-        }
-        else {
-            return false;
-        }
+    private boolean shouldTarget(EntityLivingBase candidate) {
+        return EntityUtil.isEntityLike(candidate, targetClass) && !EntityUtil.isEntityLike(candidate, entity.getClass());
     }
     
     // Copyright Mojang blah blah
@@ -96,37 +86,23 @@ public class AIAttackTargetMobOrMorph<T extends EntityLivingBase> extends Entity
         }
         if (this.targetClass != EntityPlayer.class && this.targetClass != EntityPlayerMP.class)
         {
-            List<T> list = this.taskOwner.world.<T>getEntitiesWithinAABB(this.targetClass, this.getTargetableArea(this.getTargetDistance()), this.targetEntitySelector);
-            List<EntityPlayer> playerList = this.taskOwner.world.<EntityPlayer>getEntitiesWithinAABB(EntityPlayer.class, this.getTargetableArea(this.getTargetDistance()), this.targetPlayerEntitySelector);
+            List<EntityLivingBase> list = (List<EntityLivingBase>)this.taskOwner.world.<T>getEntitiesWithinAABB(this.targetClass, this.getTargetableArea(this.getTargetDistance()), this.targetEntitySelector);
+            list.addAll(this.taskOwner.world.<EntityPlayer>getEntitiesWithinAABB(EntityPlayer.class, this.getTargetableArea(this.getTargetDistance()), this.targetPlayerEntitySelector));
             
-            if (list.isEmpty() && playerList.isEmpty())
+            // Remove entities that do not look like the entity this AI is trying to target
+            for (int i = list.size() - 1; i >= 0; i--) {
+                if (!shouldTarget(list.get(i))) {
+                    list.remove(i);
+                }
+            }
+            if (list.isEmpty())
             {
                 return false;
             }
-            else
-            {
-                // Remove players that do not look like the entity this AI is trying to target
-                for (int i=playerList.size()-1;i>=0;i--) {
-                    if (!isPlayerLikeEntity(playerList.get(i), this.targetClass)) {
-                        // Taking advantage of the fact that this is an ordered list
-                        playerList.remove(i);
-                    }
-                }
-                if (list.isEmpty() && playerList.isEmpty())
-                {
-                    return false;
-                }
-                List<EntityLivingBase> entityAndMorphList = new ArrayList<EntityLivingBase>();
-                for (int i=0;i<list.size();i++) {
-                    entityAndMorphList.add(list.get(i));
-                }
-                for (int i=0;i<playerList.size();i++) {
-                    entityAndMorphList.add(playerList.get(i));
-                }
-                Collections.sort(entityAndMorphList, this.theNearestAttackableTargetSorter);
-                this.targetEntityNotStrict = entityAndMorphList.get(0);
-                return true;
-            }
+            
+            Collections.sort(list, this.theNearestAttackableTargetSorter);
+            this.targetEntityNotStrict = list.get(0);
+            return true;
         }
         else
         {
@@ -135,7 +111,7 @@ public class AIAttackTargetMobOrMorph<T extends EntityLivingBase> extends Entity
                 @Nullable
                 public Double apply(@Nullable EntityPlayer p_apply_1_)
                 {
-                    if (!isPlayerLikeEntity(p_apply_1_, EntityPlayer.class)) {
+                    if (!EntityUtil.isMorphedAs(p_apply_1_, EntityPlayer.class)) {
                         return Double.valueOf(0.0D);
                     }
                     
