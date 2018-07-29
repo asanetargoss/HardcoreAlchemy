@@ -233,16 +233,16 @@ public class EntityUtil {
     public static boolean isMorphedAs(EntityPlayer player, Class<? extends EntityLivingBase> entityClass) {
         IMorphing morphing = Morphing.get(player);
         if (morphing == null) {
-            return player.getClass().isInstance(entityClass);
+            return entityClass.isInstance(player);
         }
         AbstractMorph morph = morphing.getCurrentMorph();
         if (morph == null) {
-            return player.getClass().isInstance(entityClass);
+            return entityClass.isInstance(player);
         }
         if (!(morph instanceof EntityMorph)) {
             return false;
         }
         EntityLivingBase morphEntity = ((EntityMorph)morph).getEntity(player.world);
-        return morphEntity.getClass().isInstance(entityClass);
+        return entityClass.isInstance(morphEntity);
     }
 }
