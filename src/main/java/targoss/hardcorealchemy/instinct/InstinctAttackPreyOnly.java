@@ -334,7 +334,7 @@ public class InstinctAttackPreyOnly implements IInstinct {
         }
         
         if (EntityUtil.isEntityLike(entity, ownEntityClass) && !targetEntityClasses.contains(entity.getClass())) {
-            Chat.notify((EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.instinct.attack_prey.preserve_own_kind"));
+            Chat.message(Chat.Type.NOTIFY, (EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.instinct.attack_prey.preserve_own_kind"), 2, "wrong_prey");
             return false;
         }
         
@@ -345,7 +345,7 @@ public class InstinctAttackPreyOnly implements IInstinct {
             }
             
             // Wrong target
-            Chat.notify((EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.instinct.attack_prey.something_else", getRandomTargetName()));
+            Chat.message(Chat.Type.NOTIFY, (EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.instinct.attack_prey.something_else", getRandomTargetName()), 2, "wrong_prey");
             return false;
         }
         
