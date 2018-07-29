@@ -135,6 +135,8 @@ public class ListenerPlayerMagic extends ConfiguredListener {
     /*TODO: Prevent using block transmutation feature of Philosopher Stone
      */
     
+    private static final String MAGIC_NOT_ALLOWED = "magic_not_allowed";
+    
     @SubscribeEvent
     public void onPlayerTickMP(TickEvent.PlayerTickEvent event) {
         if (event.phase != Phase.END) {
@@ -159,7 +161,7 @@ public class ListenerPlayerMagic extends ConfiguredListener {
             if (!capabilityHumanity.getNotifiedMagicFail()) {
                 capabilityHumanity.setNotifiedMagicFail(true);
                 if (player.world.isRemote) {
-                    Chat.notifySP(player, new TextComponentTranslation("hardcorealchemy.magic.disabled.item"));
+                    Chat.messageSP(Chat.Type.NOTIFY, player, new TextComponentTranslation("hardcorealchemy.magic.disabled.item"), 2, MAGIC_NOT_ALLOWED);
                 }
             }
         }
@@ -178,7 +180,7 @@ public class ListenerPlayerMagic extends ConfiguredListener {
             if (!capabilityHumanity.getNotifiedMagicFail()) {
                 capabilityHumanity.setNotifiedMagicFail(true);
                 if (player.world.isRemote) {
-                    Chat.notifySP(player, new TextComponentTranslation("hardcorealchemy.magic.disabled.block"));
+                    Chat.messageSP(Chat.Type.NOTIFY, player, new TextComponentTranslation("hardcorealchemy.magic.disabled.block"), 2, MAGIC_NOT_ALLOWED);
                 }
             }
         }
@@ -203,7 +205,7 @@ public class ListenerPlayerMagic extends ConfiguredListener {
             if (!capabilityHumanity.getNotifiedMagicFail()) {
                 capabilityHumanity.setNotifiedMagicFail(true);
                 if (player.world.isRemote) {
-                    Chat.notifySP(player, new TextComponentTranslation("hardcorealchemy.magic.disabled.craft"));
+                    Chat.messageSP(Chat.Type.NOTIFY, player, new TextComponentTranslation("hardcorealchemy.magic.disabled.craft"), 2, MAGIC_NOT_ALLOWED);
                 }
             }
         }
@@ -217,7 +219,7 @@ public class ListenerPlayerMagic extends ConfiguredListener {
         }
         if (!capabilityHumanity.getNotifiedMagicFail()) {
             capabilityHumanity.setNotifiedMagicFail(true);
-            Chat.notify(player, new TextComponentTranslation("hardcorealchemy.magic.disabled.projectekeypress"));
+            Chat.message(Chat.Type.NOTIFY, player, new TextComponentTranslation("hardcorealchemy.magic.disabled.projectekeypress"), 2, MAGIC_NOT_ALLOWED);
         }
         return false;
     }
