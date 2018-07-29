@@ -18,6 +18,12 @@
 
 package targoss.hardcorealchemy.util;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import com.mojang.authlib.GameProfile;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -29,52 +35,128 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class Chat {
-    
-    public static Style LIGHT_GREY_ITALIC;
-    public static Style RED_ITALIC;
-    public static Style PURPLE;
-    
-    static {
-        LIGHT_GREY_ITALIC = new Style();
-        LIGHT_GREY_ITALIC.setItalic(true);
-        LIGHT_GREY_ITALIC.setColor(TextFormatting.GRAY);
-        RED_ITALIC = new Style();
-        RED_ITALIC.setItalic(true);
-        RED_ITALIC.setColor(TextFormatting.DARK_RED);
-        PURPLE = new Style();
-        PURPLE.setColor(TextFormatting.DARK_PURPLE);
+    public static enum Type {
+        NOTIFY(new Style().setItalic(true).setColor(TextFormatting.GRAY)),
+        WARN(new Style().setItalic(true).setColor(TextFormatting.DARK_RED)),
+        THAUMIC(new Style().setColor(TextFormatting.DARK_PURPLE));
+        
+        public final Style style;
+        Type(Style style) {
+            this.style = style;
+        }
     }
     
+    public static void message(Type type, EntityPlayerMP player, ITextComponent message) {
+        message(type, player, message, 0, "");
+    }
+    
+    public static void message(Type type, EntityPlayerMP player, ITextComponent message, int cooldown) {
+        message(type, player, message, cooldown, ITextComponent.Serializer.componentToJson(message));
+    }
+    
+    public static void message(Type type, EntityPlayerMP player, ITextComponent message, int cooldown, String cooldownKey) {
+        if (!cacheAndDecideDisplayMessage(textHistoryMP, player, cooldown, cooldownKey)) {
+            return;
+        }
+        
+        player.sendMessage(message.setStyle(type.style));
+    }
+    
+    @SideOnly(Side.CLIENT)
+    public static void messageSP(Type type, EntityPlayer player, ITextComponent message) {
+        messageSP(type, player, message, 0, "");
+    }
+    
+    @SideOnly(Side.CLIENT)
+    public static void messageSP(Type type, EntityPlayer player, ITextComponent message, int cooldown) {
+        messageSP(type, player, message, cooldown, ITextComponent.Serializer.componentToJson(message));
+    }
+    
+    @SideOnly(Side.CLIENT)
+    public static void messageSP(Type type, EntityPlayer player, ITextComponent message, int cooldown, String cooldownKey) {
+        if (!cacheAndDecideDisplayMessage(textHistorySP, player, cooldown, cooldownKey)) {
+            return;
+        }
+        
+        if (Minecraft.getMinecraft().player == player) {
+            Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(message.setStyle(type.style));
+        }
+    }
+    
+    private static Map<GameProfile, LinkedHashMap<String, Integer>> textHistorySP = new HashMap<>();
+    private static Map<GameProfile, LinkedHashMap<String, Integer>> textHistoryMP = new HashMap<>();
+    
+    public static int MAX_TEXT_HISTORY_SIZE = 10;
+    
+    private static boolean cacheAndDecideDisplayMessage(Map<GameProfile, LinkedHashMap<String, Integer>> textHistory, EntityPlayer player, int cooldown, String cooldownKey) {
+        if (cooldown <= 0) {
+            return true;
+        }
+        
+        GameProfile profile = player.getGameProfile();
+        LinkedHashMap<String, Integer> history = textHistory.get(profile);
+        if (history == null) {
+            history = new LinkedHashMap<>();
+            textHistory.put(profile, history);
+        }
+        
+        if (!history.containsKey(cooldownKey) || player.ticksExisted - history.get(cooldownKey) >= cooldown) {
+            history.put(cooldownKey, player.ticksExisted);
+            
+            if (history.size() > MAX_TEXT_HISTORY_SIZE) {
+                String[] toRemove = new String[history.size() - MAX_TEXT_HISTORY_SIZE];
+                
+                int i = 0;
+                for (String key : history.keySet()) {
+                    toRemove[i] = key;
+                    ++i;
+                    if (i >= toRemove.length) {
+                        break;
+                    }
+                }
+                
+                for (String key : toRemove) {
+                    history.remove(key);
+                }
+            }
+            
+            return true;
+        }
+        
+        return false;
+        
+    }
+    
+    @Deprecated
     public static void notify(EntityPlayerMP player, ITextComponent message) {
-        player.sendMessage(message.setStyle(LIGHT_GREY_ITALIC));
+        message(Type.NOTIFY, player, message);
     }
     
+    @Deprecated
     public static void alarm(EntityPlayerMP player, ITextComponent message) {
-        player.sendMessage(message.setStyle(RED_ITALIC));
+        message(Type.WARN, player, message);
     }
     
+    @Deprecated
     public static void notifyThaumic(EntityPlayerMP player, ITextComponent message) {
-        player.sendMessage(message.setStyle(PURPLE));
+        message(Type.THAUMIC, player, message);
     }
     
+    @Deprecated
     @SideOnly(Side.CLIENT)
     public static void notifySP(EntityPlayer player, ITextComponent message) {
-        if (Minecraft.getMinecraft().player == player) {
-            Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(message.setStyle(LIGHT_GREY_ITALIC));
-        }
+        messageSP(Type.NOTIFY, player, message);
     }
     
+    @Deprecated
     @SideOnly(Side.CLIENT)
     public static void alarmSP(EntityPlayer player, ITextComponent message) {
-        if (Minecraft.getMinecraft().player == player) {
-            Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(message.setStyle(RED_ITALIC));
-        }
+        messageSP(Type.WARN, player, message);
     }
     
+    @Deprecated
     @SideOnly(Side.CLIENT)
     public static void notifyThaumicSP(EntityPlayer player, ITextComponent message) {
-        if (Minecraft.getMinecraft().player == player) {
-            Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(message.setStyle(PURPLE));
-        }
+        messageSP(Type.THAUMIC, player, message);
     }
 }
