@@ -484,7 +484,8 @@ public class InstinctAttackPreyOnly implements IInstinct {
     @Override
     public float getInactiveChangeOnKill(EntityPlayer player, EntityLivingBase entity) {
         for (Class<? extends EntityLivingBase> targetClass : targetEntityClasses) {
-            if (EntityUtil.isEntityLike(entity, targetClass)) {
+            if (EntityUtil.isEntityLike(entity, targetClass) &&
+                    !(EntityUtil.isEntityLike(entity, ownEntityClass))) {
                 return 1.0F;
             }
         }
