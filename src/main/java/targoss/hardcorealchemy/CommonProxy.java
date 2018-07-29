@@ -36,9 +36,6 @@ import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import targoss.hardcorealchemy.capability.CapUtil;
-import targoss.hardcorealchemy.capability.NoStorage;
-import targoss.hardcorealchemy.capability.cache.ClientEntityCache;
-import targoss.hardcorealchemy.capability.cache.IClientEntityCache;
 import targoss.hardcorealchemy.capability.combatlevel.CapabilityCombatLevel;
 import targoss.hardcorealchemy.capability.combatlevel.ICapabilityCombatLevel;
 import targoss.hardcorealchemy.capability.combatlevel.StorageCombatLevel;
@@ -57,15 +54,14 @@ import targoss.hardcorealchemy.capability.instincts.StorageInstinct;
 import targoss.hardcorealchemy.capability.killcount.CapabilityKillCount;
 import targoss.hardcorealchemy.capability.killcount.ICapabilityKillCount;
 import targoss.hardcorealchemy.capability.killcount.StorageKillCount;
-import targoss.hardcorealchemy.capability.morphstate.ICapabilityMorphState;
 import targoss.hardcorealchemy.capability.morphstate.CapabilityMorphState;
+import targoss.hardcorealchemy.capability.morphstate.ICapabilityMorphState;
 import targoss.hardcorealchemy.capability.morphstate.StorageMorphState;
 import targoss.hardcorealchemy.capability.serverdata.CapabilityServerData;
 import targoss.hardcorealchemy.capability.serverdata.ICapabilityServerData;
 import targoss.hardcorealchemy.capability.serverdata.StorageServerData;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.listener.ConfiguredListener;
-import targoss.hardcorealchemy.listener.ListenerSmallTweaks;
 import targoss.hardcorealchemy.listener.ListenerCrops;
 import targoss.hardcorealchemy.listener.ListenerInventoryFoodRot;
 import targoss.hardcorealchemy.listener.ListenerMobAI;
@@ -78,6 +74,7 @@ import targoss.hardcorealchemy.listener.ListenerPlayerMagic;
 import targoss.hardcorealchemy.listener.ListenerPlayerMagicState;
 import targoss.hardcorealchemy.listener.ListenerPlayerMorphState;
 import targoss.hardcorealchemy.listener.ListenerPlayerMorphs;
+import targoss.hardcorealchemy.listener.ListenerSmallTweaks;
 import targoss.hardcorealchemy.listener.ListenerWorldDifficulty;
 import targoss.hardcorealchemy.network.PacketHandler;
 
@@ -139,9 +136,6 @@ public class CommonProxy {
         CapabilityManager.INSTANCE.register(IInactiveCapabilities.class, new StorageInactiveCapabilities(), InactiveCapabilities.class);
         CapabilityManager.INSTANCE.register(ICapabilityMorphState.class, new StorageMorphState(), CapabilityMorphState.class);
         CapabilityManager.INSTANCE.register(ICapabilityInstinct.class, new StorageInstinct(), CapabilityInstinct.class);
-        
-        // Client-only
-        CapabilityManager.INSTANCE.register(IClientEntityCache.class, new NoStorage<IClientEntityCache>(), ClientEntityCache.class);
     }
     
     public static final void registerNetworking() {

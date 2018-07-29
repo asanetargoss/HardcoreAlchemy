@@ -18,12 +18,8 @@
 
 package targoss.hardcorealchemy.network;
 
-import io.netty.buffer.ByteBuf;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import net.minecraftforge.fml.relauncher.Side;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 
 public class PacketHandler {
@@ -42,6 +38,8 @@ public class PacketHandler {
         (new MessageInactiveCapabilities()).register();
         (new MessageInstinct()).register();
         (new MessageInstinctActive()).register();
+        (new MessageInstinctValue()).register();
+        (new MessageInstinctAttackPreyOnly()).register();
     }
     
 }

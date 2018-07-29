@@ -26,7 +26,6 @@ import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
@@ -34,7 +33,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.capabilities.Capability;
@@ -43,19 +41,13 @@ import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock;
 import net.minecraftforge.event.world.BlockEvent.HarvestDropsEvent;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
-import targoss.hardcorealchemy.capability.cache.ClientEntityCache;
-import targoss.hardcorealchemy.capability.cache.IClientEntityCache;
-import targoss.hardcorealchemy.capability.cache.ProviderClientEntityCache;
 import targoss.hardcorealchemy.capability.instincts.CapabilityInstinct;
 import targoss.hardcorealchemy.capability.instincts.ICapabilityInstinct;
 import targoss.hardcorealchemy.capability.instincts.ICapabilityInstinct.InstinctEntry;
@@ -63,6 +55,7 @@ import targoss.hardcorealchemy.capability.instincts.ProviderInstinct;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.instinct.IInstinct;
 import targoss.hardcorealchemy.network.MessageInstinctActive;
+import targoss.hardcorealchemy.network.MessageInstinctValue;
 import targoss.hardcorealchemy.network.PacketHandler;
 import targoss.hardcorealchemy.util.Chat;
 
@@ -295,35 +288,17 @@ public class ListenerPlayerInstinct extends ConfiguredListener {
     }
     
     @SubscribeEvent
-    public void onPlayerAttackPre(AttackEntityEvent event) {
-        EntityPlayer player = event.getEntityPlayer();
-        ICapabilityInstinct instinct = player.getCapability(INSTINCT_CAPABILITY, null);
-        if (instinct == null) {
-            return;
-        }
-        IInstinct activeInstinct = instinct.getActiveInstinct();
-        if (activeInstinct == null) {
-            return;
-        }
-        Entity target = event.getTarget();
-        if (!(target instanceof EntityLiving)) {
+    public void onPlayerAttackPre(LivingAttackEvent event) {
+        if (event.getEntityLiving().world.isRemote) {
             return;
         }
         
-        if (!activeInstinct.canAttack(player, (EntityLiving)target)) {
-            event.setCanceled(true);
-        }
-    }
-    
-    /**
-     * Ideally we want the player to not show an attack animation,
-     * but for ranged weapons it's hard to know if the entity will
-     * be hit in advance. This event gets called in place of
-     * regular onPlayerAttackPre to handle those cases.
-     * Not realistic, but prevents exploits.
-     */
-    @SubscribeEvent
-    public void onPlayerAttackPreIndirect(LivingAttackEvent event) {
+        /*
+         * Ideally we want the player to not show an attack animation,
+         * but for ranged weapons it's hard to know if the entity will
+         * be hit in advance.
+         * Not realistic, but prevents exploits.
+         */
         DamageSource damageSource = event.getSource();
         if (!(damageSource instanceof EntityDamageSource)) {
             return;
@@ -348,56 +323,14 @@ public class ListenerPlayerInstinct extends ConfiguredListener {
         }
     }
     
-    @CapabilityInject(IClientEntityCache.class)
-    public static final Capability<IClientEntityCache> CLIENT_ENTITY_CACHE = null;
-    public static final ResourceLocation CLIENT_ENTITY_CACHE_RESOURCE = ClientEntityCache.RESOURCE_LOCATION;
-    
-    @SubscribeEvent
-    public void onAttachClientEntityCache(AttachCapabilitiesEvent.Entity event) {
-        Entity entity = event.getObject();
-        if (entity.world == null || !entity.world.isRemote || !(entity instanceof EntityLivingBase)) {
-            return;
-        }
-        event.addCapability(CLIENT_ENTITY_CACHE_RESOURCE, new ProviderClientEntityCache());
-    }
-    
-    /**
-     * Cache target's DamageSource on the client, so onPlayerKill(...)
-     * can work client-side. (Otherwise, we're stuck with
-     * a generic damage source in LivingDeathEvent
-     * that tells us nothing about the attacker)
-     * 
-     * This only works for direct player attacks.
-     * Indirect damage sources should work fine.
-     */
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public void onRecordDamageSourceFromPlayer(AttackEntityEvent event) {
-        Entity entity = event.getTarget();
-        if (!entity.world.isRemote || !(entity instanceof EntityLivingBase)) {
-            return;
-        }
-        // This should never be null if the above criteria is met.
-        IClientEntityCache cache = entity.getCapability(CLIENT_ENTITY_CACHE, null);
-        cache.setDamageSource(DamageSource.causePlayerDamage(event.getEntityPlayer()));
-        cache.setLastDamageSourceUpdate(entity.world.getTotalWorldTime());
-    }
-    
     @SubscribeEvent
     public void onPlayerKill(LivingDeathEvent event) {
         EntityLivingBase entity = event.getEntityLiving();
+        if (entity.world.isRemote) {
+            return;
+        }
         
         DamageSource damageSource = event.getSource();
-        if (entity.world.isRemote) {
-            if (damageSource == null || !(damageSource instanceof EntityDamageSource)) {
-                /* The client may have missing information about
-                 * a player attacker, which we have stored in entity.lastDamageSource
-                 */
-                IClientEntityCache cache = entity.getCapability(CLIENT_ENTITY_CACHE, null);
-                if (entity.world.getTotalWorldTime() - cache.getLastDamageSourceUpdate() < 20l) {
-                    damageSource = cache.getDamageSource();
-                }
-            }
-        }
         if (damageSource == null || !(damageSource instanceof EntityDamageSource)) {
             // No excuse at this point.
             return;
@@ -412,6 +345,11 @@ public class ListenerPlayerInstinct extends ConfiguredListener {
     }
     
     public void updateInstinctAfterKill(EntityPlayer player, EntityLivingBase entity) {
+        if (player.world.isRemote) {
+            // Just in case...
+            return;
+        }
+        
         ICapabilityInstinct instinct = player.getCapability(INSTINCT_CAPABILITY, null);
         if (instinct == null) {
             return;
@@ -427,6 +365,7 @@ public class ListenerPlayerInstinct extends ConfiguredListener {
                 instinctChange += entry.instinct.getInactiveChangeOnKill(player, entity);
             }
             addInstinct(player, instinct, instinctChange);
+            PacketHandler.INSTANCE.sendTo(new MessageInstinctValue(instinct), (EntityPlayerMP)player);
         }
     }
     
@@ -472,6 +411,10 @@ public class ListenerPlayerInstinct extends ConfiguredListener {
     @SubscribeEvent
     public void onPlayerKillEntityForDrops(LivingDropsEvent event) {
         Entity killer = event.getEntity();
+        if (killer.world.isRemote) {
+            return;
+        }
+        
         if (!(killer instanceof EntityPlayer)) {
             return;
         }

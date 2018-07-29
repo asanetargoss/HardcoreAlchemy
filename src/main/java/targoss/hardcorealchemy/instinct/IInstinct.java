@@ -121,6 +121,7 @@ public interface IInstinct extends INBTSerializable<NBTTagCompound> {
     /** 
      * Whether the player can attack the entity.
      *  Only called if this instinct is active.
+     *  **Server-side only!**
      */
     public default boolean canAttack(EntityPlayer player, EntityLivingBase entity) {
         return true;
@@ -128,6 +129,7 @@ public interface IInstinct extends INBTSerializable<NBTTagCompound> {
     /**
      * Called after a player attacks an entity.
      *  Only called if this instinct is active.
+     *  **Server-side only!**
      */
     public default void afterKill(EntityPlayer player, EntityLivingBase entity) {
         return;
@@ -144,6 +146,7 @@ public interface IInstinct extends INBTSerializable<NBTTagCompound> {
      * Called after a player strikes the killing blow on an entity,
      * with the opportunity to change the loot drops.
      *  Only called if this instinct is active.
+     *  **Server-side only!**
      */
     public default void afterKillEntityForDrops(EntityPlayer player, LivingDropsEvent event) {
         return;
@@ -158,8 +161,9 @@ public interface IInstinct extends INBTSerializable<NBTTagCompound> {
         return 0.0F;
     }
     /**
-     * Called after each player attack when no instinct
+     * Called after each player kill when no instinct
      * is active.
+     *  **Server-side only!** (but the instinct value will be synced for you)
      */
     public default float getInactiveChangeOnKill(EntityPlayer player, EntityLivingBase entity) {
         return 0.0F;

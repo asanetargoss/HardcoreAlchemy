@@ -18,7 +18,6 @@
 
 package targoss.hardcorealchemy.instinct;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -36,12 +35,16 @@ import net.minecraft.entity.ai.EntityAIFindEntityNearestPlayer;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.world.World;
 import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.capability.instincts.ProviderInstinct;
+import targoss.hardcorealchemy.network.MessageInstinctAttackPreyOnly;
+import targoss.hardcorealchemy.network.MessageInstinctValue;
+import targoss.hardcorealchemy.network.PacketHandler;
 import targoss.hardcorealchemy.util.Chat;
 import targoss.hardcorealchemy.util.EntityUtil;
 import targoss.hardcorealchemy.util.MiscVanilla;
@@ -90,10 +93,10 @@ public class InstinctAttackPreyOnly implements IInstinct {
     private Set<Class<? extends EntityLivingBase>> targetEntityClasses = new HashSet<>();
     private int minRequiredKills = 1;
     
-    private boolean active = false;
-    private int numKills = 0;
-    private int requiredKills = 0;
-    private boolean inKillingFrenzy = false;
+    public boolean active = false;
+    public int numKills = 0;
+    public int requiredKills = 0;
+    public boolean inKillingFrenzy = false;
     /** Time since the player has seen prey while in a killing frenzy */
     private int timeSinceSeenPrey = 0;
 
@@ -317,6 +320,11 @@ public class InstinctAttackPreyOnly implements IInstinct {
         }
         return false;
     }
+    
+    private void syncRemote(EntityPlayerMP player) {
+        PacketHandler.INSTANCE.sendTo(new MessageInstinctValue(player.getCapability(ProviderInstinct.INSTINCT_CAPABILITY, null)), player);
+        PacketHandler.INSTANCE.sendTo(new MessageInstinctAttackPreyOnly(this), player);
+    }
 
     @Override
     public boolean canAttack(EntityPlayer player, EntityLivingBase entity) {
@@ -326,24 +334,18 @@ public class InstinctAttackPreyOnly implements IInstinct {
         }
         
         if (EntityUtil.isEntityLike(entity, ownEntityClass) && !targetEntityClasses.contains(entity.getClass())) {
-            if (player.world.isRemote) {
-                Chat.notifySP(player, new TextComponentTranslation("hardcorealchemy.instinct.attack_prey.preserve_own_kind"));
-            }
+            Chat.notify((EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.instinct.attack_prey.preserve_own_kind"));
             return false;
         }
         
         if (!isTarget(entity)) {
             if (targetEntityClasses.size() == 0) {
-                if (player.world.isRemote) {
-                    HardcoreAlchemy.LOGGER.error("No known instinct prey. Entity class: " + ownEntityClass.getName());
-                }
+                HardcoreAlchemy.LOGGER.error("No known instinct prey. Entity class: " + ownEntityClass.getName());
                 return true;
             }
             
             // Wrong target
-            if (player.world.isRemote) {
-                Chat.notifySP(player, new TextComponentTranslation("hardcorealchemy.instinct.attack_prey.something_else", getRandomTargetName()));
-            }
+            Chat.notify((EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.instinct.attack_prey.something_else", getRandomTargetName()));
             return false;
         }
         
@@ -362,15 +364,15 @@ public class InstinctAttackPreyOnly implements IInstinct {
         if (numKills >= requiredKills) {
             // Kill requirement satisfied
             inKillingFrenzy = false;
-            if (player.world.isRemote) {
-                Chat.notifySP(player, new TextComponentTranslation("hardcorealchemy.instinct.attack_prey.enough_kills"));
-            }
+            Chat.notify((EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.instinct.attack_prey.enough_kills"));
             active = false;
+            syncRemote((EntityPlayerMP)player);
             return;
         }
         
         if (inKillingFrenzy && !canIncreaseKillRequirement()) {
             inKillingFrenzy = false;
+            syncRemote((EntityPlayerMP)player);
             return;
         }
         
@@ -379,17 +381,15 @@ public class InstinctAttackPreyOnly implements IInstinct {
             if (!inKillingFrenzy) {
                 inKillingFrenzy = true;
                 lastFrenzyCheckTick = player.ticksExisted;
-                if (player.world.isRemote) {
-                    Chat.notifySP(player, new TextComponentTranslation("hardcorealchemy.instinct.attack_prey.frenzy_start"));
-                }
+                Chat.notify((EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.instinct.attack_prey.frenzy_start"));
+                syncRemote((EntityPlayerMP)player);
             }
         }
         else {
             // Killed all prey in the area
             inKillingFrenzy = false;
-            if (player.world.isRemote) {
-                Chat.notifySP(player, new TextComponentTranslation("hardcorealchemy.instinct.attack_prey.frenzy_end"));
-            }
+            Chat.notify((EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.instinct.attack_prey.frenzy_end"));
+            syncRemote((EntityPlayerMP)player);
         }
     }
     
