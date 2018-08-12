@@ -24,6 +24,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
+import targoss.hardcorealchemy.coremod.CoremodHook;
 
 @Cancelable
 public class EventCraftPredict extends Event {
@@ -47,6 +48,7 @@ public class EventCraftPredict extends Event {
         this.canceled = canceled;
     }
     
+    @CoremodHook
     public static ItemStack onCraftPredict(ItemStack craftResult, InventoryCrafting craftGrid, World world) {
         EventCraftPredict event = new EventCraftPredict(craftResult, craftGrid, world);
         return (MinecraftForge.EVENT_BUS.post(event) ? null : event.craftResult);
