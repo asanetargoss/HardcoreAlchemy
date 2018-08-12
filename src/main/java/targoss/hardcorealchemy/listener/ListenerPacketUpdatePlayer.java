@@ -38,11 +38,6 @@ import targoss.hardcorealchemy.network.MessageKillCount;
 import targoss.hardcorealchemy.network.MessageMorphState;
 import targoss.hardcorealchemy.network.PacketHandler;
 
-/**
- * It is convention in this mod to not create capabilities or do any capability
- * calculations on the client side. This event listener is responsible for sending
- * the little data that the client needs to function correctly.
- */
 public class ListenerPacketUpdatePlayer extends ConfiguredListener {
     public ListenerPacketUpdatePlayer(Configs configs) {
         super(configs);
