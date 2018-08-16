@@ -18,6 +18,12 @@
 
 package targoss.hardcorealchemy.listener;
 
+import java.util.Collection;
+import java.util.Map;
+
+import ca.wescook.nutrition.capabilities.CapInterface;
+import ca.wescook.nutrition.capabilities.CapProvider;
+import ca.wescook.nutrition.nutrients.Nutrient;
 import net.minecraft.block.BlockBed;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityList;
@@ -25,15 +31,18 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Enchantments;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.PotionEffect;
 import net.minecraftforge.event.entity.living.ZombieEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
+import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.util.MiscVanilla;
+import toughasnails.api.TANPotions;
 
 /**
  * An event listener for miscellaneous changes that
@@ -83,6 +92,52 @@ public class ListenerSmallTweaks extends ConfiguredListener {
     public void onReinforceObsidianSheepman(ZombieEvent.SummonAidEvent event) {
         if (EntityList.getEntityString(event.getEntity()).equals(ModState.ADINFEROS_ID + ".ObsidianSheepman")) {
             event.setResult(Result.DENY);
+        }
+    }
+    
+    // (10 points lost per nutrient) / ~30 seconds thirst potion length / 20 ticks per second
+    private static final float NUTRITION_DECREASE_PER_THIRST_TICK = 10.0f / 30.0f / 20.0f;
+
+    // TODO: Warning message when a player drinks a water bottle for the first time that spawn
+    
+    /**
+     * Causes Nutrition loss from Tough As Nails thirst effect
+     */
+    @SubscribeEvent
+    @Optional.Method(modid=ModState.TAN_ID)
+    public void onTANThirst(PlayerTickEvent event) {
+        if (!ModState.isNutritionLoaded) {
+            return;
+        }
+        
+        if (event.phase != Phase.START) {
+            return;
+        }
+        
+        EntityPlayer player = event.player;
+        if (player.world.isRemote && player != MiscVanilla.getTheMinecraftPlayer()) {
+            return;
+        }
+        
+        Collection<PotionEffect> effects = player.getActivePotionEffects();
+        for (PotionEffect effect : effects) {
+            if (effect.getPotion() == TANPotions.thirst) {
+                decreaseNutrition(player, NUTRITION_DECREASE_PER_THIRST_TICK);
+            }
+        }
+        
+    }
+    
+    @Optional.Method(modid=ModState.NUTRITION_ID)
+    public static void decreaseNutrition(EntityPlayer player, float amount) {
+        CapInterface nutrition = player.getCapability(CapProvider.NUTRITION_CAPABILITY, null);
+        if (nutrition == null) {
+            return;
+        }
+        for (Map.Entry<Nutrient, Boolean> enabled : nutrition.getEnabled().entrySet()) {
+            if (enabled.getValue()) {
+                nutrition.subtract(enabled.getKey(), amount, false);
+            }
         }
     }
 }
