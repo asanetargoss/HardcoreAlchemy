@@ -19,6 +19,7 @@
 package targoss.hardcorealchemy.listener;
 
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 import mchorse.metamorph.api.MorphAPI;
@@ -55,6 +56,8 @@ import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.capability.humanity.LostMorphReason;
 import targoss.hardcorealchemy.capability.humanity.ProviderHumanity;
 import targoss.hardcorealchemy.config.Configs;
+import targoss.hardcorealchemy.network.MessageHumanity;
+import targoss.hardcorealchemy.network.PacketHandler;
 import targoss.hardcorealchemy.util.Chat;
 import targoss.hardcorealchemy.util.MiscVanilla;
 import targoss.hardcorealchemy.util.MorphState;
@@ -77,6 +80,8 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
     public static final double HUMANITY_3MIN_LEFT = HUMANITY_1MIN_LEFT*3.0D;
     // Time in ticks between sending humanity value updates over the network
     public static final int HUMANITY_UPDATE_TICKS = 7;
+    
+    private Random random = new Random();
     
     // The capability from Metamorph itself
     @CapabilityInject(IMorphing.class)
@@ -201,10 +206,19 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
     
     @SubscribeEvent
     public void onPlayerPostMorph(MorphEvent.Post event) {
-        // Morphing costs one hunger shank unless you're morphing back into a player
-        if (!event.isDemorphing() && !event.force) {
-            FoodStats foodStats = event.player.getFoodStats();
-            foodStats.setFoodLevel(foodStats.getFoodLevel() - 2);
+        // Morphing costs up to one minute of morph time unless you're morphing back into a player
+        // A player must be careful not to morph when they are too weak
+        EntityPlayer player = event.player;
+        if (!event.isDemorphing() && !event.force && !player.world.isRemote) {
+            ICapabilityHumanity capabilityHumanity = player.getCapability(HUMANITY_CAPABILITY, null);
+            if (capabilityHumanity == null) {
+                return;
+            }
+            double humanityLost = random.nextDouble() * HUMANITY_1MIN_LEFT;
+            double morphReducedHumanity = capabilityHumanity.getHumanity() - humanityLost;
+            if (morphReducedHumanity < 0) morphReducedHumanity = 0;
+            capabilityHumanity.setHumanity(morphReducedHumanity);
+            PacketHandler.INSTANCE.sendTo(new MessageHumanity(capabilityHumanity), (EntityPlayerMP)player);
         }
     }
     
