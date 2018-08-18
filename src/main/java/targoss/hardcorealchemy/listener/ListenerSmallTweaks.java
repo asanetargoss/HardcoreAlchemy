@@ -28,10 +28,16 @@ import net.minecraft.block.BlockBed;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Enchantments;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.living.ZombieEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.Optional;
@@ -40,7 +46,11 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import targoss.hardcorealchemy.ModState;
+import targoss.hardcorealchemy.capability.misc.CapabilityMisc;
+import targoss.hardcorealchemy.capability.misc.ICapabilityMisc;
+import targoss.hardcorealchemy.capability.misc.ProviderMisc;
 import targoss.hardcorealchemy.config.Configs;
+import targoss.hardcorealchemy.util.Chat;
 import targoss.hardcorealchemy.util.MiscVanilla;
 import toughasnails.api.TANPotions;
 
@@ -51,6 +61,22 @@ import toughasnails.api.TANPotions;
 public class ListenerSmallTweaks extends ConfiguredListener {
     public ListenerSmallTweaks(Configs configs) {
         super(configs);
+    }
+    
+    @CapabilityInject(ICapabilityMisc.class)
+    private static final Capability<ICapabilityMisc> MISC_CAPABILITY = null;
+    
+    @SubscribeEvent
+    public void onAttachMiscCapability(AttachCapabilitiesEvent.Entity event) {
+        if (!(event.getObject() instanceof EntityPlayer)) {
+            return;
+        }
+        EntityPlayer player = (EntityPlayer)(event.getObject());
+        // TODO: Use this when determining attachment for other player capabilities too, since the client only needs to know information about themselves for the most part
+        if (player.world.isRemote && player != MiscVanilla.getTheMinecraftPlayer()) {
+            return;
+        }
+        event.addCapability(CapabilityMisc.RESOURCE_LOCATION, new ProviderMisc());
     }
 
     @SubscribeEvent
@@ -97,8 +123,6 @@ public class ListenerSmallTweaks extends ConfiguredListener {
     
     // (10 points lost per nutrient) / ~30 seconds thirst potion length / 20 ticks per second
     private static final float NUTRITION_DECREASE_PER_THIRST_TICK = 10.0f / 30.0f / 20.0f;
-
-    // TODO: Warning message when a player drinks a water bottle for the first time that spawn
     
     /**
      * Causes Nutrition loss from Tough As Nails thirst effect
@@ -123,6 +147,16 @@ public class ListenerSmallTweaks extends ConfiguredListener {
         for (PotionEffect effect : effects) {
             if (effect.getPotion() == TANPotions.thirst) {
                 decreaseNutrition(player, NUTRITION_DECREASE_PER_THIRST_TICK);
+                
+                if (!player.world.isRemote) {
+                    ICapabilityMisc miscCap =  player.getCapability(MISC_CAPABILITY, null);
+                    if (miscCap != null && !miscCap.getHasSeenThirstWarning()) {
+                        miscCap.setHasSeenThirstWarning(true);
+                        Chat.message(Chat.Type.NOTIFY, (EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.diet.dirty_water_warning"));
+                    }
+                }
+                
+                break;
             }
         }
         

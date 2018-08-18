@@ -54,6 +54,9 @@ import targoss.hardcorealchemy.capability.instincts.StorageInstinct;
 import targoss.hardcorealchemy.capability.killcount.CapabilityKillCount;
 import targoss.hardcorealchemy.capability.killcount.ICapabilityKillCount;
 import targoss.hardcorealchemy.capability.killcount.StorageKillCount;
+import targoss.hardcorealchemy.capability.misc.CapabilityMisc;
+import targoss.hardcorealchemy.capability.misc.ICapabilityMisc;
+import targoss.hardcorealchemy.capability.misc.StorageMisc;
 import targoss.hardcorealchemy.capability.morphstate.CapabilityMorphState;
 import targoss.hardcorealchemy.capability.morphstate.ICapabilityMorphState;
 import targoss.hardcorealchemy.capability.morphstate.StorageMorphState;
@@ -136,6 +139,7 @@ public class CommonProxy {
         CapabilityManager.INSTANCE.register(IInactiveCapabilities.class, new StorageInactiveCapabilities(), InactiveCapabilities.class);
         CapabilityManager.INSTANCE.register(ICapabilityMorphState.class, new StorageMorphState(), CapabilityMorphState.class);
         CapabilityManager.INSTANCE.register(ICapabilityInstinct.class, new StorageInstinct(), CapabilityInstinct.class);
+        CapabilityManager.INSTANCE.register(ICapabilityMisc.class, new StorageMisc(), CapabilityMisc.class);
     }
     
     public static final void registerNetworking() {
