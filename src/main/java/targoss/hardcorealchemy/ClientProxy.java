@@ -28,11 +28,13 @@ import net.minecraftforge.common.MinecraftForge;
 import targoss.hardcorealchemy.listener.ConfiguredListener;
 import targoss.hardcorealchemy.listener.ListenerGuiHud;
 import targoss.hardcorealchemy.listener.ListenerGuiInventory;
+import targoss.hardcorealchemy.listener.ListenerRenderView;
 
 public class ClientProxy extends CommonProxy {
     public static final ImmutableList<Class<? extends ConfiguredListener>> LISTENER_TYPES = ImmutableList.of(
             ListenerGuiHud.class,
-            ListenerGuiInventory.class
+            ListenerGuiInventory.class,
+            ListenerRenderView.class
         );
     
     @Override
