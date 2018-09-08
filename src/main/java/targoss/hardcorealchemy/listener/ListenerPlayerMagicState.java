@@ -523,7 +523,7 @@ public class ListenerPlayerMagicState extends ConfiguredListener {
             
             for (EnumKnowledgeType knowledgeType : EnumKnowledgeType.values()) {
                 for (ResearchCategory researchCategory : ResearchCategories.researchCategories.values()) {
-                    int knowledgeAmount = knowledgeSource.getKnowledge(knowledgeType, researchCategory);
+                    int knowledgeAmount = knowledgeSource.getKnowledgeRaw(knowledgeType, researchCategory);
                     mergedKnowledge.addKnowledge(knowledgeType, researchCategory, knowledgeAmount);
                 }
             }
