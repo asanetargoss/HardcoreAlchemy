@@ -156,7 +156,7 @@ public class ListenerPlayerMagic extends ConfiguredListener {
         if (capabilityHumanity == null || MorphState.canUseHighMagic(player)) {
             return;
         }
-        if (!isAllowed(MAGIC_ITEM_ALLOW_USE, event.getItemStack())) {
+        if (!isUseAllowed(event.getItemStack())) {
             event.setCanceled(true);
             if (!capabilityHumanity.getNotifiedMagicFail()) {
                 capabilityHumanity.setNotifiedMagicFail(true);
@@ -175,7 +175,7 @@ public class ListenerPlayerMagic extends ConfiguredListener {
         if (capabilityHumanity == null || MorphState.canUseHighMagic(player)) {
             return;
         }
-        if (!isAllowed(MAGIC_BLOCK_ALLOW_USE, block)) {
+        if (!isUseAllowed(block)) {
             event.setUseBlock(Result.DENY);
             if (!capabilityHumanity.getNotifiedMagicFail()) {
                 capabilityHumanity.setNotifiedMagicFail(true);
@@ -200,7 +200,7 @@ public class ListenerPlayerMagic extends ConfiguredListener {
         ICapabilityHumanity capabilityHumanity = player.getCapability(HUMANITY_CAPABILITY, null);
         if (capabilityHumanity != null &&
                 !MorphState.canUseHighMagic(player) &&
-                !isAllowed(MAGIC_ITEM_ALLOW_CRAFT, craftResult)) {
+                !isUseAllowed(craftResult)) {
             event.setCanceled(true);
             if (!capabilityHumanity.getNotifiedMagicFail()) {
                 capabilityHumanity.setNotifiedMagicFail(true);
@@ -229,7 +229,7 @@ public class ListenerPlayerMagic extends ConfiguredListener {
         eraseAllMortalMagic(event.player);
     }
     
-    public static boolean isAllowed(Set<String> whitelist, ItemStack itemStack) {
+    public static boolean isUseAllowed(ItemStack itemStack) {
         Item item = itemStack.getItem();
         
         if (!Interaction.hasSpecialUse(item)) {
@@ -238,25 +238,25 @@ public class ListenerPlayerMagic extends ConfiguredListener {
         
         ResourceLocation itemResource = item.getRegistryName();
         return !HIGH_MAGIC_MODS.contains(itemResource.getResourceDomain()) ||
-                    whitelist.contains(itemResource.toString());
+                MAGIC_ITEM_ALLOW_USE.contains(itemResource.toString());
     }
     
-    public static boolean isCraftingAllowed(Set<String> whitelist, ItemStack itemStack) {
+    public static boolean isCraftingAllowed(ItemStack itemStack) {
         Item item = itemStack.getItem();
         
         ResourceLocation itemResource = item.getRegistryName();
         return !HIGH_MAGIC_MODS.contains(itemResource.getResourceDomain()) ||
-                    whitelist.contains(itemResource.toString());
+                    MAGIC_ITEM_ALLOW_CRAFT.contains(itemResource.toString());
     }
     
-    public static boolean isAllowed(Set<String> whitelist, Block block) {
+    public static boolean isUseAllowed(Block block) {
         if (!Interaction.hasSpecialUse(block)) {
             return true;
         }
         
         ResourceLocation blockResource = block.getRegistryName();
         return !HIGH_MAGIC_MODS.contains(blockResource.getResourceDomain()) ||
-                    whitelist.contains(blockResource.toString());
+                    MAGIC_BLOCK_ALLOW_USE.contains(blockResource.toString());
     }
     
     public static void eraseAllMortalMagic(EntityPlayer player) {

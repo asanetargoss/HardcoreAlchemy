@@ -94,7 +94,7 @@ public class ListenerGuiInventory extends ConfiguredListener {
         }
         
         ItemStack craftResult = event.getItemStack();
-        if (!ListenerPlayerMagic.isCraftingAllowed(ListenerPlayerMagic.MAGIC_ITEM_ALLOW_CRAFT, craftResult)) {
+        if (!ListenerPlayerMagic.isCraftingAllowed(craftResult)) {
             event.getToolTip().add(TextFormatting.DARK_GRAY.toString() + new TextComponentTranslation("hardcorealchemy.magic.disabled.crafttooltip").getUnformattedText());
         }
     }

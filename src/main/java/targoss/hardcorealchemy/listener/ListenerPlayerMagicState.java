@@ -150,7 +150,7 @@ public class ListenerPlayerMagicState extends ConfiguredListener {
             return;
         }
         
-        if (ListenerPlayerMagic.isAllowed(ListenerPlayerMagic.MAGIC_ITEM_ALLOW_USE, event.getItemStack()) ||
+        if (ListenerPlayerMagic.isUseAllowed(event.getItemStack()) ||
                 event.getItemStack().getItem() == ItemsTC.salisMundus) {
             /* If the item is usable without high magic knowledge, there's
              * no reason it should trigger a memory flashback.
@@ -196,7 +196,7 @@ public class ListenerPlayerMagicState extends ConfiguredListener {
             return;
         }
         
-        if (ListenerPlayerMagic.isAllowed(ListenerPlayerMagic.MAGIC_BLOCK_ALLOW_USE, block)) {
+        if (ListenerPlayerMagic.isUseAllowed(block)) {
             /* If the block is usable without high magic knowledge, there's
              * no reason it should trigger a memory flashback.
              */
