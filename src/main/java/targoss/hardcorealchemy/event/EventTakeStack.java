@@ -23,6 +23,7 @@ import net.minecraft.inventory.Slot;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
+import targoss.hardcorealchemy.coremod.CoremodHook;
 
 public abstract class EventTakeStack extends Event {
     public final Slot slot;
@@ -49,6 +50,7 @@ public abstract class EventTakeStack extends Event {
             this.canceled = canceled;
         }
         
+        @CoremodHook
         public static boolean onTakeStackPre(Slot slot, EntityPlayer player) {
             Pre event = new Pre(slot, player);
             return !(MinecraftForge.EVENT_BUS.post(event));
