@@ -33,6 +33,8 @@ import am2.api.affinity.Affinity;
 import am2.api.extensions.IAffinityData;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.SlotCrafting;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -54,6 +56,8 @@ import targoss.hardcorealchemy.capability.inactive.InactiveCapabilities;
 import targoss.hardcorealchemy.capability.inactive.ProviderInactiveCapabilities;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.coremod.CoremodHook;
+import targoss.hardcorealchemy.event.EventCraftPredict;
+import targoss.hardcorealchemy.event.EventTakeStack;
 import targoss.hardcorealchemy.util.Chat;
 import targoss.hardcorealchemy.util.MiscVanilla;
 import targoss.hardcorealchemy.util.MorphState;
@@ -63,6 +67,7 @@ import thaumcraft.api.capabilities.IPlayerWarp;
 import thaumcraft.api.items.ItemsTC;
 import thaumcraft.api.research.ResearchCategories;
 import thaumcraft.api.research.ResearchCategory;
+import thaumcraft.common.container.slot.SlotCraftingArcaneWorkbench;
 import thaumcraft.common.lib.SoundsTC;
 
 /**
@@ -129,16 +134,65 @@ public class ListenerPlayerMagicState extends ConfiguredListener {
     }
     
     /**
-     * On crafting the Thauminomicon successfully, make player recall thaumic knowledge and warp from past life.
+     * Prevent the player from crafting salis mundus if they haven't
+     * had the dream yet.
      */
-    @SubscribeEvent(priority=EventPriority.HIGH)
+    @SubscribeEvent
+    @Optional.Method(modid=ModState.THAUMCRAFT_ID)
+    public void onCraftSalisMundus(EventTakeStack.Pre event) {
+        ItemStack toCraft = event.slot.getStack();
+        if (MiscVanilla.isEmptyItemStack(toCraft) ||
+                toCraft.getItem() != ItemsTC.salisMundus ||
+                !(event.slot instanceof SlotCrafting || event.slot instanceof SlotCraftingArcaneWorkbench)) {
+            return;
+        }
+        
+        IPlayerKnowledge currentKnowledge = event.player.getCapability(THAUMCRAFT_KNOWLEDGE_CAPABILITY, null);
+        if (currentKnowledge != null && !currentKnowledge.isResearchKnown("!gotdream")) {
+            event.setCanceled(true);
+        }
+    }
+    
+    /**
+     * Prevent the player form seeing the craft result for salis mundus
+     * before the player is able to craft it.
+     */
+    @SubscribeEvent
+    @Optional.Method(modid=ModState.THAUMCRAFT_ID)
+    public void onSeeCraftSalisMundus(EventCraftPredict event) {
+        if (!event.world.isRemote) {
+            return;
+        }
+        
+        ItemStack toCraft = event.craftResult;
+        if (MiscVanilla.isEmptyItemStack(toCraft) || toCraft.getItem() != ItemsTC.salisMundus) {
+            return;
+        }
+        
+        EntityPlayer player = MiscVanilla.getTheMinecraftPlayer();
+        IPlayerKnowledge currentKnowledge = player.getCapability(THAUMCRAFT_KNOWLEDGE_CAPABILITY, null);
+        if (currentKnowledge != null && !currentKnowledge.isResearchKnown("!gotdream")) {
+            event.setCanceled(true);
+        }
+    }
+    
+    /**
+     * On crafting the Thauminomicon successfully, make player recall thaumic knowledge and warp from past life.
+     * Also give player the research needed to start using the Thaumonomicon, since the research is no longer
+     * obtained from simply picking up the book.
+     */
     @Optional.Method(modid=ModState.THAUMCRAFT_ID)
     public void onPlayerCreateThauminomicon(PlayerEvent.ItemCraftedEvent event) {
         if (event.crafting.getItem() != ItemsTC.thaumonomicon) {
             return;
         }
-
+        
         recallThaumcraftIfNeeded(event.player);
+        IPlayerKnowledge currentKnowledge = event.player.getCapability(THAUMCRAFT_KNOWLEDGE_CAPABILITY, null);
+        if (currentKnowledge != null && !currentKnowledge.isResearchKnown("!gotthaumonomicon")) {
+            currentKnowledge.addResearch("!gotthaumonomicon");
+            // This is where Thaumcraft would sync player research, however there is no need since this runs on both sides.
+        }
     }
 
     @Optional.Method(modid=ModState.THAUMCRAFT_ID)
@@ -515,6 +569,19 @@ public class ListenerPlayerMagicState extends ConfiguredListener {
     @CoremodHook
     public static boolean canStartThaumcraftResearch(EntityPlayer player) {
         return MorphState.canUseHighMagic(player);
+    }
+    
+    /**
+     * Whether the player should get the research needed to unlock the
+     * first research entry simply by picking up a Thaumonomicon from the
+     * ground.
+     * Currently always false. Instead, the player must always craft the
+     * Thaumonomicon themself.
+     */
+    @Optional.Method(modid=ModState.THAUMCRAFT_ID)
+    @CoremodHook
+    public static boolean canThaumonomiconPickupUnlockResearch(EntityPlayer player) {
+        return false;
     }
     
     public static final String INACTIVE_AFFINITIES = HardcoreAlchemy.MOD_ID + ":inactive_affinities";

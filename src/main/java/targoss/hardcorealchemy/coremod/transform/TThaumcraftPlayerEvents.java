@@ -37,6 +37,7 @@ public class TThaumcraftPlayerEvents extends MethodPatcher {
     private static final String PICKUP_ITEM = "pickupItem";
     private static final String IS_RESEARCH_KNOWN = "isResearchKnown";
     private static final String CRYSTAL_RESEARCH = "!gotcrystals";
+    private static final String BOOK_RESEARCH = "!gotthaumonomicon";
 
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
@@ -53,9 +54,11 @@ public class TThaumcraftPlayerEvents extends MethodPatcher {
             ListIterator<AbstractInsnNode> iterator = instructions.iterator();
             String lastLoadedString = "";
             boolean foundCrystalResearchCheck = false;
-            boolean patched = false;
+            boolean foundBookResearchCheck = false;
+            boolean patchedCrystalResearchCheck = false;
+            boolean patchedBookResearchCheck = false;
             
-            while (iterator.hasNext() && !patched) {
+            while (iterator.hasNext() && !(patchedCrystalResearchCheck && patchedBookResearchCheck)) {
                 AbstractInsnNode insn = iterator.next();
                 
                 switch (insn.getOpcode()) {
@@ -70,6 +73,10 @@ public class TThaumcraftPlayerEvents extends MethodPatcher {
                     if (methodInsn.name.equals(IS_RESEARCH_KNOWN) &&
                             lastLoadedString.equals(CRYSTAL_RESEARCH)) {
                         foundCrystalResearchCheck = true;
+                    }
+                    else if (methodInsn.name.equals(IS_RESEARCH_KNOWN) &&
+                            lastLoadedString.equals(BOOK_RESEARCH)) {
+                        foundBookResearchCheck = true;
                     }
                 break;
                 case Opcodes.IFNE:
@@ -93,7 +100,31 @@ public class TThaumcraftPlayerEvents extends MethodPatcher {
                         patch.add(new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode)insn).label));
                         
                         instructions.insert(insn, patch);
-                        patched = true;
+                        patchedCrystalResearchCheck = true;
+                        foundCrystalResearchCheck = false;
+                    }
+                    else if (foundBookResearchCheck) {
+                        InsnList patch = new InsnList();
+                        // Get EntityItemPickupEvent
+                        patch.add(new VarInsnNode(Opcodes.ALOAD, 0));
+                        // EntityItemPickupEvent.getEntityPlayer() (EntityPlayer)
+                        patch.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL,
+                                "net/minecraftforge/event/entity/player/EntityItemPickupEvent",
+                                "getEntityPlayer",
+                                "()Lnet/minecraft/entity/player/EntityPlayer;",
+                                false));
+                        // ListenerPlayerMagicState.canThaumonomiconPickupUnlockResearch(EntityItemPickupEvent) (boolean)
+                        patch.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
+                                "targoss/hardcorealchemy/listener/ListenerPlayerMagicState",
+                                "canThaumonomiconPickupUnlockResearch",
+                                "(Lnet/minecraft/entity/player/EntityPlayer;)Z",
+                                false));
+                        // If false, skip the crystal research
+                        patch.add(new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode)insn).label));
+                        
+                        instructions.insert(insn, patch);
+                        patchedBookResearchCheck = true;
+                        foundBookResearchCheck = false;
                     }
                 break;
                 default:
