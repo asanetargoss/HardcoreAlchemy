@@ -241,6 +241,14 @@ public class ListenerPlayerMagic extends ConfiguredListener {
                     whitelist.contains(itemResource.toString());
     }
     
+    public static boolean isCraftingAllowed(Set<String> whitelist, ItemStack itemStack) {
+        Item item = itemStack.getItem();
+        
+        ResourceLocation itemResource = item.getRegistryName();
+        return !HIGH_MAGIC_MODS.contains(itemResource.getResourceDomain()) ||
+                    whitelist.contains(itemResource.toString());
+    }
+    
     public static boolean isAllowed(Set<String> whitelist, Block block) {
         if (!Interaction.hasSpecialUse(block)) {
             return true;

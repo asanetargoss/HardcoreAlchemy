@@ -18,9 +18,6 @@
 
 package targoss.hardcorealchemy.listener;
 
-import static targoss.hardcorealchemy.listener.ListenerPlayerMagic.MAGIC_ITEM_ALLOW_CRAFT;
-import static targoss.hardcorealchemy.listener.ListenerPlayerMagic.isAllowed;
-
 import java.util.List;
 
 import net.minecraft.client.Minecraft;
@@ -97,7 +94,7 @@ public class ListenerGuiInventory extends ConfiguredListener {
         }
         
         ItemStack craftResult = event.getItemStack();
-        if (!isAllowed(MAGIC_ITEM_ALLOW_CRAFT, craftResult)) {
+        if (!ListenerPlayerMagic.isCraftingAllowed(ListenerPlayerMagic.MAGIC_ITEM_ALLOW_CRAFT, craftResult)) {
             event.getToolTip().add(TextFormatting.DARK_GRAY.toString() + new TextComponentTranslation("hardcorealchemy.magic.disabled.crafttooltip").getUnformattedText());
         }
     }
