@@ -31,11 +31,8 @@ import com.google.common.collect.Sets;
 
 import am2.api.affinity.Affinity;
 import am2.api.extensions.IAffinityData;
-import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -43,9 +40,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.Clone;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.Optional;
-import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
@@ -64,11 +59,11 @@ import targoss.hardcorealchemy.util.MiscVanilla;
 import targoss.hardcorealchemy.util.MorphState;
 import thaumcraft.api.capabilities.IPlayerKnowledge;
 import thaumcraft.api.capabilities.IPlayerKnowledge.EnumKnowledgeType;
+import thaumcraft.api.capabilities.IPlayerWarp;
 import thaumcraft.api.items.ItemsTC;
 import thaumcraft.api.research.ResearchCategories;
 import thaumcraft.api.research.ResearchCategory;
 import thaumcraft.common.lib.SoundsTC;
-import thaumcraft.api.capabilities.IPlayerWarp;
 
 /**
  * Handles capabilities from other magic mods, ex: make Ars Magica
@@ -134,78 +129,18 @@ public class ListenerPlayerMagicState extends ConfiguredListener {
     }
     
     /**
-     * On using item, make player recall thaumic knowledge and warp from past life
-     * (but only if the player can use high magic)
-     * 
-     * We assume that by the time this event listener is called,
-     * all event canceling has already occurred, due to the low priority.
+     * On crafting the Thauminomicon successfully, make player recall thaumic knowledge and warp from past life.
      */
-    @SubscribeEvent(priority=EventPriority.LOWEST)
+    @SubscribeEvent(priority=EventPriority.HIGH)
     @Optional.Method(modid=ModState.THAUMCRAFT_ID)
-    public void onPlayerUseThaumicItem(PlayerInteractEvent.RightClickItem event) {
-        // No need to check event.isCanceled()==true since that would mean this method is never called
-        
-        ResourceLocation itemResource = event.getItemStack().getItem().getRegistryName();
-        if (!itemResource.getResourceDomain().equals(ModState.THAUMCRAFT_ID)) {
-            return;
-        }
-        
-        if (ListenerPlayerMagic.isUseAllowed(event.getItemStack()) ||
-                event.getItemStack().getItem() == ItemsTC.salisMundus) {
-            /* If the item is usable without high magic knowledge, there's
-             * no reason it should trigger a memory flashback.
-             * Also, this discludes salis mundus usage
-             * as a way to recall Thaumcraft (makes opening the
-             * Thauminomicon the dramatic moment)
-             */
+    public void onPlayerCreateThauminomicon(PlayerEvent.ItemCraftedEvent event) {
+        if (event.crafting.getItem() != ItemsTC.thaumonomicon) {
             return;
         }
 
-        recallThaumcraftIfNeeded(event.getEntityPlayer());
+        recallThaumcraftIfNeeded(event.player);
     }
-    
-    /**
-     * On using block, make player recall thaumic knowledge and warp from past life
-     * (but only if the player can use high magic)
-     * 
-     * We assume that by the time this event listener is called,
-     * all event canceling/denying has already occurred, due to the low priority.
-     */
-    @SubscribeEvent(priority=EventPriority.LOWEST)
-    @Optional.Method(modid=ModState.THAUMCRAFT_ID)
-    public void onPlayerUseThaumicBlock(PlayerInteractEvent.RightClickBlock event) {
-        if (event.getUseBlock() == Result.DENY) {
-            return;
-        }
-        
-        Block block = event.getWorld().getBlockState(event.getPos()).getBlock();
-        if (block == null) {
-            return;
-        }
-        
-        ResourceLocation blockResource = block.getRegistryName();
-        if (!blockResource.getResourceDomain().equals(ModState.THAUMCRAFT_ID)) {
-            return;
-        }
-        
-        if (event.getUseBlock() != Result.ALLOW && event.getEntityPlayer().isSneaking() &&
-                event.getItemStack() != null && (event.getItemStack().getItem() instanceof ItemBlock)) {
-            /* The player is trying to place a block near here,
-             * not actually use the Thaumic block itself.
-             */
-            return;
-        }
-        
-        if (ListenerPlayerMagic.isUseAllowed(block)) {
-            /* If the block is usable without high magic knowledge, there's
-             * no reason it should trigger a memory flashback.
-             */
-            return;
-        }
 
-        recallThaumcraftIfNeeded(event.getEntityPlayer());
-    }
-    
     @Optional.Method(modid=ModState.THAUMCRAFT_ID)
     public static void recallThaumcraftIfNeeded(EntityPlayer player) {
         IInactiveCapabilities inactives = player.getCapability(INACTIVE_CAPABILITIES, null);
@@ -220,7 +155,7 @@ public class ListenerPlayerMagicState extends ConfiguredListener {
         
         recallThaumicKnowledgeAndWarp(player);
         if (player.world.isRemote && MiscVanilla.isTheMinecraftPlayer(player)) {
-            Chat.notifyThaumicSP(player, new TextComponentTranslation("hardcorealchemy.magic.recall_thaumcraft"));
+            Chat.messageSP(Chat.Type.THAUMIC, player, new TextComponentTranslation("hardcorealchemy.magic.recall_thaumcraft"));
             player.playSound(SoundsTC.whispers, 0.5F, 1.0F);
         }
     }
