@@ -186,7 +186,7 @@ public class ListenerPlayerMagic extends ConfiguredListener {
         ICapabilityHumanity capabilityHumanity = player.getCapability(HUMANITY_CAPABILITY, null);
         if (capabilityHumanity != null &&
                 !MorphState.canUseHighMagic(player) &&
-                !isUseAllowed(craftResult)) {
+                !ListenerPlayerMagic.isCraftingAllowed(craftResult)) {
             event.setCanceled(true);
             if (!capabilityHumanity.getNotifiedMagicFail()) {
                 capabilityHumanity.setNotifiedMagicFail(true);
