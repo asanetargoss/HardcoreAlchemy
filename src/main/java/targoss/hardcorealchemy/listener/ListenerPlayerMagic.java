@@ -21,9 +21,6 @@ package targoss.hardcorealchemy.listener;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.annotation.Nullable;
 
 import WayofTime.bloodmagic.api.saving.SoulNetwork;
 import WayofTime.bloodmagic.api.util.helper.NetworkHelper;
@@ -39,22 +36,12 @@ import am2.extensions.SkillData;
 import moze_intel.projecte.api.ProjectEAPI;
 import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.inventory.SlotCrafting;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -69,11 +56,10 @@ import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.coremod.CoremodHook;
-import targoss.hardcorealchemy.coremod.ObfuscatedName;
 import targoss.hardcorealchemy.event.EventTakeStack;
 import targoss.hardcorealchemy.util.Chat;
 import targoss.hardcorealchemy.util.Interaction;
-import targoss.hardcorealchemy.util.InvokeUtil;
+import targoss.hardcorealchemy.util.InventoryUtil;
 import targoss.hardcorealchemy.util.MiscVanilla;
 import targoss.hardcorealchemy.util.MorphState;
 
@@ -192,7 +178,7 @@ public class ListenerPlayerMagic extends ConfiguredListener {
             return;
         }
         ItemStack craftResult = event.slot.getStack();
-        if (MiscVanilla.isEmptyItemStack(craftResult) || !(event.slot instanceof SlotCrafting)) {
+        if (MiscVanilla.isEmptyItemStack(craftResult) || !InventoryUtil.isCraftingSlot(event.slot)) {
             return;
         }
         

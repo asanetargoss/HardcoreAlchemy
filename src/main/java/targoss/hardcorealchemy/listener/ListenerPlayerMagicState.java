@@ -33,7 +33,6 @@ import am2.api.affinity.Affinity;
 import am2.api.extensions.IAffinityData;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.SlotCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
@@ -43,7 +42,6 @@ import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.Clone;
 import net.minecraftforge.fml.common.Optional;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
@@ -59,6 +57,7 @@ import targoss.hardcorealchemy.coremod.CoremodHook;
 import targoss.hardcorealchemy.event.EventCraftPredict;
 import targoss.hardcorealchemy.event.EventTakeStack;
 import targoss.hardcorealchemy.util.Chat;
+import targoss.hardcorealchemy.util.InventoryUtil;
 import targoss.hardcorealchemy.util.MiscVanilla;
 import targoss.hardcorealchemy.util.MorphState;
 import thaumcraft.api.capabilities.IPlayerKnowledge;
@@ -67,7 +66,6 @@ import thaumcraft.api.capabilities.IPlayerWarp;
 import thaumcraft.api.items.ItemsTC;
 import thaumcraft.api.research.ResearchCategories;
 import thaumcraft.api.research.ResearchCategory;
-import thaumcraft.common.container.slot.SlotCraftingArcaneWorkbench;
 import thaumcraft.common.lib.SoundsTC;
 
 /**
@@ -143,7 +141,7 @@ public class ListenerPlayerMagicState extends ConfiguredListener {
         ItemStack toCraft = event.slot.getStack();
         if (MiscVanilla.isEmptyItemStack(toCraft) ||
                 toCraft.getItem() != ItemsTC.salisMundus ||
-                !(event.slot instanceof SlotCrafting || event.slot instanceof SlotCraftingArcaneWorkbench)) {
+                !InventoryUtil.isCraftingSlot(event.slot)) {
             return;
         }
         

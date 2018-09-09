@@ -23,9 +23,6 @@ import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.gui.inventory.GuiInventory;
-import net.minecraft.inventory.Slot;
-import net.minecraft.inventory.SlotCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
@@ -35,12 +32,12 @@ import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.capability.CapUtil;
 import targoss.hardcorealchemy.capability.food.ICapabilityFood;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.util.FoodLists;
+import targoss.hardcorealchemy.util.InventoryUtil;
 import targoss.hardcorealchemy.util.MorphDiet;
 import targoss.hardcorealchemy.util.MorphState;
 
@@ -85,7 +82,7 @@ public class ListenerGuiInventory extends ConfiguredListener {
         GuiScreen gui = mc.currentScreen;
         if (gui == null ||
                 !(gui instanceof GuiContainer) ||
-                !(((GuiContainer)gui).theSlot instanceof SlotCrafting)) {
+                !InventoryUtil.isCraftingSlot(((GuiContainer)gui).theSlot)) {
             return;
         }
         
