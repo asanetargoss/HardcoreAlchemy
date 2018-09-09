@@ -41,6 +41,7 @@ import targoss.hardcorealchemy.test.api.ITestList;
 import targoss.hardcorealchemy.test.api.ITestSuite;
 import targoss.hardcorealchemy.test.api.TestList;
 import targoss.hardcorealchemy.test.api.UniqueFakePlayer;
+import targoss.hardcorealchemy.util.InventoryUtil;
 
 public class TestFoodRot implements ITestSuite {
     @Override
@@ -93,7 +94,7 @@ public class TestFoodRot implements ITestSuite {
     
     public boolean hasInventoryChest() {
         TileEntityChest chest = new TileEntityChest();
-        return ListenerInventoryFoodRot.getInventories(chest).size() == 1;
+        return InventoryUtil.getInventories(chest).size() == 1;
     }
     
     /**
@@ -137,7 +138,7 @@ public class TestFoodRot implements ITestSuite {
         
         int initialFood = fillSlotsWithFood(inventory);
         
-        tickInventories(decayRate, ListenerInventoryFoodRot.getInventories(chest));
+        tickInventories(decayRate, InventoryUtil.getInventories(chest));
         
         int finalFood = getFoodCount(inventory);
         
@@ -154,7 +155,7 @@ public class TestFoodRot implements ITestSuite {
     
     public boolean hasInventoryChestPE() {
         AlchChestTile chest = new AlchChestTile();
-        return ListenerInventoryFoodRot.getInventories(chest).size() == 1;
+        return InventoryUtil.getInventories(chest).size() == 1;
     }
     
     public static ItemStack createBackpackStack() {
@@ -165,7 +166,7 @@ public class TestFoodRot implements ITestSuite {
         FakePlayer player = UniqueFakePlayer.create();
         ItemStack backpackStack = createBackpackStack();
         
-        return ListenerInventoryFoodRot.getInventories(backpackStack).size() == 1;
+        return InventoryUtil.getInventories(backpackStack).size() == 1;
     }
     
     public boolean countPlayerInventories() {
@@ -181,7 +182,7 @@ public class TestFoodRot implements ITestSuite {
             numInventories += 1;
         }
         
-        return ListenerInventoryFoodRot.getInventories(player).size() == numInventories;
+        return InventoryUtil.getInventories(player).size() == numInventories;
     }
     
     public boolean decayPlayerInventory() {
@@ -190,7 +191,7 @@ public class TestFoodRot implements ITestSuite {
         
         int initialFood = fillSlotsWithFood(playerInventory);
         
-        tickInventories(ListenerInventoryFoodRot.getInventories(player));
+        tickInventories(InventoryUtil.getInventories(player));
         
         int finalFood = getFoodCount(playerInventory);
         
@@ -207,7 +208,7 @@ public class TestFoodRot implements ITestSuite {
         IInventory iInventoryBackpack = inventoryBackpack;
         int foodSlot = 0;
         iInventoryBackpack.setInventorySlotContents(foodSlot, createFood());
-        ListenerInventoryFoodRot.saveIronBackpackNbt(new InvWrapper(inventoryBackpack), backpackStack);
+        InventoryUtil.saveIronBackpackNbt(new InvWrapper(inventoryBackpack), backpackStack);
         
         IInventory inventoryBackpack2 = new InventoryBackpack(inventoryBackpack.getBackpackStack(), true);
         return inventoryBackpack2.getStackInSlot(foodSlot) != NO_ITEM;
@@ -218,13 +219,13 @@ public class TestFoodRot implements ITestSuite {
         IItemHandler inventoryBackpack = new InvWrapper(new InventoryBackpack(backpackStack, true));
         
         int initialFood = fillSlotsWithFood(inventoryBackpack);
-        ListenerInventoryFoodRot.saveIronBackpackNbt(inventoryBackpack, backpackStack);
+        InventoryUtil.saveIronBackpackNbt(inventoryBackpack, backpackStack);
         
         int backpackSlot = 0;
         FakePlayer player = UniqueFakePlayer.create();
         player.inventory.setInventorySlotContents(backpackSlot, backpackStack);
         
-        tickInventories(ListenerInventoryFoodRot.getInventories(player));
+        tickInventories(InventoryUtil.getInventories(player));
         
         IItemHandler inventoryBackpack2 = new InvWrapper(new InventoryBackpack(player.inventory.getStackInSlot(backpackSlot), true));
         int finalFood = getFoodCount(inventoryBackpack2);
@@ -237,13 +238,13 @@ public class TestFoodRot implements ITestSuite {
         IItemHandler inventoryBackpack = new InvWrapper(new InventoryBackpack(backpackStack, true));
         
         int initialFood = fillSlotsWithFood(inventoryBackpack);
-        ListenerInventoryFoodRot.saveIronBackpackNbt(inventoryBackpack, backpackStack);
+        InventoryUtil.saveIronBackpackNbt(inventoryBackpack, backpackStack);
         
         FakePlayer player = UniqueFakePlayer.create();
         PlayerWearingBackpackCapabilities backpackCapability = IronBackpacksCapabilities.getWearingBackpackCapability(player);
         backpackCapability.setEquippedBackpack(backpackStack);
         
-        tickInventories(ListenerInventoryFoodRot.getInventories(player));
+        tickInventories(InventoryUtil.getInventories(player));
         
         ItemStack backpackStack2 = backpackCapability.getEquippedBackpack();
         IItemHandler inventoryBackpack2 = new InvWrapper(new InventoryBackpack(backpackStack2, true));
@@ -255,14 +256,14 @@ public class TestFoodRot implements ITestSuite {
     
     public boolean decayAlchemicalBags() {
         FakePlayer player = UniqueFakePlayer.create();
-        List<IItemHandler> alchemicalBags = ListenerInventoryFoodRot.getAlchemicalBags(player);
+        List<IItemHandler> alchemicalBags = InventoryUtil.getAlchemicalBags(player);
         IItemHandler alchemicalBag = alchemicalBags.get(0);
         
         int initialFood = fillSlotsWithFood(alchemicalBag);
         
         List<IItemHandler> testBags = new ArrayList<>();
         testBags.add(alchemicalBag);
-        tickInventories(ListenerInventoryFoodRot.getInventories(player));
+        tickInventories(InventoryUtil.getInventories(player));
         
         int finalFood = getFoodCount(alchemicalBag);
         
