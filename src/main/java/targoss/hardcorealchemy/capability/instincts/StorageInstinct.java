@@ -26,9 +26,11 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
+import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.capability.instincts.ICapabilityInstinct.InstinctEntry;
 import targoss.hardcorealchemy.instinct.IInstinct;
 import targoss.hardcorealchemy.instinct.Instincts;
+import targoss.hardcorealchemy.instinct.Instincts.InstinctFactory;
 
 public class StorageInstinct implements Capability.IStorage<ICapabilityInstinct> {
     public static final String INSTINCT = "instinct";
@@ -97,19 +99,25 @@ public class StorageInstinct implements Capability.IStorage<ICapabilityInstinct>
                     continue;
                 }
                 entry.id = new ResourceLocation(entryNbt.getString(INSTINCT_ID));
-                try {
-                    IInstinct instinct = Instincts.REGISTRY.getValue(entry.id).createInstinct();
-                    instinct.deserializeNBT(entryNbt.getCompoundTag(INSTINCT_DATA));
-                    entry.instinct = instinct;
+                InstinctFactory instinctFactory = Instincts.REGISTRY.getValue(entry.id);
+                if (instinctFactory == null) {
+                    HardcoreAlchemy.LOGGER.error("Attempted to load instinct with ID '" + entry.id + "', but the instinct factory does not exist in the registry");
                 }
-                catch (Exception e) {
-                    e.printStackTrace();
-                    continue;
-                }
-                entry.weight = entryNbt.getFloat(INSTINCT_WEIGHT);
-                
-                if (entry.instinct != null) {
-                    instinctMap.put(entry.id, entry);
+                else {
+                    try {
+                        IInstinct instinct = instinctFactory.createInstinct();
+                        instinct.deserializeNBT(entryNbt.getCompoundTag(INSTINCT_DATA));
+                        entry.instinct = instinct;
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                        continue;
+                    }
+                    entry.weight = entryNbt.getFloat(INSTINCT_WEIGHT);
+                    
+                    if (entry.instinct != null) {
+                        instinctMap.put(entry.id, entry);
+                    }
                 }
             }
         }
