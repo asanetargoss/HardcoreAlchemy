@@ -179,6 +179,7 @@ public class ListenerPlayerMagicState extends ConfiguredListener {
      * Also give player the research needed to start using the Thaumonomicon, since the research is no longer
      * obtained from simply picking up the book.
      */
+    @SubscribeEvent
     @Optional.Method(modid=ModState.THAUMCRAFT_ID)
     public void onPlayerCreateThauminomicon(PlayerEvent.ItemCraftedEvent event) {
         if (event.crafting.getItem() != ItemsTC.thaumonomicon) {
