@@ -36,6 +36,7 @@ import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 import targoss.hardcorealchemy.coremod.transform.TClassInheritanceMultiMap;
 import targoss.hardcorealchemy.coremod.transform.TCraftingManager;
+import targoss.hardcorealchemy.coremod.transform.TDataVillage;
 import targoss.hardcorealchemy.coremod.transform.TDecayingCrops;
 import targoss.hardcorealchemy.coremod.transform.TEntityLivingBase;
 import targoss.hardcorealchemy.coremod.transform.THibernatingCrops;
@@ -76,7 +77,8 @@ public class HardcoreAlchemyCoremod implements IFMLLoadingPlugin {
 				TThirstOverlayHandler.class.getName(),
 				TRightClickHarvesting.class.getName(),
 				TClassInheritanceMultiMap.class.getName(),
-				TThaumcraftPlayerEvents.class.getName()
+				TThaumcraftPlayerEvents.class.getName(),
+				TDataVillage.class.getName()
 		};
 	}
 
