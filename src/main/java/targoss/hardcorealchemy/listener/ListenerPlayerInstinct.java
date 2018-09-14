@@ -31,8 +31,13 @@ import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
+import net.minecraft.util.EntitySelectors;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.capabilities.Capability;
@@ -58,6 +63,7 @@ import targoss.hardcorealchemy.network.MessageInstinctActive;
 import targoss.hardcorealchemy.network.MessageInstinctValue;
 import targoss.hardcorealchemy.network.PacketHandler;
 import targoss.hardcorealchemy.util.Chat;
+import targoss.hardcorealchemy.util.MiscVanilla;
 
 /**
  * Capability handling, ticking, and event hooks for instincts.
@@ -284,6 +290,48 @@ public class ListenerPlayerInstinct extends ConfiguredListener {
         
         if (!activeInstinct.canInteract(player, event.getItemStack())) {
             event.setCanceled(true);
+        }
+    }
+    
+    private static boolean isFlammableLivingEntity(Entity entity) {
+        return !entity.isImmuneToFire() && (entity instanceof EntityLivingBase) && EntitySelectors.NOT_SPECTATING.apply(entity);
+    }
+    
+    @SubscribeEvent
+    public void onPlayerIgnitePre(PlayerInteractEvent.RightClickBlock event) {
+        // TODO: Lava
+        // TODO Electric Boogaloo: Simulate entities in fake world to see if they get damaged, then cache the result
+        EntityPlayer player = event.getEntityPlayer();
+        ICapabilityInstinct instinct = player.getCapability(INSTINCT_CAPABILITY, null);
+        if (instinct == null) {
+            return;
+        }
+        IInstinct activeInstinct = instinct.getActiveInstinct();
+        if (activeInstinct == null) {
+            return;
+        }
+        
+        ItemStack itemStack = event.getItemStack();
+        if (MiscVanilla.isEmptyItemStack(itemStack) || itemStack.getItem() != Items.FLINT_AND_STEEL) {
+            return;
+        }
+        
+        EnumFacing facing = event.getFace();
+        if (facing == null) {
+            return;
+        }
+        
+        BlockPos pos = event.getPos();
+        
+        BlockPos firePos = pos.offset(facing);
+        // Check 3x3 area for nearby mobs that might be set on fire
+        AxisAlignedBB aabb = new AxisAlignedBB(firePos.getX() - 1, firePos.getY() - 1, firePos.getZ() - 1,
+                firePos.getX() + 2, firePos.getY() + 2, firePos.getZ() + 2);
+        for (Entity entity : player.world.getEntitiesInAABBexcluding(player, aabb, ListenerPlayerInstinct::isFlammableLivingEntity)) {
+            if (!activeInstinct.canAttack(player, (EntityLivingBase)entity)) {
+                event.setUseItem(Result.DENY);
+                break;
+            }
         }
     }
     
