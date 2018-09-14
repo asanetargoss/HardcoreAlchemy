@@ -121,7 +121,7 @@ public interface IInstinct extends INBTSerializable<NBTTagCompound> {
     /** 
      * Whether the player can attack the entity.
      *  Only called if this instinct is active.
-     *  **Server-side only!**
+     *  Server-side only in most cases, so do not rely on this running on the client.
      */
     public default boolean canAttack(EntityPlayer player, EntityLivingBase entity) {
         return true;
