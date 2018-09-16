@@ -42,10 +42,4 @@ public interface ICapabilityHumanity {
     public abstract boolean canMorph();
     public abstract ITextComponent explainWhyCantMorph();
     public abstract boolean shouldDisplayHumanity();
-    
-    /* A temporary variable used to prevent a player from seeing multiple notifications about
-     * not being able to use magic in the same tick, due to multiple events being fired.
-     */
-    public abstract void setNotifiedMagicFail(boolean notifiedMagicFail);
-    public abstract boolean getNotifiedMagicFail();
 }

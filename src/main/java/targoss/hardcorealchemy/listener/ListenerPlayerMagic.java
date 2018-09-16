@@ -49,8 +49,6 @@ import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
@@ -124,18 +122,6 @@ public class ListenerPlayerMagic extends ConfiguredListener {
     private static final String MAGIC_NOT_ALLOWED = "magic_not_allowed";
     
     @SubscribeEvent
-    public void onPlayerTickMP(TickEvent.PlayerTickEvent event) {
-        if (event.phase != Phase.END) {
-            return;
-        }
-        EntityPlayer player = event.player;
-        ICapabilityHumanity capabilityHumanity = player.getCapability(HUMANITY_CAPABILITY, null);
-        if (capabilityHumanity != null) {
-            capabilityHumanity.setNotifiedMagicFail(false);
-        }
-    }
-    
-    @SubscribeEvent
     public void onRightClickItem(PlayerInteractEvent.RightClickItem event) {
         EntityPlayer player = event.getEntityPlayer();
         ICapabilityHumanity capabilityHumanity = player.getCapability(HUMANITY_CAPABILITY, null);
@@ -144,11 +130,8 @@ public class ListenerPlayerMagic extends ConfiguredListener {
         }
         if (!isUseAllowed(event.getItemStack())) {
             event.setCanceled(true);
-            if (!capabilityHumanity.getNotifiedMagicFail()) {
-                capabilityHumanity.setNotifiedMagicFail(true);
-                if (player.world.isRemote) {
-                    Chat.messageSP(Chat.Type.NOTIFY, player, new TextComponentTranslation("hardcorealchemy.magic.disabled.item"), 2, MAGIC_NOT_ALLOWED);
-                }
+            if (player.world.isRemote) {
+                Chat.messageSP(Chat.Type.NOTIFY, player, new TextComponentTranslation("hardcorealchemy.magic.disabled.item"), 2, MAGIC_NOT_ALLOWED);
             }
         }
     }
@@ -163,11 +146,8 @@ public class ListenerPlayerMagic extends ConfiguredListener {
         }
         if (!isUseAllowed(block)) {
             event.setUseBlock(Result.DENY);
-            if (!capabilityHumanity.getNotifiedMagicFail()) {
-                capabilityHumanity.setNotifiedMagicFail(true);
-                if (player.world.isRemote) {
-                    Chat.messageSP(Chat.Type.NOTIFY, player, new TextComponentTranslation("hardcorealchemy.magic.disabled.block"), 2, MAGIC_NOT_ALLOWED);
-                }
+            if (player.world.isRemote) {
+                Chat.messageSP(Chat.Type.NOTIFY, player, new TextComponentTranslation("hardcorealchemy.magic.disabled.block"), 2, MAGIC_NOT_ALLOWED);
             }
         }
     }
@@ -188,11 +168,8 @@ public class ListenerPlayerMagic extends ConfiguredListener {
                 !MorphState.canUseHighMagic(player) &&
                 !ListenerPlayerMagic.isCraftingAllowed(craftResult)) {
             event.setCanceled(true);
-            if (!capabilityHumanity.getNotifiedMagicFail()) {
-                capabilityHumanity.setNotifiedMagicFail(true);
-                if (player.world.isRemote) {
-                    Chat.messageSP(Chat.Type.NOTIFY, player, new TextComponentTranslation("hardcorealchemy.magic.disabled.craft"), 2, MAGIC_NOT_ALLOWED);
-                }
+            if (player.world.isRemote) {
+                Chat.messageSP(Chat.Type.NOTIFY, player, new TextComponentTranslation("hardcorealchemy.magic.disabled.craft"), 2, MAGIC_NOT_ALLOWED);
             }
         }
     }
@@ -203,10 +180,7 @@ public class ListenerPlayerMagic extends ConfiguredListener {
         if (capabilityHumanity == null || MorphState.canUseHighMagic(player)) {
             return true;
         }
-        if (!capabilityHumanity.getNotifiedMagicFail()) {
-            capabilityHumanity.setNotifiedMagicFail(true);
-            Chat.message(Chat.Type.NOTIFY, player, new TextComponentTranslation("hardcorealchemy.magic.disabled.projectekeypress"), 2, MAGIC_NOT_ALLOWED);
-        }
+        Chat.message(Chat.Type.NOTIFY, player, new TextComponentTranslation("hardcorealchemy.magic.disabled.projectekeypress"), 2, MAGIC_NOT_ALLOWED);
         return false;
     }
     

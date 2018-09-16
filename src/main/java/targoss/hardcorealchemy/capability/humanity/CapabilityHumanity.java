@@ -18,22 +18,15 @@
 
 package targoss.hardcorealchemy.capability.humanity;
 
-import net.minecraft.entity.ai.attributes.IAttribute;
-import net.minecraft.entity.ai.attributes.RangedAttribute;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraftforge.common.capabilities.CapabilityManager;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 
 public class CapabilityHumanity implements ICapabilityHumanity {
     
     public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(HardcoreAlchemy.MOD_ID, "humanity");
-    
-    // Not stored
-    private boolean notifiedMagicFail;
     
     private double humanity;
     // Humanity in the previous tick after humanity tick calculations; allows us to see if humanity was changed in other ways
@@ -48,7 +41,6 @@ public class CapabilityHumanity implements ICapabilityHumanity {
         hasLostHumanity = false;
         hasLostMorphAbility = false;
         isMarried = false;
-        notifiedMagicFail = false;
     }
     
     @Override
@@ -146,16 +138,6 @@ public class CapabilityHumanity implements ICapabilityHumanity {
     @Override
     public double getLastHumanity() {
         return lastHumanity;
-    }
-
-    @Override
-    public void setNotifiedMagicFail(boolean notifiedMagicFail) {
-        this.notifiedMagicFail = notifiedMagicFail;
-    }
-
-    @Override
-    public boolean getNotifiedMagicFail() {
-        return notifiedMagicFail;
     }
 
 }
