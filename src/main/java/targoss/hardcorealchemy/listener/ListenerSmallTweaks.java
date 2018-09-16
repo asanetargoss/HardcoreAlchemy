@@ -173,5 +173,8 @@ public class ListenerSmallTweaks extends ConfiguredListener {
                 nutrition.subtract(enabled.getKey(), amount, false);
             }
         }
+        if (player.ticksExisted % 60 == 16) {
+            nutrition.resync();
+        }
     }
 }
