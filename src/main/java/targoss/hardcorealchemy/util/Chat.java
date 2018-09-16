@@ -18,9 +18,10 @@
 
 package targoss.hardcorealchemy.util;
 
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.mojang.authlib.GameProfile;
 
@@ -29,7 +30,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -55,7 +55,7 @@ public class Chat {
     }
     
     public static void message(Type type, EntityPlayerMP player, ITextComponent message, int cooldown, String cooldownKey) {
-        if (!cacheAndDecideDisplayMessage(textHistoryMP, player, cooldown, cooldownKey)) {
+        if (!cacheAndDecideDisplayMessage(player, cooldown, cooldownKey)) {
             return;
         }
         
@@ -74,33 +74,36 @@ public class Chat {
     
     @SideOnly(Side.CLIENT)
     public static void messageSP(Type type, EntityPlayer player, ITextComponent message, int cooldown, String cooldownKey) {
-        if (!cacheAndDecideDisplayMessage(textHistorySP, player, cooldown, cooldownKey)) {
-            return;
-        }
-        
         if (Minecraft.getMinecraft().player == player) {
+            if (!cacheAndDecideDisplayMessage(player, cooldown, cooldownKey)) {
+                return;
+            }
             Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(message.setStyle(type.style));
         }
     }
     
-    private static Map<GameProfile, LinkedHashMap<String, Integer>> textHistorySP = new HashMap<>();
-    private static Map<GameProfile, LinkedHashMap<String, Integer>> textHistoryMP = new HashMap<>();
+    private static Map<GameProfile, Map<String, Integer>> textHistory = new ConcurrentHashMap<>();
     
     public static int MAX_TEXT_HISTORY_SIZE = 10;
     
-    private static boolean cacheAndDecideDisplayMessage(Map<GameProfile, LinkedHashMap<String, Integer>> textHistory, EntityPlayer player, int cooldown, String cooldownKey) {
+    private static boolean cacheAndDecideDisplayMessage(EntityPlayer player, int cooldown, String cooldownKey) {
         if (cooldown <= 0) {
             return true;
         }
         
         GameProfile profile = player.getGameProfile();
-        LinkedHashMap<String, Integer> history = textHistory.get(profile);
+        Map<String, Integer> history = textHistory.get(profile);
         if (history == null) {
-            history = new LinkedHashMap<>();
+            history = Collections.synchronizedMap(new LinkedHashMap<>());
             textHistory.put(profile, history);
         }
         
-        if (!history.containsKey(cooldownKey) || player.ticksExisted - history.get(cooldownKey) >= cooldown) {
+        Integer lastMessageTick = history.get(cooldownKey);
+        if (lastMessageTick == null || player.ticksExisted - lastMessageTick >= cooldown) {
+            if (lastMessageTick != null) {
+                // Ensure the key is at the front of the history (since this is an ordered hash map)
+                history.remove(cooldownKey);
+            }
             history.put(cooldownKey, player.ticksExisted);
             
             if (history.size() > MAX_TEXT_HISTORY_SIZE) {
