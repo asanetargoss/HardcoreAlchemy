@@ -18,16 +18,17 @@
 
 package targoss.hardcorealchemy.capability.misc;
 
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 
-public class ProviderMisc implements ICapabilityProvider {
+public class ProviderMisc implements ICapabilitySerializable<NBTBase> {
     @CapabilityInject(ICapabilityMisc.class)
     public static final Capability<ICapabilityMisc> MISC_CAPABILITY = null;
     
-    private ICapabilityMisc instance = new CapabilityMisc();
+    private final ICapabilityMisc instance = MISC_CAPABILITY.getDefaultInstance();
     
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
@@ -40,6 +41,16 @@ public class ProviderMisc implements ICapabilityProvider {
             return (T)instance;
         }
         return null;
+    }
+
+    @Override
+    public NBTBase serializeNBT() {
+        return MISC_CAPABILITY.writeNBT(instance, null);
+    }
+
+    @Override
+    public void deserializeNBT(NBTBase nbt) {
+        MISC_CAPABILITY.readNBT(instance, null, nbt);
     }
 
 }
