@@ -123,6 +123,8 @@ public class ListenerSmallTweaks extends ConfiguredListener {
     
     // (10 points lost per nutrient) / ~30 seconds thirst potion length / 20 ticks per second
     private static final float NUTRITION_DECREASE_PER_THIRST_TICK = 10.0f / 30.0f / 20.0f;
+    // Do not calculate decay for that nutrient if it is below this value
+    private static final float MIN_NUTRIENT_VALUE = 3.0f;
     
     /**
      * Causes Nutrition loss from Tough As Nails thirst effect
@@ -146,7 +148,7 @@ public class ListenerSmallTweaks extends ConfiguredListener {
         Collection<PotionEffect> effects = player.getActivePotionEffects();
         for (PotionEffect effect : effects) {
             if (effect.getPotion() == TANPotions.thirst) {
-                decreaseNutrition(player, NUTRITION_DECREASE_PER_THIRST_TICK);
+                decreaseNutrition(player, NUTRITION_DECREASE_PER_THIRST_TICK, MIN_NUTRIENT_VALUE);
                 
                 if (!player.world.isRemote) {
                     ICapabilityMisc miscCap =  player.getCapability(MISC_CAPABILITY, null);
@@ -163,17 +165,23 @@ public class ListenerSmallTweaks extends ConfiguredListener {
     }
     
     @Optional.Method(modid=ModState.NUTRITION_ID)
-    public static void decreaseNutrition(EntityPlayer player, float amount) {
+    public static void decreaseNutrition(EntityPlayer player, float amount, float minValue) {
         CapInterface nutrition = player.getCapability(CapProvider.NUTRITION_CAPABILITY, null);
         if (nutrition == null) {
             return;
         }
+        boolean changed = false;
         for (Map.Entry<Nutrient, Boolean> enabled : nutrition.getEnabled().entrySet()) {
             if (enabled.getValue()) {
-                nutrition.subtract(enabled.getKey(), amount, false);
+                float currentNutrition = nutrition.get(enabled.getKey());
+                float newNutrition = Math.max(minValue, currentNutrition - amount);
+                if (newNutrition != currentNutrition) {
+                    nutrition.set(enabled.getKey(), newNutrition, false);
+                    changed = true;
+                }
             }
         }
-        if (player.ticksExisted % 60 == 16) {
+        if (changed && player.ticksExisted % 60 == 16) {
             nutrition.resync();
         }
     }
