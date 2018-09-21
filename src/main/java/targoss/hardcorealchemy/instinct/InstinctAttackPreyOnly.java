@@ -26,6 +26,10 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
+import mchorse.metamorph.api.morphs.AbstractMorph;
+import mchorse.metamorph.api.morphs.EntityMorph;
+import mchorse.metamorph.capabilities.morphing.IMorphing;
+import mchorse.metamorph.capabilities.morphing.Morphing;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
@@ -51,19 +55,24 @@ import targoss.hardcorealchemy.util.MiscVanilla;
 import targoss.hardcorealchemy.util.MobLists;
 
 /**
- * An instinct which makes the player unable to attack any entity
+ * An instinct which, when inactive, makes the player unable to attack any entity
  * unless the player's form wants to attack it, or if the entity
  * is trying to hurt the player.
  * 
  * The effect wears off when the player kills enough of the desired
  * mobs.
  * 
+ * When inactive, the instinct restores instinct value whenever
+ * the player kills the right type of mob. If the player avoids
+ * killing their desired prey, the instinct gained will be decreased
+ * until the player kills more again.
+ * 
  */
 public class InstinctAttackPreyOnly implements IInstinct {
     
     public InstinctAttackPreyOnly() { }
     
-    /** Make time (ticks) the player can not see prey while in a killing frenzy */
+    /** Make time (ticks) the player can not see prey they have coveted (ie have seen) */
     private static final int MAX_TICKS_OUT_OF_SIGHT = 20 * 20;
     /** Max distance (Manhattan) that player will search for nearby creatures  */
     private static final int SIGHT_RANGE = 20;
@@ -84,11 +93,13 @@ public class InstinctAttackPreyOnly implements IInstinct {
     
     Random random = new Random();
     private int lastFrenzyCheckTick = 0;
+    /** Indicates that trackedEntity was non-null and the entity has not died */
+    private boolean covetsPrey = false;
     private EntityLivingBase trackedEntity = null;
     private Class<? extends EntityLivingBase> lastSeenPrey = null;
     
     private Class<? extends EntityLivingBase> ownEntityClass = null;
-    /* For when the list of targets failed to initialize due to NBT serialization being called before a world could be loaded */
+    /** For when the list of targets failed to initialize due to NBT serialization being called before a world could be loaded */
     private boolean targetsInitialized = false;
     private Set<Class<? extends EntityLivingBase>> targetEntityClasses = new HashSet<>();
     private int minRequiredKills = 1;
@@ -96,10 +107,16 @@ public class InstinctAttackPreyOnly implements IInstinct {
     public boolean active = false;
     public int numKills = 0;
     public int requiredKills = 0;
+    /** Tells the player that it's good to kill all the things */
     public boolean inKillingFrenzy = false;
-    /** Time since the player has seen prey while in a killing frenzy */
+    /** Time since the player has seen prey */
     private int timeSinceSeenPrey = 0;
-
+    
+    /** Measured in kills. Higher = less instinct gained. Can be negative, providing a kill buffer */
+    private int instinctGainPenalty = 0;
+    private static final int PENALTY_AMOUNT = 5;
+    private static final int MIN_PENALTY = -3;
+    private static final int MAX_PENALTY = 20;
 
     @Override
     public boolean doesMorphEntityHaveInstinct(EntityLivingBase morphEntity) {
@@ -216,6 +233,7 @@ public class InstinctAttackPreyOnly implements IInstinct {
     public static final String NBT_REQUIRED_KILLS = "requiredKills";
     public static final String NBT_IN_KILLING_FRENZY = "inKillingFrenzy";
     public static final String NBT_TIME_SINCE_SEEN_PREY = "timeSinceSeenPrey";
+    public static final String NBT_INSTINCT_GAIN_PENALTY = "instinctGainPenalty";
     
     @Override
     public NBTTagCompound serializeNBT() {
@@ -229,6 +247,7 @@ public class InstinctAttackPreyOnly implements IInstinct {
         nbt.setInteger(NBT_REQUIRED_KILLS, requiredKills);
         nbt.setBoolean(NBT_IN_KILLING_FRENZY, inKillingFrenzy);
         nbt.setInteger(NBT_TIME_SINCE_SEEN_PREY, timeSinceSeenPrey);
+        nbt.setInteger(NBT_INSTINCT_GAIN_PENALTY, instinctGainPenalty);
         
         return nbt;
     }
@@ -266,6 +285,7 @@ public class InstinctAttackPreyOnly implements IInstinct {
         requiredKills = nbt.getInteger(NBT_REQUIRED_KILLS);
         inKillingFrenzy = nbt.getBoolean(NBT_IN_KILLING_FRENZY);
         timeSinceSeenPrey = nbt.getInteger(NBT_TIME_SINCE_SEEN_PREY);
+        instinctGainPenalty = nbt.getInteger(NBT_INSTINCT_GAIN_PENALTY);
     }
     
     @Override
@@ -279,6 +299,7 @@ public class InstinctAttackPreyOnly implements IInstinct {
         numKills = 0;
         requiredKills = minRequiredKills;
         inKillingFrenzy = false;
+        timeSinceSeenPrey = player.ticksExisted;
     }
 
     @Override
@@ -287,27 +308,50 @@ public class InstinctAttackPreyOnly implements IInstinct {
         numKills = 0;
         requiredKills = 0;
         inKillingFrenzy = false;
+        timeSinceSeenPrey = player.ticksExisted;
+    }
+
+    @Override
+    public float getInactiveChangeOnTick(EntityPlayer player) {
+        generalTick(player);
+        return 0.0F;
     }
 
     @Override
     public void tick(EntityPlayer player) {
-        /* If the player is in a killing frenzy,
-         * but the last entity falls out of their line of sight,
-         * the player will want to kill even more of the entity
-         */
-        if (inKillingFrenzy) {
-            if (!canIncreaseKillRequirement()) {
-                inKillingFrenzy = false;
-            }
-            else {
-                if (!hasSeenPreyRecently(player, null)) {
-                    increaseKillRequirement();
-                    if (player.world.isRemote) {
-                        Chat.notifySP(player, new TextComponentTranslation("hardcorealchemy.instinct.attack_prey.resist",
-                                EntityUtil.getEntityName(lastSeenPrey)));
-                    }
-                    inKillingFrenzy = false;
+        generalTick(player);
+    }
+    
+    private void generalTick(EntityPlayer player) {
+        if (!targetsInitialized && MiscVanilla.getWorld() != null) {
+            initTargets();
+        }
+        
+        boolean covetedPrey = covetsPrey;
+        updateTrackedEntity(player);
+        boolean hasSeenPrey = hasSeenPreyRecently(player);
+        
+        if (trackedEntity != null) {
+            if (!covetedPrey) {
+                if (player.world.isRemote) {
+                    Chat.messageSP(Chat.Type.NOTIFY, player, new TextComponentTranslation("hardcorealchemy.instinct.attack_prey.detect",
+                            EntityUtil.getEntityName(lastSeenPrey)));
                 }
+            }
+        }
+        else if (!hasSeenPrey) {
+            if (covetsPrey) {
+                /* The last prey fell out of their line of sight.
+                 * The player will now get less instinct gained
+                 * from future kills.
+                 */
+                if (player.world.isRemote) {
+                    Chat.messageSP(Chat.Type.NOTIFY, player, new TextComponentTranslation("hardcorealchemy.instinct.attack_prey.resist",
+                            EntityUtil.getEntityName(lastSeenPrey)));
+                }
+                inKillingFrenzy = false;
+                covetsPrey = false;
+                instinctGainPenalty = Math.min(instinctGainPenalty + PENALTY_AMOUNT, MAX_PENALTY);
             }
         }
     }
@@ -374,46 +418,45 @@ public class InstinctAttackPreyOnly implements IInstinct {
             return;
         }
         
-        if (inKillingFrenzy && !canIncreaseKillRequirement()) {
-            inKillingFrenzy = false;
-            syncRemote((EntityPlayerMP)player);
-            return;
-        }
-        
-        if (isPreyInLineOfSight(player, entity)) {
+        updateTrackedEntity(player);
+        if (trackedEntity != null) {
             // More prey visible nearby
             if (!inKillingFrenzy) {
                 inKillingFrenzy = true;
-                lastFrenzyCheckTick = player.ticksExisted;
                 Chat.notify((EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.instinct.attack_prey.frenzy_start"));
                 syncRemote((EntityPlayerMP)player);
             }
         }
         else {
-            // Killed all prey in the area
-            inKillingFrenzy = false;
-            Chat.notify((EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.instinct.attack_prey.frenzy_end"));
-            syncRemote((EntityPlayerMP)player);
+            if (inKillingFrenzy) {
+                // Killed all prey in the area
+                inKillingFrenzy = false;
+                Chat.notify((EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.instinct.attack_prey.frenzy_end"));
+                syncRemote((EntityPlayerMP)player);
+            }
         }
     }
     
-    //TODO: Have a function getMaxRequiredKills() instead
-    private boolean canIncreaseKillRequirement() {
-        return requiredKills < minRequiredKills * 4;
+    @Override
+    public float getInactiveChangeOnKill(EntityPlayer player, EntityLivingBase entity) {
+        if (!isTarget(entity)) {
+            return 0.0F;
+        }
+        float instinctChange = 10.0f / Math.max(1.0f, instinctGainPenalty + 1.0f);
+        onKillPreyGeneral(player, entity);
+        return instinctChange;
     }
     
-    private void increaseKillRequirement() {
-        requiredKills++;
+    private void onKillPreyGeneral(EntityPlayer player, EntityLivingBase entity) {
+        instinctGainPenalty = Math.max(instinctGainPenalty - 1, MIN_PENALTY);
     }
-    
+
     /**
      * Whether the one of the player's desired instinct prey
      * has recently been in their line of sight and nearby.
-     * Valid only during a killing frenzy, as that is when
-     * the timekeeping variable (lastFrenzyCheckTick) is reset.
      */
-    private boolean hasSeenPreyRecently(EntityPlayer player, @Nullable EntityLivingBase excludedEntity) {
-        boolean seenPrey = isPreyInLineOfSight(player, excludedEntity);
+    private boolean hasSeenPreyRecently(EntityPlayer player) {
+        boolean seenPrey = trackedEntity != null;
 
         // Check for integer overflow
         if (lastFrenzyCheckTick > player.ticksExisted) {
@@ -436,63 +479,64 @@ public class InstinctAttackPreyOnly implements IInstinct {
     }
     
     /**
-     * Whether the one of the player's desired instinct prey
-     * is currently in their line of sight and nearby.
+     * Updates the tracked entity.
+     * The excludedEntity is usually the player's morph.
+     * If one of the player's desired instinct prey
+     * is currently in their line of sight and nearby,
+     * the tracked entity will be set to one of those.
+     * Otherwise, the tracked entity will be null.
      */
-    private boolean isPreyInLineOfSight(EntityPlayer player, @Nullable EntityLivingBase excludedEntity) {
-        if (excludedEntity != null && excludedEntity == trackedEntity) {
+    private void updateTrackedEntity(EntityPlayer player) {
+        if (trackedEntity != null && trackedEntity.isDead) {
+            covetsPrey = false;
             trackedEntity = null;
         }
         // Can we "see" the currently cached entity?
         if (trackedEntity != null && player.canEntityBeSeen(trackedEntity)) {
-            return true;
+            covetsPrey = true;
+            return;
         }
         else {
-            trackedEntity = null;
-            List<EntityLivingBase> availablePrey = new ArrayList<>();
-            AxisAlignedBB aabb = new AxisAlignedBB(
-                    player.posX-SIGHT_RANGE, player.posY-SIGHT_RANGE, player.posZ-SIGHT_RANGE,
-                    player.posX+SIGHT_RANGE, player.posY+SIGHT_RANGE, player.posZ+SIGHT_RANGE
-                    );
-            for (Class<? extends EntityLivingBase> targetEntityClass : targetEntityClasses) {
-                for (EntityLivingBase possiblePrey : EntityUtil.getEntitiesAndMorphsExcluding(player, player.world, targetEntityClass, aabb)) {
-                    if (possiblePrey != excludedEntity && player.canEntityBeSeen(possiblePrey)) {
-                        availablePrey.add(possiblePrey);
-                    }
-                }
+            trackedEntity = getNewPrey(player);
+            if (trackedEntity != null) {
+                covetsPrey = true;
+                lastSeenPrey = trackedEntity.getClass();
             }
-            
-            if (availablePrey.size() <= 0) {
-                return false;
-            }
-            
-            // Choose entity at random
-            trackedEntity = availablePrey.get(random.nextInt(availablePrey.size()));
-            lastSeenPrey = trackedEntity.getClass();
         }
-        
-        return trackedEntity != null;
     }
     
     /**
-     * Check if prey have been calculated yet.
+     * Choses a random prey near the player
      */
-    @Override
-    public float getInactiveChangeOnTick(EntityPlayer player) {
-        if (!targetsInitialized && MiscVanilla.getWorld() != null) {
-            initTargets();
-        }
-        return 0.0F;
-    }
-
-    @Override
-    public float getInactiveChangeOnKill(EntityPlayer player, EntityLivingBase entity) {
-        for (Class<? extends EntityLivingBase> targetClass : targetEntityClasses) {
-            if (EntityUtil.isEntityLike(entity, targetClass) &&
-                    !(EntityUtil.isEntityLike(entity, ownEntityClass))) {
-                return 1.0F;
+    private @Nullable EntityLivingBase getNewPrey(EntityPlayer player) {
+        // The player should not seek to hunt its own morph entity
+        EntityLivingBase morphEntity = null;
+        IMorphing morphing = Morphing.get(player);
+        if (morphing != null) {
+            AbstractMorph morph = morphing.getCurrentMorph();
+            if (morph != null && morph instanceof EntityMorph) {
+                morphEntity = ((EntityMorph)morph).getEntity(player.world);
             }
         }
-        return 0.0F;
+        
+        List<EntityLivingBase> availablePrey = new ArrayList<>();
+        AxisAlignedBB aabb = new AxisAlignedBB(
+                player.posX-SIGHT_RANGE, player.posY-SIGHT_RANGE, player.posZ-SIGHT_RANGE,
+                player.posX+SIGHT_RANGE, player.posY+SIGHT_RANGE, player.posZ+SIGHT_RANGE
+                );
+        for (Class<? extends EntityLivingBase> targetEntityClass : targetEntityClasses) {
+            for (EntityLivingBase possiblePrey : EntityUtil.getEntitiesAndMorphsExcluding(player, player.world, targetEntityClass, aabb)) {
+                if (!possiblePrey.isDead && possiblePrey != morphEntity && player.canEntityBeSeen(possiblePrey)) {
+                    availablePrey.add(possiblePrey);
+                }
+            }
+        }
+        
+        if (availablePrey.size() > 0) {
+            return availablePrey.get(random.nextInt(availablePrey.size()));
+        }
+        else {
+            return null;
+        }
     }
 }
