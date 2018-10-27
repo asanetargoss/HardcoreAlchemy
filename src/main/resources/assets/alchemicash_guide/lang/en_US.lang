@@ -1,0 +1,144 @@
+#
+# Copyright 2017-2018 asanetargoss
+# 
+# This file is part of Hardcore Alchemy.
+# 
+# Hardcore Alchemy is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation version 3 of the License.
+# 
+# Hardcore Alchemy is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+# 
+# You should have received a copy of the GNU Lesser General Public License
+# along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+language.name=English
+language.region=United States
+language.code=en_US
+
+alchemicash.guide.author=Alchemic Ash
+alchemicash.guide.display=Vital Alchemy
+alchemicash.guide.title=Vital Alchemy
+alchemicash.guide.welcome=Alchemic Ash
+
+# Introduction
+alchemicash.guide.introduction.title=Introduction
+
+## Introduction: Welcome
+alchemicash.guide.introduction.welcome.title=Welcome
+alchemicash.guide.introduction.welcome.1=There are few branches of alchemy more grossly underestimated than vital alchemy. Certainly, there are no sharp blades to craft or energy-storing stones, but there is an undeniable elegance behind its systems. At its heart, vital alchemy works by using the regenerative properties of slime to concentrate energy and reshape it into new forms. It is particularly well-suited for synthesizing organic matter, but can be coaxed into other forms as well. This book will describe how you can coax slime into many forms, as well as some more advanced applications of vital alchemy to produce matter-generating machines, defensive charms, and more.
+
+## Introduction: Disclaimer
+alchemicash.guide.introduction.disclaimer.title=Author's Note
+alchemicash.guide.introduction.disclaimer.1=This text on vital alchemy deviates slightly from the original Kornelsen Formulation. It is possible that not all of the techniques described herein will work, depending on the morphic properties of the universe in which you reside in.
+
+# Catalyst Production
+alchemicash.guide.catalysts.title=Catalyst Production
+
+## Catalyst Production: Slime
+alchemicash.guide.catalysts.slime.title=Slime
+alchemicash.guide.catalysts.slime.1=The first, and most fundamental, ingredient in vital alchemy is slime. This may seem like a difficult requirement, but methods to synthesize slime have proliferated over the years, and you will only need two slimeballs to start. As a general rule, one should always make sure one has access to two units of slime at all times, or at least the methods to produce them.
+
+## Catalyst Production: Vital Catalyst
+alchemicash.guide.catalysts.vital_catalyst.title=Vital Catalyst
+alchemicash.guide.catalysts.vital_catalyst.1=The second, complimentary ingredient you will require is vital catalyst, which can be obtained by heating slime. By combining vital catalyst and slime, and heating more slime to produce more catalyst, you can produce theoretically infinite amounts of slime, however, time and fuel are your bottlenecks. Time can be reduced most effectively by running multiple furnaces in parallel, but you will soon feel the burden of maintaining your growing alchemy operation. Luckily, your vital catalyst is the first step toward creating devices that will ease that burden.
+
+## Catalyst Production: Alchemic Ash
+alchemicash.guide.catalysts.alchemic_ash.title=Alchemic Ash
+alchemicash.guide.catalysts.alchemic_ash.1=Alchemic ash is the third ingredient you will encounter. It is produced by heating vital catalyst even further, such that its vital, slime-like energies get converted into a more infernal form that you may recognize if you've dabbled in covalence alchemy. It is arguably as fundamental as slime as it only requires more heat to produce more of it. Once you have a modest amount of alchemic ash, you can reshape them into ashen bricks which can be used as an inexpensive alternative to iron for crafting hoppers, which can greatly simplify your alchemy processing setup. The bricks can also be coaxed to reshape themselves into relatively alchemically inert building materials.
+
+## Catalyst Production: Crystal Catalyst
+alchemicash.guide.catalysts.crystal_catalyst.title=Crystal Catalyst
+alchemicash.guide.catalysts.crystal_catalyst.1=The final fundamental ingredient you will encounter is crystal catalyst, which can be produced by cooling alchemic ash using water or snow. The resulting catalyst can be cooled again to create even more snow, or can be used as a stabilizing agent in various advanced alchemical constructs.
+
+## Catalyst Production: Production Notes
+alchemicash.guide.catalysts.advice.title=Production Notes
+alchemicash.guide.catalysts.advice.1=Of the four ingredients, alchemic ash is likely the one you will need in the largest quantities, but it will take time until you are able to see the fruits of your labor. The benefits of vital catalyst are closer within reach, important enough where it is wise to produce a backlog for later use, but not quite requiring continuous automation. The benefits of vital catalyst will be discussed in the next section.
+
+# Life Imbuement
+alchemicash.guide.vital_catalyst.title=Life Imbuement
+
+## Life Imbuement: Proliferation
+alchemicash.guide.vital_catalyst.duplication.title=Proliferation
+alchemicash.guide.vital_catalyst.duplication.1=Vital catalyst is the vital alchemical substance most well-suited for living things. In addition to encouraging the growth of slime, vital catalyst can encourage the growth of other simple forms of life. Seeds, saplings, and grass can all be encouraged to proliferate, although unfortunately the same technique cannot be used to multiply grown crops directly.
+
+## Life Imbuement: Spawning
+alchemicash.guide.vital_catalyst.mob_eggs.title=Spawning
+alchemicash.guide.vital_catalyst.mob_eggs.1=There is a way to work around vital catalyst's limitations by adding a little extra slime, allowing the creation of advanced living things using spawn eggs. Vital alchemists have amazingly been able to work out recipes for spawn eggs for some of the most common Minecraftian creatures. There is no catch to creatures created this way; it is as if the creatures had been spawned naturally. The animals can be killed and butchered, and the monsters can be harvested by blood mages for their demon will. The creatures may even adapt to their spawn environment as they usually would: for example, skeletons spawned in the Nether in this way can become wither skeletons. And, of course, these creatures can be killed with enchanted weapons, with the improvements you may expect.
+
+## Life Imbuement: Conversion
+alchemicash.guide.vital_catalyst.other.title=Conversion
+alchemicash.guide.vital_catalyst.other.1=In addition, slime and vital catalyst have a limited ability to directly convert living material to other forms. Slime can corrupt raw meat to create rotten flesh, and the rotten flesh can in turn be converted into leather using vital catalyst. It is also rarely known among today's alchemists that vital catalyst, when applied upon an ashen bale, causes the bale to break into flower, and the strange flowers which are born from this ash have unusual, mercurial properties...
+
+# Ashen Conversion
+alchemicash.guide.ash.title=Ashen Conversion
+
+## Ashen Conversion: An Alchemical Breakthrough
+alchemicash.guide.ash.discovery.title=An Alchemical Breakthrough
+alchemicash.guide.ash.discovery.1=Back in the early days of vital alchemy, ashen blooms were an active area of research. By themselves, they could be crushed into a yellow pigment, but when heated, produced a bitter substance that tasted exactly like chocolate. The blooms were strangely alive, but not quite intelligent, growing toward sunlight and flinching away from threats. However, unlike the slime, vital catalyst, and alchemic ash which came before it, ashen blooms seemed to have relatively sparse practical uses. This was very perplexing to researchers. One day, a young assistant was creating some ashen blooms for an experiment, but was surprised to instead see the ashen bale spit out a chunk of nether quartz. Upon further investigation, the assistant realized both the blooming reagent and bale pile were drastically overheated. This lucky assistant had discovered ashen conversion, a system for transmuting the hot embers of alchemic ash into materials both valuable and exotic.
+
+## Ashen Conversion: Cinder Bale
+alchemicash.guide.ash.cinder_bale.title=Cinder Bale
+alchemicash.guide.ash.cinder_bale.1=As it turns out, there is a more efficient way to "overheat" an ashen bale, by taking nine bales and sifting them together to retrieve the hottest embers within. The resulting bale is known as a cinder bale. You can then replicate the original discovery by touching alchemic ash near the bale to create quartz. The reagent is not consumed in this process. Five other materials can be created with this technique:
+alchemicash.guide.ash.cinder_bale.2=Clay Ball: From Slimeball\nMycelium: From Mushroom Stew\nEnd Stone: From Clay Ball\nGold Nugget: From Glowstone Dust\nGunpowder: From Coal
+
+## Ashen Conversion: Blazing Bale
+alchemicash.guide.ash.blazing_bale.title=Blazing Bale
+alchemicash.guide.ash.blazing_bale.1=The cinder bale can be sifted by a factor of 9 yet again for its hottest embers to create a blazing bale. Seven materials total can be produced from a cinder bale:
+alchemicash.guide.ash.blazing_bale.2=Emerald: From Alchemic Ash\nLapis Ore: From Slimeball\nSoulsand: From Mushroom Stew\nEnder Pearl: From Clay Ball\nIron Ingot: From Redstone Dust\nGold Ingot: From Glowstone Dust\nBlaze Dust: From Coal
+
+## Ashen Conversion: Inferno Bale
+alchemicash.guide.ash.inferno_bale.title=Blazing Bale
+alchemicash.guide.ash.inferno_bale.1=Finally, the blazing bale can be sifted by a factor of 9 once more to create the venerable inferno bale, whose alchemical products are as follows:
+alchemicash.guide.ash.inferno_bale.2=Diamond: From Alchemic Ash\nGhast Tear: From Slimeball\nNetherwart: From Mushroom Stew\nIron Block: From Redstone Dust\nGold Block: From Glowstone Dust\nBlaze Rod: From Coal
+
+## Ashen Conversion: Bale Burning
+alchemicash.guide.ash.fuel.title=Bale Burning
+alchemicash.guide.ash.fuel.1=In addition to being used for summoning these useful materials, bales can also be used as fuel. It is theoretically possible to heat infinite amounts of alchemic ash using merely the heat of some of its output bales, making it an excellent way to cut back on fuel use.
+
+## Ashen Conversion: Wands
+alchemicash.guide.ash.wands.title=Wands
+alchemicash.guide.ash.wands.1=The conversion of bales to hotter forms can be done slightly more efficiently with the use of specialized wands, referred to as the cinder, blazing, and inferno wands respectively. The wands are created with slime, the hot embers of six bales of the desired target heat, and a bit of crystal catalyst to hold it all together.
+
+# Alchemical Automation
+alchemicash.guide.automation.title=Alchemical Automation
+
+## Alchemical Automation: No Pipes!
+alchemicash.guide.automation.limitations.title=No Pipes!
+alchemicash.guide.automation.limitations.1=You may have noticed that the path to creating an inferno bale is not as easy as it seems. The limitations of your crude furnace and hopper system have become apparent, and it is unbecoming of you to resort to its frequent, menial upkeep. Luckily, vital alchemists before you have suffered the same growing pains, and have invented many machines to address the problem. However, one problem they have not solved is item transportation, so it would be wise for you to invest in another school of engineering or magic to fill that gap.
+
+## Alchemical Automation: Feeders
+alchemicash.guide.automation.feeders.title=Feeders
+alchemicash.guide.automation.feeders.1=One particularly well-known alchemical construct is the powder feeder, a device which uses the heat of an inferno bale to clone gunpowder into a hopper beneath it, which can in turn be deposited into the side of a furnace to fuel it. The ash feeder is created by encasing an inferno bale and gunpowder in ashen bricks. Other feeders can be crafted using similar techniques; the alchemist reading this is encouraged to experiment with different feeder recipes to find what works best for their automation needs, alchemical or otherwise.
+
+## Alchemical Automation: Eaters
+alchemicash.guide.automation.eaters.title=Eaters
+alchemicash.guide.automation.eaters.1=The eaters are specialized but clever contraptions, great for alchemists who have grown tired of converting their bales. At the cost of merely a few ashen bricks and temporary use of one's wand, an eater can be created, which takes in bales from a hopper above of the same tier the corresponding wand works with, and outputting the next tier of bale below it. Due to the immense heat and pressure created from the process, the eater will not function properly when a hopper is placed too close below it. For that reason, it is recommended to leave a larger air gap between the eater and the hopper.
+
+## Alchemical Automation: Smiths
+alchemicash.guide.automation.other.title=Smiths
+alchemicash.guide.automation.other.1=The other alchemical machines of note are the lava smith, auto-miner, and bricklayer, which perform their respective tasks in the space directly above them. The auto-miner is particularly potent in that it can precisely destroy materials of any hardness without damaging them, including grass, mycelium, and even bedrock itself. Unfortunately, the upward orientation of the auto-miner is fixed for stability reasons, so there is no known way to tunnel into the void using vital alchemical means.
+
+# Crystalline Constructs
+alchemicash.guide.crystal_catalyst.title=Crystalline Constructs
+
+## Crystalline Constructs: Skystone
+alchemicash.guide.crystal_catalyst.skystone.title=Skystone
+alchemicash.guide.crystal_catalyst.skystone.1=Every edition, I get copious requests from young alchemists asking for me to write about how to craft the skystone, and I am reminded why I always keep the crystalline section at the back of the book. Every year, I hear tragic stories of alchemists who rush toward that deceptively simple crystalline construct, only to crash dead into a forest, vanish into the sky like Icarus, get lost in the Nether, or starve to death. The skystone is a useful construct indeed, but most alchemists greatly underestimate its power, given how simple it is to craft. Consider this a warning of the dangers of delving to quickly into any magical discipline. You may want to instead invest in a blood mage's air sigil, keeping the skystone stored deep within your satchel as a fall damage good luck charm. Or, alternatively, consider investing in a pair of elytra.
+
+## Crystalline Constructs: Singing Stones
+alchemicash.guide.crystal_catalyst.singing_stones.title=Singing Stones
+alchemicash.guide.crystal_catalyst.singing_stones.1=Luckily, most vital alchemical constructs are not so dangerous. Well... they are not so dangerous to use, at least. If you are feeling adventurous, consider convincing a skeleton to shoot a creeper dead to get yourself ahold of a music disc. Where these discs come from is still unclear to all. Surround said disc with crystal catalyst and inferno bales, and the resulting construct, the singing stone, is said to sing an enchanting melody similar to the music disc from which it came. The singing stones are also known to coax flowering ash to create a dye of nearly any color. As if this were not enough, the stone, when nearby, imbues a simultaneous state of illness and wellness upon its owner, the effects of which are described below:
+alchemicash.guide.crystal_catalyst.singing_stones.2=Thirteenth Stone: Speed 1, Mining Fatigue 5\nWait Stone: Haste 1, Weakness 2\nCubic Stone: Strength 1, Slowness 2\nCat Stone: Jump Boost 1, Mining Fatigue 5\nWard Stone: Resistance 1, Weakness 2, Mining Fatigue 5\nStrad Stone: Fire Resistance, Slowness 2\nFar Stone: Water Breathing, Slowness 2\nStal Stone: Invisibility, Weakness 2\nMellohi Stone: Night Vision, Mining Fatigue 5\nMall Stone: Saturation 1, Slowness 2, Mining Fatigue 5
+
+## Crystalline Constructs: Lightning Attractor
+alchemicash.guide.crystal_catalyst.lightning_attractor.title=Lightning Attractor
+alchemicash.guide.crystal_catalyst.lightning_attractor.1=Did I say most vital alchemical constructs were not dangerous? I may have told a white lie. By surrounding a crystal catalyst with blocks of slime to create crystallized slime, and crafting the crystallized slime with ashen bricks and redstone, you can create a lightning attractor, which creates lighting, of course. What might such a device be used for? To supercharge creepers, of course, to get them to explode and behead your foes, or risk being splattered into pieces instead. The launchpad is a somewhat more predictable danger, launching any alchemist in the air who dares tinker with it. Consider installing some slime landing pads.
+
+## Crystalline Constructs: Crystalline Light
+alchemicash.guide.crystal_catalyst.crystal_block.title=Crystalline Light
+alchemicash.guide.crystal_catalyst.crystal_block.1=I mentioned earlier a glowing crystal block called crystallized slime. As it turns out, this block emits light as powerful as the glowstone of the Nether. Craft it together with ashen bricks, and you can give it an aesthetically pleasing frame. The framed crystal lighting pairs excellently with ashen brick constructions, a excellent potential addition for your sophisticated abode.

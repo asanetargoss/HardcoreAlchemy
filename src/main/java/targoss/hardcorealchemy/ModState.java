@@ -33,6 +33,7 @@ public final class ModState {
     public static final String HARVESTCRAFT_ID = "harvestcraft";
     public static final String ADINFEROS_ID = "adinferos";
     public static final String DEADLY_MONSTERS_ID = "dmonsters";
+    public static final String ALCHEMIC_ASH_ID = "AlchemicAsh";
     public static boolean isDissolutionLoaded = false;
     public static boolean isNutritionLoaded = false;
     public static boolean isBloodMagicLoaded = false;
@@ -42,6 +43,7 @@ public final class ModState {
     public static boolean isTanLoaded = false;
     public static boolean isGuideapiLoaded = false;
     public static boolean isHarvestCraftLoaded = false;
+    public static boolean isAlchemicAshLoaded = false;
 
     private ModState() { }
 }

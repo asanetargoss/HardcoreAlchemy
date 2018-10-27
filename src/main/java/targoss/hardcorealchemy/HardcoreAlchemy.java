@@ -36,6 +36,7 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import targoss.hardcorealchemy.command.CommandTest;
 import targoss.hardcorealchemy.coremod.HardcoreAlchemyCoremod;
+import targoss.hardcorealchemy.modpack.guide.AlchemicAshGuide;
 import targoss.hardcorealchemy.modpack.guide.HCAModpackGuide;
 import targoss.hardcorealchemy.test.HardcoreAlchemyTests;
 
@@ -95,11 +96,16 @@ public class HardcoreAlchemy
         ModState.isTanLoaded = modMap.containsKey(ModState.TAN_ID);
         ModState.isGuideapiLoaded = modMap.containsKey(ModState.GUIDEAPI_ID);
         ModState.isHarvestCraftLoaded = modMap.containsKey(ModState.HARVESTCRAFT_ID);
+        ModState.isAlchemicAshLoaded = modMap.containsKey(ModState.ALCHEMIC_ASH_ID);
         
         proxy.preInit(event);
         
         if (ModState.isGuideapiLoaded) {
             HCAModpackGuide.registerBook();
+        }
+        
+        if (ModState.isGuideapiLoaded && ModState.isAlchemicAshLoaded) {
+            AlchemicAshGuide.registerBook();
         }
     }
     
@@ -116,6 +122,10 @@ public class HardcoreAlchemy
         
         if (ModState.isGuideapiLoaded) {
             HCAModpackGuide.registerRecipe();
+        }
+        
+        if (ModState.isGuideapiLoaded && ModState.isAlchemicAshLoaded) {
+            AlchemicAshGuide.registerRecipe();
         }
     }
     
