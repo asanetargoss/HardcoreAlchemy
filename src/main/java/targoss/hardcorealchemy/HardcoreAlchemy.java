@@ -44,6 +44,7 @@ import targoss.hardcorealchemy.entity.Entities;
 import targoss.hardcorealchemy.instinct.Instincts;
 import targoss.hardcorealchemy.item.Items;
 import targoss.hardcorealchemy.metamorph.HcAMetamorphPack;
+import targoss.hardcorealchemy.modpack.guide.AlchemicAshGuide;
 import targoss.hardcorealchemy.modpack.guide.HCAModpackGuide;
 import targoss.hardcorealchemy.test.HardcoreAlchemyTests;
 
@@ -108,6 +109,7 @@ public class HardcoreAlchemy
         ModState.isGuideapiLoaded = modMap.containsKey(ModState.GUIDEAPI_ID);
         ModState.isHarvestCraftLoaded = modMap.containsKey(ModState.HARVESTCRAFT_ID);
         ModState.isThaumcraftLoaded = modMap.containsKey(ModState.THAUMCRAFT_ID);
+        ModState.isAlchemicAshLoaded = modMap.containsKey(ModState.ALCHEMIC_ASH_ID);
         
         proxy.preInit(event);
         
@@ -124,6 +126,10 @@ public class HardcoreAlchemy
         
         if (ModState.isGuideapiLoaded) {
             HCAModpackGuide.registerBook();
+        }
+        
+        if (ModState.isGuideapiLoaded && ModState.isAlchemicAshLoaded) {
+            AlchemicAshGuide.registerBook();
         }
     }
     
@@ -144,6 +150,10 @@ public class HardcoreAlchemy
         
         if (ModState.isGuideapiLoaded) {
             HCAModpackGuide.registerRecipe();
+        }
+        
+        if (ModState.isGuideapiLoaded && ModState.isAlchemicAshLoaded) {
+            AlchemicAshGuide.registerRecipe();
         }
     }
     
