@@ -39,14 +39,12 @@ hardcorealchemy.ability.fishing.endhunt=You end the hunt.
 hardcorealchemy.ability.fishing.error.notinwater=You must be in water to begin the hunt.
 
 hardcorealchemy.instinct.attack_prey.need=You yearn to hunt %s.
-hardcorealchemy.instinct.attack_prey.activate=You feel the singular urge to kill the first %s that crosses your path.
 hardcorealchemy.instinct.attack_prey.detect=You sense a %s.
+hardcorealchemy.instinct.attack_prey.kill_another=You kill the %s, but you feel the urge to kill more.
 hardcorealchemy.instinct.attack_prey.resist=You resist the urge to kill the %s, but it only makes the urge stronger.
 hardcorealchemy.instinct.attack_prey.preserve_own_kind=You refuse to hunt your own kind.
 hardcorealchemy.instinct.attack_prey.something_else=You want badly to kill %s instead.
-hardcorealchemy.instinct.attack_prey.enough_kills=The hunting urges start to fade.
-hardcorealchemy.instinct.attack_prey.frenzy_start=You feel a thrill from the kill, and find yourself driven into a frenzy.
-hardcorealchemy.instinct.attack_prey.frenzy_end=You manage to kill what you can see, but you still want more.
+hardcorealchemy.instinct.attack_prey.finished=The hunting urges start to fade.
 
 hardcorealchemy.magic.disabled.item=Your inhuman form prevents you from comprehending this magical item.
 hardcorealchemy.magic.disabled.block=Your inhuman form prevents you from comprehending this magical object.

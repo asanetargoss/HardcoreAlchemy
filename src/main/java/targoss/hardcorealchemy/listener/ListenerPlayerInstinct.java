@@ -19,11 +19,13 @@
 package targoss.hardcorealchemy.listener;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
-import javax.annotation.Nullable;
-
+import mchorse.metamorph.Metamorph;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -43,10 +45,12 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent.Clone;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock;
 import net.minecraftforge.event.world.BlockEvent.HarvestDropsEvent;
@@ -54,14 +58,19 @@ import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
-import targoss.hardcorealchemy.capability.instincts.CapabilityInstinct;
-import targoss.hardcorealchemy.capability.instincts.ICapabilityInstinct;
-import targoss.hardcorealchemy.capability.instincts.ICapabilityInstinct.InstinctEntry;
-import targoss.hardcorealchemy.capability.instincts.ProviderInstinct;
+import targoss.hardcorealchemy.capability.CapUtil;
+import targoss.hardcorealchemy.capability.instinct.CapabilityInstinct;
+import targoss.hardcorealchemy.capability.instinct.ICapabilityInstinct;
+import targoss.hardcorealchemy.capability.instinct.ProviderInstinct;
 import targoss.hardcorealchemy.config.Configs;
-import targoss.hardcorealchemy.instinct.IInstinct;
-import targoss.hardcorealchemy.network.MessageInstinctActive;
-import targoss.hardcorealchemy.network.MessageInstinctValue;
+import targoss.hardcorealchemy.instinct.api.IInstinctState;
+import targoss.hardcorealchemy.instinct.api.InstinctEffect;
+import targoss.hardcorealchemy.instinct.api.InstinctEffectWrapper;
+import targoss.hardcorealchemy.instinct.api.InstinctNeedWrapper;
+import targoss.hardcorealchemy.instinct.api.InstinctState;
+import targoss.hardcorealchemy.network.MessageInstinctEffects;
+import targoss.hardcorealchemy.network.MessageInstinctNeedChanged;
+import targoss.hardcorealchemy.network.MessageInstinctNeedState;
 import targoss.hardcorealchemy.network.PacketHandler;
 import targoss.hardcorealchemy.util.Chat;
 import targoss.hardcorealchemy.util.InventoryUtil;
@@ -78,18 +87,17 @@ public class ListenerPlayerInstinct extends ConfiguredListener {
     public static final Capability<ICapabilityInstinct> INSTINCT_CAPABILITY = null;
     /** Fractional amount of instinct lost per tick. One instinct icon lasts 2 days */
     public static final double INSTINCT_LOSS_RATE = 2.0D/24000.0D/2.0D;
-    /** How many ticks must pass before an instinct selection has some chance of occurring (currently 1 day) */
-    public static final int INSTINCT_SELECTION_RATE = 24000;
     /** If an instinct check fails, the amount of ticks that must pass before another check can occur */
-    public static final int INSTINCT_CHECK_INTERVAL = INSTINCT_SELECTION_RATE / 4;
-    /** Chance of an instinct selection occurring per check */
-    public static final double INSTINCT_SELECTION_CHANCE = 0.3;
+    public static final int INSTINCT_CHECK_INTERVAL = 24000 / 4;
+    /** The time in ticks that must pass before a message is displayed that
+     * a need became worse. Reset when the instinct bar is full */
+    public static final int NEED_CHANGE_MESSAGE_MIN_TIME = 200;
     
     private Random random = new Random();
 
     @SubscribeEvent
     public void onAttachCapability(AttachCapabilitiesEvent<Entity> event) {
-        if (!(event.getObject() instanceof EntityPlayer)) {
+        if (!(event.getObject() instanceof EntityPlayer) || (event.getObject() instanceof FakePlayer)) {
             return;
         }
         
@@ -98,6 +106,35 @@ public class ListenerPlayerInstinct extends ConfiguredListener {
         if (attributeMap.getAttributeInstance(ICapabilityInstinct.MAX_INSTINCT) == null) {
             attributeMap.registerAttribute(ICapabilityInstinct.MAX_INSTINCT);
         }
+    }
+    
+    @SubscribeEvent
+    public void onPlayerClone(Clone event) {
+        if (!event.isWasDeath() || Metamorph.proxy.config.keep_morphs) {
+            EntityPlayer player = event.getEntityPlayer();
+            EntityPlayer playerOld = event.getOriginal();
+            CapUtil.copyOldToNew(INSTINCT_CAPABILITY, playerOld, player);
+        }
+    }
+    
+    /**
+     * See also: ListenerPlayerHumanity.onPlayerEnterAfterlife
+     * */
+    @SubscribeEvent
+    public void onPlayerDie(LivingDeathEvent event) {
+        if (!(event.getEntity() instanceof EntityPlayer)) {
+            return;
+        }
+        if (Metamorph.proxy.config.keep_morphs) {
+            return;
+        }
+        
+        EntityPlayer player = (EntityPlayer)(event.getEntity());
+        ICapabilityInstinct instinct = player.getCapability(INSTINCT_CAPABILITY, null);
+        if (instinct == null) {
+            return;
+        }
+        instinct.clearInstincts(player);
     }
     
     public static void addInstinct(EntityPlayer player, ICapabilityInstinct instinct, float instinctChange) {
@@ -114,12 +151,10 @@ public class ListenerPlayerInstinct extends ConfiguredListener {
     
     /**
      * Instinct ticking.
-     * One instinct active at a time at most.
-     * Instinct stat cannot increase/be restored while an instinct is active.
-     * While there are no active instincts, all instincts get inactive-ticked,
-     * with the potential to cause an increase/decrease in instinct. If no
-     * inactively ticked instincts increment the instinct stat, then the instinct
-     * stat is decreased by a constant amount.
+     * All instinct needs and active instinct effects are ticked.
+     * Assuming all needs are fulfilled, the instinct bar will replenish.
+     * Otherwise, the most urgent current need dictates whether the instinct bar holds steady or decreases.
+     * If the instinct bar drops below a certain value, InstinctEffects may be applied
      */
     @SubscribeEvent
     public void onPlayerTick(PlayerTickEvent event) {
@@ -127,144 +162,298 @@ public class ListenerPlayerInstinct extends ConfiguredListener {
             return;
         }
         EntityPlayer player = event.player;
+        
         ICapabilityInstinct instinct = player.getCapability(INSTINCT_CAPABILITY, null);
         if (instinct == null) {
             return;
         }
+
+        List<ICapabilityInstinct.InstinctEntry> entries = instinct.getInstincts();
+        if (entries.size() == 0 && instinct.getActiveEffects().size() == 0) {
+            return;
+        }
         
-        IInstinct activeInstinct = instinct.getActiveInstinct();
-        if (activeInstinct != null) {
-            if (activeInstinct.shouldStayActive(player)) {
-                // Active instinct behavior
-                activeInstinct.tick(player);
+        float currentInstinct = instinct.getInstinct();
+        float instinctChange = InstinctState.getInstinctChangePerTick(IInstinctState.NeedStatus.NONE);
+        
+        // Check needs
+        
+        // Tick each need, get the associated instinct change, and sync if needed
+        boolean needStatusChanged = false;
+        int entryCount = 0;
+        int needCount = 0;
+        for (ICapabilityInstinct.InstinctEntry entry : instinct.getInstincts()) {
+            for (InstinctNeedWrapper needWrapper : entry.getNeeds(player)) {
+                InstinctState instinctState = needWrapper.getState(player);
+                
+                needWrapper.getNeed(player).tick(instinctState);
+                needStatusChanged |= instinctState.needStatus != instinctState.lastNeedStatus;
+                instinctState.lastNeedStatus = instinctState.needStatus;
+                
+                instinctChange = Math.min(instinctChange, instinctState.getInstinctChangePerTick());
+                
+                if (!player.world.isRemote && instinctState.shouldSyncNeed) {
+                    PacketHandler.INSTANCE.sendTo(new MessageInstinctNeedChanged(entryCount, needCount, needWrapper), (EntityPlayerMP)player);
+                    instinctState.shouldSyncNeed = false;
+                }
+                needCount++;
             }
-            else {
-                activeInstinct.onDeactivate(player);
-                activeInstinct = null;
-                instinct.setActiveInstinctId(null);
+            entryCount++;
+        }
+        if (needStatusChanged && !player.world.isRemote) {
+            PacketHandler.INSTANCE.sendTo(new MessageInstinctNeedState(instinct), (EntityPlayerMP)player);
+        }
+        
+        // Display messages that tell the player information about the instincts that affect them
+        if (!player.world.isRemote) {
+            displayNeedMessages((EntityPlayerMP)player, instinct);
+        }
+        
+        // Update the active effects, calling activation/deactivation functions as necessary.
+        // Effect changes are handled differentially to make efficient network syncing easy.
+        Map<InstinctEffect, InstinctEffectWrapper> oldEffects = instinct.getActiveEffects();
+        Map<InstinctEffect, InstinctEffectWrapper> newEffects = computeNewActiveEffects(player, instinct);
+        Map<InstinctEffect, InstinctEffectWrapper> effectChanges = getEffectChanges(oldEffects, newEffects);
+        transitionEffects(player, instinct, effectChanges);
+        if (!player.world.isRemote && effectChanges.size() != 0) {
+            PacketHandler.INSTANCE.sendTo(new MessageInstinctEffects(effectChanges), (EntityPlayerMP)player);
+        }
+        
+        // Tick active instinct effects
+        for (InstinctEffectWrapper effect : instinct.getActiveEffects().values()) {
+            effect.effect.tick(player, effect.amplifier);
+        }
+        
+        addInstinct(player, instinct, instinctChange);
+    }
+    
+    public static void displayNeedMessages(EntityPlayerMP player, ICapabilityInstinct instinct) {
+        // Display a periodic need message about what one of the needs does
+        int instinctMessageTime = instinct.getInstinctMessageTime();
+        if (instinctMessageTime >= INSTINCT_CHECK_INTERVAL) {
+            sendRandomInstinctToChat(player, instinct);
+            instinctMessageTime = 0;
+        }
+        else {
+            instinctMessageTime++;
+        }
+        instinct.setInstinctMessageTime(instinctMessageTime);
+        
+        // If a need becomes more urgent, give an opportunity to display a message about the need
+        float maxInstinct = (float)ICapabilityInstinct.MAX_INSTINCT.getDefaultValue();
+        IAttributeInstance maxInstinctAttribute = player.getEntityAttribute(ICapabilityInstinct.MAX_INSTINCT);
+        if (maxInstinctAttribute != null) {
+            maxInstinct = (float)maxInstinctAttribute.getAttributeValue();
+        }
+        if (instinct.getInstinct() >= maxInstinct) {
+            // The player's instinct bar is full. Reset things so need messages can be displayed again.
+            for (ICapabilityInstinct.InstinctEntry entry : instinct.getInstincts()) {
+                for (InstinctNeedWrapper needWrapper : entry.getNeeds(player)) {
+                    needWrapper.mostSevereStatusSinceMessage = InstinctState.NeedStatus.NONE;
+                    needWrapper.playerTickSinceInstinctFull = player.ticksExisted;
+                }
             }
         }
         else {
-            // Instinct calculations when no instinct behavior is active
-            // There will be a default instinct decrease unless one inactive instinct causes an increase
-            boolean doDefaultInstinctDecrease = true;
-            float instinctChange = 0.0F;
-            
-            for (ICapabilityInstinct.InstinctEntry entry : instinct.getInstinctMap().values()) {
-                float newInstinctChange = entry.instinct.getInactiveChangeOnTick(player);
-                doDefaultInstinctDecrease = (newInstinctChange <= 0) && doDefaultInstinctDecrease;
-                instinctChange += newInstinctChange;
-            }
-            
-            if (doDefaultInstinctDecrease) {
-                instinctChange -= INSTINCT_LOSS_RATE;
-            }
-            
-            // Apply instinct stat calculations
-            addInstinct(player, instinct, instinctChange);
-            
-            // Select an active instinct if enough time has passed
-            // Due to the randomness, the random check must occur server-side and be synced to the client
-            if (!player.world.isRemote) {
-                int inactiveInstinctTime = instinct.getInactiveInstinctTime();
-                if (inactiveInstinctTime >= INSTINCT_SELECTION_RATE) {
-                    // Select an active instinct if the random check succeeds and an instinct can be activated
-                    ICapabilityInstinct.InstinctEntry newActiveInstinct = selectRandomInstinct(instinct, false);
+            // For each need, check if the need status has changed, and if so, allow it to display a message.
+            for (ICapabilityInstinct.InstinctEntry entry : instinct.getInstincts()) {
+                for (InstinctNeedWrapper needWrapper : entry.getNeeds(player)) {
+                    if (needWrapper.playerTickSinceInstinctFull > player.ticksExisted) {
+                        // This doesn't make sense
+                        needWrapper.playerTickSinceInstinctFull = player.ticksExisted;
+                    }
+                    if (player.ticksExisted - needWrapper.playerTickSinceInstinctFull < NEED_CHANGE_MESSAGE_MIN_TIME) {
+                        // Too early; throttle messages
+                        return;
+                    }
+                    if (needWrapper.state.needStatus.ordinal() <= needWrapper.mostSevereStatusSinceMessage.ordinal()) {
+                        // Not more severe since the instinct bar was full
+                        return;
+                    }
                     
-                    if (newActiveInstinct == null) {
-                        // No instinct is available at all which matches
-                        // the criteria. Reset timer so we don't check too often.
-                        inactiveInstinctTime = 0;
-                        // Display a message about the effects of a random instinct.
-                        ICapabilityInstinct.InstinctEntry messageInstinct = selectRandomInstinct(instinct, true);
-                        if (messageInstinct != null) {
-                            ITextComponent needMessage = messageInstinct.instinct.getNeedMessage(player);
-                            if (needMessage != null) {
-                                Chat.message(Chat.Type.NOTIFY, (EntityPlayerMP)player, needMessage);
-                            }
-                        }
-                    }
-                    else if (random.nextFloat() < INSTINCT_SELECTION_CHANCE) {
-                        // The player has become inflicted by a new instinct behavior!
-                        instinct.setActiveInstinctId(newActiveInstinct.id);
-                        ITextComponent needMessage = newActiveInstinct.instinct.getNeedMessageOnActivate(player);
-                        if (needMessage != null) {
-                            Chat.message(Chat.Type.WARN, (EntityPlayerMP)player, newActiveInstinct.instinct.getNeedMessageOnActivate(player));
-                        }
-                        newActiveInstinct.instinct.onActivate(player);
-                        // Tell the client about the newly activated instinct.
-                        // onActivate(player) will be called on the client's side when the packet is received.
-                        PacketHandler.INSTANCE.sendTo(new MessageInstinctActive(instinct), (EntityPlayerMP)player);
-                        inactiveInstinctTime = 0;
-                    }
-                    else {
-                        // An instinct is available but the random check failed. Try again soon.
-                        inactiveInstinctTime -= INSTINCT_CHECK_INTERVAL;
-                        // Display a message about the effects of a random instinct.
-                        ICapabilityInstinct.InstinctEntry messageInstinct = selectRandomInstinct(instinct, true);
-                        if (messageInstinct != null) {
-                            ITextComponent needMessage = messageInstinct.instinct.getNeedMessage(player);
-                            if (needMessage != null) {
-                                Chat.message(Chat.Type.NOTIFY, (EntityPlayerMP)player, needMessage);
-                            }
-                        }
+                    needWrapper.mostSevereStatusSinceMessage = needWrapper.state.needStatus;
+                    needWrapper.playerTickSinceInstinctFull = player.ticksExisted;
+                    ITextComponent needMessage = needWrapper.getNeed(player).getNeedUnfulfilledMessage(needWrapper.state.needStatus);
+                    if (needMessage != null) {
+                        Chat.message(Chat.Type.NOTIFY, player, needMessage);
                     }
                 }
-                else {
-                    inactiveInstinctTime++;
-                }
-                instinct.setInactiveInstinctTime(inactiveInstinctTime);
             }
         }
     }
     
-    /**
-     * Selects random instinct based on weight.
-     * anyInstinct = false means only select from instincts
-     * which can be activated.
-     */
-    public @Nullable InstinctEntry selectRandomInstinct(ICapabilityInstinct instinct, boolean anyInstinct) {
-        ArrayList<InstinctEntry> availableInstincts = new ArrayList<>();
-        for (InstinctEntry entry : instinct.getInstinctMap().values()) {
-            if (entry.weight > 0.0F && (anyInstinct || entry.instinct.getMaxAllowedInstinct() >= instinct.getInstinct())) {
-                availableInstincts.add(entry);
+    public static Map<InstinctEffect, InstinctEffectWrapper> computeNewActiveEffects(EntityPlayer player, ICapabilityInstinct instinct) {
+        float currentInstinct = instinct.getInstinct();
+        Map<InstinctEffect, InstinctEffectWrapper> pastEffects = instinct.getActiveEffects();
+        Map<InstinctEffect, InstinctEffectWrapper> newEffects = new HashMap<>();
+        
+        for (ICapabilityInstinct.InstinctEntry entry : instinct.getInstincts()) {
+            // First, see if any needs in this instinct are not being met
+            // If all needs are satisfied, new effects will not be activated
+            // Note that existing effects will remain active with the
+            //  current amplifier or higher unless instinct exceeds the maxInstinct of all candidate effects of the same type
+            boolean needsMet = true;
+            for (InstinctNeedWrapper needWrapper : entry.getNeeds(player)) {
+                needsMet &= needWrapper.state.needStatus == IInstinctState.NeedStatus.NONE;
+            }
+            
+            // Then find all the effect amplifiers to apply
+            Map<InstinctEffect, Float> effectAmplifiers = new HashMap<>();
+            for (InstinctNeedWrapper needWrapper : entry.getNeeds(player)) {
+                for (Map.Entry<InstinctEffect, Float> amplifierEntry : needWrapper.state.effectAmplifiers.entrySet()) {
+                    InstinctEffect effect = amplifierEntry.getKey();
+                    Float amplifier = effectAmplifiers.get(effect);
+                    if (amplifier == null) {
+                        amplifier = amplifierEntry.getValue();
+                    }
+                    else {
+                        amplifier = Math.max(amplifier, amplifierEntry.getValue());
+                    }
+                    effectAmplifiers.put(effect, amplifier);
+                }
+            }
+            
+            // Then, see if we actually want to apply each effect
+        checkEffect:
+            for (InstinctEffectWrapper effectWrapper : entry.getEffects(player)) {
+                if (currentInstinct > effectWrapper.maxInstinct) {
+                    // Instinct is too high
+                    continue;
+                }
+                
+                InstinctEffect effect = effectWrapper.effect;
+                
+                // First check if the need should be activated
+                InstinctEffectWrapper pastEffect = pastEffects.get(effect);
+                if (pastEffect == null) {
+                    // Do not activate if all needs in this instinct are being met
+                    if (needsMet) {
+                        continue checkEffect;
+                    }
+                    // Do not activate if one of the needs doesn't want it
+                    for (InstinctNeedWrapper needWrapper : entry.getNeeds(player)) {
+                        if (!needWrapper.getNeed(player).shouldActivateEffect(needWrapper.getState(player), effect)) {
+                            continue checkEffect;
+                        }
+                    }
+                }
+                
+                // The effect to be added/amplified
+                InstinctEffectWrapper newEffect = newEffects.get(effect);
+                if (newEffect == null) {
+                    newEffect = new InstinctEffectWrapper(effectWrapper);
+                    newEffects.put(effect, newEffect);
+                }
+                else {
+                    // There are multiple effects of this type. Combine them.
+                    newEffect.combine(effectWrapper);
+                }
+                
+                if (pastEffect != null) {
+                    // The effect already is applied. Keep its amplifier.
+                    newEffect.combine(pastEffect);
+                }
+                
+                Float newAmplifier = effectAmplifiers.get(effect);
+                if (newAmplifier != null) {
+                    // A need has requested for this effect to be amplified
+                    newEffect.amplify(newAmplifier);
+                    // The amplifier has been applied, so don't use it again.
+                    effectAmplifiers.remove(effect);
+                    for (InstinctNeedWrapper needWrapper : entry.getNeeds(player)) {
+                        needWrapper.state.effectAmplifiers.remove(effect);
+                    }
+                }
             }
         }
         
-        int n = availableInstincts.size();
-        if (n <= 0) {
-            return null;
+        return newEffects;
+    }
+    
+    /**
+     * Helper function for differential instinct effect state (useful for efficient networking).
+     * If an instinct effect is in the map, either it has been added or its amplifier has changed.
+     * If the stored value is null, that effect has been deactivated.
+     */
+    public static Map<InstinctEffect, InstinctEffectWrapper> getEffectChanges(Map<InstinctEffect, InstinctEffectWrapper> oldEffects,
+            Map<InstinctEffect, InstinctEffectWrapper> newEffects) {
+        Map<InstinctEffect, InstinctEffectWrapper> changes = new HashMap<>();
+        
+        for (InstinctEffect oldEffect : oldEffects.keySet()) {
+            changes.put(oldEffect, null);
+        }
+        for (InstinctEffectWrapper newEffectWrapper : newEffects.values()) {
+            InstinctEffect effect = newEffectWrapper.effect;
+            if (changes.get(effect) == null ||
+                    oldEffects.get(effect).amplifier != newEffectWrapper.amplifier) {
+                changes.put(effect, newEffectWrapper);
+            }
         }
         
-        /*
-         * Randomly select an available instinct based on their weights.
-         * 
-         * Visualization/example:
-         * 
-         * random.nextFloat()*cumulativeWeight
-         * ----------------------------------------------->
-         * 
-         * availableInstincts.get(?).weight
-         * 0.5F      |1.0F               |0.7F            |
-         * 
-         * weightMap[?]                                   |cumulativeWeight
-         * 0.0F      |0.5F               |1.5F            |2.3F
-         */
-        float[] weightMap = new float[n];
-        float cumulativeWeight = 0.0F;
-        for (int i = 0; i < n; i++) {
-            weightMap[i] = cumulativeWeight;
-            cumulativeWeight += availableInstincts.get(i).weight;
-        }
-        int selectedInstinct = Arrays.binarySearch(weightMap, random.nextFloat()*cumulativeWeight);
-        if (selectedInstinct < 0) {
-            /* Not found, but the index of the next smaller
-             * value is encoded in the result.
-             */
-            selectedInstinct = (-selectedInstinct) - 2;
+        return changes;
+    }
+    
+    /**
+     * Given a list of effects which may have changed, call activate/deactivate
+     * when necessary and then update the list of active effects.
+     * 
+     * See ListenerPlayerInstinct.getEffectChanges
+     */
+    public static void transitionEffects(EntityPlayer player,
+            ICapabilityInstinct instinct,
+            Map<InstinctEffect, InstinctEffectWrapper> effectChanges) {
+        Map<InstinctEffect, InstinctEffectWrapper> pastEffects = instinct.getActiveEffects();
+        Map<InstinctEffect, InstinctEffectWrapper> newEffects = new HashMap<>();
+        newEffects.putAll(pastEffects);
+        
+        for (Map.Entry<InstinctEffect, InstinctEffectWrapper> changes : effectChanges.entrySet()) {
+            InstinctEffect effect = changes.getKey();
+            InstinctEffectWrapper wrapper = changes.getValue();
+            InstinctEffectWrapper pastWrapper = pastEffects.get(effect);
+            if (wrapper == null) {
+                if (pastWrapper != null) {
+                    pastWrapper.effect.onDeactivate(player, pastWrapper.amplifier);
+                    newEffects.remove(effect);
+                }
+            }
+            else {
+                if (pastWrapper == null) {
+                    effect.onActivate(player, wrapper.amplifier);
+                    newEffects.put(effect, wrapper);
+                }
+                else {
+                    if (pastWrapper.amplifier != wrapper.amplifier) {
+                        effect.onDeactivate(player, pastWrapper.amplifier);
+                        effect.onActivate(player, wrapper.amplifier);
+                        newEffects.put(effect, wrapper);
+                    }
+                }
+            }
         }
         
-        return availableInstincts.get(selectedInstinct);
+        // Finally, update active effects
+        instinct.setActiveEffects(newEffects);
+    }
+    
+    /**
+     * Displays a random instinct need in chat.
+     * If necessary, randomly iterate through the needs
+     * until one of them gives a non-null need message.
+     */
+    public static void sendRandomInstinctToChat(EntityPlayerMP player, ICapabilityInstinct instinctCap) {
+        List<InstinctNeedWrapper> allNeeds = new ArrayList<>();
+        for (ICapabilityInstinct.InstinctEntry entry : instinctCap.getInstincts()) {
+            allNeeds.addAll(entry.getNeeds(player));
+        }
+        Collections.shuffle(allNeeds);
+        
+        for (InstinctNeedWrapper need : allNeeds) {
+            ITextComponent needMessage = need.getNeed(player).getNeedMessage(need.state.needStatus);
+            if (needMessage != null) {
+                Chat.message(Chat.Type.NOTIFY, player, needMessage);
+                break;
+            }
+        }
     }
     
     @SubscribeEvent
@@ -274,15 +463,14 @@ public class ListenerPlayerInstinct extends ConfiguredListener {
         if (instinct == null) {
             return;
         }
-        IInstinct activeInstinct = instinct.getActiveInstinct();
-        if (activeInstinct == null) {
-            return;
-        }
         
         BlockPos blockPos = event.getPos();
         Block block = player.world.getBlockState(blockPos).getBlock();
-        if (!activeInstinct.canInteract(player, blockPos, block)) {
-            event.setUseBlock(Result.DENY);
+        for (InstinctEffectWrapper effect : instinct.getActiveEffects().values()) {
+            if (!effect.effect.canInteract(player, effect.amplifier, blockPos, block)) {
+                event.setUseBlock(Result.DENY);
+                break;
+            }
         }
     }
     
@@ -293,13 +481,13 @@ public class ListenerPlayerInstinct extends ConfiguredListener {
         if (instinct == null) {
             return;
         }
-        IInstinct activeInstinct = instinct.getActiveInstinct();
-        if (activeInstinct == null) {
-            return;
-        }
         
-        if (!activeInstinct.canInteract(player, event.getItemStack())) {
-            event.setCanceled(true);
+        ItemStack itemStack = event.getItemStack();
+        for (InstinctEffectWrapper effect : instinct.getActiveEffects().values()) {
+            if (!effect.effect.canInteract(player, effect.amplifier, itemStack)) {
+                event.setCanceled(true);
+                break;
+            }
         }
     }
     
@@ -314,10 +502,6 @@ public class ListenerPlayerInstinct extends ConfiguredListener {
         EntityPlayer player = event.getEntityPlayer();
         ICapabilityInstinct instinct = player.getCapability(INSTINCT_CAPABILITY, null);
         if (instinct == null) {
-            return;
-        }
-        IInstinct activeInstinct = instinct.getActiveInstinct();
-        if (activeInstinct == null) {
             return;
         }
         
@@ -337,10 +521,15 @@ public class ListenerPlayerInstinct extends ConfiguredListener {
         // Check 3x3 area for nearby mobs that might be set on fire
         AxisAlignedBB aabb = new AxisAlignedBB(firePos.getX() - 1, firePos.getY() - 1, firePos.getZ() - 1,
                 firePos.getX() + 2, firePos.getY() + 2, firePos.getZ() + 2);
+        
+    checkEntities:
         for (Entity entity : player.world.getEntitiesInAABBexcluding(player, aabb, ListenerPlayerInstinct::isFlammableLivingEntity)) {
-            if (!activeInstinct.canAttack(player, (EntityLivingBase)entity)) {
-                event.setUseItem(Result.DENY);
-                break;
+            EntityLivingBase entityLiving = (EntityLivingBase)entity;
+            for (InstinctEffectWrapper effect : instinct.getActiveEffects().values()) {
+                if (!effect.effect.canAttack(player, effect.amplifier, entityLiving)) {
+                    event.setUseItem(Result.DENY);
+                    break checkEntities;
+                }
             }
         }
     }
@@ -371,13 +560,13 @@ public class ListenerPlayerInstinct extends ConfiguredListener {
         if (instinct == null) {
             return;
         }
-        IInstinct activeInstinct = instinct.getActiveInstinct();
-        if (activeInstinct == null) {
-            return;
-        }
         
-        if (!activeInstinct.canAttack(player, event.getEntityLiving())) {
-            event.setCanceled(true);
+        EntityLivingBase entityLiving = event.getEntityLiving();
+        for (InstinctEffectWrapper effect : instinct.getActiveEffects().values()) {
+            if (!effect.effect.canAttack(player, effect.amplifier, entityLiving)) {
+                event.setCanceled(true);
+                break;
+            }
         }
     }
     
@@ -399,31 +588,18 @@ public class ListenerPlayerInstinct extends ConfiguredListener {
             return;
         }
         
-        updateInstinctAfterKill((EntityPlayer)agressor, entity);
-    }
-    
-    public void updateInstinctAfterKill(EntityPlayer player, EntityLivingBase entity) {
-        if (player.world.isRemote) {
-            // Just in case...
-            return;
-        }
+        EntityPlayer player = (EntityPlayer)agressor;
         
-        ICapabilityInstinct instinct = player.getCapability(INSTINCT_CAPABILITY, null);
+        ICapabilityInstinct instinct = agressor.getCapability(INSTINCT_CAPABILITY, null);
         if (instinct == null) {
             return;
         }
         
-        IInstinct activeInstinct = instinct.getActiveInstinct();
-        if (activeInstinct != null) {
-            activeInstinct.afterKill(player, entity);
-        }
-        else {
-            float instinctChange = 0.0F;
-            for (ICapabilityInstinct.InstinctEntry entry : instinct.getInstinctMap().values()) {
-                instinctChange += entry.instinct.getInactiveChangeOnKill(player, entity);
+        List<ICapabilityInstinct.InstinctEntry> instincts = instinct.getInstincts();
+        for (ICapabilityInstinct.InstinctEntry entry : instincts) {
+            for (InstinctNeedWrapper needWrapper : entry.getNeeds(player)) {
+                needWrapper.getNeed(player).afterKill(needWrapper.getState(player), entity);
             }
-            addInstinct(player, instinct, instinctChange);
-            PacketHandler.INSTANCE.sendTo(new MessageInstinctValue(instinct), (EntityPlayerMP)player);
         }
     }
     
@@ -436,13 +612,11 @@ public class ListenerPlayerInstinct extends ConfiguredListener {
             return;
         }
         
-        IInstinct activeInstinct = instinct.getActiveInstinct();
-        if (activeInstinct == null) {
-            return;
-        }
-        
-        if (!activeInstinct.canInteract(player, event.getItemStack())) {
-            event.setUseItem(Result.DENY);
+        for (InstinctEffectWrapper effect : instinct.getActiveEffects().values()) {
+            if (!effect.effect.canInteract(player, effect.amplifier, event.getItemStack())) {
+                event.setUseItem(Result.DENY);
+                break;
+            }
         }
     }
     
@@ -458,12 +632,9 @@ public class ListenerPlayerInstinct extends ConfiguredListener {
             return;
         }
         
-        IInstinct activeInstinct = instinct.getActiveInstinct();
-        if (activeInstinct == null) {
-            return;
+        for (InstinctEffectWrapper effect : instinct.getActiveEffects().values()) {
+            effect.effect.onBlockDrops(player, effect.amplifier, event);
         }
-        
-        activeInstinct.afterBlockHarvest(player, event);
     }
     
     @SubscribeEvent
@@ -483,11 +654,8 @@ public class ListenerPlayerInstinct extends ConfiguredListener {
             return;
         }
         
-        IInstinct activeInstinct = instinct.getActiveInstinct();
-        if (activeInstinct == null) {
-            return;
+        for (InstinctEffectWrapper effect : instinct.getActiveEffects().values()) {
+            effect.effect.onEntityDrops(player, effect.amplifier, event);
         }
-        
-        activeInstinct.afterKillEntityForDrops(player, event);
     }
 }

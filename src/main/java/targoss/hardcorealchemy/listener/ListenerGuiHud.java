@@ -46,7 +46,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
-import targoss.hardcorealchemy.capability.instincts.ICapabilityInstinct;
+import targoss.hardcorealchemy.capability.instinct.ICapabilityInstinct;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.coremod.CoremodHook;
 import targoss.hardcorealchemy.util.MorphState;
@@ -154,7 +154,7 @@ public class ListenerGuiHud extends ConfiguredListener {
         }
         
         ICapabilityInstinct instinctCap = player.getCapability(INSTINCT_CAPABILITY, null);
-        if (instinctCap == null || instinctCap.getInstinctMap().size() == 0) {
+        if (instinctCap == null || instinctCap.getInstincts().size() == 0) {
             return;
         }
         
@@ -182,7 +182,7 @@ public class ListenerGuiHud extends ConfiguredListener {
         int texY = 18;
         int sizeX = 4;
         // Whether we should render the normal chains or the chains with the red glow
-        texY += instinctCap.getActiveInstinct() == null ? 0 : 9;
+        texY += instinctCap.getActiveEffects().size() == 0 ? 0 : 9;
         int y = top;
         
         if (instinct <= 2.0f) {

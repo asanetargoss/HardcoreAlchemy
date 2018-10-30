@@ -60,13 +60,15 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import targoss.hardcorealchemy.ModState;
-import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
-import targoss.hardcorealchemy.capability.humanity.ProviderHumanity;
+import targoss.hardcorealchemy.capability.instinct.ICapabilityInstinct;
+import targoss.hardcorealchemy.capability.instinct.ProviderInstinct;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.coremod.CoremodHook;
 import targoss.hardcorealchemy.event.EventDrawInventoryItem;
 import targoss.hardcorealchemy.event.EventDrawWorldItem;
 import targoss.hardcorealchemy.event.EventRenderSlotTooltip;
+import targoss.hardcorealchemy.instinct.api.InstinctEffectWrapper;
+import targoss.hardcorealchemy.instinct.api.Instincts;
 import targoss.hardcorealchemy.util.InventoryUtil;
 import targoss.hardcorealchemy.util.MiscVanilla;
 
@@ -130,21 +132,13 @@ public class ListenerPlayerHinderedMind extends ConfiguredListener {
     }
     
     public static boolean isPlayerHindered(EntityPlayer player) {
-        IMorphing morphing = Morphing.get(player);
-        if (morphing == null) {
+        ICapabilityInstinct instinct = player.getCapability(ProviderInstinct.INSTINCT_CAPABILITY, null);
+        if (instinct == null) {
             return false;
         }
         
-        if (morphing.getCurrentMorph() == null) {
-            return false;
-        }
-        
-        ICapabilityHumanity humanity = player.getCapability(ProviderHumanity.HUMANITY_CAPABILITY, null);
-        if (humanity == null || humanity.canMorph()) {
-            return false;
-        }
-        
-        return true;
+        InstinctEffectWrapper wrapper = instinct.getActiveEffects().get(Instincts.EFFECT_HINDERED_MIND);
+        return wrapper != null && wrapper.amplifier >= 1.0F;
     }
     
     @CoremodHook

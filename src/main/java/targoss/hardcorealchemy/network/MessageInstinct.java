@@ -18,89 +18,37 @@
 
 package targoss.hardcorealchemy.network;
 
-import java.util.Map;
-
 import io.netty.buffer.ByteBuf;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import targoss.hardcorealchemy.capability.instincts.ICapabilityInstinct;
-import targoss.hardcorealchemy.capability.instincts.ICapabilityInstinct.InstinctEntry;
-import targoss.hardcorealchemy.capability.instincts.ProviderInstinct;
-import targoss.hardcorealchemy.instinct.Instincts;
+import targoss.hardcorealchemy.capability.instinct.ICapabilityInstinct;
+import targoss.hardcorealchemy.capability.instinct.ProviderInstinct;
 import targoss.hardcorealchemy.util.MiscVanilla;
 
 public class MessageInstinct extends MessageToClient implements Runnable {
     
     public MessageInstinct() { }
     
-    public float instinct;
-    public ResourceLocation activeInstinct;
-    public InstinctEntry[] instinctEntries;
+    public NBTTagCompound instinctNBT = new NBTTagCompound();
     
     public MessageInstinct(ICapabilityInstinct instinct) {
-        this.instinct = instinct.getInstinct();
-        this.activeInstinct = instinct.getActiveInstinctId();
-        instinctEntries = instinct.getInstinctMap().values().toArray(new InstinctEntry[]{});
+        instinctNBT = (NBTTagCompound)ProviderInstinct.INSTINCT_CAPABILITY.writeNBT(instinct, null);
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        buf.writeFloat(instinct);
-        
-        if (activeInstinct != null) {
-            buf.writeBoolean(true);
-            ByteBufUtils.writeUTF8String(buf, activeInstinct.toString());
-        }
-        else {
-            buf.writeBoolean(false);
-        }
-        
-        buf.writeInt(instinctEntries.length);
-        for (InstinctEntry entry : instinctEntries) {
-            // No need for integer ids. Maybe 5 instincts to send at most.
-            ByteBufUtils.writeUTF8String(buf, entry.id.toString());
-            ByteBufUtils.writeTag(buf, entry.instinct.serializeNBT());
-            buf.writeFloat(entry.weight);
-        }
+        ByteBufUtils.writeTag(buf, instinctNBT);
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        this.instinct = buf.readFloat();
-        
-        if (buf.readBoolean() == true) {
-            this.activeInstinct = new ResourceLocation(ByteBufUtils.readUTF8String(buf));
-        }
-        else {
-            this.activeInstinct = null;
-        }
-        
-        int instinctCount = buf.readInt();
-        this.instinctEntries = new InstinctEntry[instinctCount];
-        for (int i = 0; i < instinctCount; i++) {
-            InstinctEntry entry = new InstinctEntry();
-            boolean invalid = false;
-            
-            entry.id = new ResourceLocation(ByteBufUtils.readUTF8String(buf));
-            
-            entry.instinct = Instincts.REGISTRY.getValue(entry.id).createInstinct();
-            if (entry.instinct == null) {
-                invalid = true;
-            }
-            entry.instinct.deserializeNBT(ByteBufUtils.readTag(buf));
-            
-            entry.weight = buf.readFloat();
-            
-            if (invalid) {
-                entry = null;
-            }
-            this.instinctEntries[i] = entry;
-        }
+        instinctNBT = ByteBufUtils.readTag(buf);
     }
     
+    // TODO: Move to static class because this ends up getting called on the wrong thread
     @Override
     public void run() {
         ICapabilityInstinct instinct = MiscVanilla
@@ -110,14 +58,7 @@ public class MessageInstinct extends MessageToClient implements Runnable {
             return;
         }
         
-        instinct.setInstinct(this.instinct);
-        Map<ResourceLocation, InstinctEntry> instinctMap = instinct.getInstinctMap();
-        instinctMap.clear();
-        for (InstinctEntry entry : instinctEntries) {
-            instinctMap.put(entry.id, entry);
-        }
-        
-        instinct.setActiveInstinctId(this.activeInstinct);
+        ProviderInstinct.INSTINCT_CAPABILITY.readNBT(instinct, null, instinctNBT);
     }
     
     public static class Handler implements IMessageHandler<MessageInstinct, IMessage> {

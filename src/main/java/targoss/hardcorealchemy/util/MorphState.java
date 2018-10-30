@@ -19,6 +19,7 @@
 package targoss.hardcorealchemy.util;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import ladysnake.dissolution.common.capabilities.CapabilityIncorporealHandler;
 import ladysnake.dissolution.common.capabilities.IIncorporealHandler;
@@ -35,14 +36,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.fml.common.Optional;
-import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.capability.humanity.LostMorphReason;
-import targoss.hardcorealchemy.capability.instincts.ICapabilityInstinct;
-import targoss.hardcorealchemy.instinct.InstinctAttackPreyOnly;
-import targoss.hardcorealchemy.instinct.Instincts;
-import targoss.hardcorealchemy.instinct.Instincts.InstinctFactory;
+import targoss.hardcorealchemy.capability.instinct.ICapabilityInstinct;
+import targoss.hardcorealchemy.instinct.api.Instinct;
+import targoss.hardcorealchemy.instinct.api.Instincts;
 import targoss.hardcorealchemy.item.Items;
 import targoss.hardcorealchemy.listener.ListenerPlayerDiet;
 import targoss.hardcorealchemy.listener.ListenerPlayerHumanity;
@@ -65,6 +64,14 @@ public class MorphState {
         return MorphManager.INSTANCE.morphFromNBT(morphProperties);
     }
     
+    /**
+     * Forces the player into human form, and clears the player's needs and instincts.
+     * Returns true if successful
+     */
+    public static boolean resetForm(EntityPlayer player) {
+        return forceForm(player, LostMorphReason.REGAINED_MORPH_ABILITY, (AbstractMorph)null);
+    }
+    
     public static boolean forceForm(EntityPlayer player, LostMorphReason reason,
             String morphName) {
         return forceForm(player, reason, createMorph(morphName));
@@ -80,17 +87,17 @@ public class MorphState {
      * state transition.
      */
     /**
-     * Forces the player into the given AbstractMorph (null permitted)
-     * with the given reason, and updates the player's needs and instincts
+     * Forces the player into the given AbstractMorph.
+     * with the given reason, and updates the player's needs and instincts.
      * Returns true if successful
      */
     public static boolean forceForm(EntityPlayer player, LostMorphReason reason,
-            AbstractMorph morph) {
+            @Nullable AbstractMorph morph) {
         IMorphing morphing = player.getCapability(ListenerPlayerHumanity.MORPHING_CAPABILITY, null);
         if (morphing == null) {
             return false;
         }
-        ICapabilityHumanity capabilityHumanity = player.getCapability(ListenerPlayerHumanity.HUMANITY_CAPABILITY, null);
+        ICapabilityHumanity capabilityHumanity = player.getCapability(HUMANITY_CAPABILITY, null);
         if (capabilityHumanity == null) {
             return false;
         }
@@ -107,8 +114,19 @@ public class MorphState {
         
         if (success) {
             capabilityHumanity.loseMorphAbilityFor(reason);
-            double humanity = morph == null ? 20.0D : 0.0D;
+            
+            double humanity;
+            if (morph == null) {
+                humanity = 20.0F;
+            }
+            else if (reason == LostMorphReason.REGAINED_MORPH_ABILITY) {
+                humanity = capabilityHumanity.getHumanity();
+            }
+            else {
+                humanity = 0.0F;
+            }
             capabilityHumanity.setHumanity(humanity);
+            
             if (reason != LostMorphReason.LOST_HUMANITY) {
                 // Prevent showing the player a message that their humanity has changed
                 capabilityHumanity.setLastHumanity(humanity);
@@ -119,9 +137,12 @@ public class MorphState {
             }
             
             ICapabilityInstinct instincts = player.getCapability(INSTINCT_CAPABILITY, null);
-            if (instincts != null && (morph instanceof EntityMorph)) {
-                instincts.setInstinct(ICapabilityInstinct.DEFAULT_INSTINCT_VALUE);
-                MorphState.buildInstincts(instincts, ((EntityMorph)morph).getEntity(player.world));
+            if (instincts != null) {
+                instincts.clearInstincts(player);
+                if (morph instanceof EntityMorph) {
+                    instincts.setInstinct(ICapabilityInstinct.DEFAULT_INSTINCT_VALUE);
+                    MorphState.buildInstincts(player, instincts, ((EntityMorph)morph).getEntity(player.world));
+                }
             }
         }
         
@@ -158,18 +179,18 @@ public class MorphState {
         return false;
     }
 
-    public static void buildInstincts(ICapabilityInstinct instincts, EntityLivingBase morphEntity) {
-        instincts.clearInstincts();
+    public static void buildInstincts(EntityPlayer player, ICapabilityInstinct instincts, EntityLivingBase morphEntity) {
+        instincts.clearInstincts(player);
         
         if (morphEntity == null || !(morphEntity instanceof EntityLiving)) {
             return;
         }
         EntityLiving morphedLiving = (EntityLiving)morphEntity;
         
-        for (InstinctFactory instinctFactory : Instincts.REGISTRY.getValues()) {
-            // No caching right now. Not many instincts to deal with.
-            if (instinctFactory.instinctObject.doesMorphEntityHaveInstinct(morphEntity)) {
-                instincts.addInstinct(instinctFactory, morphEntity);
+        for (Instinct instinct : Instincts.REGISTRY.getValues()) {
+            // No caching (for now); just go through the list of registered instincts and figure out which are applicable
+            if (instinct.doesMorphEntityHaveInstinct(morphEntity)) {
+                instincts.addInstinct(instinct);
             }
         }
     }

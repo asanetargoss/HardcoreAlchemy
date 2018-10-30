@@ -316,14 +316,26 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
             }
         }
     }
-
+    
+    /**
+     * This event handler fixes state issues caused by the player becoming a ghost, which
+     * are normally cleared automatically when a player dies due to capabilities clearing.
+     * 
+     * - The player is forced to human form because a player's "soul" is human (lore)
+     * - Humanity value is reset
+     * - Instincts are cleared so the player isn't bugged about instinct-related needs
+     * 
+     * Note: The code for death handling is rather ad-hoc right now. Ideally no capabilities
+     * would be cleared and data would be manually cleared on a case-by-case basis according
+     * to a well-defined player life/afterlife state.
+     */
     @Optional.Method(modid = ModState.DISSOLUTION_ID)
     @SubscribeEvent
     public void onPlayerEnterAfterlife(PlayerRespawnEvent event) {
         EntityPlayer player = event.player;
         if (MorphState.isIncorporeal(player)) {
             // You're a ghost, so being in a morph doesn't really make sense
-            MorphAPI.morph(player, null, true);
+            MorphState.resetForm(player);
         }
     }
 }

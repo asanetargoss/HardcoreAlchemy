@@ -66,6 +66,11 @@ public class CapabilityHumanity implements ICapabilityHumanity {
     @Override
     public void loseMorphAbilityFor(LostMorphReason reason) {
         switch (reason) {
+        case REGAINED_MORPH_ABILITY:
+            this.hasLostHumanity = false;
+            this.isMarried = false;
+            this.hasLostMorphAbility = false;
+            break;
         case LOST_HUMANITY:
             this.hasLostHumanity = true;
             this.isMarried = false;

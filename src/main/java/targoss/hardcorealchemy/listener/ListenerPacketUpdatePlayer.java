@@ -27,7 +27,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.capability.inactive.IInactiveCapabilities;
-import targoss.hardcorealchemy.capability.instincts.ICapabilityInstinct;
+import targoss.hardcorealchemy.capability.instinct.ICapabilityInstinct;
 import targoss.hardcorealchemy.capability.killcount.ICapabilityKillCount;
 import targoss.hardcorealchemy.capability.morphstate.ICapabilityMorphState;
 import targoss.hardcorealchemy.config.Configs;

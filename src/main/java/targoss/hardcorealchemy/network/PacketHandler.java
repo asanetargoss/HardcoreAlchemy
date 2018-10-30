@@ -37,9 +37,9 @@ public class PacketHandler {
         (new MessageMorphState()).register();
         (new MessageInactiveCapabilities()).register();
         (new MessageInstinct()).register();
-        (new MessageInstinctActive()).register();
-        (new MessageInstinctValue()).register();
-        (new MessageInstinctAttackPreyOnly()).register();
+        (new MessageInstinctNeedState()).register();
+        (new MessageInstinctEffects()).register();
+        (new MessageInstinctNeedChanged()).register();
     }
     
 }

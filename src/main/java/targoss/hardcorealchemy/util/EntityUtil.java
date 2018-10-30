@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.base.Predicate;
@@ -83,6 +84,10 @@ public class EntityUtil {
         customEntityStrings.put(EntityCreature.class, new TextComponentTranslation("entity.Creature.name"));
         customEntityStrings.put(EntityAnimal.class, new TextComponentTranslation("entity.Animal.name"));
         customEntityStrings.put(EntityPlayer.class, new TextComponentTranslation("entity.Player.name"));
+    }
+    
+    public static ITextComponent getEntityName(EntityLivingBase entity) {
+        return getEntityName(entity.getClass());
     }
     
     public static ITextComponent getEntityName(Class<? extends EntityLivingBase> entityClass) {
@@ -174,7 +179,7 @@ public class EntityUtil {
         }
     }
     
-    // Adapted from ItemMonsterPlacer.spawnCreature
+    // Adapted from ItemMonsterPlacer.spawnCreature (1.10.2 stable)
     public static void createLivingEntityAt(EntityLiving entityLiving, float x, float y, float z) {
         entityLiving.setLocationAndAngles(x, y, z, MathHelper.wrapDegrees(entityLiving.world.rand.nextFloat() * 360.0F), 0.0F);
         entityLiving.rotationYawHead = entityLiving.rotationYaw;
@@ -244,5 +249,21 @@ public class EntityUtil {
         }
         EntityLivingBase morphEntity = ((EntityMorph)morph).getEntity(player.world);
         return entityClass.isInstance(morphEntity);
+    }
+    
+    public static EntityLivingBase getEffectiveEntity(@Nonnull EntityPlayer player) {
+        IMorphing morphing = Morphing.get(player);
+        if (morphing == null) {
+            return player;
+        }
+        AbstractMorph morph = morphing.getCurrentMorph();
+        if (morph == null) {
+            return player;
+        }
+        if (!(morph instanceof EntityMorph)) {
+            // Incorrect, but there's no better answer
+            return player;
+        }
+        return ((EntityMorph)morph).getEntity(player.world);
     }
 }
