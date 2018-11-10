@@ -40,6 +40,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
@@ -177,13 +178,19 @@ public class ListenerPlayerInstinct extends ConfiguredListener {
                         // Display a message about the effects of a random instinct.
                         ICapabilityInstinct.InstinctEntry messageInstinct = selectRandomInstinct(instinct, true);
                         if (messageInstinct != null) {
-                            Chat.notify((EntityPlayerMP)player, messageInstinct.instinct.getNeedMessage(player));
+                            ITextComponent needMessage = messageInstinct.instinct.getNeedMessage(player);
+                            if (needMessage != null) {
+                                Chat.notify((EntityPlayerMP)player, needMessage);
+                            }
                         }
                     }
                     else if (random.nextFloat() < INSTINCT_SELECTION_CHANCE) {
                         // The player has become inflicted by a new instinct behavior!
                         instinct.setActiveInstinctId(newActiveInstinct.id);
-                        Chat.alarm((EntityPlayerMP)player, newActiveInstinct.instinct.getNeedMessageOnActivate(player));
+                        ITextComponent needMessage = newActiveInstinct.instinct.getNeedMessageOnActivate(player);
+                        if (needMessage != null) {
+                            Chat.alarm((EntityPlayerMP)player, newActiveInstinct.instinct.getNeedMessageOnActivate(player));
+                        }
                         newActiveInstinct.instinct.onActivate(player);
                         // Tell the client about the newly activated instinct.
                         // onActivate(player) will be called on the client's side when the packet is received.
@@ -196,7 +203,10 @@ public class ListenerPlayerInstinct extends ConfiguredListener {
                         // Display a message about the effects of a random instinct.
                         ICapabilityInstinct.InstinctEntry messageInstinct = selectRandomInstinct(instinct, true);
                         if (messageInstinct != null) {
-                            Chat.notify((EntityPlayerMP)player, messageInstinct.instinct.getNeedMessage(player));
+                            ITextComponent needMessage = messageInstinct.instinct.getNeedMessage(player);
+                            if (needMessage != null) {
+                                Chat.notify((EntityPlayerMP)player, needMessage);
+                            }
                         }
                     }
                 }
