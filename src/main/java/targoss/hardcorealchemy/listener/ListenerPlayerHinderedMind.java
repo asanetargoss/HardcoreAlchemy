@@ -25,6 +25,12 @@ import mchorse.metamorph.capabilities.morphing.IMorphing;
 import mchorse.metamorph.capabilities.morphing.Morphing;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemArmor;
+import net.minecraft.item.ItemShield;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemSword;
+import net.minecraft.item.ItemTool;
 import net.minecraft.util.MovementInput;
 import net.minecraftforge.client.GuiIngameForge;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -72,7 +78,15 @@ public class ListenerPlayerHinderedMind extends ConfiguredListener {
             return;
         }
         
-        event.itemStack.stackSize = Math.min(4, event.itemStack.stackSize);
+        ItemStack itemStack = event.itemStack;
+        Item item = itemStack.getItem();
+        itemStack.stackSize = Math.min(4, itemStack.stackSize);
+        if ((item instanceof ItemTool) ||
+                (item instanceof ItemSword) ||
+                (item instanceof ItemArmor) ||
+                (item instanceof ItemShield)) {
+            itemStack.setItemDamage(0);
+        }
     }
     
     private boolean renderHotbar = true;
