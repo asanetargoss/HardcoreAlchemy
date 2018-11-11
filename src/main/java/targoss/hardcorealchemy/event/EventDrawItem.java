@@ -25,7 +25,7 @@ import targoss.hardcorealchemy.coremod.CoremodHook;
 import targoss.hardcorealchemy.util.MiscVanilla;
 
 /**
- *  Event for when an ItemStack's visual appearance is drawn anywhere in the inventory.
+ *  Event for when an ItemStack's visual appearance is drawn in the inventory, on the ground, or as a held item.
  *  ItemStack is a copy and is therefore safe to modify.
  */
 public class EventDrawItem extends Event {
