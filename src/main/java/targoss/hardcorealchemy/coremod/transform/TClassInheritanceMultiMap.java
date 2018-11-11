@@ -36,9 +36,6 @@ import targoss.hardcorealchemy.coremod.MethodPatcher;
 public class TClassInheritanceMultiMap extends MethodPatcher {
     private static final String CLASS_INHERITANCE_MULTI_MAP = "net.minecraft.util.ClassInheritanceMultiMap";
     
-    // TODO: Remove after testing
-    @Override public boolean enableDebug() { return true; }
-    
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
         if (transformedName.equals(CLASS_INHERITANCE_MULTI_MAP)) {

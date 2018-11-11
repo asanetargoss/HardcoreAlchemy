@@ -34,10 +34,6 @@ import targoss.hardcorealchemy.coremod.MethodPatcher;
 public class TDataVillage extends MethodPatcher {
     private static final String DATA_VILLAGE = "ckhbox.villagebox.common.village.data.DataVillage";
     private static final String ADD_DEAD_VILLAGER = "addDeadVillager";
-    
-    // TODO: Remove after testing
-    @Override
-    public boolean enableDebug() { return true; }
 
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
