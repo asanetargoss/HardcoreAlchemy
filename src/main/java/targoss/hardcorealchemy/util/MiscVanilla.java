@@ -88,4 +88,14 @@ public class MiscVanilla {
         }
         return player.world;
     }
+    
+    @SideOnly(Side.CLIENT)
+    public static boolean getHeldItemTooltips() {
+        return Minecraft.getMinecraft().gameSettings.heldItemTooltips;
+    }
+    
+    @SideOnly(Side.CLIENT)
+    public static void setHeldItemTooltips(boolean heldItemTooltips) {
+        Minecraft.getMinecraft().gameSettings.heldItemTooltips = heldItemTooltips;
+    }
 }

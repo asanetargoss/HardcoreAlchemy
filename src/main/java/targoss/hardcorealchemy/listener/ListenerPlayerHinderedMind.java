@@ -35,6 +35,8 @@ import net.minecraft.util.MovementInput;
 import net.minecraftforge.client.GuiIngameForge;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -89,6 +91,16 @@ public class ListenerPlayerHinderedMind extends ConfiguredListener {
         }
     }
     
+    @SubscribeEvent(priority=EventPriority.LOWEST)
+    public void onDisplayTooltip(ItemTooltipEvent event) {
+        if (!isPlayerHindered(event.getEntityPlayer())) {
+            return;
+        }
+        
+        event.getToolTip().clear();
+    }
+    
+    private boolean heldItemTooltips = true;
     private boolean renderHotbar = true;
     private boolean renderHealth = true;
     private boolean renderArmor = true;
@@ -98,14 +110,22 @@ public class ListenerPlayerHinderedMind extends ConfiguredListener {
     private boolean renderExperience = true;
     private boolean renderJumpBar = true;
     
+    @Override
+    public void serverAboutToStart(FMLServerAboutToStartEvent event) {
+        heldItemTooltips = MiscVanilla.getHeldItemTooltips();
+    }
+    
     @SubscribeEvent(priority=EventPriority.LOWEST)
     public void onRenderOverlayPre(RenderGameOverlayEvent.Pre event) {
         if (event.getType() != RenderGameOverlayEvent.ElementType.ALL) {
             return;
         }
         if (!isPlayerHindered(MiscVanilla.getTheMinecraftPlayer())) {
+            MiscVanilla.setHeldItemTooltips(heldItemTooltips);
             return;
         }
+        
+        MiscVanilla.setHeldItemTooltips(false);
         
         renderHotbar = GuiIngameForge.renderHotbar;
         renderHealth = GuiIngameForge.renderHealth;
