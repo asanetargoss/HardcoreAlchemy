@@ -43,6 +43,8 @@ public class MiscVanilla {
         return Minecraft.getMinecraft().player == player;
     }
     
+    public static final ItemStack ITEM_STACK_EMPTY = null;
+    
     public static boolean isEmptyItemStack(ItemStack itemStack) {
         return itemStack == null;
     }

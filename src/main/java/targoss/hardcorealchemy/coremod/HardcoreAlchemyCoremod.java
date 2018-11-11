@@ -39,6 +39,7 @@ import targoss.hardcorealchemy.coremod.transform.TCraftingManager;
 import targoss.hardcorealchemy.coremod.transform.TDataVillage;
 import targoss.hardcorealchemy.coremod.transform.TDecayingCrops;
 import targoss.hardcorealchemy.coremod.transform.TEntityLivingBase;
+import targoss.hardcorealchemy.coremod.transform.TRenderItem;
 import targoss.hardcorealchemy.coremod.transform.THibernatingCrops;
 import targoss.hardcorealchemy.coremod.transform.TObjectProximityModifier;
 import targoss.hardcorealchemy.coremod.transform.TProjectEKeyHandler;
@@ -78,7 +79,8 @@ public class HardcoreAlchemyCoremod implements IFMLLoadingPlugin {
 				TRightClickHarvesting.class.getName(),
 				TClassInheritanceMultiMap.class.getName(),
 				TThaumcraftPlayerEvents.class.getName(),
-				TDataVillage.class.getName()
+				TDataVillage.class.getName(),
+				TRenderItem.class.getName()
 		};
 	}
 
