@@ -41,11 +41,12 @@ import net.minecraft.item.ItemTool;
 import net.minecraft.util.MovementInput;
 import net.minecraftforge.client.GuiIngameForge;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
@@ -277,14 +278,27 @@ public class ListenerPlayerHinderedMind extends ConfiguredListener {
         }
     }
     
+    private boolean isMovementRigged = false; 
+    
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
-    public void onClientEnterWorld(EntityJoinWorldEvent event) {
+    public void onLoadWorld(WorldEvent.Load event) {
+        isMovementRigged = false;
+    }
+    
+    @SubscribeEvent
+    @SideOnly(Side.CLIENT)
+    public void onCheckClientMovement(ClientTickEvent event) {
+        if (isMovementRigged) {
+            return;
+        }
+        
         EntityPlayerSP player = (EntityPlayerSP)MiscVanilla.getTheMinecraftPlayer();
         if (player == null) {
             return;
         }
         
         player.movementInput = new RiggedMovementInput(player.movementInput);
+        isMovementRigged = true;
     }
 }
