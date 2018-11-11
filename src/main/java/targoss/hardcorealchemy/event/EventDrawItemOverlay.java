@@ -28,17 +28,17 @@ import targoss.hardcorealchemy.util.MiscVanilla;
  *  Event for when an ItemStack is drawn anywhere in the inventory.
  *  ItemStack is a copy and is therefore safe to modify.
  */
-public class EventDrawItemStack extends Event {
+public class EventDrawItemOverlay extends Event {
     public ItemStack itemStack;
     
-    public EventDrawItemStack(ItemStack itemStack) {
+    public EventDrawItemOverlay(ItemStack itemStack) {
         this.itemStack = itemStack;
     }
     
     @CoremodHook
-    public static ItemStack onDrawItemStack(ItemStack itemStack) {
+    public static ItemStack onDrawItemOverlay(ItemStack itemStack) {
         ItemStack newItemStack = MiscVanilla.isEmptyItemStack(itemStack) ? itemStack : itemStack.copy();
-        EventDrawItemStack event = new EventDrawItemStack(newItemStack);
+        EventDrawItemOverlay event = new EventDrawItemOverlay(newItemStack);
         return (MinecraftForge.EVENT_BUS.post(event) ? MiscVanilla.ITEM_STACK_EMPTY : event.itemStack);
     }
 }

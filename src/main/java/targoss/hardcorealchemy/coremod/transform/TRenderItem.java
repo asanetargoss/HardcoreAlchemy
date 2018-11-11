@@ -48,8 +48,8 @@ public class TRenderItem extends MethodPatcher {
             InsnList patch = new InsnList();
             patch.add(new VarInsnNode(Opcodes.ALOAD, 2));
             patch.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
-                    "targoss/hardcorealchemy/event/EventDrawItemStack",
-                    "onDrawItemStack",
+                    "targoss/hardcorealchemy/event/EventDrawItemOverlay",
+                    "onDrawItemOverlay",
                     "(Lnet/minecraft/item/ItemStack;)Lnet/minecraft/item/ItemStack;",
                     false));
             patch.add(new VarInsnNode(Opcodes.ASTORE, 2));

@@ -42,7 +42,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.capability.humanity.ProviderHumanity;
 import targoss.hardcorealchemy.config.Configs;
-import targoss.hardcorealchemy.event.EventDrawItemStack;
+import targoss.hardcorealchemy.event.EventDrawItemOverlay;
 import targoss.hardcorealchemy.util.MiscVanilla;
 
 public class ListenerPlayerHinderedMind extends ConfiguredListener {
@@ -69,7 +69,7 @@ public class ListenerPlayerHinderedMind extends ConfiguredListener {
     }
     
     @SubscribeEvent
-    public void onDrawItemStack(EventDrawItemStack event) {
+    public void onDrawItemOverlay(EventDrawItemOverlay event) {
         if (!isPlayerHindered(MiscVanilla.getTheMinecraftPlayer())) {
             return;
         }
