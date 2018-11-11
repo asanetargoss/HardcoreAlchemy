@@ -52,8 +52,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.capability.humanity.ProviderHumanity;
 import targoss.hardcorealchemy.config.Configs;
+import targoss.hardcorealchemy.event.EventDrawHeldItem;
 import targoss.hardcorealchemy.event.EventDrawItem;
 import targoss.hardcorealchemy.event.EventDrawItemOverlay;
+import targoss.hardcorealchemy.event.EventRenderEntityItem;
 import targoss.hardcorealchemy.util.MiscVanilla;
 
 public class ListenerPlayerHinderedMind extends ConfiguredListener {
@@ -155,6 +157,50 @@ public class ListenerPlayerHinderedMind extends ConfiguredListener {
     
     @SubscribeEvent
     public void onDrawItem(EventDrawItem event) {
+        if (!isPlayerHindered(MiscVanilla.getTheMinecraftPlayer())) {
+            return;
+        }
+        
+        if (MiscVanilla.isEmptyItemStack(event.itemStack)) {
+            return;
+        }
+        
+        ItemStack itemStack = event.itemStack;
+        Item oldItem = itemStack.getItem();
+        Item obfuscatedItem = getObfuscatedItem(oldItem);
+        if (obfuscatedItem != oldItem) {
+            // TODO: Set the item field directly because this initializes capabilities every time it is called, which is really awful
+            itemStack.setItem(obfuscatedItem);
+            if (!itemStack.isItemStackDamageable()) {
+                itemStack.setItemDamage(0);
+            }
+        }
+    }
+    
+    @SubscribeEvent
+    public void onDrawHeldItem(EventDrawHeldItem event) {
+        if (!isPlayerHindered(MiscVanilla.getTheMinecraftPlayer())) {
+            return;
+        }
+        
+        if (MiscVanilla.isEmptyItemStack(event.itemStack)) {
+            return;
+        }
+        
+        ItemStack itemStack = event.itemStack;
+        Item oldItem = itemStack.getItem();
+        Item obfuscatedItem = getObfuscatedItem(oldItem);
+        if (obfuscatedItem != oldItem) {
+            // TODO: Set the item field directly because this initializes capabilities every time it is called, which is really awful
+            itemStack.setItem(obfuscatedItem);
+            if (!itemStack.isItemStackDamageable()) {
+                itemStack.setItemDamage(0);
+            }
+        }
+    }
+    
+    @SubscribeEvent
+    public void onRenderEntityItem(EventRenderEntityItem event) {
         if (!isPlayerHindered(MiscVanilla.getTheMinecraftPlayer())) {
             return;
         }
