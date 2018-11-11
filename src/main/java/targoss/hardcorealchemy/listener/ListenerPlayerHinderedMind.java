@@ -18,6 +18,9 @@
 
 package targoss.hardcorealchemy.listener;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import mchorse.metamorph.api.MorphManager;
 import mchorse.metamorph.api.abilities.IAbility;
 import mchorse.metamorph.api.morphs.AbstractMorph;
@@ -25,8 +28,12 @@ import mchorse.metamorph.capabilities.morphing.IMorphing;
 import mchorse.metamorph.capabilities.morphing.Morphing;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemHoe;
 import net.minecraft.item.ItemShield;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
@@ -44,12 +51,66 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.capability.humanity.ProviderHumanity;
 import targoss.hardcorealchemy.config.Configs;
+import targoss.hardcorealchemy.event.EventDrawItem;
 import targoss.hardcorealchemy.event.EventDrawItemOverlay;
 import targoss.hardcorealchemy.util.MiscVanilla;
 
 public class ListenerPlayerHinderedMind extends ConfiguredListener {
     public ListenerPlayerHinderedMind(Configs configs) {
         super(configs);
+    }
+    
+    private boolean heldItemTooltips = true;
+    private boolean renderHotbar = true;
+    private boolean renderHealth = true;
+    private boolean renderArmor = true;
+    private boolean renderFood = true;
+    private boolean renderHealthMount = true;
+    private boolean renderAir = true;
+    private boolean renderExperience = true;
+    private boolean renderJumpBar = true;
+    
+    private Map<Item, Item> itemObfuscation = new HashMap<>();
+    
+    @Override
+    public void serverAboutToStart(FMLServerAboutToStartEvent event) {
+        heldItemTooltips = MiscVanilla.getHeldItemTooltips();
+
+        Item coal = Items.COAL;
+        itemObfuscation.put(Items.REDSTONE, coal);
+        itemObfuscation.put(Items.DIAMOND, coal);
+        itemObfuscation.put(Items.IRON_INGOT, coal);
+        itemObfuscation.put(Items.GOLD_INGOT, coal);
+        itemObfuscation.put(Items.DYE, coal);
+        itemObfuscation.put(Items.FLINT, coal);
+        itemObfuscation.put(Items.GLOWSTONE_DUST, coal);
+        itemObfuscation.put(Items.ENDER_PEARL, coal);
+        itemObfuscation.put(Items.EMERALD, coal);
+        itemObfuscation.put(Items.NETHER_STAR, coal);
+    }
+    
+    private Item getObfuscatedItem(Item item) {
+        if (itemObfuscation.containsKey(item)) {
+            return itemObfuscation.get(item);
+        }
+        
+        if (item instanceof ItemBlock) {
+            return Item.getItemFromBlock(Blocks.STONE);
+        }
+        
+        if (item instanceof ItemTool) {
+            return Items.STONE_PICKAXE;
+        }
+        
+        if (item instanceof ItemSword) {
+            return Items.STONE_SWORD;
+        }
+        
+        if (item instanceof ItemHoe) {
+            return Items.STONE_HOE;
+        }
+        
+        return item;
     }
     
     public static boolean isPlayerHindered(EntityPlayer player) {
@@ -91,6 +152,28 @@ public class ListenerPlayerHinderedMind extends ConfiguredListener {
         }
     }
     
+    @SubscribeEvent
+    public void onDrawItem(EventDrawItem event) {
+        if (!isPlayerHindered(MiscVanilla.getTheMinecraftPlayer())) {
+            return;
+        }
+        
+        if (MiscVanilla.isEmptyItemStack(event.itemStack)) {
+            return;
+        }
+        
+        ItemStack itemStack = event.itemStack;
+        Item oldItem = itemStack.getItem();
+        Item obfuscatedItem = getObfuscatedItem(oldItem);
+        if (obfuscatedItem != oldItem) {
+            // TODO: Set the item field directly because this initializes capabilities every time it is called, which is really awful
+            itemStack.setItem(obfuscatedItem);
+            if (!itemStack.isItemStackDamageable()) {
+                itemStack.setItemDamage(0);
+            }
+        }
+    }
+    
     @SubscribeEvent(priority=EventPriority.LOWEST)
     public void onDisplayTooltip(ItemTooltipEvent event) {
         if (!isPlayerHindered(event.getEntityPlayer())) {
@@ -98,21 +181,6 @@ public class ListenerPlayerHinderedMind extends ConfiguredListener {
         }
         
         event.getToolTip().clear();
-    }
-    
-    private boolean heldItemTooltips = true;
-    private boolean renderHotbar = true;
-    private boolean renderHealth = true;
-    private boolean renderArmor = true;
-    private boolean renderFood = true;
-    private boolean renderHealthMount = true;
-    private boolean renderAir = true;
-    private boolean renderExperience = true;
-    private boolean renderJumpBar = true;
-    
-    @Override
-    public void serverAboutToStart(FMLServerAboutToStartEvent event) {
-        heldItemTooltips = MiscVanilla.getHeldItemTooltips();
     }
     
     @SubscribeEvent(priority=EventPriority.LOWEST)

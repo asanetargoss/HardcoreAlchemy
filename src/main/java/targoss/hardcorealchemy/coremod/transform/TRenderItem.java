@@ -18,10 +18,13 @@
 
 package targoss.hardcorealchemy.coremod.transform;
 
+import java.util.List;
+
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.ParameterNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
 import targoss.hardcorealchemy.coremod.MethodPatcher;
@@ -30,6 +33,7 @@ import targoss.hardcorealchemy.coremod.ObfuscatedName;
 public class TRenderItem extends MethodPatcher {
     private static final String RENDER_ITEM = "net.minecraft.client.renderer.RenderItem";
     private static final ObfuscatedName RENDER_ITEM_OVERLAY_INTO_GUI = new ObfuscatedName("func_180453_a" /*renderItemOverlayIntoGUI*/);
+    private static final ObfuscatedName RENDER_ITEM_AND_EFFECT_INTO_GUI = new ObfuscatedName("func_184391_a" /*renderItemAndEffectIntoGUI*/);
     
     // TODO: Remove after testing
     @Override public boolean enableDebug() { return true; }
@@ -44,6 +48,18 @@ public class TRenderItem extends MethodPatcher {
 
     @Override
     public void transformMethod(MethodNode method) {
+        if (method.name.equals(RENDER_ITEM_AND_EFFECT_INTO_GUI.get()) &&
+                method.desc.equals("(Lnet/minecraft/entity/EntityLivingBase;Lnet/minecraft/item/ItemStack;II)V")) {
+            InsnList patch = new InsnList();
+            patch.add(new VarInsnNode(Opcodes.ALOAD, 2));
+            patch.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
+                    "targoss/hardcorealchemy/event/EventDrawItem",
+                    "onDrawItem",
+                    "(Lnet/minecraft/item/ItemStack;)Lnet/minecraft/item/ItemStack;",
+                    false));
+            patch.add(new VarInsnNode(Opcodes.ASTORE, 2));
+            method.instructions.insert(patch);
+        }
         if (method.name.equals(RENDER_ITEM_OVERLAY_INTO_GUI.get())) {
             InsnList patch = new InsnList();
             patch.add(new VarInsnNode(Opcodes.ALOAD, 2));
