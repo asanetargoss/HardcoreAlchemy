@@ -31,9 +31,6 @@ public class TItemRenderer extends MethodPatcher {
     private static final String ITEM_RENDERER = "net.minecraft.client.renderer.ItemRenderer";
     private static final ObfuscatedName RENDER_ITEM_SIDE = new ObfuscatedName("func_187462_a" /*renderItemSide*/);
     
-    //TODO: Remove after testing
-    @Override public boolean enableDebug() { return true; }
-    
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
         if (transformedName.equals(ITEM_RENDERER)) {

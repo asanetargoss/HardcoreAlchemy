@@ -34,9 +34,6 @@ public class TRenderItem extends MethodPatcher {
     private static final String RENDER_ITEM = "net.minecraft.client.renderer.RenderItem";
     private static final ObfuscatedName RENDER_ITEM_OVERLAY_INTO_GUI = new ObfuscatedName("func_180453_a" /*renderItemOverlayIntoGUI*/);
     private static final ObfuscatedName RENDER_ITEM_AND_EFFECT_INTO_GUI = new ObfuscatedName("func_184391_a" /*renderItemAndEffectIntoGUI*/);
-    
-    // TODO: Remove after testing
-    @Override public boolean enableDebug() { return true; }
 
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
