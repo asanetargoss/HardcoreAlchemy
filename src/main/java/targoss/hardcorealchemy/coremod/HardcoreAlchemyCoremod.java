@@ -21,7 +21,6 @@ package targoss.hardcorealchemy.coremod;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
@@ -38,13 +37,15 @@ import targoss.hardcorealchemy.coremod.transform.TClassInheritanceMultiMap;
 import targoss.hardcorealchemy.coremod.transform.TCraftingManager;
 import targoss.hardcorealchemy.coremod.transform.TDataVillage;
 import targoss.hardcorealchemy.coremod.transform.TDecayingCrops;
+import targoss.hardcorealchemy.coremod.transform.TEntity;
 import targoss.hardcorealchemy.coremod.transform.TEntityLivingBase;
-import targoss.hardcorealchemy.coremod.transform.TRenderItem;
+import targoss.hardcorealchemy.coremod.transform.TEntityPlayerSP;
 import targoss.hardcorealchemy.coremod.transform.THibernatingCrops;
 import targoss.hardcorealchemy.coremod.transform.TItemRenderer;
 import targoss.hardcorealchemy.coremod.transform.TObjectProximityModifier;
 import targoss.hardcorealchemy.coremod.transform.TProjectEKeyHandler;
 import targoss.hardcorealchemy.coremod.transform.TRenderEntityItem;
+import targoss.hardcorealchemy.coremod.transform.TRenderItem;
 import targoss.hardcorealchemy.coremod.transform.TRightClickHarvesting;
 import targoss.hardcorealchemy.coremod.transform.TSlot;
 import targoss.hardcorealchemy.coremod.transform.TThaumcraftPlayerEvents;
@@ -84,7 +85,9 @@ public class HardcoreAlchemyCoremod implements IFMLLoadingPlugin {
 				TDataVillage.class.getName(),
 				TRenderItem.class.getName(),
 				TItemRenderer.class.getName(),
-				TRenderEntityItem.class.getName()
+				TRenderEntityItem.class.getName(),
+				TEntity.class.getName(),
+				TEntityPlayerSP.class.getName()
 		};
 	}
 

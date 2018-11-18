@@ -27,6 +27,7 @@ import mchorse.metamorph.api.morphs.AbstractMorph;
 import mchorse.metamorph.capabilities.morphing.IMorphing;
 import mchorse.metamorph.capabilities.morphing.Morphing;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -52,6 +53,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.capability.humanity.ProviderHumanity;
 import targoss.hardcorealchemy.config.Configs;
+import targoss.hardcorealchemy.coremod.CoremodHook;
 import targoss.hardcorealchemy.event.EventDrawItem;
 import targoss.hardcorealchemy.event.EventDrawItemOverlay;
 import targoss.hardcorealchemy.util.MiscVanilla;
@@ -130,6 +132,16 @@ public class ListenerPlayerHinderedMind extends ConfiguredListener {
         }
         
         return true;
+    }
+    
+    @CoremodHook
+    public static boolean canPlayerUseSneakToPreventFall(Entity entity) {
+        return (entity instanceof EntityPlayer) && !isPlayerHindered((EntityPlayer)entity);
+    }
+    
+    @CoremodHook
+    public static boolean isPlayerSneakingToPreventAutoJump(EntityPlayer player) {
+        return player.isSneaking() && !isPlayerHindered(player);
     }
     
     @SubscribeEvent
@@ -253,7 +265,11 @@ public class ListenerPlayerHinderedMind extends ConfiguredListener {
             if (ListenerPlayerHinderedMind.isPlayerHindered(player)) {
                 ((EntityPlayerSP)player).autoJumpEnabled = true;
                 jump = false;
-                sneak = false;
+                if (sneak) {
+                    // Undo the movement bonus of sneaking
+                    moveStrafe = moveStrafe / 0.3F;
+                    moveForward = moveForward / 0.3F;
+                }
                 player.setSprinting(false);
 
                 // Auto-swim if the player is in water and doesn't have the swim ability
