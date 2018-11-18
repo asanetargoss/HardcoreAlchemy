@@ -264,7 +264,9 @@ public class ListenerPlayerHinderedMind extends ConfiguredListener {
             EntityPlayer player = MiscVanilla.getTheMinecraftPlayer();
             if (ListenerPlayerHinderedMind.isPlayerHindered(player)) {
                 ((EntityPlayerSP)player).autoJumpEnabled = true;
-                jump = false;
+                if (!player.capabilities.allowFlying) {
+                    jump = false;
+                }
                 if (sneak) {
                     // Undo the movement bonus of sneaking
                     moveStrafe = moveStrafe / 0.3F;
