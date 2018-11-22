@@ -80,6 +80,7 @@ public class ListenerPlayerHinderedMind extends ConfiguredListener {
         heldItemTooltips = MiscVanilla.getHeldItemTooltips();
 
         Item coal = Items.COAL;
+        itemObfuscation.put(coal, coal);
         itemObfuscation.put(Items.REDSTONE, coal);
         itemObfuscation.put(Items.DIAMOND, coal);
         itemObfuscation.put(Items.IRON_INGOT, coal);
@@ -113,7 +114,7 @@ public class ListenerPlayerHinderedMind extends ConfiguredListener {
             return Items.STONE_HOE;
         }
         
-        return item;
+        return null;
     }
     
     public static boolean isPlayerHindered(EntityPlayer player) {
@@ -160,7 +161,8 @@ public class ListenerPlayerHinderedMind extends ConfiguredListener {
         if ((item instanceof ItemTool) ||
                 (item instanceof ItemSword) ||
                 (item instanceof ItemArmor) ||
-                (item instanceof ItemShield)) {
+                (item instanceof ItemShield) ||
+                (item instanceof ItemBlock /* For essentia jars from Thaumcraft */)) {
             itemStack.setItemDamage(0);
         }
     }
@@ -178,7 +180,7 @@ public class ListenerPlayerHinderedMind extends ConfiguredListener {
         ItemStack itemStack = event.itemStack;
         Item oldItem = itemStack.getItem();
         Item obfuscatedItem = getObfuscatedItem(oldItem);
-        if (obfuscatedItem != oldItem) {
+        if (obfuscatedItem != null) {
             // TODO: Set the item field directly because this initializes capabilities every time it is called, which is really awful
             itemStack.setItem(obfuscatedItem);
             if (!itemStack.isItemStackDamageable()) {
