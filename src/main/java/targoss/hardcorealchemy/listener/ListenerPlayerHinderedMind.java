@@ -31,6 +31,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemBlock;
@@ -42,7 +43,7 @@ import net.minecraft.item.ItemTool;
 import net.minecraft.util.MovementInput;
 import net.minecraftforge.client.GuiIngameForge;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -54,8 +55,10 @@ import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.capability.humanity.ProviderHumanity;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.coremod.CoremodHook;
-import targoss.hardcorealchemy.event.EventDrawItem;
-import targoss.hardcorealchemy.event.EventDrawItemOverlay;
+import targoss.hardcorealchemy.event.EventDrawInventoryItem;
+import targoss.hardcorealchemy.event.EventDrawWorldItem;
+import targoss.hardcorealchemy.event.EventRenderSlotTooltip;
+import targoss.hardcorealchemy.event.EventTakeStack;
 import targoss.hardcorealchemy.util.MiscVanilla;
 
 public class ListenerPlayerHinderedMind extends ConfiguredListener {
@@ -145,13 +148,39 @@ public class ListenerPlayerHinderedMind extends ConfiguredListener {
         return player.isSneaking() && !isPlayerHindered(player);
     }
     
+    /**
+     * Check if this is a real inventory slot as opposed to some documentation/display slot
+     */
+    private static boolean isRealInventorySlot(Slot slot, EntityPlayer player) {
+        // Special case
+        if (slot == EventDrawInventoryItem.MOUSE_SLOT) {
+            return true;
+        }
+        // The best way to check if an item is actually in a real inventory slot,
+        // as opposed to some form of documentation or display, is to check
+        // if the player can take the item.
+        // However, we added an event which can stop this from happening
+        // in a real inventory slot, so we need to check for that case
+        // There is also a possible case where the event is canceled yet the
+        // slot isn't real, which would cause this heuristic to fail.
+        // For now, this is enough.
+        EventTakeStack.Pre stackEvent = new EventTakeStack.Pre(slot, player);
+        // Can take stack, or was taking stack canceled?
+        return (slot.canTakeStack(player) || MinecraftForge.EVENT_BUS.post(stackEvent));
+    }
+    
     @SubscribeEvent
-    public void onDrawItemOverlay(EventDrawItemOverlay event) {
-        if (!isPlayerHindered(MiscVanilla.getTheMinecraftPlayer())) {
+    public void onDrawInventoryItem(EventDrawInventoryItem event) {
+        if (MiscVanilla.isEmptyItemStack(event.itemStack)) {
             return;
         }
         
-        if (MiscVanilla.isEmptyItemStack(event.itemStack)) {
+        EntityPlayer player = MiscVanilla.getTheMinecraftPlayer();
+        if (!isPlayerHindered(player)) {
+            return;
+        }
+        
+        if (!isRealInventorySlot(event.slot, player)) {
             return;
         }
         
@@ -165,10 +194,20 @@ public class ListenerPlayerHinderedMind extends ConfiguredListener {
                 (item instanceof ItemBlock /* For essentia jars from Thaumcraft */)) {
             itemStack.setItemDamage(0);
         }
+
+        Item oldItem = itemStack.getItem();
+        Item obfuscatedItem = getObfuscatedItem(oldItem);
+        if (obfuscatedItem != null) {
+            // TODO: Set the item field directly because this initializes capabilities every time it is called, which is really awful
+            itemStack.setItem(obfuscatedItem);
+            if (!itemStack.isItemStackDamageable()) {
+                itemStack.setItemDamage(0);
+            }
+        }
     }
     
     @SubscribeEvent
-    public void onDrawItem(EventDrawItem event) {
+    public void onDrawWorldItem(EventDrawWorldItem event) {
         if (!isPlayerHindered(MiscVanilla.getTheMinecraftPlayer())) {
             return;
         }
@@ -189,13 +228,19 @@ public class ListenerPlayerHinderedMind extends ConfiguredListener {
         }
     }
     
-    @SubscribeEvent(priority=EventPriority.LOWEST)
-    public void onDisplayTooltip(ItemTooltipEvent event) {
-        if (!isPlayerHindered(event.getEntityPlayer())) {
+    @SubscribeEvent
+    public void onDisplayTooltip(EventRenderSlotTooltip.Pre event) {
+        EntityPlayer player = MiscVanilla.getTheMinecraftPlayer();
+        
+        if (!isPlayerHindered(player)) {
             return;
         }
         
-        event.getToolTip().clear();
+        if (!isRealInventorySlot(event.slot, player)) {
+            return;
+        }
+        
+        event.setCanceled(true);
     }
     
     @SubscribeEvent(priority=EventPriority.LOWEST)

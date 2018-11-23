@@ -25,20 +25,20 @@ import targoss.hardcorealchemy.coremod.CoremodHook;
 import targoss.hardcorealchemy.util.MiscVanilla;
 
 /**
- *  Event for when an ItemStack's count/damage bar is drawn anywhere in the inventory.
+ *  Event for when an ItemStack's visual appearance is drawn in the world, or as a held item.
  *  ItemStack is a copy and is therefore safe to modify.
  */
-public class EventDrawItemOverlay extends Event {
+public class EventDrawWorldItem extends Event {
     public ItemStack itemStack;
     
-    public EventDrawItemOverlay(ItemStack itemStack) {
+    public EventDrawWorldItem(ItemStack itemStack) {
         this.itemStack = itemStack;
     }
     
     @CoremodHook
-    public static ItemStack onDrawItemOverlay(ItemStack itemStack) {
+    public static ItemStack onDrawItem(ItemStack itemStack) {
         ItemStack newItemStack = MiscVanilla.isEmptyItemStack(itemStack) ? itemStack : itemStack.copy();
-        EventDrawItemOverlay event = new EventDrawItemOverlay(newItemStack);
+        EventDrawWorldItem event = new EventDrawWorldItem(newItemStack);
         return (MinecraftForge.EVENT_BUS.post(event) ? MiscVanilla.ITEM_STACK_EMPTY : event.itemStack);
     }
 }

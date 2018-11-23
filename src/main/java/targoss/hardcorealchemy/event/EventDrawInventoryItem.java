@@ -18,6 +18,7 @@
 
 package targoss.hardcorealchemy.event;
 
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Event;
@@ -25,20 +26,32 @@ import targoss.hardcorealchemy.coremod.CoremodHook;
 import targoss.hardcorealchemy.util.MiscVanilla;
 
 /**
- *  Event for when an ItemStack's visual appearance is drawn in an inventory, in the world, or as a held item.
+ *  Event for when an ItemStack's visual appearance is drawn in an inventory.
  *  ItemStack is a copy and is therefore safe to modify.
  */
-public class EventDrawItem extends Event {
+public class EventDrawInventoryItem extends Event {
     public ItemStack itemStack;
+    public final Slot slot;
     
-    public EventDrawItem(ItemStack itemStack) {
+    public EventDrawInventoryItem(ItemStack itemStack, Slot slot) {
         this.itemStack = itemStack;
+        this.slot = slot;
     }
     
     @CoremodHook
-    public static ItemStack onDrawItem(ItemStack itemStack) {
+    public static ItemStack onDrawItem(ItemStack itemStack, Slot slot) {
         ItemStack newItemStack = MiscVanilla.isEmptyItemStack(itemStack) ? itemStack : itemStack.copy();
-        EventDrawItem event = new EventDrawItem(newItemStack);
+        EventDrawInventoryItem event = new EventDrawInventoryItem(newItemStack, slot);
         return (MinecraftForge.EVENT_BUS.post(event) ? MiscVanilla.ITEM_STACK_EMPTY : event.itemStack);
+    }
+    
+    /**
+     * A special slot indicating the item is being manipulated by the mouse or a touchscreen
+     */
+    public static final Slot MOUSE_SLOT = new Slot(null, 0, 0, 0);
+    
+    @CoremodHook
+    public static ItemStack onDrawMouseItem(ItemStack itemStack) {
+        return onDrawItem(itemStack, MOUSE_SLOT);
     }
 }

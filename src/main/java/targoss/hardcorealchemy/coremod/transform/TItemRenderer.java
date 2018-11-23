@@ -45,7 +45,7 @@ public class TItemRenderer extends MethodPatcher {
             InsnList patch = new InsnList();
             patch.add(new VarInsnNode(Opcodes.ALOAD, 2));
             patch.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
-                    "targoss/hardcorealchemy/event/EventDrawItem",
+                    "targoss/hardcorealchemy/event/EventDrawWorldItem",
                     "onDrawItem",
                     "(Lnet/minecraft/item/ItemStack;)Lnet/minecraft/item/ItemStack;",
                     false));

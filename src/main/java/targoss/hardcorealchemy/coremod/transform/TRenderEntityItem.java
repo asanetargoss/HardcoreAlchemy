@@ -55,7 +55,7 @@ public class TRenderEntityItem extends MethodPatcher {
                         ((MethodInsnNode)hook).name.equals(GET_ENTITY_ITEM.get())) {
                     InsnList patch = new InsnList();
                     patch.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
-                            "targoss/hardcorealchemy/event/EventDrawItem",
+                            "targoss/hardcorealchemy/event/EventDrawWorldItem",
                             "onDrawItem",
                             "(Lnet/minecraft/item/ItemStack;)Lnet/minecraft/item/ItemStack;",
                             false));
