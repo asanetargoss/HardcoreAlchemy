@@ -40,7 +40,7 @@ public class TGuiContainer extends MethodPatcher {
     private final ObfuscatedName DRAW_SCREEN = new ObfuscatedName("func_73863_a" /*drawScreen*/);
     private final ObfuscatedName THE_SLOT = new ObfuscatedName("field_147006_u" /*theSlot*/);
     private final ObfuscatedName RETURNING_STACK = new ObfuscatedName("field_146991_C" /*returningStack*/);
-    private final ObfuscatedName ENABLE_DEPTH = new ObfuscatedName("enableDepth" /*GlStateManager.enableDepth*/);
+    private final ObfuscatedName ENABLE_DEPTH = new ObfuscatedName("func_179126_j" /*GlStateManager.enableDepth*/);
     private final ObfuscatedName GET_STACK = new ObfuscatedName("func_75211_c" /*Slot.getStack*/);
     private final ObfuscatedName GET_HAS_STACK = new ObfuscatedName("func_75216_d" /*Slot.getHasStack*/);
 
