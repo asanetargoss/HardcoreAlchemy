@@ -53,7 +53,6 @@ import net.minecraft.util.MovementInput;
 import net.minecraftforge.client.GuiIngameForge;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
@@ -70,7 +69,7 @@ import targoss.hardcorealchemy.coremod.CoremodHook;
 import targoss.hardcorealchemy.event.EventDrawInventoryItem;
 import targoss.hardcorealchemy.event.EventDrawWorldItem;
 import targoss.hardcorealchemy.event.EventRenderSlotTooltip;
-import targoss.hardcorealchemy.event.EventTakeStack;
+import targoss.hardcorealchemy.util.InventoryUtil;
 import targoss.hardcorealchemy.util.MiscVanilla;
 
 public class ListenerPlayerHinderedMind extends ConfiguredListener {
@@ -160,27 +159,6 @@ public class ListenerPlayerHinderedMind extends ConfiguredListener {
         return player.isSneaking() && !isPlayerHindered(player);
     }
     
-    /**
-     * Check if this is a real inventory slot as opposed to some documentation/display slot
-     */
-    private static boolean isRealInventorySlot(Slot slot, EntityPlayer player) {
-        // Special case
-        if (slot == EventDrawInventoryItem.MOUSE_SLOT) {
-            return true;
-        }
-        // The best way to check if an item is actually in a real inventory slot,
-        // as opposed to some form of documentation or display, is to check
-        // if the player can take the item.
-        // However, we added an event which can stop this from happening
-        // in a real inventory slot, so we need to check for that case
-        // There is also a possible case where the event is canceled yet the
-        // slot isn't real, which would cause this heuristic to fail.
-        // For now, this is enough.
-        EventTakeStack.Pre stackEvent = new EventTakeStack.Pre(slot, player);
-        // Can take stack, or was taking stack canceled?
-        return (slot.canTakeStack(player) || MinecraftForge.EVENT_BUS.post(stackEvent));
-    }
-    
     @SubscribeEvent
     public void onDrawInventoryItem(EventDrawInventoryItem event) {
         if (MiscVanilla.isEmptyItemStack(event.itemStack)) {
@@ -192,7 +170,7 @@ public class ListenerPlayerHinderedMind extends ConfiguredListener {
             return;
         }
         
-        if (!isRealInventorySlot(event.slot, player)) {
+        if (!InventoryUtil.isInteractableSlot(event.slot, player)) {
             return;
         }
         
@@ -248,7 +226,7 @@ public class ListenerPlayerHinderedMind extends ConfiguredListener {
             return;
         }
         
-        if (!isRealInventorySlot(event.slot, player)) {
+        if (!InventoryUtil.isInteractableSlot(event.slot, player)) {
             return;
         }
         
@@ -425,7 +403,7 @@ public class ListenerPlayerHinderedMind extends ConfiguredListener {
                 GuiContainer guiContainer = (GuiContainer)guiScreen;
                 Slot hoveredSlot = guiContainer.getSlotUnderMouse();
                 EntityPlayer player = MiscVanilla.getTheMinecraftPlayer();
-                if (hoveredSlot != null && isRealInventorySlot(hoveredSlot, player) && isPlayerHindered(player)) {
+                if (hoveredSlot != null && InventoryUtil.isInteractableSlot(hoveredSlot, player) && isPlayerHindered(player)) {
                     return null;
                 }
             }

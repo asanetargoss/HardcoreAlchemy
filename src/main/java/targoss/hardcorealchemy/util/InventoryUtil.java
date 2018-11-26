@@ -40,14 +40,21 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import targoss.hardcorealchemy.ModState;
+import targoss.hardcorealchemy.event.EventDrawInventoryItem;
+import targoss.hardcorealchemy.event.EventTakeStack;
 import thaumcraft.common.container.slot.SlotCraftingArcaneWorkbench;
 
 public class InventoryUtil {
+    /**
+     * Check if the slot is a crafting table output slot.
+     * This function also handles "technical" slots used by EventDrawInventoryItem.
+     */
     public static boolean isCraftingSlot(Slot slot) {
         if (slot instanceof SlotCrafting) {
             return true;
@@ -60,6 +67,33 @@ public class InventoryUtil {
         }
         
         return false;
+    }
+
+    /**
+     * Check if the slot is a slot containing an item the player can take and/or place,
+     * as opposed to some documentation/display slot.
+     * Player field is required and determines which player is about to interact with the slot.
+     * This function also handles "technical" slots used by EventDrawInventoryItem.
+     */
+    public static boolean isInteractableSlot(Slot slot, EntityPlayer player) {
+        // Special cases
+        if (slot == null) {
+            return false;
+        }
+        if (slot == EventDrawInventoryItem.MOUSE_SLOT) {
+            return true;
+        }
+        // The best way to check if an item is actually in a real inventory slot,
+        // as opposed to some form of documentation or display, is to check
+        // if the player can take the item.
+        // However, we added an event which can stop this from happening
+        // in a real inventory slot, so we need to check for that case
+        // There is also a possible case where the event is canceled yet the
+        // slot isn't real, which would cause this heuristic to fail.
+        // For now, this is enough.
+        EventTakeStack.Pre stackEvent = new EventTakeStack.Pre(slot, player);
+        // Can take stack, or was taking stack canceled?
+        return (slot.canTakeStack(player) || MinecraftForge.EVENT_BUS.post(stackEvent));
     }
 
     @Optional.Method(modid=ModState.THAUMCRAFT_ID)
