@@ -20,7 +20,6 @@ package targoss.hardcorealchemy.util;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
@@ -41,12 +40,6 @@ public class MiscVanilla {
     @SideOnly(Side.CLIENT)
     public static boolean isTheMinecraftPlayer(EntityPlayer player) {
         return Minecraft.getMinecraft().player == player;
-    }
-    
-    public static final ItemStack ITEM_STACK_EMPTY = null;
-    
-    public static boolean isEmptyItemStack(ItemStack itemStack) {
-        return itemStack == null;
     }
     
     /**

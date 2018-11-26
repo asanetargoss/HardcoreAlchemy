@@ -40,7 +40,6 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.util.InventoryUtil;
-import targoss.hardcorealchemy.util.MiscVanilla;
 
 public class ListenerInventoryFoodRot extends ConfiguredListener {
     public ListenerInventoryFoodRot(Configs configs) {
@@ -151,7 +150,7 @@ public class ListenerInventoryFoodRot extends ConfiguredListener {
         for (int i = 0; i < inventorySize; i++) {
             ItemStack itemStack = inventory.getStackInSlot(i);
             
-            if (MiscVanilla.isEmptyItemStack(itemStack)) {
+            if (InventoryUtil.isEmptyItemStack(itemStack)) {
                 continue;
             }
             

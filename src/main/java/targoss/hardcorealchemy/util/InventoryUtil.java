@@ -56,6 +56,12 @@ import targoss.hardcorealchemy.event.EventTakeStack;
 import thaumcraft.common.container.slot.SlotCraftingArcaneWorkbench;
 
 public class InventoryUtil {
+    public static final ItemStack ITEM_STACK_EMPTY = null;
+
+    public static boolean isEmptyItemStack(ItemStack itemStack) {
+        return itemStack == null;
+    }
+
     /**
      * Check if the slot is a crafting table output slot.
      * This function also handles "technical" slots used by EventDrawInventoryItem.
@@ -202,7 +208,7 @@ public class InventoryUtil {
         int slots = inventory.getSlots();
         for (int i = 0; i < slots; i++) {
             ItemStack item = inventory.getStackInSlot(i);
-            if (!MiscVanilla.isEmptyItemStack(item)) {
+            if (!InventoryUtil.isEmptyItemStack(item)) {
                 NBTTagCompound itemNbt = new NBTTagCompound();
                 itemNbt.setByte("Slot", (byte)i);
                 item.writeToNBT(itemNbt);

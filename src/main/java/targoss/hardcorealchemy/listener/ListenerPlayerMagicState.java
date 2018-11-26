@@ -139,7 +139,7 @@ public class ListenerPlayerMagicState extends ConfiguredListener {
     @Optional.Method(modid=ModState.THAUMCRAFT_ID)
     public void onCraftSalisMundus(EventTakeStack.Pre event) {
         ItemStack toCraft = event.slot.getStack();
-        if (MiscVanilla.isEmptyItemStack(toCraft) ||
+        if (InventoryUtil.isEmptyItemStack(toCraft) ||
                 toCraft.getItem() != ItemsTC.salisMundus ||
                 !InventoryUtil.isCraftingSlot(event.slot)) {
             return;
@@ -163,7 +163,7 @@ public class ListenerPlayerMagicState extends ConfiguredListener {
         }
         
         ItemStack toCraft = event.craftResult;
-        if (MiscVanilla.isEmptyItemStack(toCraft) || toCraft.getItem() != ItemsTC.salisMundus) {
+        if (InventoryUtil.isEmptyItemStack(toCraft) || toCraft.getItem() != ItemsTC.salisMundus) {
             return;
         }
         

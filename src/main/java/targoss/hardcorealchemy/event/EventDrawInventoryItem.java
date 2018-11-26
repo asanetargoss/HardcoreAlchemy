@@ -23,7 +23,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import targoss.hardcorealchemy.coremod.CoremodHook;
-import targoss.hardcorealchemy.util.MiscVanilla;
+import targoss.hardcorealchemy.util.InventoryUtil;
 
 /**
  *  Event for when an ItemStack's visual appearance is drawn in an inventory.
@@ -40,9 +40,9 @@ public class EventDrawInventoryItem extends Event {
     
     @CoremodHook
     public static ItemStack onDrawItem(ItemStack itemStack, Slot slot) {
-        ItemStack newItemStack = MiscVanilla.isEmptyItemStack(itemStack) ? itemStack : itemStack.copy();
+        ItemStack newItemStack = InventoryUtil.isEmptyItemStack(itemStack) ? itemStack : itemStack.copy();
         EventDrawInventoryItem event = new EventDrawInventoryItem(newItemStack, slot);
-        return (MinecraftForge.EVENT_BUS.post(event) ? MiscVanilla.ITEM_STACK_EMPTY : event.itemStack);
+        return (MinecraftForge.EVENT_BUS.post(event) ? InventoryUtil.ITEM_STACK_EMPTY : event.itemStack);
     }
     
     /**

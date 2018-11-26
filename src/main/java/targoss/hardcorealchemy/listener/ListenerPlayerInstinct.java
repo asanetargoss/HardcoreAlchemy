@@ -64,7 +64,7 @@ import targoss.hardcorealchemy.network.MessageInstinctActive;
 import targoss.hardcorealchemy.network.MessageInstinctValue;
 import targoss.hardcorealchemy.network.PacketHandler;
 import targoss.hardcorealchemy.util.Chat;
-import targoss.hardcorealchemy.util.MiscVanilla;
+import targoss.hardcorealchemy.util.InventoryUtil;
 
 /**
  * Capability handling, ticking, and event hooks for instincts.
@@ -322,7 +322,7 @@ public class ListenerPlayerInstinct extends ConfiguredListener {
         }
         
         ItemStack itemStack = event.getItemStack();
-        if (MiscVanilla.isEmptyItemStack(itemStack) || itemStack.getItem() != Items.FLINT_AND_STEEL) {
+        if (InventoryUtil.isEmptyItemStack(itemStack) || itemStack.getItem() != Items.FLINT_AND_STEEL) {
             return;
         }
         

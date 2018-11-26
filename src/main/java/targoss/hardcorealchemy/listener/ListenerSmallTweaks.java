@@ -51,6 +51,7 @@ import targoss.hardcorealchemy.capability.misc.ICapabilityMisc;
 import targoss.hardcorealchemy.capability.misc.ProviderMisc;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.util.Chat;
+import targoss.hardcorealchemy.util.InventoryUtil;
 import targoss.hardcorealchemy.util.MiscVanilla;
 import toughasnails.api.TANPotions;
 
@@ -92,7 +93,7 @@ public class ListenerSmallTweaks extends ConfiguredListener {
         }
         
         ItemStack heldStack = player.getHeldItemMainhand();
-        if (MiscVanilla.isEmptyItemStack(heldStack)) {
+        if (InventoryUtil.isEmptyItemStack(heldStack)) {
             event.setDropChance(0.0F);
             return;
         }

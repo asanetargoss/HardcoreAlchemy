@@ -185,7 +185,7 @@ public class FoodLists {
      * DOES NOT check for NBT/Capability/crafting history!
      */
     public static MorphDiet.Restriction getRestriction(ItemStack itemStack) {
-        if (MiscVanilla.isEmptyItemStack(itemStack)) {
+        if (InventoryUtil.isEmptyItemStack(itemStack)) {
             return null;
         }
         Item item = itemStack.getItem();
@@ -218,7 +218,7 @@ public class FoodLists {
     }
     
     public static boolean getIgnoresCrafting(ItemStack itemStack) {
-        if (MiscVanilla.isEmptyItemStack(itemStack)) {
+        if (InventoryUtil.isEmptyItemStack(itemStack)) {
             return false;
         }
         Item item = itemStack.getItem();

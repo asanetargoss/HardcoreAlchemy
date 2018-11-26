@@ -158,7 +158,7 @@ public class ListenerPlayerHinderedMind extends ConfiguredListener {
     
     @SubscribeEvent
     public void onDrawInventoryItem(EventDrawInventoryItem event) {
-        if (MiscVanilla.isEmptyItemStack(event.itemStack)) {
+        if (InventoryUtil.isEmptyItemStack(event.itemStack)) {
             return;
         }
         
@@ -199,7 +199,7 @@ public class ListenerPlayerHinderedMind extends ConfiguredListener {
             return;
         }
         
-        if (MiscVanilla.isEmptyItemStack(event.itemStack)) {
+        if (InventoryUtil.isEmptyItemStack(event.itemStack)) {
             return;
         }
         
