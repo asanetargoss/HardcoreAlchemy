@@ -31,6 +31,9 @@ import gr8pefish.ironbackpacks.container.backpack.InventoryBackpack;
 import gr8pefish.ironbackpacks.items.backpacks.ItemBackpack;
 import moze_intel.projecte.api.ProjectEAPI;
 import moze_intel.projecte.api.capabilities.IAlchBagProvider;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
@@ -42,6 +45,8 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Optional;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -94,6 +99,15 @@ public class InventoryUtil {
         EventTakeStack.Pre stackEvent = new EventTakeStack.Pre(slot, player);
         // Can take stack, or was taking stack canceled?
         return (slot.canTakeStack(player) || MinecraftForge.EVENT_BUS.post(stackEvent));
+    }
+    
+    @SideOnly(Side.CLIENT)
+    public static Slot getSlotUnderMouse() {
+        GuiScreen guiScreen = Minecraft.getMinecraft().currentScreen;
+        if (guiScreen instanceof GuiContainer) {
+            return ((GuiContainer)guiScreen).getSlotUnderMouse();
+        }
+        return null;
     }
 
     @Optional.Method(modid=ModState.THAUMCRAFT_ID)

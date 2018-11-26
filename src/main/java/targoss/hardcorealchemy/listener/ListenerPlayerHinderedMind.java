@@ -32,10 +32,7 @@ import mezz.jei.JustEnoughItems;
 import mezz.jei.config.OverlayToggleEvent;
 import mezz.jei.input.IClickedIngredient;
 import mezz.jei.input.IShowsRecipeFocuses;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -398,14 +395,10 @@ public class ListenerPlayerHinderedMind extends ConfiguredListener {
 
         @Override
         public IClickedIngredient<?> getIngredientUnderMouse(int mouseX, int mouseY) {
-            GuiScreen guiScreen = Minecraft.getMinecraft().currentScreen;
-            if (guiScreen instanceof GuiContainer) {
-                GuiContainer guiContainer = (GuiContainer)guiScreen;
-                Slot hoveredSlot = guiContainer.getSlotUnderMouse();
-                EntityPlayer player = MiscVanilla.getTheMinecraftPlayer();
-                if (hoveredSlot != null && InventoryUtil.isInteractableSlot(hoveredSlot, player) && isPlayerHindered(player)) {
-                    return null;
-                }
+            Slot hoveredSlot = InventoryUtil.getSlotUnderMouse();
+            EntityPlayer player = MiscVanilla.getTheMinecraftPlayer();
+            if (hoveredSlot != null && InventoryUtil.isInteractableSlot(hoveredSlot, player) && isPlayerHindered(player)) {
+                return null;
             }
             return delegate.getIngredientUnderMouse(mouseX, mouseY);
         }
