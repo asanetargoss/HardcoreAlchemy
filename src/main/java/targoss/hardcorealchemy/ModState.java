@@ -35,6 +35,7 @@ public final class ModState {
     public static final String THAUMCRAFT_ID = "thaumcraft";
     public static final String DEADLY_MONSTERS_ID = "dmonsters";
     public static final String ALCHEMIC_ASH_ID = "AlchemicAsh";
+    public static final String JEI_ID = "JEI";
     public static boolean isDissolutionLoaded = false;
     public static boolean isNutritionLoaded = false;
     public static boolean isBloodMagicLoaded = false;
@@ -46,6 +47,7 @@ public final class ModState {
     public static boolean isHarvestCraftLoaded = false;
     public static boolean isThaumcraftLoaded = false;
     public static boolean isAlchemicAshLoaded = false;
+    public static boolean isJEILoaded = false;
 
     private ModState() { }
 }

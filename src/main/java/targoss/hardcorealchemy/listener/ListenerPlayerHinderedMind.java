@@ -18,7 +18,9 @@
 
 package targoss.hardcorealchemy.listener;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import mchorse.metamorph.api.MorphManager;
@@ -26,7 +28,14 @@ import mchorse.metamorph.api.abilities.IAbility;
 import mchorse.metamorph.api.morphs.AbstractMorph;
 import mchorse.metamorph.capabilities.morphing.IMorphing;
 import mchorse.metamorph.capabilities.morphing.Morphing;
+import mezz.jei.JustEnoughItems;
+import mezz.jei.config.OverlayToggleEvent;
+import mezz.jei.input.IClickedIngredient;
+import mezz.jei.input.IShowsRecipeFocuses;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -42,15 +51,18 @@ import net.minecraft.item.ItemSword;
 import net.minecraft.item.ItemTool;
 import net.minecraft.util.MovementInput;
 import net.minecraftforge.client.GuiIngameForge;
+import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.capability.humanity.ProviderHumanity;
 import targoss.hardcorealchemy.config.Configs;
@@ -365,5 +377,102 @@ public class ListenerPlayerHinderedMind extends ConfiguredListener {
         
         player.movementInput = new RiggedMovementInput(player.movementInput);
         isMovementRigged = true;
+    }
+
+    @Optional.Method(modid=ModState.JEI_ID)
+    private static List<IShowsRecipeFocuses> getJeiRecipeFocuses() {
+        try {
+            // Reflection... (JustEnoughItems.proxy.starter.guiEventHandler.inputHandler.showsRecipeFocuses)
+            mezz.jei.ProxyCommonClient jeiProxy = (mezz.jei.ProxyCommonClient)JustEnoughItems.getProxy();
+            Field jeiStarterField = jeiProxy.getClass().getDeclaredField("starter");
+            jeiStarterField.setAccessible(true);
+            mezz.jei.JeiStarter jeiStarter = (mezz.jei.JeiStarter)jeiStarterField.get(jeiProxy);
+            Field guiEventHandlerField = jeiStarter.getClass().getDeclaredField("guiEventHandler");
+            guiEventHandlerField.setAccessible(true);
+            mezz.jei.GuiEventHandler guiEventHandler = (mezz.jei.GuiEventHandler)guiEventHandlerField.get(jeiStarter);
+            Field inputHandlerField = guiEventHandler.getClass().getDeclaredField("inputHandler");
+            inputHandlerField.setAccessible(true);
+            mezz.jei.input.InputHandler inputHandler = (mezz.jei.input.InputHandler)inputHandlerField.get(guiEventHandler);
+            if (inputHandler == null) {
+                return null;
+            }
+            Field showsRecipeFocusesField = inputHandler.getClass().getDeclaredField("showsRecipeFocuses");
+            showsRecipeFocusesField.setAccessible(true);
+            return (List<IShowsRecipeFocuses>)showsRecipeFocusesField.get(inputHandler);
+        } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        
+        return null;
+    }
+    
+    /**
+     * When GuiContainerWrapper is replaced by this, and the player's mind is hindered,
+     * JEI will no longer look up recipes on items in inventories.
+     */
+    @SideOnly(Side.CLIENT)
+    public static class InventoryRecipeCheckStopper extends mezz.jei.input.GuiContainerWrapper {
+        public mezz.jei.input.GuiContainerWrapper delegate;
+        
+        public InventoryRecipeCheckStopper (mezz.jei.input.GuiContainerWrapper delegate) {
+            this.delegate = delegate;
+        }
+
+        @Override
+        public IClickedIngredient<?> getIngredientUnderMouse(int mouseX, int mouseY) {
+            GuiScreen guiScreen = Minecraft.getMinecraft().currentScreen;
+            if (guiScreen instanceof GuiContainer) {
+                GuiContainer guiContainer = (GuiContainer)guiScreen;
+                Slot hoveredSlot = guiContainer.getSlotUnderMouse();
+                EntityPlayer player = MiscVanilla.getTheMinecraftPlayer();
+                if (hoveredSlot != null && isRealInventorySlot(hoveredSlot, player) && isPlayerHindered(player)) {
+                    return null;
+                }
+            }
+            return delegate.getIngredientUnderMouse(mouseX, mouseY);
+        }
+        
+        public boolean canSetFocusWithMouse() {
+            return delegate.canSetFocusWithMouse();
+        }
+    }
+
+    @Optional.Method(modid=ModState.JEI_ID)
+    @SideOnly(Side.CLIENT)
+    private static void overrideJEIInventoryHandler() {
+        // This is all client side. Yay!
+        List<IShowsRecipeFocuses> recipeShowers = getJeiRecipeFocuses();
+        if (recipeShowers == null) {
+            return;
+        }
+        int n = recipeShowers.size();
+        for (int i = 0; i < n; i++) {
+            IShowsRecipeFocuses recipeShower = recipeShowers.get(i);
+            if (!(recipeShower instanceof mezz.jei.input.GuiContainerWrapper)) {
+                continue;
+            }
+            recipeShowers.set(i, new InventoryRecipeCheckStopper((mezz.jei.input.GuiContainerWrapper)recipeShowers.get(i)));
+        }
+    }
+    
+    @SubscribeEvent
+    @Optional.Method(modid=ModState.JEI_ID)
+    @SideOnly(Side.CLIENT)
+    public void onGuiInitForJEI(GuiScreenEvent.InitGuiEvent.Post event) {
+        overrideJEIInventoryHandler();
+    }
+    
+    @SubscribeEvent
+    @Optional.Method(modid=ModState.JEI_ID)
+    @SideOnly(Side.CLIENT)
+    public void onOverlayToggleForJEI(OverlayToggleEvent event) {
+        overrideJEIInventoryHandler();
+    }
+    
+    @SubscribeEvent
+    @Optional.Method(modid=ModState.JEI_ID)
+    @SideOnly(Side.CLIENT)
+    public void onDrawBackgroundEventPostForJEI(GuiScreenEvent.BackgroundDrawnEvent event) {
+        overrideJEIInventoryHandler();
     }
 }
