@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockCrops;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -41,6 +42,10 @@ public class Interaction {
      * Whether a block has a special right-click use
      */
     public static boolean hasSpecialUse(Block block) {
+        if (block instanceof BlockCrops) {
+            return false;
+        }
+        
         return hasUseFunction(block);
     }
     

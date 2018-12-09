@@ -82,7 +82,7 @@ public class InvokeUtil {
     }
     
     /**
-     * Similar to Class.getDeclaredMethod except doesn't throw an exception.
+     * Similar to Class.getDeclaredMethod except doesn't throw an exception when it doesn't find the method.
      * Returns null if unsuccessful.
      */
     public static @Nullable Method findDeclaredMethod(Class clazz, String methodName, Class... methodArgs) {
