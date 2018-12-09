@@ -28,7 +28,6 @@ import java.util.Set;
 import java.util.UUID;
 
 import mchorse.metamorph.Metamorph;
-import mchorse.metamorph.api.events.AcquireMorphEvent;
 import mchorse.metamorph.api.events.MorphEvent;
 import mchorse.metamorph.api.events.RegisterBlacklistEvent;
 import mchorse.metamorph.api.events.SpawnGhostEvent;
@@ -48,10 +47,8 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.Clone;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerChangedDimensionEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.capability.CapUtil;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
@@ -285,7 +282,7 @@ public class ListenerPlayerMorphs extends ConfiguredListener {
         if (player.isEntityInsideOpaqueBlock()) {
             event.setCanceled(true);
             if (!player.world.isRemote) {
-                Chat.notify((EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.morph.suffocation_risk"));
+                Chat.message(Chat.Type.NOTIFY, (EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.morph.suffocation_risk"));
             }
         }
         

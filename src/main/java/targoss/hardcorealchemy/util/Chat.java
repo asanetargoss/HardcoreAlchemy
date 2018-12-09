@@ -129,37 +129,4 @@ public class Chat {
         return false;
         
     }
-    
-    @Deprecated
-    public static void notify(EntityPlayerMP player, ITextComponent message) {
-        message(Type.NOTIFY, player, message);
-    }
-    
-    @Deprecated
-    public static void alarm(EntityPlayerMP player, ITextComponent message) {
-        message(Type.WARN, player, message);
-    }
-    
-    @Deprecated
-    public static void notifyThaumic(EntityPlayerMP player, ITextComponent message) {
-        message(Type.THAUMIC, player, message);
-    }
-    
-    @Deprecated
-    @SideOnly(Side.CLIENT)
-    public static void notifySP(EntityPlayer player, ITextComponent message) {
-        messageSP(Type.NOTIFY, player, message);
-    }
-    
-    @Deprecated
-    @SideOnly(Side.CLIENT)
-    public static void alarmSP(EntityPlayer player, ITextComponent message) {
-        messageSP(Type.WARN, player, message);
-    }
-    
-    @Deprecated
-    @SideOnly(Side.CLIENT)
-    public static void notifyThaumicSP(EntityPlayer player, ITextComponent message) {
-        messageSP(Type.THAUMIC, player, message);
-    }
 }

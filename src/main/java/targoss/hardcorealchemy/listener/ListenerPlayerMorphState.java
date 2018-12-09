@@ -99,7 +99,7 @@ public class ListenerPlayerMorphState extends ConfiguredListener {
             if (!player.isInWater()) {
                 morphState.setIsFishingUnderwater(false);
                 if (player.world.isRemote) {
-                    Chat.notifySP(player, new TextComponentTranslation("hardcorealchemy.ability.fishing.endhunt"));
+                    Chat.messageSP(Chat.Type.NOTIFY, player, new TextComponentTranslation("hardcorealchemy.ability.fishing.endhunt"));
                 }
                 morphState.setFishingTimer(0);
             }

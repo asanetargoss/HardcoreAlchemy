@@ -180,7 +180,7 @@ public class ListenerPlayerInstinct extends ConfiguredListener {
                         if (messageInstinct != null) {
                             ITextComponent needMessage = messageInstinct.instinct.getNeedMessage(player);
                             if (needMessage != null) {
-                                Chat.notify((EntityPlayerMP)player, needMessage);
+                                Chat.message(Chat.Type.NOTIFY, (EntityPlayerMP)player, needMessage);
                             }
                         }
                     }
@@ -189,7 +189,7 @@ public class ListenerPlayerInstinct extends ConfiguredListener {
                         instinct.setActiveInstinctId(newActiveInstinct.id);
                         ITextComponent needMessage = newActiveInstinct.instinct.getNeedMessageOnActivate(player);
                         if (needMessage != null) {
-                            Chat.alarm((EntityPlayerMP)player, newActiveInstinct.instinct.getNeedMessageOnActivate(player));
+                            Chat.message(Chat.Type.WARN, (EntityPlayerMP)player, newActiveInstinct.instinct.getNeedMessageOnActivate(player));
                         }
                         newActiveInstinct.instinct.onActivate(player);
                         // Tell the client about the newly activated instinct.
@@ -205,7 +205,7 @@ public class ListenerPlayerInstinct extends ConfiguredListener {
                         if (messageInstinct != null) {
                             ITextComponent needMessage = messageInstinct.instinct.getNeedMessage(player);
                             if (needMessage != null) {
-                                Chat.notify((EntityPlayerMP)player, needMessage);
+                                Chat.message(Chat.Type.NOTIFY, (EntityPlayerMP)player, needMessage);
                             }
                         }
                     }

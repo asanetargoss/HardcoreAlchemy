@@ -19,58 +19,41 @@
 package targoss.hardcorealchemy.listener;
 
 import static ca.wescook.nutrition.capabilities.CapProvider.NUTRITION_CAPABILITY;
-import static targoss.hardcorealchemy.HardcoreAlchemy.LOGGER;
 
-import java.util.List;
 import java.util.Map;
 
 import ca.wescook.nutrition.capabilities.CapInterface;
 import ca.wescook.nutrition.nutrients.Nutrient;
 import ca.wescook.nutrition.nutrients.NutrientList;
-import mchorse.metamorph.api.events.MorphEvent;
 import mchorse.metamorph.api.morphs.AbstractMorph;
 import mchorse.metamorph.capabilities.morphing.IMorphing;
 import mchorse.metamorph.capabilities.morphing.Morphing;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.FoodStats;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.event.RenderGameOverlayEvent.Chat;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
-import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.CapUtil;
-import targoss.hardcorealchemy.capability.food.CapabilityFood;
 import targoss.hardcorealchemy.capability.food.ICapabilityFood;
-import targoss.hardcorealchemy.capability.food.ProviderFood;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.event.EventCraftPredict;
+import targoss.hardcorealchemy.util.Chat;
 import targoss.hardcorealchemy.util.FoodLists;
 import targoss.hardcorealchemy.util.InventoryUtil;
-import targoss.hardcorealchemy.util.MorphState;
 import targoss.hardcorealchemy.util.MorphDiet;
+import targoss.hardcorealchemy.util.MorphState;
 import toughasnails.api.TANCapabilities;
 import toughasnails.thirst.ThirstHandler;
 
@@ -224,7 +207,7 @@ public class ListenerPlayerDiet extends ConfiguredListener {
              */
             event.setCanceled(true);
             if (player.world.isRemote) {
-                targoss.hardcorealchemy.util.Chat.notifySP(player, needs.restriction.getFoodRefusal());
+                Chat.messageSP(Chat.Type.NOTIFY, player, needs.restriction.getFoodRefusal());
             }
         }
     }

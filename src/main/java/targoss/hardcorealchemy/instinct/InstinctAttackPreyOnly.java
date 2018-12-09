@@ -412,7 +412,7 @@ public class InstinctAttackPreyOnly implements IInstinct {
         if (numKills >= requiredKills) {
             // Kill requirement satisfied
             inKillingFrenzy = false;
-            Chat.notify((EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.instinct.attack_prey.enough_kills"));
+            Chat.message(Chat.Type.NOTIFY, (EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.instinct.attack_prey.enough_kills"));
             active = false;
             syncRemote((EntityPlayerMP)player);
             return;
@@ -423,7 +423,7 @@ public class InstinctAttackPreyOnly implements IInstinct {
             // More prey visible nearby
             if (!inKillingFrenzy) {
                 inKillingFrenzy = true;
-                Chat.notify((EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.instinct.attack_prey.frenzy_start"));
+                Chat.message(Chat.Type.NOTIFY, (EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.instinct.attack_prey.frenzy_start"));
                 syncRemote((EntityPlayerMP)player);
             }
         }
@@ -431,7 +431,7 @@ public class InstinctAttackPreyOnly implements IInstinct {
             if (inKillingFrenzy) {
                 // Killed all prey in the area
                 inKillingFrenzy = false;
-                Chat.notify((EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.instinct.attack_prey.frenzy_end"));
+                Chat.message(Chat.Type.NOTIFY, (EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.instinct.attack_prey.frenzy_end"));
                 syncRemote((EntityPlayerMP)player);
             }
         }

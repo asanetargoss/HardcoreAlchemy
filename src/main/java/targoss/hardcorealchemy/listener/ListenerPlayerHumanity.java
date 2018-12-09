@@ -18,9 +18,7 @@
 
 package targoss.hardcorealchemy.listener;
 
-import java.util.HashSet;
 import java.util.Random;
-import java.util.Set;
 
 import mchorse.metamorph.api.MorphAPI;
 import mchorse.metamorph.api.events.MorphEvent;
@@ -36,7 +34,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.FoodStats;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -200,7 +197,7 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
         }
         if (!capabilityHumanity.canMorph()) {
             event.setCanceled(true);
-            Chat.notify((EntityPlayerMP)player, capabilityHumanity.explainWhyCantMorph());
+            Chat.message(Chat.Type.NOTIFY, (EntityPlayerMP)player, capabilityHumanity.explainWhyCantMorph());
         }
     }
     
@@ -290,20 +287,20 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
         // If humanity passes a critical threshold, display message (most urgent one first)
         if (newHumanity <= 0) {
             // Display lost humanity message
-            Chat.notifySP(player, new TextComponentTranslation("hardcorealchemy.humanity.lost"));
+            Chat.messageSP(Chat.Type.NOTIFY, player, new TextComponentTranslation("hardcorealchemy.humanity.lost"));
         }
         else if (newHumanity <= HUMANITY_3MIN_LEFT) {
             if (newHumanity <= HUMANITY_1MIN_LEFT && oldHumanity > HUMANITY_1MIN_LEFT) {
                 // Display 1 minute left message
-                Chat.alarmSP(player, new TextComponentTranslation("hardcorealchemy.humanity.warn3.variant1"));
+                Chat.messageSP(Chat.Type.WARN, player, new TextComponentTranslation("hardcorealchemy.humanity.warn3.variant1"));
             }
             else if (newHumanity <= HUMANITY_2MIN_LEFT && oldHumanity > HUMANITY_2MIN_LEFT) {
                 // Display 2 minutes left message
-                Chat.notifySP(player, new TextComponentTranslation("hardcorealchemy.humanity.warn2.variant1"));
+                Chat.messageSP(Chat.Type.NOTIFY, player, new TextComponentTranslation("hardcorealchemy.humanity.warn2.variant1"));
             }
             else if (oldHumanity > HUMANITY_3MIN_LEFT) {
                 // Display 3 minutes left message
-                Chat.notifySP(player, new TextComponentTranslation("hardcorealchemy.humanity.warn1.variant1"));
+                Chat.messageSP(Chat.Type.NOTIFY, player, new TextComponentTranslation("hardcorealchemy.humanity.warn1.variant1"));
             }
         }
     }
@@ -315,7 +312,7 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
             // You're a ghost, so being in a morph doesn't really make sense
             event.setCanceled(true);
             if (event.player.world.isRemote) {
-                Chat.notifySP(event.player, new TextComponentTranslation("hardcorealchemy.morph.disabled.dead"));
+                Chat.messageSP(Chat.Type.NOTIFY, event.player, new TextComponentTranslation("hardcorealchemy.morph.disabled.dead"));
             }
         }
     }

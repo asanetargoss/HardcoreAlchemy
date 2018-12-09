@@ -23,8 +23,6 @@ import mchorse.metamorph.api.morphs.AbstractMorph;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.TextComponentTranslation;
-import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
-import targoss.hardcorealchemy.capability.humanity.ProviderHumanity;
 import targoss.hardcorealchemy.capability.morphstate.ICapabilityMorphState;
 import targoss.hardcorealchemy.capability.morphstate.ProviderMorphState;
 import targoss.hardcorealchemy.util.Chat;
@@ -49,15 +47,15 @@ public class UnderwaterFishing implements IAction {
         // Toggle hunt state (cannot start hunt unless in water)
         if (morphState.getIsFishingUnderwater()) {
             morphState.setIsFishingUnderwater(false);
-            Chat.notifySP(player, new TextComponentTranslation("hardcorealchemy.ability.fishing.endhunt"));
+            Chat.messageSP(Chat.Type.NOTIFY, player, new TextComponentTranslation("hardcorealchemy.ability.fishing.endhunt"));
         }
         else {
             if (player.isInWater()) {
                 morphState.setIsFishingUnderwater(true);
-                Chat.notifySP(player, new TextComponentTranslation("hardcorealchemy.ability.fishing.beginhunt"));
+                Chat.messageSP(Chat.Type.NOTIFY, player, new TextComponentTranslation("hardcorealchemy.ability.fishing.beginhunt"));
             }
             else {
-                Chat.alarmSP(player, new TextComponentTranslation("hardcorealchemy.ability.fishing.error.notinwater"));
+                Chat.messageSP(Chat.Type.WARN, player, new TextComponentTranslation("hardcorealchemy.ability.fishing.error.notinwater"));
             }
         }
     }
