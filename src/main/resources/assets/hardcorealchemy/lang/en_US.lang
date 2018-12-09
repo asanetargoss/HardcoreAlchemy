@@ -50,7 +50,6 @@ hardcorealchemy.instinct.attack_prey.frenzy_end=You manage to kill what you can 
 
 hardcorealchemy.magic.disabled.item=Your inhuman form prevents you from comprehending this magical item.
 hardcorealchemy.magic.disabled.block=Your inhuman form prevents you from comprehending this magical object.
-hardcorealchemy.magic.disabled.craft=Your inhuman form prevents you from crafting this magical object.
 hardcorealchemy.magic.disabled.crafttooltip=Your form prevents crafting this
 hardcorealchemy.magic.disabled.projectekeypress=Your inhuman form prevents you from manipulating alchemical constructs.
 

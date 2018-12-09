@@ -167,9 +167,6 @@ public class ListenerPlayerMagic extends ConfiguredListener {
                 !MorphState.canUseHighMagic(player) &&
                 !ListenerPlayerMagic.isCraftingAllowed(craftResult)) {
             event.setCanceled(true);
-            if (player.world.isRemote) {
-                Chat.messageSP(Chat.Type.NOTIFY, player, new TextComponentTranslation("hardcorealchemy.magic.disabled.craft"), 2, MAGIC_NOT_ALLOWED);
-            }
         }
     }
     
