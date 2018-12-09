@@ -99,7 +99,7 @@ public class Chat {
         }
         
         Integer lastMessageTick = history.get(cooldownKey);
-        if (lastMessageTick == null || player.ticksExisted - lastMessageTick >= cooldown) {
+        if (lastMessageTick == null || player.ticksExisted - lastMessageTick >= cooldown || player.ticksExisted < lastMessageTick) {
             if (lastMessageTick != null) {
                 // Ensure the key is at the front of the history (since this is an ordered hash map)
                 history.remove(cooldownKey);
