@@ -40,12 +40,13 @@ import targoss.hardcorealchemy.coremod.transform.TDecayingCrops;
 import targoss.hardcorealchemy.coremod.transform.TEntity;
 import targoss.hardcorealchemy.coremod.transform.TEntityLivingBase;
 import targoss.hardcorealchemy.coremod.transform.TEntityPlayerSP;
+import targoss.hardcorealchemy.coremod.transform.TGuiContainer;
 import targoss.hardcorealchemy.coremod.transform.THibernatingCrops;
 import targoss.hardcorealchemy.coremod.transform.TItemRenderer;
 import targoss.hardcorealchemy.coremod.transform.TObjectProximityModifier;
 import targoss.hardcorealchemy.coremod.transform.TProjectEKeyHandler;
 import targoss.hardcorealchemy.coremod.transform.TRenderEntityItem;
-import targoss.hardcorealchemy.coremod.transform.TGuiContainer;
+import targoss.hardcorealchemy.coremod.transform.TRenderItem;
 import targoss.hardcorealchemy.coremod.transform.TRightClickHarvesting;
 import targoss.hardcorealchemy.coremod.transform.TSlot;
 import targoss.hardcorealchemy.coremod.transform.TThaumcraftPlayerEvents;
@@ -86,6 +87,7 @@ public class HardcoreAlchemyCoremod implements IFMLLoadingPlugin {
 				TGuiContainer.class.getName(),
 				TItemRenderer.class.getName(),
 				TRenderEntityItem.class.getName(),
+				TRenderItem.class.getName(),
 				TEntity.class.getName(),
 				TEntityPlayerSP.class.getName()
 		};
