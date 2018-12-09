@@ -25,6 +25,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.JumpInsnNode;
 import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.MethodInsnNode;
@@ -39,10 +40,14 @@ public class TGuiContainer extends MethodPatcher {
     private final ObfuscatedName DRAW_SLOT = new ObfuscatedName("func_146977_a" /*drawSlot*/);
     private final ObfuscatedName DRAW_SCREEN = new ObfuscatedName("func_73863_a" /*drawScreen*/);
     private final ObfuscatedName THE_SLOT = new ObfuscatedName("field_147006_u" /*theSlot*/);
+    private final ObfuscatedName DRAG_SPLITTING_REMNANT = new ObfuscatedName("field_146996_I" /*dragSplittingRemnant*/);
     private final ObfuscatedName RETURNING_STACK = new ObfuscatedName("field_146991_C" /*returningStack*/);
     private final ObfuscatedName ENABLE_DEPTH = new ObfuscatedName("func_179126_j" /*GlStateManager.enableDepth*/);
     private final ObfuscatedName GET_STACK = new ObfuscatedName("func_75211_c" /*Slot.getStack*/);
     private final ObfuscatedName GET_HAS_STACK = new ObfuscatedName("func_75216_d" /*Slot.getHasStack*/);
+    private final ObfuscatedName STACK_SIZE = new ObfuscatedName("field_77994_a" /*ItemStack.stackSize*/);
+    
+    @Override public boolean enableDebug() { return true; } // TODO: Remove after testing
 
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
@@ -207,12 +212,13 @@ public class TGuiContainer extends MethodPatcher {
             //     // Do stuff
             // }
             //
-            // After:
+            // After (roughly speaking, most of the actual work happens before the null check):
             //
             // if (itemstack != null)
             // {
             //     itemstack = EventDrawInventoryItem.onDrawMouseItem(itemstack);
             //     if (itemstack == null) GOTO END1;
+            //     this.dragSplittingRemnant = Math.max(this.dragSplittingRemnamt, itemstack.stackSize);
             //     // Do stuff
             // } END1
             // if (this.returningStack != null)
@@ -270,46 +276,67 @@ public class TGuiContainer extends MethodPatcher {
                 }
             }
             
-            // Patch after "if itemstack != null {"
+            // Patch near "if itemstack != null {"
             {
-                InsnList patch = new InsnList();
-                patch.add(new VarInsnNode(Opcodes.ALOAD, itemStackVar));
-                patch.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
-                        "targoss/hardcorealchemy/event/EventDrawInventoryItem",
-                        "onDrawMouseItem",
-                        "(Lnet/minecraft/item/ItemStack;)Lnet/minecraft/item/ItemStack;",
-                        false));
-                patch.add(new VarInsnNode(Opcodes.ASTORE, itemStackVar));
-                patch.add(new VarInsnNode(Opcodes.ALOAD, itemStackVar));
-                patch.add(new JumpInsnNode(Opcodes.IFNULL, itemStackNullDest));
-                instructions.insert(jumpToItemStackNullDest, patch);
+                // Step 1: Override itemstack
+                //         This happens just before the IFNULL jump check.
+                {
+                    InsnList patch = new InsnList();
+                    patch.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
+                            "targoss/hardcorealchemy/event/EventDrawInventoryItem",
+                            "onDrawMouseItem",
+                            "(Lnet/minecraft/item/ItemStack;)Lnet/minecraft/item/ItemStack;",
+                            false));
+                    patch.add(new InsnNode(Opcodes.DUP));
+                    patch.add(new VarInsnNode(Opcodes.ASTORE, itemStackVar));
+                    instructions.insertBefore(jumpToItemStackNullDest, patch);
+                }
+                
+                // Step 2: Override dragSplittingRemnant with a smaller value if it's larger than itemstack.stackSize
+                //         At this point we know itemstack is not null, because it's after the IFNULL jump check.
+                {
+                    InsnList patch = new InsnList();
+                    patch.add(new VarInsnNode(Opcodes.ALOAD, 0)); // Gotta have another ALOAD 0 for the putfield which comes later
+                    patch.add(new VarInsnNode(Opcodes.ALOAD, itemStackVar));
+                    patch.add(new FieldInsnNode(Opcodes.GETFIELD,
+                            "net/minecraft/item/ItemStack",
+                            STACK_SIZE.get(),
+                            "I"));
+                    patch.add(new VarInsnNode(Opcodes.ALOAD, 0));
+                    patch.add(new FieldInsnNode(Opcodes.GETFIELD,
+                            GUI_CONTAINER.replace('.', '/'),
+                            DRAG_SPLITTING_REMNANT.get(),
+                            "I"));
+                    patch.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
+                            "java/lang/Math",
+                            "min",
+                            "(II)I",
+                            false));
+                    patch.add(new FieldInsnNode(Opcodes.PUTFIELD,
+                            GUI_CONTAINER.replace('.', '/'),
+                            DRAG_SPLITTING_REMNANT.get(),
+                            "I"));
+                    instructions.insert(jumpToItemStackNullDest, patch);
+                }
             }
             
-            // Patch after "if this.returningStack != null {"
+            // Patch before jump after "if this.returningStack != null {"
             {
                 InsnList patch = new InsnList();
-                patch.add(new VarInsnNode(Opcodes.ALOAD, 0));
-                patch.add(new VarInsnNode(Opcodes.ALOAD, 0)); // Need to load twice for the PUTFIELD that comes later
-                patch.add(new FieldInsnNode(Opcodes.GETFIELD,
-                        GUI_CONTAINER.replace('.', '/'),
-                        RETURNING_STACK.get(),
-                        "Lnet/minecraft/item/ItemStack;"));
                 patch.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
                         "targoss/hardcorealchemy/event/EventDrawInventoryItem",
                         "onDrawMouseItem",
                         "(Lnet/minecraft/item/ItemStack;)Lnet/minecraft/item/ItemStack;",
                         false));
+                patch.add(new InsnNode(Opcodes.DUP)); // Frame before (bottom to top): [item], Frame after: [item, item]
+                patch.add(new VarInsnNode(Opcodes.ALOAD, 0)); // Frame after: [item, item, this]
+                patch.add(new InsnNode(Opcodes.SWAP)); // Frame after: [item, this, item]
+                // I wonder if Java compilers even use SWAP anymore...
                 patch.add(new FieldInsnNode(Opcodes.PUTFIELD,
                         GUI_CONTAINER.replace('.', '/'),
                         RETURNING_STACK.get(),
-                        "Lnet/minecraft/item/ItemStack;"));
-                patch.add(new VarInsnNode(Opcodes.ALOAD, 0));
-                patch.add(new FieldInsnNode(Opcodes.GETFIELD,
-                        GUI_CONTAINER.replace('.', '/'),
-                        RETURNING_STACK.get(),
-                        "Lnet/minecraft/item/ItemStack;"));
-                patch.add(new JumpInsnNode(Opcodes.IFNULL, returningStackNullDest));
-                instructions.insert(jumpToReturningStackNullDest, patch);
+                        "Lnet/minecraft/item/ItemStack;")); // Frame is now [item], so ready for a jump statement again
+                instructions.insertBefore(jumpToReturningStackNullDest, patch);
             }
         }
     }
