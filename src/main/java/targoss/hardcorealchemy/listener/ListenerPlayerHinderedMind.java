@@ -426,21 +426,21 @@ public class ListenerPlayerHinderedMind extends ConfiguredListener {
         }
     }
     
-    @SubscribeEvent
+    @SubscribeEvent(priority=EventPriority.LOW)
     @Optional.Method(modid=ModState.JEI_ID)
     @SideOnly(Side.CLIENT)
     public void onGuiInitForJEI(GuiScreenEvent.InitGuiEvent.Post event) {
         overrideJEIInventoryHandler();
     }
     
-    @SubscribeEvent
+    @SubscribeEvent(priority=EventPriority.LOW)
     @Optional.Method(modid=ModState.JEI_ID)
     @SideOnly(Side.CLIENT)
     public void onOverlayToggleForJEI(OverlayToggleEvent event) {
         overrideJEIInventoryHandler();
     }
     
-    @SubscribeEvent
+    @SubscribeEvent(priority=EventPriority.LOW)
     @Optional.Method(modid=ModState.JEI_ID)
     @SideOnly(Side.CLIENT)
     public void onDrawBackgroundEventPostForJEI(GuiScreenEvent.BackgroundDrawnEvent event) {
