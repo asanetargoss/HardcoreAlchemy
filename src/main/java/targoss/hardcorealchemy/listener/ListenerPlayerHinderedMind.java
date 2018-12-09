@@ -28,6 +28,7 @@ import mchorse.metamorph.api.abilities.IAbility;
 import mchorse.metamorph.api.morphs.AbstractMorph;
 import mchorse.metamorph.capabilities.morphing.IMorphing;
 import mchorse.metamorph.capabilities.morphing.Morphing;
+import mcp.mobius.waila.api.event.WailaRenderEvent;
 import mezz.jei.JustEnoughItems;
 import mezz.jei.config.OverlayToggleEvent;
 import mezz.jei.input.IClickedIngredient;
@@ -445,5 +446,14 @@ public class ListenerPlayerHinderedMind extends ConfiguredListener {
     @SideOnly(Side.CLIENT)
     public void onDrawBackgroundEventPostForJEI(GuiScreenEvent.BackgroundDrawnEvent event) {
         overrideJEIInventoryHandler();
+    }
+    
+    @SubscribeEvent
+    @Optional.Method(modid=ModState.WAWLA_ID)
+    @SideOnly(Side.CLIENT)
+    public void onRenderWAWLATooltip(WailaRenderEvent.Pre event) {
+        if (isPlayerHindered(MiscVanilla.getTheMinecraftPlayer())) {
+            event.setCanceled(true);
+        }
     }
 }

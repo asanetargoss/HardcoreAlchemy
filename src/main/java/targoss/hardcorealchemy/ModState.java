@@ -36,6 +36,7 @@ public final class ModState {
     public static final String DEADLY_MONSTERS_ID = "dmonsters";
     public static final String ALCHEMIC_ASH_ID = "AlchemicAsh";
     public static final String JEI_ID = "JEI";
+    public static final String WAWLA_ID = "Waila";
     public static boolean isDissolutionLoaded = false;
     public static boolean isNutritionLoaded = false;
     public static boolean isBloodMagicLoaded = false;
