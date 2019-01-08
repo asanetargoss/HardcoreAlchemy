@@ -82,6 +82,17 @@ public class MiscVanilla {
         return player.world;
     }
     
+    public static enum MoonPhase {
+        FULL_MOON,
+        WANING_GIBBOUS,
+        LAST_QUARTER,
+        WANING_CRESCENT,
+        NEW_MOON,
+        WAXING_CRESCENT,
+        FIRST_QUARTER,
+        WAXING_GIBBOUS;
+    }
+    
     @SideOnly(Side.CLIENT)
     public static boolean getHeldItemTooltips() {
         return Minecraft.getMinecraft().gameSettings.heldItemTooltips;
