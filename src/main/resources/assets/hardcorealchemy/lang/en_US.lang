@@ -52,6 +52,7 @@ hardcorealchemy.magic.disabled.item=Your inhuman form prevents you from comprehe
 hardcorealchemy.magic.disabled.block=Your inhuman form prevents you from comprehending this magical object.
 hardcorealchemy.magic.disabled.crafttooltip=Your form prevents crafting this
 hardcorealchemy.magic.disabled.projectekeypress=Your inhuman form prevents you from manipulating alchemical constructs.
+hardcorealchemy.magic.disabled.not_full_moon=This object's magic seems to only respond during a full moon.
 
 hardcorealchemy.magic.recall_thaumcraft=Memories from a past life come flooding back to you.
 

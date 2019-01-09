@@ -22,6 +22,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.Sets;
+
 import WayofTime.bloodmagic.api.saving.SoulNetwork;
 import WayofTime.bloodmagic.api.util.helper.NetworkHelper;
 import am2.api.affinity.Affinity;
@@ -50,6 +52,7 @@ import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.registry.IForgeRegistryEntry;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.config.Configs;
@@ -58,6 +61,7 @@ import targoss.hardcorealchemy.event.EventTakeStack;
 import targoss.hardcorealchemy.util.Chat;
 import targoss.hardcorealchemy.util.Interaction;
 import targoss.hardcorealchemy.util.InventoryUtil;
+import targoss.hardcorealchemy.util.MiscVanilla;
 import targoss.hardcorealchemy.util.MorphState;
 
 public class ListenerPlayerMagic extends ConfiguredListener {
@@ -74,6 +78,11 @@ public class ListenerPlayerMagic extends ConfiguredListener {
     public static final Set<String> MAGIC_ITEM_ALLOW_USE;
     public static final Set<String> MAGIC_ITEM_ALLOW_CRAFT;
     public static final Set<String> MAGIC_BLOCK_ALLOW_USE;
+    
+    public static final Set<String> MAGIC_OBJECT_REQUIRES_FULL_MOON = Sets.newHashSet(
+            "projecte:transmutation_table",
+            "projecte:item.pe_transmutation_tablet"
+            );
     
     @CapabilityInject(ICapabilityHumanity.class)
     public static final Capability<ICapabilityHumanity> HUMANITY_CAPABILITY = null;
@@ -123,14 +132,19 @@ public class ListenerPlayerMagic extends ConfiguredListener {
     @SubscribeEvent
     public void onRightClickItem(PlayerInteractEvent.RightClickItem event) {
         EntityPlayer player = event.getEntityPlayer();
+        ItemStack itemStack = event.getItemStack();
         ICapabilityHumanity capabilityHumanity = player.getCapability(HUMANITY_CAPABILITY, null);
-        if (capabilityHumanity == null || MorphState.canUseHighMagic(player)) {
-            return;
-        }
-        if (!isUseAllowed(event.getItemStack())) {
+        if (capabilityHumanity != null && !MorphState.canUseHighMagic(player) && !isUseAllowed(itemStack)) {
             event.setCanceled(true);
             if (player.world.isRemote) {
                 Chat.messageSP(Chat.Type.NOTIFY, player, new TextComponentTranslation("hardcorealchemy.magic.disabled.item"), 2, MAGIC_NOT_ALLOWED);
+            }
+            return;
+        }
+        if (itemStack != null && isHinderedByMoonPhase(player, itemStack.getItem())) {
+            event.setCanceled(true);
+            if (player.world.isRemote) {
+                Chat.messageSP(Chat.Type.NOTIFY, player, new TextComponentTranslation("hardcorealchemy.magic.disabled.not_full_moon"), 2, MAGIC_NOT_ALLOWED);
             }
         }
     }
@@ -140,13 +154,17 @@ public class ListenerPlayerMagic extends ConfiguredListener {
         Block block = event.getWorld().getBlockState(event.getPos()).getBlock();
         EntityPlayer player = event.getEntityPlayer();
         ICapabilityHumanity capabilityHumanity = player.getCapability(HUMANITY_CAPABILITY, null);
-        if (capabilityHumanity == null || MorphState.canUseHighMagic(player)) {
-            return;
-        }
-        if (!isUseAllowed(block)) {
+        if (capabilityHumanity != null && !MorphState.canUseHighMagic(player) && !isUseAllowed(block)) {
             event.setUseBlock(Result.DENY);
             if (player.world.isRemote) {
                 Chat.messageSP(Chat.Type.NOTIFY, player, new TextComponentTranslation("hardcorealchemy.magic.disabled.block"), 2, MAGIC_NOT_ALLOWED);
+            }
+            return;
+        }
+        if (isHinderedByMoonPhase(player, block)) {
+            event.setCanceled(true);
+            if (player.world.isRemote) {
+                Chat.messageSP(Chat.Type.NOTIFY, player, new TextComponentTranslation("hardcorealchemy.magic.disabled.not_full_moon"), 2, MAGIC_NOT_ALLOWED);
             }
         }
     }
@@ -183,6 +201,23 @@ public class ListenerPlayerMagic extends ConfiguredListener {
     @SubscribeEvent
     public void onMageDie(PlayerRespawnEvent event) {
         eraseAllMortalMagic(event.player);
+    }
+    
+    public static boolean requiresFullMoon(IForgeRegistryEntry.Impl useTarget) {
+        if (useTarget == null) {
+            return false;
+        }
+        ResourceLocation resource = useTarget.getRegistryName();
+        return resource != null && MAGIC_OBJECT_REQUIRES_FULL_MOON.contains(resource.toString());
+    }
+    
+    public static boolean isHinderedByMoonPhase(EntityPlayer player, IForgeRegistryEntry.Impl useTarget) {
+        if (useTarget != null &&
+                player.world.provider.getMoonPhase(player.world.getWorldTime()) != MiscVanilla.MoonPhase.FULL_MOON.ordinal()
+                && requiresFullMoon(useTarget)) {
+            return true;
+        }
+        return false;
     }
     
     public static boolean isUseAllowed(ItemStack itemStack) {
