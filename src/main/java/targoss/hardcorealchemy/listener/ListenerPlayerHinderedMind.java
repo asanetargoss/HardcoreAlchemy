@@ -131,24 +131,27 @@ public class ListenerPlayerHinderedMind extends ConfiguredListener {
         return null;
     }
     
-    public static boolean isPlayerHindered(EntityPlayer player) {
+    public static float getPlayerHindrance(EntityPlayer player) {
         ICapabilityInstinct instinct = player.getCapability(ProviderInstinct.INSTINCT_CAPABILITY, null);
         if (instinct == null) {
-            return false;
+            return 0.0F;
         }
         
         InstinctEffectWrapper wrapper = instinct.getActiveEffects().get(Instincts.EFFECT_HINDERED_MIND);
-        return wrapper != null && wrapper.amplifier >= 1.0F;
+        if (wrapper == null) {
+            return 0.0F;
+        }
+        return wrapper.amplifier;
     }
     
     @CoremodHook
     public static boolean canPlayerUseSneakToPreventFall(Entity entity) {
-        return (entity instanceof EntityPlayer) && !isPlayerHindered((EntityPlayer)entity);
+        return (entity instanceof EntityPlayer) && getPlayerHindrance((EntityPlayer)entity) < 1.0F;
     }
     
     @CoremodHook
     public static boolean isPlayerSneakingToPreventAutoJump(EntityPlayer player) {
-        return player.isSneaking() && !isPlayerHindered(player);
+        return player.isSneaking() && getPlayerHindrance(player) < 1.0F;
     }
     
     @SubscribeEvent
@@ -158,7 +161,7 @@ public class ListenerPlayerHinderedMind extends ConfiguredListener {
         }
         
         EntityPlayer player = MiscVanilla.getTheMinecraftPlayer();
-        if (!isPlayerHindered(player)) {
+        if (getPlayerHindrance(player) < 1.0F) {
             return;
         }
         
@@ -190,7 +193,7 @@ public class ListenerPlayerHinderedMind extends ConfiguredListener {
     
     @SubscribeEvent
     public void onDrawWorldItem(EventDrawWorldItem event) {
-        if (!isPlayerHindered(MiscVanilla.getTheMinecraftPlayer())) {
+        if (getPlayerHindrance(MiscVanilla.getTheMinecraftPlayer()) < 1.0F) {
             return;
         }
         
@@ -214,7 +217,7 @@ public class ListenerPlayerHinderedMind extends ConfiguredListener {
     public void onDisplayTooltip(EventRenderSlotTooltip.Pre event) {
         EntityPlayer player = MiscVanilla.getTheMinecraftPlayer();
         
-        if (!isPlayerHindered(player)) {
+        if (getPlayerHindrance(player) < 1.0F) {
             return;
         }
         
@@ -230,7 +233,7 @@ public class ListenerPlayerHinderedMind extends ConfiguredListener {
         if (event.getType() != RenderGameOverlayEvent.ElementType.ALL) {
             return;
         }
-        if (!isPlayerHindered(MiscVanilla.getTheMinecraftPlayer())) {
+        if (getPlayerHindrance(MiscVanilla.getTheMinecraftPlayer()) < 1.0F) {
             MiscVanilla.setHeldItemTooltips(heldItemTooltips);
             return;
         }
@@ -291,7 +294,7 @@ public class ListenerPlayerHinderedMind extends ConfiguredListener {
             sneak = delegate.sneak;
             
             EntityPlayer player = MiscVanilla.getTheMinecraftPlayer();
-            if (ListenerPlayerHinderedMind.isPlayerHindered(player)) {
+            if (getPlayerHindrance(player) >= 1.0F) {
                 ((EntityPlayerSP)player).autoJumpEnabled = true;
                 if (!player.capabilities.allowFlying) {
                     jump = false;
@@ -392,7 +395,7 @@ public class ListenerPlayerHinderedMind extends ConfiguredListener {
         public IClickedIngredient<?> getIngredientUnderMouse(int mouseX, int mouseY) {
             Slot hoveredSlot = InventoryUtil.getSlotUnderMouse();
             EntityPlayer player = MiscVanilla.getTheMinecraftPlayer();
-            if (hoveredSlot != null && InventoryUtil.isInteractableSlot(hoveredSlot, player) && isPlayerHindered(player)) {
+            if (hoveredSlot != null && InventoryUtil.isInteractableSlot(hoveredSlot, player) && getPlayerHindrance(player) >= 1.0F) {
                 return null;
             }
             return delegate.getIngredientUnderMouse(mouseX, mouseY);
@@ -446,7 +449,7 @@ public class ListenerPlayerHinderedMind extends ConfiguredListener {
     @Optional.Method(modid=ModState.WAWLA_ID)
     @SideOnly(Side.CLIENT)
     public void onRenderWAWLATooltip(WailaRenderEvent.Pre event) {
-        if (isPlayerHindered(MiscVanilla.getTheMinecraftPlayer())) {
+        if (getPlayerHindrance(MiscVanilla.getTheMinecraftPlayer()) >= 1.0F) {
             event.setCanceled(true);
         }
     }
