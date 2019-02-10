@@ -254,9 +254,13 @@ public class InstinctNeedAttackPrey implements IInstinctNeed {
         covetsPrey = nbt.getBoolean(NBT_COVETS_PREY);
         timeSinceSeenPrey = nbt.getInteger(NBT_TIME_SINCE_SEEN_PREY);
         if (nbt.hasKey(NBT_LAST_SEEN_PREY)) {
-            Class<? extends Entity> possibleLastSeenPrey = EntityList.getClassFromID(EntityList.getIDFromString(nbt.getString(NBT_LAST_SEEN_PREY)));
-            if (EntityLivingBase.class.isAssignableFrom(possibleLastSeenPrey)) {
-                lastSeenPrey = (Class<? extends EntityLivingBase>)possibleLastSeenPrey;
+            String entityString = nbt.getString(NBT_LAST_SEEN_PREY);
+            // If you don't check the string is valid, vanilla could return a pig instead as the entity ID, which we don't want
+            if (EntityList.isStringValidEntityName(entityString)) {
+                Class<? extends Entity> possibleLastSeenPrey = EntityList.getClassFromID(EntityList.getIDFromString(entityString));
+                if (EntityLivingBase.class.isAssignableFrom(possibleLastSeenPrey)) {
+                    lastSeenPrey = (Class<? extends EntityLivingBase>)possibleLastSeenPrey;
+                }
             }
         }
         hasKilled = nbt.getBoolean(NBT_HAS_KILLED);
