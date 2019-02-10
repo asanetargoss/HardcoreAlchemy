@@ -19,6 +19,7 @@
 package targoss.hardcorealchemy.instinct.api;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -64,6 +65,14 @@ public abstract class InstinctEffect extends IForgeRegistryEntry.Impl<InstinctEf
     public boolean canInteract(EntityPlayer player, float amplifier, ItemStack itemStack) {
         return true;
     }
+    
+    /**
+     * Called when a player tries to place a block
+     */
+    public boolean canPlaceBlock(EntityPlayer player, float amplifier, BlockPos pos, Block block) {
+        return true;
+    }
+    
     /** 
      * Whether the player can attack the entity.
      *  Only called if this effect is active.

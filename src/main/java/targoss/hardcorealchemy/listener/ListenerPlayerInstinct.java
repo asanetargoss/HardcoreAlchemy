@@ -34,6 +34,8 @@ import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
@@ -470,6 +472,21 @@ public class ListenerPlayerInstinct extends ConfiguredListener {
             if (!effect.effect.canInteract(player, effect.amplifier, blockPos, block)) {
                 event.setUseBlock(Result.DENY);
                 break;
+            }
+        }
+        
+        ItemStack itemStack = event.getItemStack();
+        if (itemStack != InventoryUtil.ITEM_STACK_EMPTY) {
+            Item item = itemStack.getItem();
+            if (item instanceof ItemBlock) {
+                Block blockFromItem = ((ItemBlock)item).getBlock();
+                BlockPos placeBlockPos = blockPos.offset(event.getFace());
+                for (InstinctEffectWrapper effect : instinct.getActiveEffects().values()) {
+                    if (!effect.effect.canPlaceBlock(player, effect.amplifier, placeBlockPos, blockFromItem)) {
+                        event.setUseItem(Result.DENY);
+                        break;
+                    }
+                }
             }
         }
     }
