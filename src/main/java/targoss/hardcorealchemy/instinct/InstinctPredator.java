@@ -47,7 +47,9 @@ public class InstinctPredator extends Instinct {
         List<InstinctEffectWrapper> effects = new ArrayList<>();
         effects.add(new InstinctEffectWrapper(Instincts.EFFECT_HINDERED_MIND).setMaxInstinct(15.0F).setAmplifier(0.5F));
         effects.add(new InstinctEffectWrapper(Instincts.EFFECT_HINDERED_MIND).setMaxInstinct(10.0F).setAmplifier(1.0F));
-        effects.add(new InstinctEffectWrapper(Instincts.EFFECT_HINDERED_MIND).setMaxInstinct(5.0F).setAmplifier(1.5F));
+        effects.add(new InstinctEffectWrapper(Instincts.EFFECT_HINDERED_MIND).setMaxInstinct(6.5F).setAmplifier(1.5F));
+        effects.add(new InstinctEffectWrapper(Instincts.EFFECT_HINDERED_MIND).setMaxInstinct(5.0F).setAmplifier(1.75F));
+        effects.add(new InstinctEffectWrapper(Instincts.EFFECT_HINDERED_MIND).setMaxInstinct(0.0F).setAmplifier(2.0F));
         return effects;
     }
 

@@ -39,6 +39,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.inventory.SlotCrafting;
 import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -54,6 +55,7 @@ import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.event.EventDrawInventoryItem;
 import targoss.hardcorealchemy.event.EventTakeStack;
 import thaumcraft.common.container.slot.SlotCraftingArcaneWorkbench;
+import toughasnails.api.thirst.IDrink;
 
 public class InventoryUtil {
     public static final ItemStack ITEM_STACK_EMPTY = null;
@@ -230,5 +232,10 @@ public class InventoryUtil {
         }
         
         return inventories;
+    }
+    
+    @Optional.Method(modid = ModState.TAN_ID)
+    public static boolean isTANDrink(Item item) {
+        return item instanceof IDrink;
     }
 }
