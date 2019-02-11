@@ -19,11 +19,16 @@
 package targoss.hardcorealchemy.instinct.api;
 
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraftforge.fml.common.registry.IForgeRegistryEntry;
-import targoss.hardcorealchemy.HardcoreAlchemy;
 
-public abstract class InstinctNeedFactory extends IForgeRegistryEntry.Impl<InstinctNeedFactory> {
-    public InstinctNeedFactory() {}
+public class InstinctNeedFactorySimple extends InstinctNeedFactory {
+    public final IInstinctNeed templateNeed;
     
-    public abstract IInstinctNeed createNeed(EntityLivingBase morphEntity);
+    public InstinctNeedFactorySimple(IInstinctNeed templateNeed) {
+        this.templateNeed = templateNeed;
+    }
+    
+    @Override
+    public IInstinctNeed createNeed(EntityLivingBase morphEntity) {
+        return templateNeed.createInstanceFromMorphEntity(morphEntity);
+    }
 }

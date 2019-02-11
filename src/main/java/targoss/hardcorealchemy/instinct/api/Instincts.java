@@ -56,7 +56,7 @@ public class Instincts {
             .create();
 
     public static final Instinct PREDATOR = instinct("predator", new InstinctPredator());
-    public static final InstinctNeedFactory NEED_ATTACK_PREY = instinctNeed("attack_prey", InstinctNeedAttackPrey.class);
+    public static final InstinctNeedFactory NEED_ATTACK_PREY = instinctNeed("attack_prey", new InstinctNeedAttackPrey());
     
     public static final InstinctEffect EFFECT_HINDERED_MIND = instinctEffect("hindered_mind", new InstinctEffectHinderedMind());
     
@@ -73,8 +73,8 @@ public class Instincts {
         INSTINCT_CACHE.clear();
     }
     
-    private static InstinctNeedFactory instinctNeed(String name, Class<? extends IInstinctNeed> instinctClass) {
-        InstinctNeedFactory instinctEntry = new InstinctNeedFactory(instinctClass);
+    private static InstinctNeedFactory instinctNeed(String name, IInstinctNeed instinctNeed) {
+        InstinctNeedFactory instinctEntry = new InstinctNeedFactorySimple(instinctNeed);
         instinctEntry.setRegistryName(new ResourceLocation(HardcoreAlchemy.MOD_ID, name));
         INSTINCT_NEED_FACTORY_CACHE.add(instinctEntry);
         return instinctEntry;
