@@ -23,15 +23,11 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ResourceLocation;
 import targoss.hardcorealchemy.HardcoreAlchemy;
-import targoss.hardcorealchemy.instinct.api.IInstinctNeed;
 import targoss.hardcorealchemy.instinct.api.Instinct;
 import targoss.hardcorealchemy.instinct.api.InstinctEffect;
 import targoss.hardcorealchemy.instinct.api.InstinctEffectWrapper;
@@ -110,35 +106,6 @@ public interface ICapabilityInstinct {
      * state in a way that will persist, use clearInstincts/addInstinct, or getInstincts/setInstincts
      */
     void setActiveEffects(Map<InstinctEffect, InstinctEffectWrapper> effects);
-    
-    @Deprecated
-    public static class InstinctNeedEntry {
-        /** Used as the key in the instinct map */
-        public ResourceLocation id;
-        public IInstinctNeed instinct;
-        public float weight = 1.0F;
-    }
-
-    @Deprecated
-    void clearInstinctNeeds();
-
-    @Deprecated
-    void addInstinctNeed(InstinctNeedFactory instinctFactory, EntityLivingBase morphEntity);
-
-    @Deprecated
-    @Nullable IInstinctNeed getActiveInstinct();
-
-    @Deprecated
-    @Nonnull Map<ResourceLocation, InstinctNeedEntry> getInstinctMap();
-
-    @Deprecated
-    void setInstinctMap(Map<ResourceLocation, InstinctNeedEntry> instinctMap);
-
-    @Deprecated
-    ResourceLocation getActiveInstinctId();
-
-    @Deprecated
-    void setActiveInstinctId(ResourceLocation activeInstinctId);
     
     /**
      * Gets the time in ticks since an instinct need message has been shown.
