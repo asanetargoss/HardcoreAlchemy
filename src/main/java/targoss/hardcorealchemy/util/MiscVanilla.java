@@ -18,6 +18,9 @@
 
 package targoss.hardcorealchemy.util;
 
+import java.util.Calendar;
+import java.util.Random;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
@@ -27,6 +30,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.coremod.CoremodHook;
 
 /**
  * Miscellaneous utility class for vanilla Minecraft
@@ -91,6 +95,51 @@ public class MiscVanilla {
         WAXING_CRESCENT,
         FIRST_QUARTER,
         WAXING_GIBBOUS;
+    }
+    
+    private static class FuzzState {
+        boolean enabled = false;
+        Random random = new Random();
+        Calendar testCalendar = Calendar.getInstance();
+    }
+    
+    private static FuzzState clientFuzz = new FuzzState();
+    private static FuzzState serverFuzz = new FuzzState();
+    
+    public static void enableTimeFuzz(boolean isRemote) {
+        (isRemote ? clientFuzz : serverFuzz).enabled = true;
+    }
+    
+    public static void disableTimeFuzz(boolean isRemote) {
+        (isRemote ? clientFuzz : serverFuzz).enabled = false;
+    }
+    
+    public static boolean isFuzzingTime(boolean isRemote) {
+        return (isRemote ? clientFuzz : serverFuzz).enabled;
+    }
+
+    @CoremodHook
+    public static long coremodHookServerTimeMillis(long currentTimeMillis) {
+        if (serverFuzz.enabled) {
+            // Choose a random Minecraft time
+            return serverFuzz.random.nextLong();
+        }
+        return currentTimeMillis;
+    }
+
+    // TODO: @CoremodHook
+    public static long coremodHookWorldTimeMillis(long currentTimeMillis, World world) {
+        FuzzState state = world.isRemote ? clientFuzz : serverFuzz;
+        if (state.enabled) {
+            long newTimeMillis;
+            do {
+                // Choose a random real-world time (excluding April Fools)
+                newTimeMillis = state.random.nextLong();
+                state.testCalendar.setTimeInMillis(newTimeMillis);
+            } while (state.testCalendar.get(Calendar.MONTH) == 4 && state.testCalendar.get(Calendar.DAY_OF_MONTH) == 1);
+            return newTimeMillis;
+        }
+        return currentTimeMillis;
     }
     
     @SideOnly(Side.CLIENT)

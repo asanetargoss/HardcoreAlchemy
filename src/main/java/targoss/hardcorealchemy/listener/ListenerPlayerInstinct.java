@@ -691,4 +691,5 @@ public class ListenerPlayerInstinct extends ConfiguredListener {
             effect.effect.onEntityDrops(player, effect.amplifier, event);
         }
     }
+    
 }

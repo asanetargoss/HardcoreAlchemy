@@ -46,6 +46,13 @@ hardcorealchemy.instinct.attack_prey.preserve_own_kind=You refuse to hunt your o
 hardcorealchemy.instinct.attack_prey.something_else=You want badly to kill %s instead.
 hardcorealchemy.instinct.attack_prey.finished=The hunting urges start to fade.
 
+hardcorealchemy.instinct.home.generic.fulfilled=You yearn to be somewhere else.
+hardcorealchemy.instinct.home.generic.need=You feel at home here.
+hardcorealchemy.instinct.home.nature.need=You yearn for sun and leaves above your head and grass beneath your feet.
+hardcorealchemy.instinct.home.nature.fulfilled=This natural environment makes you feel at ease.
+
+hardcorealchemy.instinct.effect.hunted.warn.variant1=What was that sound?
+
 hardcorealchemy.magic.disabled.item=Your inhuman form prevents you from comprehending this magical item.
 hardcorealchemy.magic.disabled.block=Your inhuman form prevents you from comprehending this magical object.
 hardcorealchemy.magic.disabled.crafttooltip=Your form prevents crafting this

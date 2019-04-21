@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.WeakHashMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -41,6 +42,7 @@ import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.player.EntityPlayer;
@@ -50,6 +52,9 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.LoaderState;
 import targoss.hardcorealchemy.HardcoreAlchemy;
@@ -156,6 +161,54 @@ public class EntityUtil {
             aiTasksOriginal.clear();
             return aiTasksCopy;
         }
+    }
+    
+    private static Map<World, IChunkGenerator> clientSpawnCache = new WeakHashMap<>();
+    
+    /**
+     * Gets the list of entities permitted to spawn at the given location, along with additional spawn information.
+     * May be the original or a copy depending on the situation.
+     */
+    public static List<Biome.SpawnListEntry> getSpawnList(World world, EnumCreatureType creatureType, BlockPos pos) {
+        if (!world.isRemote) {
+            return ((WorldServer)world).getChunkProvider().getPossibleCreatures(creatureType, pos);
+        }
+        else {
+            if (!clientSpawnCache.containsKey(world)) {
+                clientSpawnCache.put(world, world.provider.createChunkGenerator());
+            }
+            return clientSpawnCache.get(world).getPossibleCreatures(creatureType, pos);
+        }
+    }
+    
+    /**
+     * Returns true if the entity has a chance to spawn here, filtering by the given EnumCreatureType.
+     */
+    public static boolean canEntitySpawnHere(EntityLiving entity, World world, BlockPos pos, EnumCreatureType creatureType) {
+        if (!creatureType.getCreatureClass().isAssignableFrom(entity.getClass())) {
+            return false;
+        }
+        
+        List<Biome.SpawnListEntry> creatureSpawns = getSpawnList(world, creatureType, pos);
+        for (Biome.SpawnListEntry creatureSpawn : creatureSpawns) {
+            if (creatureSpawn.entityClass == entity.getClass()) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Returns true if the entity has a chance to spawn here.
+     */
+    public static boolean canEntitySpawnHere(EntityLiving entity, World world, BlockPos pos) {
+        for (EnumCreatureType creatureType : EnumCreatureType.values()) {
+            if (canEntitySpawnHere(entity, world, pos, creatureType)) {
+                return true;
+            }
+        }
+        return false;
     }
     
     /**

@@ -26,6 +26,7 @@ import java.util.Map;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.instinct.api.IInstinctEffectData;
 import targoss.hardcorealchemy.instinct.api.Instinct;
 import targoss.hardcorealchemy.instinct.api.InstinctEffect;
 import targoss.hardcorealchemy.instinct.api.InstinctEffectWrapper;
@@ -36,6 +37,7 @@ public class CapabilityInstinct implements ICapabilityInstinct {
     private float instinct = ICapabilityInstinct.DEFAULT_INSTINCT_VALUE;
     private List<ICapabilityInstinct.InstinctEntry> instincts = new ArrayList();
     private Map<InstinctEffect, InstinctEffectWrapper> activeEffects = new HashMap<>();
+    private Map<InstinctEffect, IInstinctEffectData> effectData = new HashMap<>();
     
     private int instinctMessageTime = 0;
 
@@ -91,5 +93,20 @@ public class CapabilityInstinct implements ICapabilityInstinct {
     @Override
     public void setInstinctMessageTime(int inactiveInstinctTime) {
         this.instinctMessageTime = inactiveInstinctTime;
+    }
+    
+    @Override
+    public IInstinctEffectData getInstinctEffectData(InstinctEffect instinctEffect) {
+        if (effectData.containsKey(instinctEffect)) {
+            return effectData.get(instinctEffect);
+        }
+        
+        IInstinctEffectData data = instinctEffect.createData();
+        if (data != null) {
+            effectData.put(instinctEffect, data);
+            return data;
+        }
+        
+        return null;
     }
 }

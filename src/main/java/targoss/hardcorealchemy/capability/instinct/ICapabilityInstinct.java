@@ -23,11 +23,13 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.entity.player.EntityPlayer;
 import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.instinct.api.IInstinctEffectData;
 import targoss.hardcorealchemy.instinct.api.Instinct;
 import targoss.hardcorealchemy.instinct.api.InstinctEffect;
 import targoss.hardcorealchemy.instinct.api.InstinctEffectWrapper;
@@ -118,4 +120,6 @@ public interface ICapabilityInstinct {
      * Used on server only.
      */
     void setInstinctMessageTime(int inactiveInstinctTime);
+    
+    IInstinctEffectData getInstinctEffectData(InstinctEffect instinctEffect);
 }

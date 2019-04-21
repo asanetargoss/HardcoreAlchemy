@@ -39,6 +39,7 @@ import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.entity.EntityFishSwarm;
 import targoss.hardcorealchemy.util.Chat;
 import targoss.hardcorealchemy.util.EntityUtil;
+import targoss.hardcorealchemy.util.RandomUtil;
 
 public class ListenerPlayerMorphState extends ConfiguredListener {
     public ListenerPlayerMorphState(Configs configs) {
@@ -110,25 +111,14 @@ public class ListenerPlayerMorphState extends ConfiguredListener {
                 if (!player.world.isRemote) {
                     if (timer >= FISH_WAIT_PERIOD && (timer-FISH_WAIT_PERIOD) % FISH_SPAWN_INTERVAL == 0) {
                         // Find a spot to spawn a fish swarm entity (or if not, give up)
-                        for (int i = 0; i < 15; i++) {
-                            // Attempt to spawn swarm between 3 and 7 blocks away (each axis)
-                            float min = 3.0F;
-                            float max = 7.0F;
-                            float range = max-min;
-                            float distanceX = (random.nextFloat()-0.5F)*2.0F;
-                            distanceX = distanceX>0.0F ? (distanceX*range)+min : (distanceX*range)-min;
-                            float distanceY = (random.nextFloat()-0.5F)*2.0F;
-                            distanceY = distanceY>0.0F ? (distanceY*range)+min : (distanceY*range)-min;
-                            float distanceZ = (random.nextFloat()-0.5F)*2.0F;
-                            distanceZ = distanceZ>0.0F ? (distanceZ*range)+min : (distanceZ*range)-min;
-                            
-                            BlockPos spawnPos = new BlockPos(player.posX+distanceX, player.posY+distanceY, player.posZ+distanceZ);
-                            
-                            if (player.world.getBlockState(spawnPos).getMaterial() == Material.WATER) {
-                                EntityFishSwarm fishSwarm = new EntityFishSwarm(player.world);
-                                EntityUtil.createLivingEntityAt(fishSwarm, spawnPos.getX(), spawnPos.getY(), spawnPos.getZ());
-                                break;
-                            }
+                        int attempts = 15;
+                        BlockPos spawnPos = RandomUtil.findSuitableBlockPosInRangeSigned(
+                                random, attempts,
+                                player.getPosition(), 3.0F, 7.0F,
+                                (BlockPos pos) -> player.world.getBlockState(pos).getMaterial() == Material.WATER);
+                        if (spawnPos != null) {
+                            EntityFishSwarm fishSwarm = new EntityFishSwarm(player.world);
+                            EntityUtil.createLivingEntityAt(fishSwarm, spawnPos.getX(), spawnPos.getY(), spawnPos.getZ());
                         }
                     }
                 }

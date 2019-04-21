@@ -51,6 +51,8 @@ import targoss.hardcorealchemy.coremod.transform.TRightClickHarvesting;
 import targoss.hardcorealchemy.coremod.transform.TSlot;
 import targoss.hardcorealchemy.coremod.transform.TThaumcraftPlayerEvents;
 import targoss.hardcorealchemy.coremod.transform.TThirstOverlayHandler;
+import targoss.hardcorealchemy.coremod.transform.TWorld;
+import targoss.hardcorealchemy.coremod.transform.TMinecraftServer;
 
 @IFMLLoadingPlugin.Name(value = "Hardcore Alchemy Coremod")
 @IFMLLoadingPlugin.MCVersion(value = "1.10.2")
@@ -89,7 +91,9 @@ public class HardcoreAlchemyCoremod implements IFMLLoadingPlugin {
 				TRenderEntityItem.class.getName(),
 				TRenderItem.class.getName(),
 				TEntity.class.getName(),
-				TEntityPlayerSP.class.getName()
+				TEntityPlayerSP.class.getName(),
+				TMinecraftServer.class.getName(),
+				TWorld.class.getName()
 		};
 	}
 

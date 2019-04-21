@@ -29,10 +29,28 @@ import net.minecraftforge.event.world.BlockEvent.HarvestDropsEvent;
 import net.minecraftforge.fml.common.registry.IForgeRegistryEntry;
 
 /**
- * Stateless class for defining an effect which changes
+ * Single-instance object for defining an effect which changes
  * player capabilities/behavior.
+ * 
+ * The magnitude of the amplifier determines the strength of the effect.
+ * The following interpretation of the amplifier is recommended:
+ * Below 0.0: Undefined behavior.
+ * Between 0.0 and 1.0 inclusive: Player experiences warnings, flavor effects, and
+ *   effects which affect gameplay but not enough to require the player to change their behavior.
+ * Above 1.0: Player experiences aspects of effect which may significantly affect gameplay,
+ *   increasing necessity to fulfill their instincts.
+ * At or above 2.0: All aspects of the InstinctEffect are active, although may become even more severe at
+ *   higher amplifier values.
  */
 public abstract class InstinctEffect extends IForgeRegistryEntry.Impl<InstinctEffect> {
+    /**
+     * If non-null, this constructs data container associated with the player.
+     * All state goes in here.
+     */
+    public IInstinctEffectData createData() {
+        return null;
+    }
+    
     /**
      * What to do when the effect becomes
      * active, just before tick() is called.

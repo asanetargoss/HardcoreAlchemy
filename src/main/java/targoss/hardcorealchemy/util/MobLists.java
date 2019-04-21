@@ -147,9 +147,33 @@ public class MobLists {
         passiveMobs.add("Chicken");
         passiveMobs.add("Sheep");
         passiveMobs.add("EntityHorse");
+        passiveMobs.add("Rabbit");
         
         return passiveMobs;
     }
+    
+    /**
+     * Mobs that like spawning on grass during the day
+     */
+    public static Set<String> getGrassMobs() {
+        Set<String> grassMobs = new HashSet();
+        
+        // Minecraft
+        grassMobs.add("Pig");
+        grassMobs.add("Cow");
+        grassMobs.add("Chicken");
+        grassMobs.add("Sheep");
+        grassMobs.add("EntityHorse");
+        grassMobs.add("Wolf");
+        grassMobs.add("Ozelot");
+        grassMobs.add("Rabbit");
+        // ToroQuest
+        grassMobs.add("toroquest.toro");
+        
+        return grassMobs;
+    }
+    
+    // TODO: DesertMobs, SnowMobs
 
     /*
      * All classes of this set must be derived from EntityTameable

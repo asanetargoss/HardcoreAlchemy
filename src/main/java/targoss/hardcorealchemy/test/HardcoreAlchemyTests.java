@@ -18,21 +18,18 @@
 
 package targoss.hardcorealchemy.test;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
-import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.test.api.ITestSuite;
 import targoss.hardcorealchemy.test.api.TestSystem;
-import targoss.hardcorealchemy.test.suite.TestMobLists;
-import targoss.hardcorealchemy.test.suite.TestWorldReference;
 import targoss.hardcorealchemy.test.suite.TestFoodRot;
 import targoss.hardcorealchemy.test.suite.TestHumanity;
+import targoss.hardcorealchemy.test.suite.TestMobLists;
+import targoss.hardcorealchemy.test.suite.TestTimeFuzz;
+import targoss.hardcorealchemy.test.suite.TestWorldReference;
 
 /**
  * Server-side tests for Hardcore Alchemy
@@ -58,6 +55,7 @@ public class HardcoreAlchemyTests extends TestSystem {
         testSuites.add(TestFoodRot.class);
         testSuites.add(TestHumanity.class);
         testSuites.add(TestMobLists.class);
+        testSuites.add(TestTimeFuzz.class);
         
         return testSuites;
     }
