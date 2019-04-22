@@ -28,6 +28,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import mchorse.metamorph.Metamorph;
+import mchorse.metamorph.api.events.AcquireMorphEvent;
 import mchorse.metamorph.api.events.MorphEvent;
 import mchorse.metamorph.api.events.RegisterBlacklistEvent;
 import mchorse.metamorph.api.events.SpawnGhostEvent;
@@ -169,6 +170,11 @@ public class ListenerPlayerMorphs extends ConfiguredListener {
 	        event.setCanceled(true);
 	    }
 	}
+    
+    @SubscribeEvent
+    public void onPlayerAcquireMorph(AcquireMorphEvent.Post event) {
+        updateMaxHumanity(event.player);
+    }
 
     @SubscribeEvent
     public void onPlayerClone(Clone event) {
