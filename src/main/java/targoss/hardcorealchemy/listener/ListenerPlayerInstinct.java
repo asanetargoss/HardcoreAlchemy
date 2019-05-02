@@ -27,6 +27,8 @@ import java.util.Random;
 
 import mchorse.metamorph.Metamorph;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
@@ -52,9 +54,9 @@ import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.Clone;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock;
 import net.minecraftforge.event.world.BlockEvent.HarvestDropsEvent;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -621,7 +623,7 @@ public class ListenerPlayerInstinct extends ConfiguredListener {
     }
     
     @SubscribeEvent
-    public void onPlayerDig(LeftClickBlock event) {
+    public void onPlayerDig(PlayerEvent.BreakSpeed event) {
         EntityPlayer player = event.getEntityPlayer();
         
         ICapabilityInstinct instinct = player.getCapability(INSTINCT_CAPABILITY, null);
@@ -629,9 +631,23 @@ public class ListenerPlayerInstinct extends ConfiguredListener {
             return;
         }
         
+        ItemStack heldItem = player.getHeldItemMainhand();
+        IBlockState state = event.getState();
         for (InstinctEffectWrapper effect : instinct.getActiveEffects().values()) {
-            if (!effect.effect.canInteract(player, effect.amplifier, event.getItemStack())) {
-                event.setUseItem(Result.DENY);
+            if (!effect.effect.canInteract(player, effect.amplifier, heldItem)) {
+                if (!InventoryUtil.isEmptyItemStack(heldItem)) {
+                    float toolBreakStrength = player.inventory.getStrVsBlock(state);
+                    if (toolBreakStrength > 1.0F) {
+                        int efficiencyModifier = EnchantmentHelper.getEfficiencyModifier(player);
+                        if (efficiencyModifier > 0)
+                        {
+                            toolBreakStrength += (float)(efficiencyModifier * efficiencyModifier + 1);
+                        }
+                    }
+                    if (toolBreakStrength != 0.0F) {
+                        event.setNewSpeed(event.getOriginalSpeed() / toolBreakStrength);
+                    }
+                }
                 break;
             }
         }
