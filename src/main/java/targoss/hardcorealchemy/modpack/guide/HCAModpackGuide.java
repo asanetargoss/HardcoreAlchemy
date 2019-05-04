@@ -26,6 +26,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.item.Items;
 
 public class HCAModpackGuide {
     private static Book guide = null;
@@ -63,12 +64,12 @@ public class HCAModpackGuide {
         
         book.addCategory(CategoryBuilder.withCategory(base + "modpack_info", "sign")
                 .addEntry("about_the_pack", "compass", "1", "2", "3")
-                .addEntry("known_issues", "poisonous_potato", numStrings(1, 3))
+                .addEntry("known_issues", "poisonous_potato", numStrings(1, 7))
                 .getCategory());
         
         book.addCategory(CategoryBuilder.withCategory(base + "unexpected_journey", "adinferos:pocket_wormhole")
                 .addEntry("intro", "wooden_axe", numStrings(1, 5))
-                .addEntry("settling_in", "armor_stand", numStrings(1, 5))
+                .addEntry("settling_in", "armor_stand", numStrings(1, 6))
                 .addEntry("the_nether", "quartz_ore", numStrings(1, 5))
                 .getCategory());
         
@@ -79,8 +80,16 @@ public class HCAModpackGuide {
                 .addEntry("ars_magica", "arsmagica2:arcane_compendium", "1")
                 .addEntry("astral_sorcery", "astralsorcery:ItemWand", "1")
                 .addEntry("projecte", "projecte:item.pe_philosophers_stone", "1")
+                .addEntry("thaumcraft", "thaumcraft:goggles", "1")
                 .addEntry("alchemic_ash", "AlchemicAsh:VitalCatalyst", "1")
                 .addEntry("unique_crops", "uniquecrops:seednormal", "1")
+                .getCategory());
+        
+        book.addCategory(CategoryBuilder.withCategory(base + "morphing", Items.ESSENCE_MAGE.getRegistryName().toString())
+                .addEntry("intro", "golden_apple", numStrings(1, 3))
+                .addEntry("abilities", "ender_pearl", "1")
+                .addEntry("lost_humanity", "rotten_flesh", numStrings(1, 3))
+                .addEntry("instinct_attack_prey", "magma_cream", "1")
                 .getCategory());
         
         guide = book;
