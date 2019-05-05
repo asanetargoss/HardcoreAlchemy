@@ -16,7 +16,7 @@ About the Hardcore Alchemy mod:
 # Developing/building
 
 ## Dependencies
-This branch targets the 0.4.x version of the modpack. Download the 0.4.0 zip file from the link below and add its contents to libs/ (create the folder if it does not exist):
+This branch targets the 0.3.8+/0.4.x version of the modpack. Download the 0.4.0 zip file from the link below and add its contents to libs/ (create the folder if it does not exist):
 
 http://www.mediafire.com/folder/grwn2vsjr2lce/Hardcore_Alchemy_Libs
 
