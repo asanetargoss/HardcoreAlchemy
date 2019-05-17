@@ -49,7 +49,7 @@ public class Items {
     
     public static final Item ESSENCE_MAGE = item("essence_mage");
     
-    public static final Potion POTION_ALLOW_MAGIC = potion("allow_magic", GOOD_EFFECT, new Color(113, 80, 182), 0);
+    public static final Potion POTION_ALLOW_MAGIC = potion("allow_magic", GOOD_EFFECT, new Color(113, 80, 182), 0, true);
     public static final PotionType POTION_TYPE_ALLOW_MAGIC = potionType(POTION_ALLOW_MAGIC, 5*60*20);
     
     private static Item item(String itemName, Item item) {
@@ -72,8 +72,8 @@ public class Items {
         return potion;
     }
     
-    private static Potion potion(String potionName, boolean isBadEffect, Color color, int locationId) {
-        HcAPotion potion = new HcAPotion(isBadEffect, color, locationId);
+    private static Potion potion(String potionName, boolean isBadEffect, Color color, int locationId, boolean halfPixelOffsetRight) {
+        HcAPotion potion = new HcAPotion(isBadEffect, color, locationId, halfPixelOffsetRight);
         return potion(potionName, potion);
     }
     

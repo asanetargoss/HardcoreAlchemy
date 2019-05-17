@@ -50,11 +50,13 @@ public class HcAPotion extends Potion {
     public static final boolean GOOD_EFFECT = false;
     public static final boolean BAD_EFFECT = true;
     
-    private final int iconId;
+    protected final int iconId;
+    protected final double offsetRight;
     
-    public HcAPotion(boolean isBadEffect, Color color, int iconId) {
+    public HcAPotion(boolean isBadEffect, Color color, int iconId, boolean halfPixelOffsetRight) {
         super(isBadEffect, colorValue(color));
         this.iconId = iconId;
+        this.offsetRight = halfPixelOffsetRight ? 0.5D : 0.0D;
     }
     
     private static int colorValue(Color color) {
@@ -99,10 +101,10 @@ public class HcAPotion extends Potion {
         Tessellator tessellator = Tessellator.getInstance();
         VertexBuffer vertexbuffer = tessellator.getBuffer();
         vertexbuffer.begin(7, DefaultVertexFormats.POSITION_TEX);
-        vertexbuffer.pos((double)(6 + x),                (double)(7 + y + EFFECT_WIDTH), zLevel).tex((double)((float)(textureX)                * UV_SCALE), (double)((float)(textureY + EFFECT_WIDTH) * UV_SCALE)).endVertex();
-        vertexbuffer.pos((double)(6 + x + EFFECT_WIDTH), (double)(7 + y + EFFECT_WIDTH), zLevel).tex((double)((float)(textureX + EFFECT_WIDTH) * UV_SCALE), (double)((float)(textureY + EFFECT_WIDTH) * UV_SCALE)).endVertex();
-        vertexbuffer.pos((double)(6 + x + EFFECT_WIDTH), (double)(7 + y),                zLevel).tex((double)((float)(textureX + EFFECT_WIDTH) * UV_SCALE), (double)((float)(textureY)                * UV_SCALE)).endVertex();
-        vertexbuffer.pos((double)(6 + x),                (double)(7 + y),                zLevel).tex((double)((float)(textureX)                * UV_SCALE), (double)((float)(textureY)                * UV_SCALE)).endVertex();
+        vertexbuffer.pos((double)(6 + x) + offsetRight,                (double)(7 + y + EFFECT_WIDTH), zLevel).tex((double)((float)(textureX)                * UV_SCALE), (double)((float)(textureY + EFFECT_WIDTH) * UV_SCALE)).endVertex();
+        vertexbuffer.pos((double)(6 + x + EFFECT_WIDTH) + offsetRight, (double)(7 + y + EFFECT_WIDTH), zLevel).tex((double)((float)(textureX + EFFECT_WIDTH) * UV_SCALE), (double)((float)(textureY + EFFECT_WIDTH) * UV_SCALE)).endVertex();
+        vertexbuffer.pos((double)(6 + x + EFFECT_WIDTH) + offsetRight, (double)(7 + y),                zLevel).tex((double)((float)(textureX + EFFECT_WIDTH) * UV_SCALE), (double)((float)(textureY)                * UV_SCALE)).endVertex();
+        vertexbuffer.pos((double)(6 + x) + offsetRight,                (double)(7 + y),                zLevel).tex((double)((float)(textureX)                * UV_SCALE), (double)((float)(textureY)                * UV_SCALE)).endVertex();
         tessellator.draw();
     }
     
@@ -115,6 +117,6 @@ public class HcAPotion extends Potion {
         mc.getTextureManager().bindTexture(TILESET);
         int textureX = REGION_X + (iconId % EFFECT_COUNT);
         int textureY = REGION_Y + (iconId / EFFECT_COUNT);
-        mc.ingameGUI.drawTexturedModalRect(x + 3, y + 3, textureX, textureY, EFFECT_WIDTH, EFFECT_WIDTH);
+        mc.ingameGUI.drawTexturedModalRect((float)(x + 3) + (float)offsetRight, (float)(y + 3) + (float)offsetRight, textureX, textureY, EFFECT_WIDTH, EFFECT_WIDTH);
     }
 }
