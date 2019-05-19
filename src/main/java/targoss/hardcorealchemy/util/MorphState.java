@@ -25,6 +25,7 @@ import ladysnake.dissolution.common.capabilities.CapabilityIncorporealHandler;
 import ladysnake.dissolution.common.capabilities.IIncorporealHandler;
 import mchorse.metamorph.api.MorphAPI;
 import mchorse.metamorph.api.MorphManager;
+import mchorse.metamorph.api.abilities.IAbility;
 import mchorse.metamorph.api.morphs.AbstractMorph;
 import mchorse.metamorph.api.morphs.EntityMorph;
 import mchorse.metamorph.capabilities.morphing.IMorphing;
@@ -175,6 +176,29 @@ public class MorphState {
                 null);
         if (incorporeal != null && incorporeal.isIncorporeal()) {
             return true;
+        }
+        return false;
+    }
+    
+    public static boolean hasMorphAbility(EntityPlayer player, String abilityName) {
+        IMorphing morphing = player.getCapability(ListenerPlayerHumanity.MORPHING_CAPABILITY, null);
+        if (morphing == null) {
+            return false;
+        }
+        AbstractMorph morph = morphing.getCurrentMorph();
+        if (morph == null) {
+            return false;
+        }
+        
+        IAbility ability = MorphManager.INSTANCE.abilities.get(abilityName);
+        if (ability == null) {
+            return false;
+        }
+        
+        for (IAbility playerAbility : morph.settings.abilities) {
+            if (playerAbility == ability) {
+                return true;
+            }
         }
         return false;
     }

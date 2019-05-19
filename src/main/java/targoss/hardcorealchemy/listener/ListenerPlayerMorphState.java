@@ -22,6 +22,7 @@ import java.util.Random;
 
 import mchorse.metamorph.api.events.MorphEvent;
 import net.minecraft.block.material.Material;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
@@ -30,6 +31,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import targoss.hardcorealchemy.capability.morphstate.CapabilityMorphState;
@@ -39,6 +41,7 @@ import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.entity.EntityFishSwarm;
 import targoss.hardcorealchemy.util.Chat;
 import targoss.hardcorealchemy.util.EntityUtil;
+import targoss.hardcorealchemy.util.MorphState;
 import targoss.hardcorealchemy.util.RandomUtil;
 
 public class ListenerPlayerMorphState extends ConfiguredListener {
@@ -132,4 +135,42 @@ public class ListenerPlayerMorphState extends ConfiguredListener {
             }
         }
     }
+    
+    /** When the player has the water_breath ability,
+     * invert the effect of the player losing dig speed underwater,
+     * so the player instead digs normally when in water and slowly
+     * when out of water.
+     */
+    @SubscribeEvent
+    public void onPlayerDigUnderwater(PlayerEvent.BreakSpeed event) {
+        EntityPlayer player = event.getEntityPlayer();
+        if (!MorphState.hasMorphAbility(player, "water_breath")) {
+            return;
+        }
+        
+        float modifier = 1.0F;
+        
+        boolean inWater = player.isInWater();
+        
+        // Undo mining penalty when swimming due to feet not touching the ground
+        if (inWater && !player.onGround) {
+            modifier *= 5.0F;
+        }
+        
+        if (player.isInsideOfMaterial(Material.WATER)) {
+            if (!EnchantmentHelper.getAquaAffinityModifier(player)) {
+                // Only undo it if Aqua Affinity is not applying its own effect
+                modifier *= 5.0F;
+            }
+        }
+        else {
+            // Be a bit more lenient. Allow the player to dig blocks easily as long as they are breathing water.
+            if (!inWater) {
+                modifier *= 0.2F;
+            }
+        }
+        
+        event.setNewSpeed(event.getNewSpeed() * modifier);
+    }
+    
 }
