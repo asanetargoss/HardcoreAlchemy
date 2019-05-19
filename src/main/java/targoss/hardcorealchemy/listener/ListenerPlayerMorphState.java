@@ -28,12 +28,15 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraftforge.client.event.FOVUpdateEvent;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import targoss.hardcorealchemy.capability.morphstate.CapabilityMorphState;
 import targoss.hardcorealchemy.capability.morphstate.ICapabilityMorphState;
 import targoss.hardcorealchemy.capability.morphstate.ProviderMorphState;
@@ -41,6 +44,7 @@ import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.entity.EntityFishSwarm;
 import targoss.hardcorealchemy.util.Chat;
 import targoss.hardcorealchemy.util.EntityUtil;
+import targoss.hardcorealchemy.util.MiscVanilla;
 import targoss.hardcorealchemy.util.MorphState;
 import targoss.hardcorealchemy.util.RandomUtil;
 
@@ -171,6 +175,45 @@ public class ListenerPlayerMorphState extends ConfiguredListener {
         }
         
         event.setNewSpeed(event.getNewSpeed() * modifier);
+    }
+    
+    protected static final int MAX_WATER_TIME = 20 * 4;
+    protected static int waterTime = 0;
+    protected static boolean highWaterTime = false;
+    
+    /**
+     * Increase FOV when the player is in water and has the swim ability, to combat
+     * motion sickness due to fast movement.
+     */
+    @SubscribeEvent
+    @SideOnly(Side.CLIENT)
+    public void onSwimmingMorphInWater(FOVUpdateEvent event) {
+        EntityPlayer player = MiscVanilla.getTheMinecraftPlayer();
+        if (!MorphState.hasMorphAbility(player, "swim")) {
+            return;
+        }
+        
+        if (waterTime > MAX_WATER_TIME * 0.5) {
+            highWaterTime = true;
+        }
+        else if (waterTime <= 0) {
+            highWaterTime = false;
+        }
+        
+        if (highWaterTime) {
+            event.setNewfov(event.getNewfov() * 4.0f);
+        }
+        
+        if (player.isInWater()) {
+            if (waterTime < MAX_WATER_TIME) { 
+                waterTime++;
+            }   
+        }
+        else {
+            if (waterTime > 0) {
+                waterTime--;
+            }
+        }
     }
     
 }
