@@ -241,7 +241,10 @@ public class InstinctNeedAttackPrey implements IInstinctNeed {
         nbt.setBoolean(NBT_COVETS_PREY, covetsPrey);
         nbt.setInteger(NBT_TIME_SINCE_SEEN_PREY, timeSinceSeenPrey);
         if (lastSeenPrey != null) {
-            nbt.setString(NBT_LAST_SEEN_PREY, EntityList.getEntityStringFromClass(lastSeenPrey));
+            String entityString = EntityList.getEntityStringFromClass(lastSeenPrey);
+            if (entityString != null) {
+                nbt.setString(NBT_LAST_SEEN_PREY, entityString);
+            }
         }
         nbt.setBoolean(NBT_HAS_KILLED, hasKilled);
         nbt.setInteger(NBT_SUDDEN_URGE_TIMER, suddenUrgeTimer);
