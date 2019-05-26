@@ -244,28 +244,51 @@ public class EntityUtil {
     /**
      * Gets living entities and morphed players who resemble the given entity class
      */
-    public static <T extends EntityLivingBase> List<T> getEntitiesAndMorphs(World world, Class<? extends T> entityClass, AxisAlignedBB aabb) {
-        if (entityClass.isInstance(EntityPlayer.class)) {
-            return (List<T>)world.getEntitiesWithinAABB((Class<? extends EntityPlayer>)entityClass, aabb, EntityUtil::isUnmorphed);
+    public static <T extends EntityLivingBase> List<T> getEntitiesAndMorphs(World world, Class<? extends T> entityClass, AxisAlignedBB aabb, @Nullable Predicate <? super T > filter) {
+        if (EntityPlayer.class.isAssignableFrom(entityClass)) {
+            return (List<T>)world.getEntitiesWithinAABB((Class<? extends T>)entityClass, aabb, new Predicate<T>() {
+                @Override public boolean apply(T player) {
+                    return isUnmorphed((EntityPlayer)player) && entityClass.isAssignableFrom(player.getClass()) && (filter == null || filter.apply(player));
+                }
+            });
+        }
+        else if (entityClass.isAssignableFrom(EntityPlayer.class)) {
+            return (List<T>)world.getEntitiesWithinAABB(entityClass, aabb, new Predicate<T>() {
+                @Override public boolean apply(T entity) {
+                    EntityLivingBase effectiveEntity = getEffectiveEntity(entity);
+                    return entityClass.isAssignableFrom(effectiveEntity.getClass()) && (filter == null || filter.apply((T)effectiveEntity));
+                }
+            });
         }
         else {
-            List<T> likeEntities = world.getEntitiesWithinAABB(entityClass, aabb, null);
+            List<T> likeEntities = world.getEntitiesWithinAABB(entityClass, aabb, filter);
             List<EntityPlayer> morphedPlayers = world.getEntitiesWithinAABB(EntityPlayer.class, aabb, new Predicate<EntityPlayer>() {
-                    @Override public boolean apply(EntityPlayer player) { return isMorphedAs(player, entityClass); }
-                });
+                @Override public boolean apply(EntityPlayer player) {
+                    EntityLivingBase effectiveEntity = getEffectiveEntity(player);
+                    return entityClass.isAssignableFrom(effectiveEntity.getClass()) && (filter == null || filter.apply((T)effectiveEntity));
+                }
+            });
             likeEntities.addAll((List<T>)morphedPlayers);
             return likeEntities;
         }
+    }
+    
+    public static <T extends EntityLivingBase> List<T> getEntitiesAndMorphs(World world, Class<? extends T> entityClass, AxisAlignedBB aabb) {
+        return getEntitiesAndMorphs(world, entityClass, aabb, null);
     }
 
     /**
      * Gets living entities and morphed players who resemble the given entity class,
      * excluding the given entity.
      */
-    public static <T extends EntityLivingBase> List<T> getEntitiesAndMorphsExcluding(EntityLivingBase excludingEntity, World world, Class <? extends T> entityClass, AxisAlignedBB aabb) {
-        List<T> foundEntities = getEntitiesAndMorphs(world, entityClass, aabb);
+    public static <T extends EntityLivingBase> List<T> getEntitiesAndMorphsExcluding(EntityLivingBase excludingEntity, World world, Class <? extends T> entityClass, AxisAlignedBB aabb, @Nullable Predicate <? super T > filter) {
+        List<T> foundEntities = getEntitiesAndMorphs(world, entityClass, aabb, filter);
         foundEntities.remove(excludingEntity);
         return foundEntities;
+    }
+    
+    public static <T extends EntityLivingBase> List<T> getEntitiesAndMorphsExcluding(EntityLivingBase excludingEntity, World world, Class <? extends T> entityClass, AxisAlignedBB aabb) {
+        return getEntitiesAndMorphsExcluding(excludingEntity, world, entityClass, aabb, null);
     }
     
     /**
@@ -318,5 +341,12 @@ public class EntityUtil {
             return player;
         }
         return ((EntityMorph)morph).getEntity(player.world);
+    }
+    
+    public static EntityLivingBase getEffectiveEntity(@Nonnull EntityLivingBase entity) {
+        if (entity instanceof EntityPlayer) {
+            return getEffectiveEntity((EntityPlayer)entity);
+        }
+        return entity;
     }
 }

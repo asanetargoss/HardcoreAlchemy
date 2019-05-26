@@ -26,6 +26,8 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
+import com.google.common.base.Predicate;
+
 import mchorse.metamorph.api.morphs.AbstractMorph;
 import mchorse.metamorph.api.morphs.EntityMorph;
 import mchorse.metamorph.capabilities.morphing.IMorphing;
@@ -111,7 +113,39 @@ public class InstinctNeedAttackPrey implements IInstinctNeed {
     private Class<? extends EntityLivingBase> ownEntityClass = null;
     /** Whether initTargets() was called */
     private boolean targetsInitialized = false;
-    private Set<Class<? extends EntityLivingBase>> targetEntityClasses = new HashSet<>();
+    protected static class EntityTargetInfo<T extends EntityLivingBase> {
+        public final Class<T> entityClass;
+        public final Predicate<? super T> filter;
+        protected final int hash;
+        
+        public EntityTargetInfo(Class<T> targetClass, @Nullable Predicate<? super T> targetSelector) {
+            this.entityClass = targetClass;
+            this.filter = targetSelector;
+            int hash = this.entityClass.hashCode();
+            if (this.filter != null) {
+                hash = hash * 31 + this.filter.hashCode();
+            }
+            this.hash = hash;
+        }
+        
+        public boolean isValidTarget(EntityLivingBase entity) {
+            EntityLivingBase effectiveEntity = EntityUtil.getEffectiveEntity(entity);
+            if (!entityClass.isAssignableFrom(effectiveEntity.getClass())) {
+                return false;
+            }
+            if (filter != null && !filter.apply((T)effectiveEntity)) {
+                return false;
+            }
+            return true;
+        }
+        
+        @Override
+        public int hashCode() {
+            return hash;
+        }
+        
+    }
+    private Set<EntityTargetInfo<? extends EntityLivingBase>> entityTargetTypes = new HashSet<>();
     
     @Override
     public IInstinctNeed createInstanceFromMorphEntity(EntityLivingBase morphEntity) {
@@ -131,18 +165,18 @@ public class InstinctNeedAttackPrey implements IInstinctNeed {
     }
     
     private ITextComponent getRandomTargetName() {
-        if (targetEntityClasses.size() == 0) {
+        if (entityTargetTypes.size() == 0) {
             return null;
         }
         
-        int indexToSelect = random.nextInt(targetEntityClasses.size());
+        int indexToSelect = random.nextInt(entityTargetTypes.size());
         int i = 0;
         
         String chosenEntityName = null;
         Class<? extends EntityLivingBase> chosenEntityClass = null;
-        for (Class<? extends EntityLivingBase> targetClass : targetEntityClasses) {
+        for (EntityTargetInfo targetInfo : entityTargetTypes) {
             if (i++ == indexToSelect) {
-                chosenEntityClass = targetClass;
+                chosenEntityClass = targetInfo.entityClass;
                 break;
             }
         }
@@ -201,7 +235,7 @@ public class InstinctNeedAttackPrey implements IInstinctNeed {
     }
 
     private void setDesiredTargets(EntityLiving entityMorphedAs) {
-        targetEntityClasses.clear();
+        entityTargetTypes.clear();
         for (EntityAITasks.EntityAITaskEntry aiTaskEntry : EntityUtil.getAiTargetTasks(entityMorphedAs)) {
             EntityAIBase task = aiTaskEntry.action;
             
@@ -214,14 +248,14 @@ public class InstinctNeedAttackPrey implements IInstinctNeed {
             }
             
             if (targetClass != null) {
-                targetEntityClasses.add(targetClass);
+                entityTargetTypes.add(new EntityTargetInfo(targetClass, ((EntityAINearestAttackableTarget)task).targetEntitySelector));
                 
                 if (targetClass == EntityPlayer.class) {
                     /* Also add non-player humans from MobLists.getHumans()
                      * This allows more options for things to kill
                      */
                     for (Class<? extends EntityLivingBase> humanClass : getHumanClasses()) {
-                        targetEntityClasses.add(humanClass);
+                        entityTargetTypes.add(new EntityTargetInfo(humanClass, null));
                     }
                 }
             }
@@ -322,7 +356,7 @@ public class InstinctNeedAttackPrey implements IInstinctNeed {
     @Override
     public void afterKill(IInstinctState instinctState, EntityLivingBase entity) {
         EntityPlayer player = instinctState.getPlayer();
-        if (isTarget(entity)) {
+        if (isTarget(entity) || (trackedEntity != null && entity == trackedEntity)) {
             hasKilled = true;
             updateTrackedEntity(player);
             if (trackedEntity != null) {
@@ -348,12 +382,20 @@ public class InstinctNeedAttackPrey implements IInstinctNeed {
     }
     
     private boolean isTarget(EntityLivingBase entity) {
-        for (Class targetClass : targetEntityClasses) {
-            if (EntityUtil.isEntityLike(entity, targetClass)) {
-                return true;
+        // The AI predicates discard entities that are dead, but we may need to know if this entity WAS a valid target at some point.
+        boolean wasDead = entity.isDead;
+        float health = entity.getHealth();
+        boolean validTarget = false;
+        for (EntityTargetInfo targetInfo : entityTargetTypes) {
+            if (targetInfo.isValidTarget(entity)) {
+                validTarget = true;
+                break;
             }
         }
-        return false;
+        entity.isDead = wasDead;
+        entity.setHealth(health);
+        
+        return validTarget;
     }
     
     private boolean isKilled(EntityLivingBase entity) {
@@ -437,9 +479,9 @@ public class InstinctNeedAttackPrey implements IInstinctNeed {
                 player.posX-SIGHT_RANGE, player.posY-SIGHT_RANGE, player.posZ-SIGHT_RANGE,
                 player.posX+SIGHT_RANGE, player.posY+SIGHT_RANGE, player.posZ+SIGHT_RANGE
                 );
-        for (Class<? extends EntityLivingBase> targetEntityClass : targetEntityClasses) {
-            for (EntityLivingBase possiblePrey : EntityUtil.getEntitiesAndMorphsExcluding(player, player.world, targetEntityClass, aabb)) {
-                if (possiblePrey != morphEntity && !isKilled(possiblePrey) && isTarget(possiblePrey) && player.canEntityBeSeen(possiblePrey)) {
+        for (EntityTargetInfo targetInfo : entityTargetTypes) {
+            for (EntityLivingBase possiblePrey : (List<EntityLivingBase>)EntityUtil.getEntitiesAndMorphsExcluding(player, player.world, targetInfo.entityClass, aabb, targetInfo.filter)) {
+                if (possiblePrey != morphEntity && !isKilled(possiblePrey) && player.canEntityBeSeen(possiblePrey)) {
                     availablePrey.add(possiblePrey);
                 }
             }
