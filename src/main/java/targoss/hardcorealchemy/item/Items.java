@@ -18,6 +18,8 @@
 
 package targoss.hardcorealchemy.item;
 
+import static net.minecraft.init.Items.FERMENTED_SPIDER_EYE;
+import static net.minecraft.init.Items.REDSTONE;
 import static targoss.hardcorealchemy.item.HcAPotion.GOOD_EFFECT;
 
 import java.util.ArrayList;
@@ -51,6 +53,10 @@ public class Items {
     
     public static final Potion POTION_ALLOW_MAGIC = potion("allow_magic", GOOD_EFFECT, new Color(113, 80, 182), 0, true);
     public static final PotionType POTION_TYPE_ALLOW_MAGIC = potionType(POTION_ALLOW_MAGIC, 5*60*20);
+    //public static final Potion POTION_AIR_BREATHING = potion("air_breathing", new PotionAirBreathing(GOOD_EFFECT, new Color(86, 211, 212), 1, false));
+    public static final Potion POTION_AIR_BREATHING = potion("air_breathing", new PotionAirBreathing(GOOD_EFFECT, new Color(205, 205, 205), 1, false));
+    public static final PotionType POTION_TYPE_AIR_BREATHING = potionType(POTION_AIR_BREATHING, 3*60*20);
+    public static final PotionType POTION_TYPE_AIR_BREATHING_EXTENDED = potionType(POTION_AIR_BREATHING, "_extended", 8*60*20);
     
     private static Item item(String itemName, Item item) {
         item.setRegistryName(HardcoreAlchemy.MOD_ID, itemName);
@@ -77,13 +83,17 @@ public class Items {
         return potion(potionName, potion);
     }
     
-    private static PotionType potionType(Potion potion, int duration) {
+    private static PotionType potionType(Potion potion, String registrySuffix, int duration) {
         PotionType type = new PotionType(
                 potion.getRegistryName().toString(),
                 new PotionEffect[]{new PotionEffect(potion, duration)});
-        type.setRegistryName(potion.getRegistryName());
+        type.setRegistryName(potion.getRegistryName().toString() + registrySuffix);
         POTION_TYPE_CACHE.add(type);
         return type;
+    }
+    
+    private static PotionType potionType(Potion potion, int duration) {
+        return potionType(potion, "", duration);
     }
     
     public static void registerItems() {
@@ -133,6 +143,21 @@ public class Items {
                 PotionUtils.addPotionToItemStack(new ItemStack(Item.getByNameOrId("potion")), PotionType.getPotionTypeForName("awkward")),
                 new ItemStack(ESSENCE_MAGE),
                 PotionUtils.addPotionToItemStack(new ItemStack(Item.getByNameOrId("potion")), POTION_TYPE_ALLOW_MAGIC)
+                );
+        BrewingRecipeRegistry.addRecipe(
+                PotionUtils.addPotionToItemStack(new ItemStack(Item.getByNameOrId("potion")), PotionType.getPotionTypeForName("water_breathing")),
+                new ItemStack(FERMENTED_SPIDER_EYE),
+                PotionUtils.addPotionToItemStack(new ItemStack(Item.getByNameOrId("potion")), POTION_TYPE_AIR_BREATHING)
+                );
+        BrewingRecipeRegistry.addRecipe(
+                PotionUtils.addPotionToItemStack(new ItemStack(Item.getByNameOrId("potion")), PotionType.getPotionTypeForName("long_water_breathing")),
+                new ItemStack(FERMENTED_SPIDER_EYE),
+                PotionUtils.addPotionToItemStack(new ItemStack(Item.getByNameOrId("potion")), POTION_TYPE_AIR_BREATHING_EXTENDED)
+                );
+        BrewingRecipeRegistry.addRecipe(
+                PotionUtils.addPotionToItemStack(new ItemStack(Item.getByNameOrId("potion")), POTION_TYPE_AIR_BREATHING),
+                new ItemStack(REDSTONE),
+                PotionUtils.addPotionToItemStack(new ItemStack(Item.getByNameOrId("potion")), POTION_TYPE_AIR_BREATHING_EXTENDED)
                 );
     }
 }
