@@ -95,8 +95,8 @@ public class HcAPotion extends Potion {
     public void renderInventoryEffect(int x, int y, PotionEffect effect, net.minecraft.client.Minecraft mc) {
         mc.getTextureManager().bindTexture(TILESET);
         float UV_SCALE = 1.0F/256.0F;
-        int textureX = REGION_X + (iconId % EFFECT_COUNT);
-        int textureY = REGION_Y + (iconId / EFFECT_COUNT);
+        int textureX = REGION_X + EFFECT_WIDTH * (iconId % EFFECT_COUNT);
+        int textureY = REGION_Y + EFFECT_WIDTH * (iconId / EFFECT_COUNT);
         double zLevel = 200.0D;
         Tessellator tessellator = Tessellator.getInstance();
         VertexBuffer vertexbuffer = tessellator.getBuffer();
@@ -115,8 +115,8 @@ public class HcAPotion extends Potion {
     @SideOnly(Side.CLIENT)
     public void renderHUDEffect(int x, int y, PotionEffect effect, net.minecraft.client.Minecraft mc, float alpha) {
         mc.getTextureManager().bindTexture(TILESET);
-        int textureX = REGION_X + (iconId % EFFECT_COUNT);
-        int textureY = REGION_Y + (iconId / EFFECT_COUNT);
+        int textureX = REGION_X + EFFECT_WIDTH * (iconId % EFFECT_COUNT);
+        int textureY = REGION_Y + EFFECT_WIDTH * (iconId / EFFECT_COUNT);
         mc.ingameGUI.drawTexturedModalRect((float)(x + 3) + (float)offsetRight, (float)(y + 3) + (float)offsetRight, textureX, textureY, EFFECT_WIDTH, EFFECT_WIDTH);
     }
 }
