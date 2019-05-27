@@ -86,7 +86,7 @@ public class InstinctNeedAttackPrey implements IInstinctNeed {
         return HUMAN_CLASSES;
     }
     
-    /** Indicates that trackedEntity was non-null and the entity has not died */
+    /** Indicates that the player needs to kill something */
     private boolean covetsPrey = false;
     /** Time since the player has seen prey (in ticks) */
     private int timeSinceSeenPrey = 0;
@@ -348,6 +348,13 @@ public class InstinctNeedAttackPrey implements IInstinctNeed {
                     suddenUrgeTimer--;
                 }
             }
+            else if (!covetsPrey && covetedPrey && lastTrackedEntity != null) {
+                instinctState.setNeedStatus(InstinctState.NeedStatus.NONE);
+                if (player.world.isRemote) {
+                    Chat.messageSP(Chat.Type.NOTIFY, player, new TextComponentTranslation("hardcorealchemy.instinct.attack_prey.gone",
+                        EntityUtil.getEntityName(lastTrackedEntity)));
+                }
+            }
         }
         
         sawPrey = hasSeenPrey;
@@ -399,7 +406,7 @@ public class InstinctNeedAttackPrey implements IInstinctNeed {
     }
     
     private boolean isKilled(EntityLivingBase entity) {
-        return entity.isDead || entity.getHealth() <= 0;
+        return entity.getHealth() <= 0;
     }
     
     // TODO: Change entity detection algorithm to allow continuing to track entities through walls below a certain distance (line of sight still required to initiate need)
