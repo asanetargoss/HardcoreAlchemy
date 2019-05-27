@@ -18,6 +18,8 @@
 
 package targoss.hardcorealchemy.capability.instinct;
 
+import static targoss.hardcorealchemy.util.Serialization.NBT_COMPOUND_ID;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -38,6 +40,7 @@ import targoss.hardcorealchemy.instinct.api.InstinctEffectWrapper;
 import targoss.hardcorealchemy.instinct.api.InstinctNeedWrapper;
 import targoss.hardcorealchemy.instinct.api.InstinctState;
 import targoss.hardcorealchemy.instinct.api.Instincts;
+import targoss.hardcorealchemy.util.Serialization;
 
 public class StorageInstinct implements Capability.IStorage<ICapabilityInstinct> {
     public static final String INSTINCT = "instinct";
@@ -64,13 +67,6 @@ public class StorageInstinct implements Capability.IStorage<ICapabilityInstinct>
     public static final String EFFECT_MAX_INSTINCT = "max_instinct";
     
     public static final String ACTIVE_EFFECTS = "active_effects";
-    
-    private static int NBT_COMPOUND_ID = ((List<String>)Arrays.asList(NBTBase.NBT_TYPES)).indexOf("COMPOUND");
-    static {
-        if (NBT_COMPOUND_ID == -1) {
-            throw new ModStateException("StorageInstinct.NBT_COMPOUND_ID could not be defined. Have NBT constants changed?");
-        }
-    }
     
     @Override
     public NBTBase writeNBT(Capability<ICapabilityInstinct> capability, ICapabilityInstinct instance, EnumFacing side) {

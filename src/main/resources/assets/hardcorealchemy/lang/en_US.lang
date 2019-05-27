@@ -40,7 +40,7 @@ hardcorealchemy.ability.fishing.error.notinwater=You must be in water to begin t
 
 hardcorealchemy.instinct.attack_prey.need=You yearn to hunt %s.
 hardcorealchemy.instinct.attack_prey.detect=You sense a %s.
-hardcorealchemy.instinct.attack_prey.gone=You no longer sense a %s.
+hardcorealchemy.instinct.attack_prey.gone=You no longer sense prey.
 hardcorealchemy.instinct.attack_prey.kill_another=You kill the %s, but you feel the urge to kill more.
 hardcorealchemy.instinct.attack_prey.resist=You resist the urge to kill the %s, but it only makes the urge stronger.
 hardcorealchemy.instinct.attack_prey.preserve_own_kind=You refuse to hunt your own kind.

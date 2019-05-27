@@ -18,6 +18,8 @@
 
 package targoss.hardcorealchemy.instinct;
 
+import static targoss.hardcorealchemy.util.Serialization.NBT_STRING_ID;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -43,6 +45,8 @@ import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -144,8 +148,26 @@ public class InstinctNeedAttackPrey implements IInstinctNeed {
             return hash;
         }
         
+        @Override
+        public boolean equals(Object obj) {
+            if (super.equals(obj)) {
+                return true;
+            }
+            
+            if (obj == null || !(obj instanceof EntityTargetInfo)) {
+                return false;
+            }
+            
+            EntityTargetInfo other = (EntityTargetInfo)obj;
+            
+            return (entityClass == other.entityClass &&
+                    filter == other.filter);
+        }
+        
     }
+    // This will contain information from just the AI at first, but more entries will be added as entities are identified as prey
     private Set<EntityTargetInfo<? extends EntityLivingBase>> entityTargetTypes = new HashSet<>();
+    private static final int MAX_SIMPLE_TARGET_TYPES_SERIALIZED = 10;
     
     @Override
     public IInstinctNeed createInstanceFromMorphEntity(EntityLivingBase morphEntity) {
@@ -267,6 +289,7 @@ public class InstinctNeedAttackPrey implements IInstinctNeed {
     private static final String NBT_LAST_SEEN_PREY = "lastSeenPrey";
     private static final String NBT_HAS_KILLED = "hasKilled";
     private static final String NBT_SUDDEN_URGE_TIMER = "suddenUrgeTimer";
+    private static final String NBT_KNOWN_TARGETS = "knownTargets";
     
     @Override
     public NBTTagCompound serializeNBT() {
@@ -282,6 +305,24 @@ public class InstinctNeedAttackPrey implements IInstinctNeed {
         }
         nbt.setBoolean(NBT_HAS_KILLED, hasKilled);
         nbt.setInteger(NBT_SUDDEN_URGE_TIMER, suddenUrgeTimer);
+        
+        NBTTagList knownTargetsList = new NBTTagList();
+        // Avoid caching too many things
+        int targetCacheAllowance = MAX_SIMPLE_TARGET_TYPES_SERIALIZED;
+        for (EntityTargetInfo targetInfo : entityTargetTypes) {
+            if (targetInfo.filter != null) {
+                // Can't serialize these
+                continue;
+            }
+            String entityString = EntityList.getEntityStringFromClass(targetInfo.entityClass);
+            if (entityString != null && !entityString.isEmpty()) {
+                knownTargetsList.appendTag(new NBTTagString(entityString));
+                if (--targetCacheAllowance <= 0) {
+                    break;
+                }
+            }
+        }
+        nbt.setTag(NBT_KNOWN_TARGETS, knownTargetsList);
         
         return nbt;
     }
@@ -302,6 +343,21 @@ public class InstinctNeedAttackPrey implements IInstinctNeed {
         }
         hasKilled = nbt.getBoolean(NBT_HAS_KILLED);
         suddenUrgeTimer = nbt.getInteger(NBT_SUDDEN_URGE_TIMER);
+        {
+            NBTTagList knownTargetsList = nbt.getTagList(NBT_KNOWN_TARGETS, NBT_STRING_ID);
+            int n = Math.min(knownTargetsList.tagCount(), MAX_SIMPLE_TARGET_TYPES_SERIALIZED);
+            for (int i = 0; i < n; i++) {
+                String knownTargetString = knownTargetsList.getStringTagAt(i);
+                if (knownTargetString == "") {
+                    continue;
+                }
+                Class<? extends Entity> entityClass = EntityList.NAME_TO_CLASS.get(knownTargetString);
+                if (entityClass == null || !EntityLivingBase.class.isAssignableFrom(entityClass)) {
+                    continue;
+                }
+                entityTargetTypes.add(new EntityTargetInfo((Class<? extends EntityLivingBase>)entityClass, null));
+            }
+        }
     }
     
     private static int DETECT_MESSAGE_COOLDOWN = 10 * 20;
@@ -349,10 +405,10 @@ public class InstinctNeedAttackPrey implements IInstinctNeed {
                 }
             }
             else if (!covetsPrey && covetedPrey && lastTrackedEntity != null) {
-                instinctState.setNeedStatus(InstinctState.NeedStatus.NONE);
-                if (player.world.isRemote) {
-                    Chat.messageSP(Chat.Type.NOTIFY, player, new TextComponentTranslation("hardcorealchemy.instinct.attack_prey.gone",
-                        EntityUtil.getEntityName(lastTrackedEntity)));
+                if (!player.world.isRemote) {
+                    instinctState.setNeedStatus(InstinctState.NeedStatus.NONE);
+                    Chat.message(Chat.Type.NOTIFY, (EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.instinct.attack_prey.gone"));
+                    instinctState.syncNeed();
                 }
             }
         }
@@ -366,6 +422,7 @@ public class InstinctNeedAttackPrey implements IInstinctNeed {
         if (isTarget(entity) || (trackedEntity != null && entity == trackedEntity)) {
             hasKilled = true;
             updateTrackedEntity(player);
+            
             if (trackedEntity != null) {
                 instinctState.setNeedStatus(IInstinctState.NeedStatus.URGENT);
                 Chat.message(Chat.Type.NOTIFY, (EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.instinct.attack_prey.kill_another",
@@ -376,6 +433,7 @@ public class InstinctNeedAttackPrey implements IInstinctNeed {
                 // The last prey they could see has died
                 Chat.message(Chat.Type.NOTIFY, (EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.instinct.attack_prey.finished"));
             }
+            
             instinctState.syncNeed();
         }
         else if (hasKilled) {
@@ -392,6 +450,8 @@ public class InstinctNeedAttackPrey implements IInstinctNeed {
         // The AI predicates discard entities that are dead, but we may need to know if this entity WAS a valid target at some point.
         boolean wasDead = entity.isDead;
         float health = entity.getHealth();
+        entity.isDead = false;
+        entity.setHealth(Float.MIN_VALUE);
         boolean validTarget = false;
         for (EntityTargetInfo targetInfo : entityTargetTypes) {
             if (targetInfo.isValidTarget(entity)) {
@@ -450,7 +510,7 @@ public class InstinctNeedAttackPrey implements IInstinctNeed {
      * Otherwise, the tracked entity will be null.
      */
     private void updateTrackedEntity(EntityPlayer player) {
-        if (trackedEntity != null && isKilled(trackedEntity)) {
+        if (trackedEntity == null || isKilled(trackedEntity)) {
             covetsPrey = false;
             trackedEntity = null;
         }
@@ -495,7 +555,12 @@ public class InstinctNeedAttackPrey implements IInstinctNeed {
         }
         
         if (availablePrey.size() > 0) {
-            return availablePrey.get(random.nextInt(availablePrey.size()));
+            EntityLivingBase chosenPrey = availablePrey.get(random.nextInt(availablePrey.size()));
+            // Also add this to the list of valid targets, if it is not present (reduces issues with unreliable targeting lambdas)
+            // Because it's a set, no need to check for duplicates
+            // TODO: AAAAA! It's still complaining about wanting to kill squid instead, when killing squid!
+            entityTargetTypes.add(new EntityTargetInfo(chosenPrey.getClass(), null));
+            return chosenPrey;
         }
         else {
             return null;
