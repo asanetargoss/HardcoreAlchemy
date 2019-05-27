@@ -27,17 +27,21 @@ import ca.wescook.nutrition.nutrients.Nutrient;
 import net.minecraft.block.BlockBed;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityList;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Enchantments;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.pathfinding.PathNavigateSwimmer;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.ZombieEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.Optional;
@@ -50,6 +54,7 @@ import targoss.hardcorealchemy.capability.misc.CapabilityMisc;
 import targoss.hardcorealchemy.capability.misc.ICapabilityMisc;
 import targoss.hardcorealchemy.capability.misc.ProviderMisc;
 import targoss.hardcorealchemy.config.Configs;
+import targoss.hardcorealchemy.item.Items;
 import targoss.hardcorealchemy.util.Chat;
 import targoss.hardcorealchemy.util.InventoryUtil;
 import targoss.hardcorealchemy.util.MiscVanilla;
@@ -184,6 +189,19 @@ public class ListenerSmallTweaks extends ConfiguredListener {
         }
         if (changed && player.ticksExisted % 60 == 16) {
             nutrition.resync();
+        }
+    }
+    
+    @SubscribeEvent
+    public void onWaterMobUpdate(LivingUpdateEvent event) {
+        EntityLivingBase entity = event.getEntityLiving();
+        if (!entity.isPotionActive(Items.POTION_AIR_BREATHING)) {
+            return;
+        }
+        if (entity.canBreatheUnderwater() ||
+                ((entity instanceof EntityLiving) && ((EntityLiving)entity).getNavigator() instanceof PathNavigateSwimmer)
+                ) {
+            entity.setAir(300);
         }
     }
 }

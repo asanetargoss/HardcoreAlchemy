@@ -21,7 +21,10 @@ package targoss.hardcorealchemy.item;
 import org.lwjgl.util.Color;
 
 import mchorse.metamorph.capabilities.morphing.IMorphing;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.passive.EntityWaterMob;
+import net.minecraft.pathfinding.PathNavigateSwimmer;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 
@@ -40,9 +43,9 @@ public class PotionAirBreathing extends HcAPotion {
     @Override
     public void performEffect(EntityLivingBase entity, int ampifier) {
         IMorphing morphing = entity.getCapability(MORPHING_CAPABILITY, null);
-        if (morphing == null) {
-            return;
+        if (morphing != null) {
+            morphing.setSquidAir(300);
         }
-        morphing.setSquidAir(300);
+        // Squids will override their air meter if their air is set here, so the code for that is in a listener instead.
     }
 }
