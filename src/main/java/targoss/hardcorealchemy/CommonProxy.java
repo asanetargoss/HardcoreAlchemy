@@ -65,6 +65,7 @@ import targoss.hardcorealchemy.capability.serverdata.ICapabilityServerData;
 import targoss.hardcorealchemy.capability.serverdata.StorageServerData;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.listener.ConfiguredListener;
+import targoss.hardcorealchemy.listener.ListenerConfigs;
 import targoss.hardcorealchemy.listener.ListenerCrops;
 import targoss.hardcorealchemy.listener.ListenerInventoryFoodRot;
 import targoss.hardcorealchemy.listener.ListenerMobAI;
@@ -100,6 +101,7 @@ public class CommonProxy {
                 ListenerPlayerMorphState.class,
                 ListenerPlayerInstinct.class,
                 ListenerPlayerHinderedMind.class,
+                ListenerConfigs.class,
                 ListenerCrops.class // 1.10-specific
             );
     

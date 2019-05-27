@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Random;
 
 import mchorse.metamorph.Metamorph;
+import mchorse.metamorph.capabilities.morphing.IMorphing;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -78,6 +79,7 @@ import targoss.hardcorealchemy.network.MessageInstinctNeedState;
 import targoss.hardcorealchemy.network.PacketHandler;
 import targoss.hardcorealchemy.util.Chat;
 import targoss.hardcorealchemy.util.InventoryUtil;
+import targoss.hardcorealchemy.util.MorphState;
 
 /**
  * Capability handling, ticking, and event hooks for instincts.
@@ -170,6 +172,22 @@ public class ListenerPlayerInstinct extends ConfiguredListener {
         ICapabilityInstinct instinct = player.getCapability(INSTINCT_CAPABILITY, null);
         if (instinct == null) {
             return;
+        }
+        
+        // Rather than bail out at the beginning, check if some instinct effects are enabled, as they may alter state.
+        if (!configs.base.enableInstincts) {
+            if (instinct.getEnabled()) {
+                instinct.clearInstincts(player);
+                instinct.setInstinct(ICapabilityInstinct.DEFAULT_INSTINCT_VALUE);
+                instinct.setEnabled(false);
+            }
+            return;
+        } else {
+            if (!instinct.getEnabled()) {
+                // Need to re-initialize
+                MorphState.buildInstincts(player, instinct);
+                instinct.setEnabled(true);
+            }
         }
 
         List<ICapabilityInstinct.InstinctEntry> entries = instinct.getInstincts();

@@ -18,6 +18,43 @@
 
 package targoss.hardcorealchemy.config;
 
-public class Configs {
+import java.io.File;
+import java.nio.file.Path;
 
+import net.minecraftforge.common.config.Configuration;
+import targoss.hardcorealchemy.HardcoreAlchemy;
+
+public class Configs {
+    public static final int VERSION = 1;
+    public static final String BASE_CONFIG_NAME = HardcoreAlchemy.MOD_ID + ".cfg";
+    
+    public File hcaConfigurationDir;
+    
+    public ConfigBase base;
+    
+    public Configs() {
+        base = new ConfigBase(VERSION);
+    }
+    
+    public static int getVersionForForgeConfig(Configuration configuration, int version) {
+        return configuration.getInt("version", "meta", version, 1, VERSION, "This is used to keep track of changes to the config format. Changing this is not recommended.");
+    }
+    
+    /**
+     * Initialize the configs using the given file as the base folder.
+     * The base folder is assumed to be an initially empty folder exclusively used by this mod.
+     */
+    public void init(File hcaConfigurationDir) {
+        this.hcaConfigurationDir = hcaConfigurationDir;
+        Path configurationPath = hcaConfigurationDir.toPath();
+        base.init(configurationPath.resolve(BASE_CONFIG_NAME).toFile());
+    }
+    
+    public void load() {
+        base.load();
+    }
+    
+    public void save() {
+        base.save();
+    }
 }

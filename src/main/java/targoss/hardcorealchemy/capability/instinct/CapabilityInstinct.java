@@ -34,12 +34,23 @@ import targoss.hardcorealchemy.instinct.api.InstinctEffectWrapper;
 public class CapabilityInstinct implements ICapabilityInstinct {
     public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(HardcoreAlchemy.MOD_ID, "instinct");
     
+    protected boolean enabled = true;
     private float instinct = ICapabilityInstinct.DEFAULT_INSTINCT_VALUE;
     private List<ICapabilityInstinct.InstinctEntry> instincts = new ArrayList();
     private Map<InstinctEffect, InstinctEffectWrapper> activeEffects = new HashMap<>();
     private Map<InstinctEffect, IInstinctEffectData> effectData = new HashMap<>();
     
     private int instinctMessageTime = 0;
+    
+    @Override
+    public boolean getEnabled() {
+        return enabled;
+    }
+    
+    @Override
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 
     @Override
     public float getInstinct() {

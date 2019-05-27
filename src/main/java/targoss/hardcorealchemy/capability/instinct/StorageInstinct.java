@@ -41,6 +41,7 @@ import targoss.hardcorealchemy.instinct.api.Instincts;
 
 public class StorageInstinct implements Capability.IStorage<ICapabilityInstinct> {
     public static final String INSTINCT = "instinct";
+    public static final String ENABLED = "enabled";
     public static final String INACTIVE_INSTINCT_TIME = "inactiveInstinctTime";
 
     public static final String INSTINCTS = "instincts";
@@ -76,6 +77,7 @@ public class StorageInstinct implements Capability.IStorage<ICapabilityInstinct>
         NBTTagCompound nbtCompound = new NBTTagCompound();
         
         nbtCompound.setFloat(INSTINCT, instance.getInstinct());
+        nbtCompound.setBoolean(ENABLED, instance.getEnabled());
         nbtCompound.setFloat(INACTIVE_INSTINCT_TIME, instance.getInstinctMessageTime());
         
         NBTTagList instinctsNBT = new NBTTagList();
@@ -103,6 +105,10 @@ public class StorageInstinct implements Capability.IStorage<ICapabilityInstinct>
         NBTTagCompound nbtCompound = (nbt instanceof NBTTagCompound) ? (NBTTagCompound)nbt : new NBTTagCompound();
         
         instance.setInstinct(nbtCompound.getFloat(INSTINCT));
+        if (nbtCompound.hasKey(ENABLED)) {
+            // Enabled defaults to true, so be careful not to override the value
+            instance.setEnabled(nbtCompound.getBoolean(ENABLED));
+        }
         instance.setInstinctMessageTime(nbtCompound.getInteger(INACTIVE_INSTINCT_TIME));
         
         List<InstinctEntry> instincts = instance.getInstincts();

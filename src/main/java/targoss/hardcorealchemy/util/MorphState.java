@@ -41,6 +41,7 @@ import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.capability.humanity.LostMorphReason;
 import targoss.hardcorealchemy.capability.instinct.ICapabilityInstinct;
+import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.instinct.api.Instinct;
 import targoss.hardcorealchemy.instinct.api.Instincts;
 import targoss.hardcorealchemy.item.Items;
@@ -69,18 +70,18 @@ public class MorphState {
      * Forces the player into human form, and clears the player's needs and instincts.
      * Returns true if successful
      */
-    public static boolean resetForm(EntityPlayer player) {
-        return forceForm(player, LostMorphReason.REGAINED_MORPH_ABILITY, (AbstractMorph)null);
+    public static boolean resetForm(Configs configs, EntityPlayer player) {
+        return forceForm(configs, player, LostMorphReason.REGAINED_MORPH_ABILITY, (AbstractMorph)null);
     }
     
-    public static boolean forceForm(EntityPlayer player, LostMorphReason reason,
+    public static boolean forceForm(Configs configs, EntityPlayer player, LostMorphReason reason,
             String morphName) {
-        return forceForm(player, reason, createMorph(morphName));
+        return forceForm(configs, player, reason, createMorph(morphName));
     }
 
-    public static boolean forceForm(EntityPlayer player, LostMorphReason reason,
+    public static boolean forceForm(Configs configs, EntityPlayer player, LostMorphReason reason,
             String morphName, NBTTagCompound morphProperties) {
-        return forceForm(player, reason, createMorph(morphName, morphProperties));
+        return forceForm(configs, player, reason, createMorph(morphName, morphProperties));
     }
     
     /*TODO: Consider making forceForm server-side authoritative, and
@@ -92,7 +93,7 @@ public class MorphState {
      * with the given reason, and updates the player's needs and instincts.
      * Returns true if successful
      */
-    public static boolean forceForm(EntityPlayer player, LostMorphReason reason,
+    public static boolean forceForm(Configs configs, EntityPlayer player, LostMorphReason reason,
             @Nullable AbstractMorph morph) {
         IMorphing morphing = player.getCapability(ListenerPlayerHumanity.MORPHING_CAPABILITY, null);
         if (morphing == null) {
@@ -140,8 +141,8 @@ public class MorphState {
             ICapabilityInstinct instincts = player.getCapability(INSTINCT_CAPABILITY, null);
             if (instincts != null) {
                 instincts.clearInstincts(player);
-                if (morph instanceof EntityMorph) {
-                    instincts.setInstinct(ICapabilityInstinct.DEFAULT_INSTINCT_VALUE);
+                instincts.setInstinct(ICapabilityInstinct.DEFAULT_INSTINCT_VALUE);
+                if (configs.base.enableInstincts && morph instanceof EntityMorph) {
                     MorphState.buildInstincts(player, instincts, ((EntityMorph)morph).getEntity(player.world));
                 }
             }
@@ -205,6 +206,7 @@ public class MorphState {
 
     public static void buildInstincts(EntityPlayer player, ICapabilityInstinct instincts, EntityLivingBase morphEntity) {
         instincts.clearInstincts(player);
+        instincts.setInstinct(ICapabilityInstinct.DEFAULT_INSTINCT_VALUE);
         
         if (morphEntity == null || !(morphEntity instanceof EntityLiving)) {
             return;
@@ -218,5 +220,23 @@ public class MorphState {
             }
         }
     }
-
+    
+    public static void buildInstincts(EntityPlayer player, ICapabilityInstinct instincts) {
+        instincts.clearInstincts(player);
+        instincts.setInstinct(ICapabilityInstinct.DEFAULT_INSTINCT_VALUE);
+        
+        IMorphing morphing = Morphing.get(player);
+        if (morphing == null) {
+            return;
+        }
+        AbstractMorph morph = morphing.getCurrentMorph();
+        if (!(morph instanceof EntityMorph)) {
+            return;
+        }
+        EntityLivingBase morphEntity = ((EntityMorph)morph).getEntity(player.world);
+        if (morphEntity == null) {
+            return;
+        }
+        buildInstincts(player, instincts, morphEntity);
+    }
 }

@@ -40,6 +40,7 @@ public class PacketHandler {
         (new MessageInstinctNeedState()).register();
         (new MessageInstinctEffects()).register();
         (new MessageInstinctNeedChanged()).register();
+        (new MessageConfigs()).register();
     }
     
 }

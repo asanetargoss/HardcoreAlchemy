@@ -157,15 +157,15 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
                     // If you are already in a morph, then congrats, you get to keep that morph!
                     if (morphing.getCurrentMorph() == null) {
                         // Uh oh, you're a zombie now!
-                        MorphState.forceForm(player, LostMorphReason.LOST_HUMANITY, "Zombie");
+                        MorphState.forceForm(configs, player, LostMorphReason.LOST_HUMANITY, "Zombie");
                     }
                     else {
-                        MorphState.forceForm(player, LostMorphReason.LOST_HUMANITY, morphing.getCurrentMorph());
+                        MorphState.forceForm(configs, player, LostMorphReason.LOST_HUMANITY, morphing.getCurrentMorph());
                     }
                 }
                 else if (item == CHORUS_FRUIT) {
                     // Uh oh, you're an enderman now!
-                    MorphState.forceForm(player, LostMorphReason.LOST_HUMANITY, "Enderman");
+                    MorphState.forceForm(configs, player, LostMorphReason.LOST_HUMANITY, "Enderman");
                 }
                 else if (item == WITHER_APPLE) {
                     // Uh oh, you're a wither skeleton now!
@@ -173,7 +173,7 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
                     NBTTagCompound nbtEntityData = new NBTTagCompound();
                     nbt.setTag("EntityData", nbtEntityData);
                     nbtEntityData.setByte("SkeletonType", (byte)1);
-                    MorphState.forceForm(player, LostMorphReason.LOST_HUMANITY, "Skeleton", nbt);
+                    MorphState.forceForm(configs, player, LostMorphReason.LOST_HUMANITY, "Skeleton", nbt);
                     //TODO: clear the withering effect if and when I can figure out how to balance it
                 }
             }
@@ -255,11 +255,11 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
                     if (newHumanity <= 0) {
                         AbstractMorph morph = morphing.getCurrentMorph();
                         if (morph != null) {
-                            MorphState.forceForm(player, LostMorphReason.LOST_HUMANITY, morph);
+                            MorphState.forceForm(configs, player, LostMorphReason.LOST_HUMANITY, morph);
                         }
                         else {
                             // If the player isn't in a morph, give a reasonable default
-                            MorphState.forceForm(player, LostMorphReason.LOST_HUMANITY, "Zombie");
+                            MorphState.forceForm(configs, player, LostMorphReason.LOST_HUMANITY, "Zombie");
                         }
                     }
                 }
@@ -335,7 +335,7 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
         EntityPlayer player = event.player;
         if (MorphState.isIncorporeal(player)) {
             // You're a ghost, so being in a morph doesn't really make sense
-            MorphState.resetForm(player);
+            MorphState.resetForm(configs, player);
         }
     }
 }

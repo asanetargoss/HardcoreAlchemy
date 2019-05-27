@@ -41,6 +41,10 @@ public interface ICapabilityInstinct {
     public static final IAttribute MAX_INSTINCT = new RangedAttribute(null, HardcoreAlchemy.MOD_ID + ":max_instinct", 20.0D, Double.MIN_VALUE, Double.MAX_VALUE).setShouldWatch(true);
     public static final float DEFAULT_INSTINCT_VALUE = (float)(MAX_INSTINCT.getDefaultValue()*0.51);
     
+    boolean getEnabled();
+    
+    void setEnabled(boolean enabled);
+    
     float getInstinct();
     
     void setInstinct(float instinct);

@@ -33,7 +33,7 @@ import targoss.hardcorealchemy.config.Configs;
  * It is initialized with a Configs instance.
  */
 public abstract class ConfiguredListener {
-    private Configs configs;
+    public Configs configs;
     
     private ConfiguredListener() { }
     
