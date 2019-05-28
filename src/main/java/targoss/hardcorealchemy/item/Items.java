@@ -31,14 +31,16 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.potion.PotionType;
-import net.minecraft.potion.PotionUtils;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.registry.IForgeRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import targoss.hardcorealchemy.HardcoreAlchemy;
@@ -53,7 +55,6 @@ public class Items {
     
     public static final Potion POTION_ALLOW_MAGIC = potion("allow_magic", GOOD_EFFECT, new Color(113, 80, 182), 0, true);
     public static final PotionType POTION_TYPE_ALLOW_MAGIC = potionType(POTION_ALLOW_MAGIC, 5*60*20);
-    //public static final Potion POTION_AIR_BREATHING = potion("air_breathing", new PotionAirBreathing(GOOD_EFFECT, new Color(86, 211, 212), 1, false));
     public static final Potion POTION_AIR_BREATHING = potion("air_breathing", new PotionAirBreathing(GOOD_EFFECT, new Color(205, 205, 205), 1, false));
     public static final PotionType POTION_TYPE_AIR_BREATHING = potionType(POTION_AIR_BREATHING, 3*60*20);
     public static final PotionType POTION_TYPE_AIR_BREATHING_EXTENDED = potionType(POTION_AIR_BREATHING, "_extended", 8*60*20);
@@ -86,7 +87,7 @@ public class Items {
     private static PotionType potionType(Potion potion, String registrySuffix, int duration) {
         PotionType type = new PotionType(
                 potion.getRegistryName().toString(),
-                new PotionEffect[]{new PotionEffect(potion, duration)});
+                new PotionEffect(potion, duration));
         type.setRegistryName(potion.getRegistryName().toString() + registrySuffix);
         POTION_TYPE_CACHE.add(type);
         return type;
@@ -124,6 +125,29 @@ public class Items {
         POTION_TYPE_CACHE.clear();
     }
     
+    private static Item potionItem;
+    private static ItemStack getPotionItemStack(PotionType potionType) {
+        if (potionItem == null) {
+            potionItem = Item.getByNameOrId("potion");
+        }
+        
+        ItemStack itemStack = new ItemStack(potionItem);
+        NBTTagCompound potionTag = new NBTTagCompound();
+        potionTag.setString("Potion", potionType.getRegistryName().toString());
+        itemStack.setTagCompound(potionTag);
+        return itemStack;
+    }
+    
+    /**
+     * Because BrewingRecipeRegistry.addRecipe isn't NBT sensitive...
+     * ;_;
+     */
+    private static void addPotionRecipe(PotionType inputPotion, ItemStack inputCatalystStack, PotionType outputPotion) {
+        ItemStack inputPotionStack = getPotionItemStack(inputPotion);
+        ItemStack outputPotionStack = getPotionItemStack(outputPotion);
+        BrewingRecipeRegistry.addRecipe(new HcABrewingRecipe(inputPotionStack, inputCatalystStack, outputPotionStack));
+    }
+    
     public static void registerRecipes() {
         if (recipesRegistered) {
             return;
@@ -139,25 +163,29 @@ public class Items {
                 new ItemStack(Item.getByNameOrId("book")),
                 lapis
                 );
-        BrewingRecipeRegistry.addRecipe(
-                PotionUtils.addPotionToItemStack(new ItemStack(Item.getByNameOrId("potion")), PotionType.getPotionTypeForName("awkward")),
+        
+        IForgeRegistry<PotionType> potionTypeRegistry = GameRegistry.findRegistry(PotionType.class);
+
+        
+        addPotionRecipe(
+                potionTypeRegistry.getValue(new ResourceLocation("awkward")),
                 new ItemStack(ESSENCE_MAGE),
-                PotionUtils.addPotionToItemStack(new ItemStack(Item.getByNameOrId("potion")), POTION_TYPE_ALLOW_MAGIC)
+                POTION_TYPE_ALLOW_MAGIC
                 );
-        BrewingRecipeRegistry.addRecipe(
-                PotionUtils.addPotionToItemStack(new ItemStack(Item.getByNameOrId("potion")), PotionType.getPotionTypeForName("water_breathing")),
+        addPotionRecipe(
+                potionTypeRegistry.getValue(new ResourceLocation("water_breathing")),
                 new ItemStack(FERMENTED_SPIDER_EYE),
-                PotionUtils.addPotionToItemStack(new ItemStack(Item.getByNameOrId("potion")), POTION_TYPE_AIR_BREATHING)
+                POTION_TYPE_AIR_BREATHING
                 );
-        BrewingRecipeRegistry.addRecipe(
-                PotionUtils.addPotionToItemStack(new ItemStack(Item.getByNameOrId("potion")), PotionType.getPotionTypeForName("long_water_breathing")),
+        addPotionRecipe(
+                potionTypeRegistry.getValue(new ResourceLocation("long_water_breathing")),
                 new ItemStack(FERMENTED_SPIDER_EYE),
-                PotionUtils.addPotionToItemStack(new ItemStack(Item.getByNameOrId("potion")), POTION_TYPE_AIR_BREATHING_EXTENDED)
+                POTION_TYPE_AIR_BREATHING_EXTENDED
                 );
-        BrewingRecipeRegistry.addRecipe(
-                PotionUtils.addPotionToItemStack(new ItemStack(Item.getByNameOrId("potion")), POTION_TYPE_AIR_BREATHING),
+        addPotionRecipe(
+                POTION_TYPE_AIR_BREATHING,
                 new ItemStack(REDSTONE),
-                PotionUtils.addPotionToItemStack(new ItemStack(Item.getByNameOrId("potion")), POTION_TYPE_AIR_BREATHING_EXTENDED)
+                POTION_TYPE_AIR_BREATHING_EXTENDED
                 );
     }
 }
