@@ -29,6 +29,7 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -52,7 +53,7 @@ import targoss.hardcorealchemy.util.MiscVanilla;
  * If they do not feel "at home," the player's instinct decreases slowly.
  * This instinct need may display an additional message when the player transitions to a favorable environment.
  */
-public class InstinctNeedSpawnEnvironment extends InstinctNeedEnvironment {
+public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
     
     @CapabilityInject(IMorphing.class)
     private static final Capability<IMorphing> MORPHING_CAPABILITY = null;
@@ -98,11 +99,22 @@ public class InstinctNeedSpawnEnvironment extends InstinctNeedEnvironment {
      */
     protected float preferredAtHomeFrequency = 0.0F;
     
-    // TODO: Dynamically determine if a mob can have this instinct by looping over all biomes and making sure the mob spawns in at least one of them
-    
     public InstinctNeedSpawnEnvironment(EntityLivingBase morphEntity) {
-        super(morphEntity);
+        spawnCheckEntity = morphEntity;
     }
+
+    @Override
+    public NBTTagCompound serializeNBT() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void deserializeNBT(NBTTagCompound nbt) {
+        // TODO Auto-generated method stub
+        
+    }
+
 
     @Override
     public IInstinctNeed createInstanceFromMorphEntity(EntityLivingBase morphEntity) {
@@ -189,6 +201,11 @@ public class InstinctNeedSpawnEnvironment extends InstinctNeedEnvironment {
         feelAtHomeMessageQueue = Math.max(feelAtHomeMessageQueue + 1, MAX_FEEL_AT_HOME_MESSAGE_QUEUE);
         return null;
     }
+
+    @Override
+    public ITextComponent getNeedUnfulfilledMessage(NeedStatus needStatus) {
+        return null;
+    }
     
     @Override
     public void tick(IInstinctState instinctState) {
@@ -234,5 +251,4 @@ public class InstinctNeedSpawnEnvironment extends InstinctNeedEnvironment {
             shouldRandomlyDisplayFeelAtHomeMessage = true;
         }
     }
-
 }

@@ -32,7 +32,7 @@ import net.minecraft.world.World;
 import targoss.hardcorealchemy.instinct.api.IInstinctNeed;
 import targoss.hardcorealchemy.instinct.api.IInstinctState.NeedStatus;
 
-public class InstinctNeedForestPlains extends InstinctNeedEnvironment {
+public class InstinctNeedForestPlains extends InstinctNeedSpawnEnvironment {
     public InstinctNeedForestPlains(EntityLivingBase morphEntity) {
         super(morphEntity);
     }
@@ -45,70 +45,6 @@ public class InstinctNeedForestPlains extends InstinctNeedEnvironment {
         return null;
     }
     
-    @Override
-    public boolean doesPlayerFeelAtHome(EntityPlayer player) {
-        World world = player.world;
-        MutableBlockPos blockCheckPos = new MutableBlockPos();
-        boolean onOrAboveGrass = false;
-        boolean sufficientLight = false;
-        boolean skyAbove = false;
-        boolean leavesAbove = false;
-        
-        // Check if standing or floating above grass (leaves are also fine)
-        blockCheckPos.setPos(player);
-        int grassChecksRemaining = 10;
-        for (; blockCheckPos.getY() >= 0 && grassChecksRemaining > 0; blockCheckPos.move(EnumFacing.DOWN)) {
-            grassChecksRemaining--;
-            IBlockState stateCandidate = world.getBlockState(blockCheckPos);
-            Block grassCandidate = stateCandidate.getBlock();
-            Material material = grassCandidate.getMaterial(stateCandidate);
-            if (grassCandidate != null && (material == Material.GRASS || material == Material.LEAVES)) {
-                onOrAboveGrass = true;
-                break;
-            }
-        }
-        // No grass! Return early.
-        if (!onOrAboveGrass) {
-            return false;
-        }
-        
-        // Check if sky or leaves above
-        blockCheckPos.setPos(player).move(EnumFacing.UP, (int)Math.floor(player.height));
-        if (world.canSeeSky(blockCheckPos)) {
-            skyAbove = true;
-        }
-        else {
-            int maxCheckHeight = Math.min(1 + world.getHeight(blockCheckPos.getX(), blockCheckPos.getZ()), 20 + blockCheckPos.getY());
-            for (; blockCheckPos.getY() <= maxCheckHeight; blockCheckPos.move(EnumFacing.UP)) {
-                if (world.canSeeSky(blockCheckPos)) {
-                    skyAbove = true;
-                    break;
-                }
-                IBlockState stateCandidate = world.getBlockState(blockCheckPos);
-                Block grassOrSkyCandidate = stateCandidate.getBlock();
-                if (grassOrSkyCandidate == null) {
-                    skyAbove = true;
-                    break;
-                }
-                Material material = grassOrSkyCandidate.getMaterial(stateCandidate);
-                if (material == Material.AIR) {
-                    skyAbove = true;
-                    break;
-                }
-                if (material == Material.LEAVES) {
-                    leavesAbove = true;
-                    break;
-                }
-            }
-        }
-        
-        // Check if sufficient light (basically, any light level
-        blockCheckPos.setPos(player);
-        sufficientLight = world.getLight(blockCheckPos) > 8;
-        
-        return onOrAboveGrass && (sufficientLight || skyAbove) && (leavesAbove || skyAbove);
-    }
-
     @Override
     public ITextComponent getFeelsAtHomeMessage(NeedStatus needStatus) {
         return new TextComponentTranslation("hardcorealchemy.instinct.home.nature.fulfilled");
