@@ -47,6 +47,8 @@ public class TestTimeFuzz implements ITestSuite {
         return tests;
     }
     
+    private static final int REASONABLE_RNG_CHECK_COUNT = 100;
+    
     public boolean checkServerFuzzDisabled(int fuzzChecks) {
         // Server time in milliseconds should either increase or stay the same
         // If there is an RNG in place, there will be great variation in the value
@@ -62,7 +64,7 @@ public class TestTimeFuzz implements ITestSuite {
     }
     
     public boolean checkServerFuzzDisabled() {
-        return checkServerFuzzDisabled(5);
+        return checkServerFuzzDisabled(REASONABLE_RNG_CHECK_COUNT);
     }
     
     public boolean checkWorldFuzzDisabled(int fuzzChecks, World world) {
@@ -79,7 +81,7 @@ public class TestTimeFuzz implements ITestSuite {
     }
     
     public boolean checkWorldFuzzDisabled() {
-        return checkWorldFuzzDisabled(5, MiscVanilla.getWorld());
+        return checkWorldFuzzDisabled(REASONABLE_RNG_CHECK_COUNT, MiscVanilla.getWorld());
     }
     
     public boolean checkServerFuzzDisabledFunction() {
