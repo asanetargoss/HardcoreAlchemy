@@ -29,6 +29,7 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -40,6 +41,7 @@ import net.minecraftforge.common.capabilities.CapabilityInject;
 import targoss.hardcorealchemy.instinct.api.IInstinctNeed;
 import targoss.hardcorealchemy.instinct.api.IInstinctState;
 import targoss.hardcorealchemy.instinct.api.IInstinctState.NeedStatus;
+import targoss.hardcorealchemy.util.Chat;
 import targoss.hardcorealchemy.util.EntityUtil;
 import targoss.hardcorealchemy.util.MiscVanilla;
 
@@ -58,8 +60,7 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
     @CapabilityInject(IMorphing.class)
     private static final Capability<IMorphing> MORPHING_CAPABILITY = null;
     
-    // TODO: Consider rolling this into the base class, or have the simpler hysteresis pulled into another implementation
-    // TODO: Serialization (+ Networking?)
+    // TODO: Networking?
     protected static final int MIN_HISTORY_CAPACITY = 10 * 20;
     protected static final int MAX_HISTORY_CAPACITY = 4096;
     /**
@@ -68,7 +69,7 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
     protected int historyCapacity = MAX_HISTORY_CAPACITY;
     /**
      * In case some entities have extremely rare spawn success,
-     * allow preferredAtHomeFrequencies to decay if maxAtHomeStreak
+     * allow preferredAtHomeFraction to decay if maxAtHomeStreak
      * never exceeds this value.
      * Decay will only occur when the player is not feeling at home.
      */
@@ -87,32 +88,53 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
     
     protected EntityLivingBase spawnCheckEntity = null;
     protected boolean feelsAtHome = false;
-    protected int feelAtHomeMessageQueue = 0;
-    protected boolean shouldRandomlyDisplayFeelAtHomeMessage = true;
+    protected int atHomeMessageQueue = 0;
+    protected boolean atHomeMessageEnabled = true;
     protected int atHomeStreak = 0;
     protected int maxAtHomeStreak = 0;
-    protected float averageAtHomeFrequency = 0.0F;
+    protected float averageAtHomeFraction = 0.0F;
     /**
      * The preferred number of ticks (relative to the environment history size) at which the
      * player starts to feel at home. When above this value, the player will not feel negative effects.
-     * The value of this will be no greater than maxAtHomeFrequency / 2
+     * The value of this will be no greater than the maximum recorded averageAtHomeFraction / 2
      */
-    protected float preferredAtHomeFrequency = 0.0F;
+    protected float preferredAtHomeFraction = 0.0F;
     
     public InstinctNeedSpawnEnvironment(EntityLivingBase morphEntity) {
+        // TODO: Proxy entity, for cases when an entity doesn't have spawn conditions, but a similar entity does. Note: Will need to update the entity's position and world manually in that case.
         spawnCheckEntity = morphEntity;
     }
+    
+    private static final String NBT_FEELS_AT_HOME = "feelsAtHome";
+    private static final String NBT_AT_HOME_MESSAGE_QUEUE = "atHomeMessageQueue";
+    private static final String NBT_AT_HOME_MESSAGE_ENABLED = "atHomeMessageEnabled";
+    private static final String NBT_AT_HOME_STREAK = "atHomeStreak";
+    private static final String NBT_MAX_AT_HOME_STREAK = "maxAtHomeStreak";
+    private static final String NBT_AVERAGE_AT_HOME_FRACTION = "averageAtHomeFraction";
+    private static final String NBT_PREFERRED_AT_HOME_FRACTION = "preferredAtHomeFraction";
 
     @Override
     public NBTTagCompound serializeNBT() {
-        // TODO Auto-generated method stub
-        return null;
+        NBTTagCompound nbt = new NBTTagCompound();
+        
+        nbt.setBoolean(NBT_FEELS_AT_HOME, feelsAtHome);
+        nbt.setByte(NBT_AT_HOME_MESSAGE_QUEUE, (byte)atHomeMessageQueue);
+        nbt.setBoolean(NBT_AT_HOME_MESSAGE_ENABLED, atHomeMessageEnabled);
+        nbt.setInteger(NBT_AT_HOME_STREAK, atHomeStreak);
+        nbt.setFloat(NBT_AVERAGE_AT_HOME_FRACTION, averageAtHomeFraction);
+        nbt.setFloat(NBT_PREFERRED_AT_HOME_FRACTION, preferredAtHomeFraction);
+        
+        return nbt;
     }
 
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
-        // TODO Auto-generated method stub
-        
+        feelsAtHome = nbt.getBoolean(NBT_FEELS_AT_HOME);
+        atHomeMessageQueue = nbt.getByte(NBT_AT_HOME_MESSAGE_QUEUE);
+        atHomeMessageEnabled = nbt.getBoolean(NBT_AT_HOME_MESSAGE_ENABLED);
+        atHomeStreak = nbt.getInteger(NBT_AT_HOME_STREAK);
+        averageAtHomeFraction = nbt.getFloat(NBT_AVERAGE_AT_HOME_FRACTION);
+        preferredAtHomeFraction = nbt.getFloat(NBT_PREFERRED_AT_HOME_FRACTION);
     }
 
 
@@ -181,12 +203,12 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
     
     @Override
     public boolean doesReallyNotFeelAtHome() {
-        return !feelsAtHome && averageAtHomeFrequency <= (1.0F / historyCapacity);
+        return !feelsAtHome && averageAtHomeFraction <= (1.0F / historyCapacity);
     }
     
     @Override
     public boolean doesReallyFeelAtHome() {
-        return feelsAtHome && averageAtHomeFrequency > preferredAtHomeFrequency;
+        return feelsAtHome && averageAtHomeFraction > preferredAtHomeFraction;
     }
     
     @Override
@@ -198,7 +220,7 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
         else if (doesReallyNotFeelAtHome()) {
             return getNotAtHomeMessage(needStatus);
         }
-        feelAtHomeMessageQueue = Math.max(feelAtHomeMessageQueue + 1, MAX_FEEL_AT_HOME_MESSAGE_QUEUE);
+        atHomeMessageQueue = Math.max(atHomeMessageQueue + 1, MAX_FEEL_AT_HOME_MESSAGE_QUEUE);
         return null;
     }
 
@@ -222,15 +244,15 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
         maxAtHomeStreak = Math.max(maxAtHomeStreak, atHomeStreak);
         
         historyCapacity = Math.max(MIN_HISTORY_CAPACITY, MAX_HISTORY_CAPACITY - maxAtHomeStreak);
-        averageAtHomeFrequency = ((averageAtHomeFrequency * (historyCapacity - 1)) + (feelsAtHome ? 1.0F : 0.0F)) / historyCapacity;
+        averageAtHomeFraction = ((averageAtHomeFraction * (historyCapacity - 1)) + (feelsAtHome ? 1.0F : 0.0F)) / historyCapacity;
         if (atHomeStreak == 0) {
             // Prevent abnormal random output putting the player in a state where they can never feel "at home" anymore
-            if (preferredAtHomeFrequency <= MAX_FREQUENCY_ALLOWING_DECAY) {
-                preferredAtHomeFrequency -= PREFERRED_FREQUENCY_DECAY_RATE;
+            if (preferredAtHomeFraction <= MAX_FREQUENCY_ALLOWING_DECAY) {
+                preferredAtHomeFraction -= PREFERRED_FREQUENCY_DECAY_RATE;
             }
         }
         else {
-            preferredAtHomeFrequency = Math.max(averageAtHomeFrequency / 2.0F, preferredAtHomeFrequency);
+            preferredAtHomeFraction = Math.max(averageAtHomeFraction / 2.0F, preferredAtHomeFraction);
         }
         
         boolean reallyFeelsAtHome = doesReallyFeelAtHome();
@@ -238,17 +260,21 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
         
         if (reallyFeelsAtHome) {
             instinctState.setNeedStatus(IInstinctState.NeedStatus.NONE);
-            if (shouldRandomlyDisplayFeelAtHomeMessage) {
-                if (feelAtHomeMessageQueue > 0) {
-                    // TODO: Message
-                    feelAtHomeMessageQueue--;
+            if (atHomeMessageEnabled) {
+                if (atHomeMessageQueue > 0) {
+                    if (!player.world.isRemote) {
+                        ITextComponent feelsAtHomeMessage = getFeelsAtHomeMessage(NeedStatus.NONE);
+                        Chat.message(Chat.Type.NOTIFY, (EntityPlayerMP)player, feelsAtHomeMessage);
+                    }
+                    
+                    atHomeMessageQueue--;
                 }
-                shouldRandomlyDisplayFeelAtHomeMessage = false;
+                atHomeMessageEnabled = false;
             }
         }
         else if (reallyFeelsNotAtHome) {
             instinctState.setNeedStatus(IInstinctState.NeedStatus.EVENTUALLY);
-            shouldRandomlyDisplayFeelAtHomeMessage = true;
+            atHomeMessageEnabled = true;
         }
     }
 }
