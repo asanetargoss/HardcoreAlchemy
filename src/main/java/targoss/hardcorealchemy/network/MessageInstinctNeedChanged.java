@@ -21,16 +21,16 @@ package targoss.hardcorealchemy.network;
 import java.util.List;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import targoss.hardcorealchemy.capability.instinct.ICapabilityInstinct;
 import targoss.hardcorealchemy.capability.instinct.ProviderInstinct;
-import targoss.hardcorealchemy.capability.instinct.StorageInstinct;
+import targoss.hardcorealchemy.instinct.api.IInstinctNeed;
 import targoss.hardcorealchemy.instinct.api.InstinctNeedWrapper;
+import targoss.hardcorealchemy.network.instinct.INeedMessenger;
 import targoss.hardcorealchemy.util.MiscVanilla;
 
 public class MessageInstinctNeedChanged extends MessageToClient {
@@ -40,37 +40,42 @@ public class MessageInstinctNeedChanged extends MessageToClient {
     // Same as in MessageInstinctNeedState, we assume that the instincts are the same on the client and server
     public int instinctID;
     public int needID;
-    public NBTTagCompound needData;
+    // Need-specific custom data
+    public ByteBuf payload;
     
     public MessageInstinctNeedChanged(int instinctID, int needID, InstinctNeedWrapper wrapper) {
         this.instinctID = instinctID;
         this.needID = needID;
-        this.needData = wrapper.need.serializeNBT();
+        IInstinctNeed need = wrapper.need;
+        INeedMessenger messenger = wrapper.state.messenger;
+        payload = Unpooled.buffer();
+        messenger.toBytes(need, this.payload);
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
         buf.writeInt(instinctID);
         buf.writeInt(needID);
-        ByteBufUtils.writeTag(buf, needData);
+        buf.writeBytes(payload);
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
         instinctID = buf.readInt();
         needID = buf.readInt();
-        needData = ByteBufUtils.readTag(buf);
+        // Copying the data is less efficient, but we should never assume the source buffer won't be re-used later...
+        payload = buf.readBytes(buf.readableBytes());
     }
     
     public static class ReceiveAction implements Runnable {
         private int instinctID;
         private int needID;
-        private NBTTagCompound needData;
+        private ByteBuf payload;
         
-        public ReceiveAction(int instinctID, int needID, NBTTagCompound needData) {
+        public ReceiveAction(int instinctID, int needID, ByteBuf payload) {
             this.instinctID = instinctID;
             this.needID = needID;
-            this.needData = needData;
+            this.payload = payload;
         }
 
         @Override
@@ -90,7 +95,10 @@ public class MessageInstinctNeedChanged extends MessageToClient {
                 return;
             }
             List<InstinctNeedWrapper> needs = instincts.get(instinctID).getNeeds(player);
-            needs.get(needID).need.deserializeNBT(needData);
+            InstinctNeedWrapper wrapper = needs.get(needID);
+            IInstinctNeed need = wrapper.need;
+            INeedMessenger messenger = wrapper.state.messenger;
+            messenger.fromBytes(need, payload);
         }
     }
     
@@ -98,7 +106,7 @@ public class MessageInstinctNeedChanged extends MessageToClient {
         @Override
         public IMessage onMessage(MessageInstinctNeedChanged message, MessageContext ctx) {
             message.getThreadListener().addScheduledTask(
-                    new ReceiveAction(message.instinctID, message.needID, message.needData)
+                    new ReceiveAction(message.instinctID, message.needID, message.payload)
                 );
             return null;
         }

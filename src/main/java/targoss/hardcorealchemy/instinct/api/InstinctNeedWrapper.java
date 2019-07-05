@@ -25,6 +25,7 @@ import mchorse.metamorph.capabilities.morphing.Morphing;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import targoss.hardcorealchemy.network.instinct.INeedMessenger;
 
 public class InstinctNeedWrapper {
     /** Backpointer to the factory. Needed for proper serialization. */
@@ -65,6 +66,10 @@ public class InstinctNeedWrapper {
                 throw new IllegalStateException("Cannot define an instinct need unless the player is morphed as an EntityLiving");
             }
             need = factory.createNeed(morphEntity);
+            INeedMessenger messenger = need.getCustomMessenger();
+            if (messenger != null) {
+                state.messenger = messenger;
+            }
             if (needData != null) {
                 need.deserializeNBT(needData);
                 needData = null;

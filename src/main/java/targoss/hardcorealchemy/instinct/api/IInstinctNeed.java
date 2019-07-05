@@ -25,6 +25,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.util.INBTSerializable;
 import targoss.hardcorealchemy.capability.instinct.ICapabilityInstinct;
+import targoss.hardcorealchemy.network.instinct.INeedMessenger;
 
 /**
  * Object for keeping track of whether a specific instinct need is being
@@ -90,5 +91,9 @@ public interface IInstinctNeed extends INBTSerializable<NBTTagCompound> {
     
     public default void afterKill(IInstinctState instinctState, EntityLivingBase entity) {
         return;
+    }
+    
+    public default INeedMessenger getCustomMessenger() {
+        return null;
     }
 }

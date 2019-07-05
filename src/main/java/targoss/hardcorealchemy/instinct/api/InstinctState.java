@@ -25,11 +25,15 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.capability.instinct.ICapabilityInstinct;
-import targoss.hardcorealchemy.network.PacketHandler;
 import targoss.hardcorealchemy.network.MessageInstinctNeedChanged;
+import targoss.hardcorealchemy.network.PacketHandler;
+import targoss.hardcorealchemy.network.instinct.INeedMessenger;
+import targoss.hardcorealchemy.network.instinct.NeedMessengerFullSync;
 
 public class InstinctState implements IInstinctState {
     public InstinctState() {}
+    
+    public static final INeedMessenger DEFAULT_MESSENGER = new NeedMessengerFullSync();
     
     public EntityPlayer player = null;
     public NeedStatus needStatus = NeedStatus.NONE;
@@ -37,6 +41,7 @@ public class InstinctState implements IInstinctState {
     public NeedStatus lastNeedStatus = NeedStatus.NONE;
     public Map<InstinctEffect, Float> effectAmplifiers = new HashMap<>();
     public boolean shouldSyncNeed = false;
+    public INeedMessenger messenger = DEFAULT_MESSENGER;
 
     @Override
     public EntityPlayer getPlayer() {
@@ -93,5 +98,10 @@ public class InstinctState implements IInstinctState {
             return;
         }
         shouldSyncNeed = true;
+    }
+    
+    @Override
+    public INeedMessenger getNeedMessenger() {
+        return messenger;
     }
 }

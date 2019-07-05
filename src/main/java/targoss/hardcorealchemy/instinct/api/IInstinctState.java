@@ -19,6 +19,7 @@
 package targoss.hardcorealchemy.instinct.api;
 
 import net.minecraft.entity.player.EntityPlayer;
+import targoss.hardcorealchemy.network.instinct.INeedMessenger;
 
 /**
  * A class sharing data between InstinctNeed and the instinct system
@@ -51,9 +52,18 @@ public interface IInstinctState {
     void setEffectAmplifier(InstinctEffect instinctEffect, float amplifier);
     
     /**
-     * Requests sending the instinct need, instinct state, etc to
-     * the client by serializing the need's NBT data.
-     * If you need to send a lot of data, consider using a custom packet instead.
+     * Requests sending the instinct state and some instinct need data.
+     * By default, this will serialize the instinct need's entire NBT.
+     * If you need to send data frequently, consider having your instinct need
+     * provide a custom INeedMesseger.
      */
     void syncNeed();
+    
+    /**
+     * Gets the current object used to send instinct data to the client when syncNeed is called.
+     * Defaults to an implementation that serializes the instinct need's NBT.
+     * If you use a custom INeedMessenger, you could configure it to decide what data needs to be
+     * sent.
+     */
+    INeedMessenger getNeedMessenger();
 }
