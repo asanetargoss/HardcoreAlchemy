@@ -85,11 +85,15 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
      * at the moment when the environment is definitively favorable
      */
     protected static final int MAX_FEEL_AT_HOME_MESSAGE_QUEUE = 3;
+    protected int atHomeMessageQueue = 0;
+    protected boolean atHomeMessageEnabled = true;
+    
+    protected boolean feltAtHome = false;
+    protected static final int DATA_SEND_COOLDOWN_TIME = 20 * 20;
+    protected int dataSendCooldown = 0;
     
     protected EntityLivingBase spawnCheckEntity = null;
     protected boolean feelsAtHome = false;
-    protected int atHomeMessageQueue = 0;
-    protected boolean atHomeMessageEnabled = true;
     protected int atHomeStreak = 0;
     protected int maxAtHomeStreak = 0;
     protected float averageAtHomeFraction = 0.0F;
@@ -106,8 +110,6 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
     }
     
     private static final String NBT_FEELS_AT_HOME = "feelsAtHome";
-    private static final String NBT_AT_HOME_MESSAGE_QUEUE = "atHomeMessageQueue";
-    private static final String NBT_AT_HOME_MESSAGE_ENABLED = "atHomeMessageEnabled";
     private static final String NBT_AT_HOME_STREAK = "atHomeStreak";
     private static final String NBT_MAX_AT_HOME_STREAK = "maxAtHomeStreak";
     private static final String NBT_AVERAGE_AT_HOME_FRACTION = "averageAtHomeFraction";
@@ -118,9 +120,8 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
         NBTTagCompound nbt = new NBTTagCompound();
         
         nbt.setBoolean(NBT_FEELS_AT_HOME, feelsAtHome);
-        nbt.setByte(NBT_AT_HOME_MESSAGE_QUEUE, (byte)atHomeMessageQueue);
-        nbt.setBoolean(NBT_AT_HOME_MESSAGE_ENABLED, atHomeMessageEnabled);
         nbt.setInteger(NBT_AT_HOME_STREAK, atHomeStreak);
+        nbt.setInteger(NBT_MAX_AT_HOME_STREAK, maxAtHomeStreak);
         nbt.setFloat(NBT_AVERAGE_AT_HOME_FRACTION, averageAtHomeFraction);
         nbt.setFloat(NBT_PREFERRED_AT_HOME_FRACTION, preferredAtHomeFraction);
         
@@ -130,9 +131,8 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
         feelsAtHome = nbt.getBoolean(NBT_FEELS_AT_HOME);
-        atHomeMessageQueue = nbt.getByte(NBT_AT_HOME_MESSAGE_QUEUE);
-        atHomeMessageEnabled = nbt.getBoolean(NBT_AT_HOME_MESSAGE_ENABLED);
         atHomeStreak = nbt.getInteger(NBT_AT_HOME_STREAK);
+        maxAtHomeStreak = nbt.getInteger(NBT_MAX_AT_HOME_STREAK);
         averageAtHomeFraction = nbt.getFloat(NBT_AVERAGE_AT_HOME_FRACTION);
         preferredAtHomeFraction = nbt.getFloat(NBT_PREFERRED_AT_HOME_FRACTION);
     }
@@ -276,5 +276,15 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
             instinctState.setNeedStatus(IInstinctState.NeedStatus.EVENTUALLY);
             atHomeMessageEnabled = true;
         }
+        
+        if (dataSendCooldown > 0) {
+            dataSendCooldown--;
+        } else if (!player.world.isRemote) {
+            if (feelsAtHome != feltAtHome) {
+                // TODO: sync();
+                dataSendCooldown = DATA_SEND_COOLDOWN_TIME;
+            }
+        }
+        feltAtHome = feelsAtHome;
     }
 }
