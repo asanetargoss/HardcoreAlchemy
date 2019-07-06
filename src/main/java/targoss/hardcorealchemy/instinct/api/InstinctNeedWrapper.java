@@ -25,7 +25,7 @@ import mchorse.metamorph.capabilities.morphing.Morphing;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import targoss.hardcorealchemy.network.instinct.INeedMessenger;
+import targoss.hardcorealchemy.instinct.network.api.INeedMessenger;
 
 public class InstinctNeedWrapper {
     /** Backpointer to the factory. Needed for proper serialization. */

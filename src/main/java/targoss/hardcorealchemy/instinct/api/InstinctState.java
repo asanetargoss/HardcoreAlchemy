@@ -25,15 +25,12 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.capability.instinct.ICapabilityInstinct;
+import targoss.hardcorealchemy.instinct.network.api.INeedMessenger;
 import targoss.hardcorealchemy.network.MessageInstinctNeedChanged;
 import targoss.hardcorealchemy.network.PacketHandler;
-import targoss.hardcorealchemy.network.instinct.INeedMessenger;
-import targoss.hardcorealchemy.network.instinct.NeedMessengerFullSync;
 
 public class InstinctState implements IInstinctState {
     public InstinctState() {}
-    
-    public static final INeedMessenger DEFAULT_MESSENGER = new NeedMessengerFullSync();
     
     public EntityPlayer player = null;
     public NeedStatus needStatus = NeedStatus.NONE;
@@ -41,7 +38,7 @@ public class InstinctState implements IInstinctState {
     public NeedStatus lastNeedStatus = NeedStatus.NONE;
     public Map<InstinctEffect, Float> effectAmplifiers = new HashMap<>();
     public boolean shouldSyncNeed = false;
-    public INeedMessenger messenger = DEFAULT_MESSENGER;
+    public INeedMessenger messenger = IInstinctState.DEFAULT_MESSENGER;
 
     @Override
     public EntityPlayer getPlayer() {
@@ -85,19 +82,6 @@ public class InstinctState implements IInstinctState {
             currentAmplifier = Math.max(currentAmplifier, amplifier);
         }
         effectAmplifiers.put(instinctEffect, amplifier);
-    }
-    
-    @Override
-    public void syncNeed() {
-        if (player == null) {
-            HardcoreAlchemy.LOGGER.warn("Received request to sync instinct need to client, but there is no player to send data to");
-            return;
-        }
-        if (player.world.isRemote) {
-            HardcoreAlchemy.LOGGER.warn("Received request to sync instinct need while on the client");
-            return;
-        }
-        shouldSyncNeed = true;
     }
     
     @Override

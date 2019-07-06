@@ -25,7 +25,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.util.INBTSerializable;
 import targoss.hardcorealchemy.capability.instinct.ICapabilityInstinct;
-import targoss.hardcorealchemy.network.instinct.INeedMessenger;
+import targoss.hardcorealchemy.instinct.network.api.INeedMessenger;
 
 /**
  * Object for keeping track of whether a specific instinct need is being
@@ -93,6 +93,10 @@ public interface IInstinctNeed extends INBTSerializable<NBTTagCompound> {
         return;
     }
     
+    /**
+     * When returning a non-null value, defines a custom INeedMessenger
+     * that will be used for syncing this need's data over the network.
+     */
     public default INeedMessenger getCustomMessenger() {
         return null;
     }

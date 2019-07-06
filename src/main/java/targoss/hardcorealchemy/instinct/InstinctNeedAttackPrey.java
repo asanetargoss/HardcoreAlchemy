@@ -54,6 +54,7 @@ import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.instinct.api.IInstinctNeed;
 import targoss.hardcorealchemy.instinct.api.IInstinctState;
 import targoss.hardcorealchemy.instinct.api.InstinctState;
+import targoss.hardcorealchemy.instinct.network.api.NeedMessengerFullSync;
 import targoss.hardcorealchemy.util.Chat;
 import targoss.hardcorealchemy.util.EntityUtil;
 import targoss.hardcorealchemy.util.MiscVanilla;
@@ -408,7 +409,7 @@ public class InstinctNeedAttackPrey implements IInstinctNeed {
                 if (!player.world.isRemote) {
                     instinctState.setNeedStatus(InstinctState.NeedStatus.NONE);
                     Chat.message(Chat.Type.NOTIFY, (EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.instinct.attack_prey.gone"));
-                    instinctState.syncNeed();
+                    ((NeedMessengerFullSync)instinctState.getNeedMessenger()).sync();
                 }
             }
         }
@@ -434,7 +435,7 @@ public class InstinctNeedAttackPrey implements IInstinctNeed {
                 Chat.message(Chat.Type.NOTIFY, (EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.instinct.attack_prey.finished"));
             }
             
-            instinctState.syncNeed();
+            ((NeedMessengerFullSync)instinctState.getNeedMessenger()).sync();
         }
         else if (hasKilled) {
             if (!covetsPrey) {
@@ -442,7 +443,7 @@ public class InstinctNeedAttackPrey implements IInstinctNeed {
             }
             covetsPrey = true;
             suddenUrgeTimer = SUDDEN_URGE_TIME;
-            instinctState.syncNeed();
+            ((NeedMessengerFullSync)instinctState.getNeedMessenger()).sync();
         }
     }
     

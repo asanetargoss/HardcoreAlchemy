@@ -16,31 +16,20 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.network.instinct;
+package targoss.hardcorealchemy.instinct.network.api;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 import targoss.hardcorealchemy.instinct.api.IInstinctNeed;
 
-public class NeedMessengerFullSync implements INeedMessenger<IInstinctNeed> {
-    protected boolean sync = false;
-    
-    public void sync() {
-        sync = true;
-    }
-
-    @Override
-    public boolean shouldSync() {
-        return sync;
-    }
-
-    @Override
-    public void toBytes(IInstinctNeed need, ByteBuf buf) {
-        ByteBufUtils.writeTag(buf, need.serializeNBT());
-    }
-
-    @Override
-    public void fromBytes(IInstinctNeed need, ByteBuf buf) {
-        need.deserializeNBT(ByteBufUtils.readTag(buf));
-    }
+/**
+ * Allows for custom syncing of Instinct Need data without
+ * regards to how and where the Instinct Need is stored.
+ * 
+ * The implementation can be either stateless, or a unique instance
+ * for the current need object.
+ */
+public interface INeedMessenger<T extends IInstinctNeed> {
+    public boolean shouldSync();
+    public void toBytes(T need, ByteBuf buf);
+    public void fromBytes(T need, ByteBuf buf);
 }

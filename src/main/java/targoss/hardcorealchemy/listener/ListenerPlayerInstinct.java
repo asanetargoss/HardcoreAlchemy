@@ -214,7 +214,7 @@ public class ListenerPlayerInstinct extends ConfiguredListener {
                 
                 instinctChange = Math.min(instinctChange, instinctState.getInstinctChangePerTick());
                 
-                if (!player.world.isRemote && instinctState.shouldSyncNeed) {
+                if (!player.world.isRemote && instinctState.messenger.shouldSync()) {
                     PacketHandler.INSTANCE.sendTo(new MessageInstinctNeedChanged(entryCount, needCount, needWrapper), (EntityPlayerMP)player);
                     instinctState.shouldSyncNeed = false;
                 }

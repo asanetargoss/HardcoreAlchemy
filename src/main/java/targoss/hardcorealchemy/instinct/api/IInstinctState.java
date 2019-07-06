@@ -19,7 +19,8 @@
 package targoss.hardcorealchemy.instinct.api;
 
 import net.minecraft.entity.player.EntityPlayer;
-import targoss.hardcorealchemy.network.instinct.INeedMessenger;
+import targoss.hardcorealchemy.instinct.network.api.INeedMessenger;
+import targoss.hardcorealchemy.instinct.network.api.NeedMessengerFullSync;
 
 /**
  * A class sharing data between InstinctNeed and the instinct system
@@ -36,6 +37,7 @@ public interface IInstinctState {
         EVENTUALLY,
         URGENT;
     }
+    
     /**
      * Tells the instinct system if this need is fulfilled or not.
      * The instinct system then may increase/decrease the instinct value accordingly.
@@ -50,20 +52,14 @@ public interface IInstinctState {
      * determined by the owning Instinct (via Instinct.getEffects)
      */
     void setEffectAmplifier(InstinctEffect instinctEffect, float amplifier);
+
+    public static final INeedMessenger DEFAULT_MESSENGER = new NeedMessengerFullSync();
     
     /**
-     * Requests sending the instinct state and some instinct need data.
-     * By default, this will serialize the instinct need's entire NBT.
-     * If you need to send data frequently, consider having your instinct need
-     * provide a custom INeedMesseger.
-     */
-    void syncNeed();
-    
-    /**
-     * Gets the current object used to send instinct data to the client when syncNeed is called.
-     * Defaults to an implementation that serializes the instinct need's NBT.
-     * If you use a custom INeedMessenger, you could configure it to decide what data needs to be
-     * sent.
+     * Gets the current object used to send instinct data over the network.
+     * Interact with this object instead of sending a packet directly.
+     * Defaults to IInstinctState.DEFAULT_MESSENGER.
+     * A custom INeedMessenger can be set by overriding IInstinctNeed.getCustomMessenger
      */
     INeedMessenger getNeedMessenger();
 }
