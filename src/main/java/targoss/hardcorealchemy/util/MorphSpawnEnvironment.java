@@ -16,25 +16,26 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.instinct.network.api;
+package targoss.hardcorealchemy.util;
 
-import io.netty.buffer.ByteBuf;
-import targoss.hardcorealchemy.instinct.api.IInstinctNeed;
+import java.util.HashMap;
+import java.util.Map;
 
-/**
- * Allows for custom syncing of Instinct Need data without
- * regards to how and where the Instinct Need is stored.
- * 
- * The implementation can be either stateless, or a unique instance
- * for the current need object.
- */
-public interface INeedMessenger<T extends IInstinctNeed> {
-    public boolean shouldSync();
-    /**
-     * Called when shouldSync() returns true
-     * and the instinct system is about to sync
-     * the need data.
-     */
-    public void toBytes(T need, ByteBuf buf);
-    public void fromBytes(T need, ByteBuf buf);
+public class MorphSpawnEnvironment {
+    private static Map<String, String> proxies = new HashMap<>();
+    
+    static {
+        
+        
+    }
+    
+    // TODO
+    /*@Nullable EntityLivingBase getSpawnCheckEntity(EntityLivingBase originalEntity) {
+        
+        if () {
+            
+            return thing;
+        }
+        return null;
+    }*/
 }

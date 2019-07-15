@@ -41,6 +41,7 @@ import net.minecraftforge.common.capabilities.CapabilityInject;
 import targoss.hardcorealchemy.instinct.api.IInstinctNeed;
 import targoss.hardcorealchemy.instinct.api.IInstinctState;
 import targoss.hardcorealchemy.instinct.api.IInstinctState.NeedStatus;
+import targoss.hardcorealchemy.instinct.network.NeedMessengerSpawnEnvironment;
 import targoss.hardcorealchemy.util.Chat;
 import targoss.hardcorealchemy.util.EntityUtil;
 import targoss.hardcorealchemy.util.MiscVanilla;
@@ -88,21 +89,19 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
     protected int atHomeMessageQueue = 0;
     protected boolean atHomeMessageEnabled = true;
     
-    protected boolean feltAtHome = false;
-    protected static final int DATA_SEND_COOLDOWN_TIME = 20 * 20;
-    protected int dataSendCooldown = 0;
-    
     protected EntityLivingBase spawnCheckEntity = null;
-    protected boolean feelsAtHome = false;
-    protected int atHomeStreak = 0;
-    protected int maxAtHomeStreak = 0;
-    protected float averageAtHomeFraction = 0.0F;
+    protected boolean usingProxyEntity = false;
+    
+    public boolean feelsAtHome = false;
+    public int atHomeStreak = 0;
+    public int maxAtHomeStreak = 0;
+    public float averageAtHomeFraction = 0.0F;
     /**
      * The preferred number of ticks (relative to the environment history size) at which the
      * player starts to feel at home. When above this value, the player will not feel negative effects.
      * The value of this will be no greater than the maximum recorded averageAtHomeFraction / 2
      */
-    protected float preferredAtHomeFraction = 0.0F;
+    public float preferredAtHomeFraction = 0.0F;
     
     public InstinctNeedSpawnEnvironment(EntityLivingBase morphEntity) {
         // TODO: Proxy entity, for cases when an entity doesn't have spawn conditions, but a similar entity does. Note: Will need to update the entity's position and world manually in that case.
@@ -232,6 +231,13 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
     @Override
     public void tick(IInstinctState instinctState) {
         EntityPlayer player = instinctState.getPlayer();
+        
+        if (usingProxyEntity) {
+            spawnCheckEntity.world = player.world;
+            spawnCheckEntity.setPosition(player.posX, player.posY, player.posZ);
+            
+        }
+        
         feelsAtHome = doesPlayerFeelAtHome(player);
         if (feelsAtHome) {
             if (atHomeStreak < Integer.MAX_VALUE) {
@@ -277,14 +283,9 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
             atHomeMessageEnabled = true;
         }
         
-        if (dataSendCooldown > 0) {
-            dataSendCooldown--;
-        } else if (!player.world.isRemote) {
-            if (feelsAtHome != feltAtHome) {
-                // TODO: sync();
-                dataSendCooldown = DATA_SEND_COOLDOWN_TIME;
-            }
+        if (!player.world.isRemote) {
+            // Check if we need to sync data
+            ((NeedMessengerSpawnEnvironment)instinctState.getNeedMessenger()).serverTick(this);
         }
-        feltAtHome = feelsAtHome;
     }
 }
