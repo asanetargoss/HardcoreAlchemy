@@ -417,10 +417,11 @@ public class ListenerPlayerHinderedMind extends ConfiguredListener {
         int n = recipeShowers.size();
         for (int i = 0; i < n; i++) {
             IShowsRecipeFocuses recipeShower = recipeShowers.get(i);
-            if (!(recipeShower instanceof mezz.jei.input.GuiContainerWrapper)) {
+            if (recipeShower.getClass() != mezz.jei.input.GuiContainerWrapper.class) {
+                // Make sure we don't create an infinite chain of GuiContainerWrappers, in the case where JEI decides to refresh inventory handlers ad infinitum
                 continue;
             }
-            recipeShowers.set(i, new InventoryRecipeCheckStopper((mezz.jei.input.GuiContainerWrapper)recipeShowers.get(i)));
+            recipeShowers.set(i, new InventoryRecipeCheckStopper((mezz.jei.input.GuiContainerWrapper)recipeShower));
         }
     }
     
