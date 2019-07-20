@@ -104,6 +104,8 @@ public class ListenerPlayerMagic extends ConfiguredListener {
         HIGH_MAGIC_MODS.add("Psi");
         HIGH_MAGIC_MODS.add("psi");
         HIGH_MAGIC_MODS.add("wizardry");
+        HIGH_MAGIC_MODS.add("notenoughwands");
+        HIGH_MAGIC_MODS.add("betterbuilderswands");
         
         MAGIC_ITEM_ALLOW_USE = new HashSet<String>();
         MAGIC_ITEM_ALLOW_USE.add("projecte:item.pe_alchemical_bag");
