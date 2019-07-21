@@ -58,7 +58,6 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
     @CapabilityInject(IMorphing.class)
     private static final Capability<IMorphing> MORPHING_CAPABILITY = null;
     
-    // TODO: Networking?
     protected static final int MIN_HISTORY_CAPACITY = 10 * 20;
     protected static final int MAX_HISTORY_CAPACITY = 4096;
     /**
