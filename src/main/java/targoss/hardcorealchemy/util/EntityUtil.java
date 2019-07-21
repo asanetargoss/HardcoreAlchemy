@@ -182,16 +182,16 @@ public class EntityUtil {
     }
     
     /**
-     * Returns true if the entity has a chance to spawn here, filtering by the given EnumCreatureType.
+     * Returns true if the entity class has a chance to spawn here, filtering by the given EnumCreatureType.
      */
-    public static boolean canEntitySpawnHere(EntityLiving entity, World world, BlockPos pos, EnumCreatureType creatureType) {
-        if (!creatureType.getCreatureClass().isAssignableFrom(entity.getClass())) {
+    public static boolean canEntityClassSpawnHere(Class <? extends EntityLiving> entityClass, World world, BlockPos pos, EnumCreatureType creatureType) {
+        if (!creatureType.getCreatureClass().isAssignableFrom(entityClass)) {
             return false;
         }
         
         List<Biome.SpawnListEntry> creatureSpawns = getSpawnList(world, creatureType, pos);
         for (Biome.SpawnListEntry creatureSpawn : creatureSpawns) {
-            if (creatureSpawn.entityClass == entity.getClass()) {
+            if (creatureSpawn.entityClass == entityClass) {
                 return true;
             }
         }
@@ -200,15 +200,22 @@ public class EntityUtil {
     }
     
     /**
-     * Returns true if the entity has a chance to spawn here.
+     * Returns true if the entity class has a chance to spawn here.
      */
-    public static boolean canEntitySpawnHere(EntityLiving entity, World world, BlockPos pos) {
+    public static boolean canEntityClassSpawnHere(Class<? extends EntityLiving> entityClass, World world, BlockPos pos) {
         for (EnumCreatureType creatureType : EnumCreatureType.values()) {
-            if (canEntitySpawnHere(entity, world, pos, creatureType)) {
+            if (canEntityClassSpawnHere(entityClass, world, pos, creatureType)) {
                 return true;
             }
         }
         return false;
+    }
+    
+    /**
+     * Returns true if the entity has a chance to spawn here.
+     */
+    public static boolean canEntitySpawnHere(EntityLiving entity, World world, BlockPos pos) {
+        return canEntityClassSpawnHere(entity.getClass(), world, pos);
     }
     
     /**

@@ -18,9 +18,6 @@
 
 package targoss.hardcorealchemy.instinct;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import mchorse.metamorph.api.morphs.AbstractMorph;
 import mchorse.metamorph.api.morphs.EntityMorph;
 import mchorse.metamorph.capabilities.morphing.IMorphing;
@@ -35,7 +32,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import targoss.hardcorealchemy.instinct.api.IInstinctNeed;
@@ -45,6 +41,7 @@ import targoss.hardcorealchemy.instinct.network.NeedMessengerSpawnEnvironment;
 import targoss.hardcorealchemy.util.Chat;
 import targoss.hardcorealchemy.util.EntityUtil;
 import targoss.hardcorealchemy.util.MiscVanilla;
+import targoss.hardcorealchemy.util.MorphSpawnEnvironment;
 
 /**
  * A general purpose instinct need class which determines if a player
@@ -104,8 +101,12 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
     public float preferredAtHomeFraction = 0.0F;
     
     public InstinctNeedSpawnEnvironment(EntityLivingBase morphEntity) {
-        // TODO: Proxy entity, for cases when an entity doesn't have spawn conditions, but a similar entity does. Note: Will need to update the entity's position and world manually in that case.
         spawnCheckEntity = morphEntity;
+        EntityLivingBase proxyEntity = MorphSpawnEnvironment.getSpawnCheckEntity(morphEntity);
+        if (proxyEntity != null) {
+            spawnCheckEntity = proxyEntity;
+            usingProxyEntity = true;
+        }
     }
     
     private static final String NBT_FEELS_AT_HOME = "feelsAtHome";
@@ -136,11 +137,12 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
         preferredAtHomeFraction = nbt.getFloat(NBT_PREFERRED_AT_HOME_FRACTION);
     }
 
-
     @Override
     public IInstinctNeed createInstanceFromMorphEntity(EntityLivingBase morphEntity) {
         return new InstinctNeedSpawnEnvironment(morphEntity);
     }
+    
+    // TODO: Cache biomes the entity is known to spawn in, and check during initialization if spawning of that entity was disabled in at least one of those biomes. If that happens, reset this need to avoid issues.
 
     @Override
     public boolean doesPlayerFeelAtHome(EntityPlayer player) {
@@ -156,7 +158,6 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
         World world = player.world;
         EntityLivingBase morphEntity = ((EntityMorph)morph).getEntity(world);
         BlockPos pos = player.getPosition();
-        Biome biome = world.getBiome(pos);
         
         // Adapted from vanilla spawn mechanics, with a few simplifications
         if (morphEntity instanceof EntityLiving && EntityUtil.canEntitySpawnHere((EntityLiving)morphEntity, world, pos)) {

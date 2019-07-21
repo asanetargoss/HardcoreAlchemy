@@ -21,21 +21,43 @@ package targoss.hardcorealchemy.util;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.Nullable;
+
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
+import net.minecraft.entity.EntityLivingBase;
+import targoss.hardcorealchemy.ModState;
+
 public class MorphSpawnEnvironment {
     private static Map<String, String> proxies = new HashMap<>();
     
     static {
-        
-        
+        String tc = ModState.THAUMCRAFT_ID + ".";
+        proxies.put(tc + "ThaumSlime", tc + "Taintacle");
+        proxies.put(tc + "TaintCrawler", tc + "Taintacle");
+        proxies.put(tc + "TaintacleTiny", tc + "Taintacle");
+        proxies.put(tc + "TaintSeed", tc + "Taintacle");
+        proxies.put(tc + "TaintSeedPrime", tc + "Taintacle");
     }
     
-    // TODO
-    /*@Nullable EntityLivingBase getSpawnCheckEntity(EntityLivingBase originalEntity) {
-        
-        if () {
-            
-            return thing;
+    /**
+     * Used by InstinctNeedSpawnEnvironment to determine what environment a player's
+     * permanent morph wants to be in, based on the spawn conditions of the morph entity.
+     * 
+     * Given an entity, constructs an entity that should be used in its place for
+     * performing this check. May be null, in which case just use the original entity.
+     */
+    public static @Nullable EntityLivingBase getSpawnCheckEntity(EntityLivingBase originalEntity) {
+        String entityID = EntityList.getEntityString(originalEntity);
+        if (entityID != null) {
+            String proxyEntityID = proxies.get(entityID);
+            if (proxyEntityID != null) {
+                Entity proxyEntity = EntityList.createEntityByName(proxyEntityID, originalEntity.world);
+                if (proxyEntity instanceof EntityLivingBase) {
+                    return (EntityLivingBase)proxyEntity;
+                }
+            }
         }
         return null;
-    }*/
+    }
 }

@@ -108,6 +108,8 @@ public class MobLists {
         nonMobs.add("arsmagica2.ThrownRock");
         nonMobs.add("arsmagica2.ThrownSickle");
         nonMobs.add("arsmagica2.WinterGuardianArm");
+        // Thaumcraft
+        nonMobs.add("thaumcraft.EntityTaintSwarm");
         
         return nonMobs;
     }
