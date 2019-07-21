@@ -54,7 +54,6 @@ public interface IInstinctNeedEnvironment extends IInstinctNeed {
                     return new InstinctNeedForestPlains(morphEntity);
                 }
             }
-            // TODO: Dynamically determine if a mob can have this instinct by looping over all biomes and making sure the mob spawns in at least one of them
             return null;
         }
     }
