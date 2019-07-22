@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 asanetargoss
+ * Copyright 2019 asanetargoss
  * 
  * This file is part of Hardcore Alchemy.
  * 
@@ -16,40 +16,29 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.capability.misc;
+package targoss.hardcorealchemy.capability.entitystate;
 
 import java.util.UUID;
 
+import javax.annotation.Nullable;
+
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.ResourceLocation;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 
-public class CapabilityMisc implements ICapabilityMisc {
-    public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(HardcoreAlchemy.MOD_ID, "misc");
+public class CapabilityEntityState implements ICapabilityEntityState {
+    public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(HardcoreAlchemy.MOD_ID, "entity_state");
     
-    private boolean hasSeenThirstWarning;
-    private UUID lifetimeUUID = null;
-    
-    public CapabilityMisc() {
-        hasSeenThirstWarning = false;
-    }
-    
+    private UUID targetPlayerID = null;
+    private EntityLivingBase lastAttackTarget = null;
+
     @Override
-    public boolean getHasSeenThirstWarning() {
-        return hasSeenThirstWarning;
+    public UUID getTargetPlayerID() {
+        return targetPlayerID;
     }
 
     @Override
-    public void setHasSeenThirstWarning(boolean hasSeenThirstWarning) {
-        this.hasSeenThirstWarning = hasSeenThirstWarning;
-    }
-
-    @Override
-    public UUID getLifetimeUUID() {
-        return lifetimeUUID;
-    }
-
-    @Override
-    public void setLifetimeUUID(UUID uuid) {
-        this.lifetimeUUID = uuid;
+    public void setTargetPlayerID(@Nullable UUID playerID) {
+        this.targetPlayerID = playerID;
     }
 }

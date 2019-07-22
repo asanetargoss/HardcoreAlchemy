@@ -18,20 +18,16 @@
 
 package targoss.hardcorealchemy.listener;
 
-import static targoss.hardcorealchemy.HardcoreAlchemy.LOGGER;
-
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.logging.log4j.core.Logger;
-
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.EntityAIFindEntityNearestPlayer;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
@@ -41,15 +37,19 @@ import net.minecraft.entity.monster.EntitySpider;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.combatlevel.CapabilityCombatLevel;
 import targoss.hardcorealchemy.capability.combatlevel.ICapabilityCombatLevel;
+import targoss.hardcorealchemy.capability.entitystate.CapabilityEntityState;
+import targoss.hardcorealchemy.capability.entitystate.ProviderEntityState;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.entity.ai.AIAttackTargetMobOrMorph;
 import targoss.hardcorealchemy.entity.ai.AISpiderTargetMobOrMorph;
+import targoss.hardcorealchemy.entity.ai.AITargetChosenPlayer;
 import targoss.hardcorealchemy.entity.ai.AITargetUnmorphedPlayer;
 import targoss.hardcorealchemy.entity.ai.AIUntamedAttackMobOrMorph;
 import targoss.hardcorealchemy.util.MobLists;
@@ -82,18 +82,36 @@ public class ListenerMobAI extends ConfiguredListener {
     }
     
     @SubscribeEvent
+    public void onAttachEntityCapability(AttachCapabilitiesEvent.Entity event) {
+        if (!(event.getObject() instanceof EntityLiving)) {
+            return;
+        }
+        event.addCapability(CapabilityEntityState.RESOURCE_LOCATION, new ProviderEntityState());
+    }
+    
+    @SubscribeEvent
     public void onEntityJoinWorld(EntityJoinWorldEvent event) {
-        // Persuade entities that morphs aren't human, unless said entity knows better
         Entity entity = event.getEntity();
-        if (entity instanceof EntityLiving && !mobAIIgnoreMorphList.contains(EntityList.getEntityString(entity))) {
+        if (entity instanceof EntityLiving) {
             EntityLiving entityLiving = (EntityLiving)entity;
-            wrapReplaceAttackAI(entityLiving, EntityAINearestAttackableTarget.class, AIAttackTargetMobOrMorph.class);
-            wrapReplaceAttackAI(entityLiving, EntityAITargetNonTamed.class, AIUntamedAttackMobOrMorph.class);
-            wrapReplaceAttackAI(entityLiving, EntitySpider.AISpiderTarget.class, AISpiderTargetMobOrMorph.class);
-            wrapReplaceAttackAI(entityLiving, EntityAIFindEntityNearestPlayer.class, AITargetUnmorphedPlayer.class);
             
-            if (DEADLY_MONSTERS_CLIMBER_AI != null) {
-                wrapReplaceAttackAI(entityLiving, DEADLY_MONSTERS_CLIMBER_AI, AIAttackTargetMobOrMorph.class, EntityAINearestAttackableTarget.class);
+            // Persuade entities that morphs aren't human, unless said entity knows better
+            if (!mobAIIgnoreMorphList.contains(EntityList.getEntityString(entity))) {
+                wrapReplaceAttackAI(entityLiving, EntityAINearestAttackableTarget.class, AIAttackTargetMobOrMorph.class);
+                wrapReplaceAttackAI(entityLiving, EntityAITargetNonTamed.class, AIUntamedAttackMobOrMorph.class);
+                wrapReplaceAttackAI(entityLiving, EntitySpider.AISpiderTarget.class, AISpiderTargetMobOrMorph.class);
+                wrapReplaceAttackAI(entityLiving, EntityAIFindEntityNearestPlayer.class, AITargetUnmorphedPlayer.class);
+                
+                if (DEADLY_MONSTERS_CLIMBER_AI != null) {
+                    wrapReplaceAttackAI(entityLiving, DEADLY_MONSTERS_CLIMBER_AI, AIAttackTargetMobOrMorph.class, EntityAINearestAttackableTarget.class);
+                }
+            }
+            
+            // Persuade entities to target a specific player if told to do so
+            if (entityLiving instanceof EntityCreature) {
+                EntityCreature entityCreature = (EntityCreature)entityLiving;
+                
+                addTargetSpecficPlayerTask(entityCreature);
             }
         }
     }
@@ -141,4 +159,49 @@ public class ListenerMobAI extends ConfiguredListener {
             e.printStackTrace();
         }
     }
+    
+    private static void addTargetSpecficPlayerTask(EntityCreature entityCreature) {
+        int firstPriority = 1;
+        EntityAITasks targetTaskList = entityCreature.targetTasks;
+        for (EntityAITasks.EntityAITaskEntry targetTask : targetTaskList.taskEntries) {
+            firstPriority = Math.min(firstPriority, targetTask.priority - 1);
+        }
+        targetTaskList.addTask(firstPriority, new AITargetChosenPlayer(entityCreature));
+    }
+    
+    // TODO: Remove this commented out code once we confirm that an AI task is enough
+    
+    /*public static boolean shouldKeepOldAttackTarget(ICapabilityEntityState entityState) {
+        UUID targetPlayerUUID = entityState.getTargetPlayerID();
+        if (targetPlayerUUID == null) {
+            return false;
+        }
+        EntityLivingBase lastTarget = entityState.getLastAttackTarget();
+        if (!(lastTarget instanceof EntityPlayer)) {
+            return false;
+        }
+        // If the creature is currently targeting the player they are supposed to be targeting, do not allow them to change targets
+        ICapabilityMisc misc = lastTarget.getCapability(ProviderMisc.MISC_CAPABILITY, null);
+        return (misc != null && misc.getLifetimeUUID().equals(targetPlayerUUID));
+    }*/
+    
+    /*@SubscribeEvent
+    public void onEntityIgnoreChosenTarget(LivingSetAttackTargetEvent event) {
+        Entity entity = event.getEntity();
+        if (!(entity instanceof EntityLiving)) {
+            return;
+        }
+        EntityLiving entityLiving = (EntityLiving)entity;
+        ICapabilityEntityState entityState = entityLiving.getCapability(ProviderEntityState.CAPABILITY, null);
+        if (entityState == null) {
+            return;
+        }
+        
+        if (shouldKeepOldAttackTarget(entityState)) {
+            entityLiving.attackTarget = entityState.getLastAttackTarget();
+        } else {
+            entityState.setLastAttackTarget(entityLiving.attackTarget);
+        }
+    }*/
+    
 }

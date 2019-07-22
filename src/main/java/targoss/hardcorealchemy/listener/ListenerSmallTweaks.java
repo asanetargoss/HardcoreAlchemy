@@ -20,6 +20,7 @@ package targoss.hardcorealchemy.listener;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.UUID;
 
 import ca.wescook.nutrition.capabilities.CapInterface;
 import ca.wescook.nutrition.capabilities.CapProvider;
@@ -43,6 +44,7 @@ import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.ZombieEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
@@ -50,6 +52,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import targoss.hardcorealchemy.ModState;
+import targoss.hardcorealchemy.capability.CapUtil;
 import targoss.hardcorealchemy.capability.misc.CapabilityMisc;
 import targoss.hardcorealchemy.capability.misc.ICapabilityMisc;
 import targoss.hardcorealchemy.capability.misc.ProviderMisc;
@@ -82,7 +85,19 @@ public class ListenerSmallTweaks extends ConfiguredListener {
         if (player.world.isRemote && player != MiscVanilla.getTheMinecraftPlayer()) {
             return;
         }
-        event.addCapability(CapabilityMisc.RESOURCE_LOCATION, new ProviderMisc());
+        ProviderMisc misc = new ProviderMisc();
+        misc.instance.setLifetimeUUID(UUID.randomUUID());
+        event.addCapability(CapabilityMisc.RESOURCE_LOCATION, misc);
+    }
+    
+    @SubscribeEvent
+    public void onCloneMiscCapability(PlayerEvent.Clone event) {
+        if (event.isWasDeath()) {
+            return;
+        }
+        EntityPlayer oldPlayer = event.getOriginal();
+        EntityPlayer newPlayer = event.getEntityPlayer();
+        CapUtil.copyOldToNew(MISC_CAPABILITY, oldPlayer, newPlayer);
     }
 
     @SubscribeEvent

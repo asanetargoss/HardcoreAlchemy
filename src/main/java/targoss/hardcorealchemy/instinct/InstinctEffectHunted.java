@@ -31,6 +31,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.SPacketSoundEffect;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
@@ -38,7 +39,13 @@ import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
+import targoss.hardcorealchemy.capability.combatlevel.ICapabilityCombatLevel;
+import targoss.hardcorealchemy.capability.combatlevel.ProviderCombatLevel;
+import targoss.hardcorealchemy.capability.entitystate.ICapabilityEntityState;
+import targoss.hardcorealchemy.capability.entitystate.ProviderEntityState;
 import targoss.hardcorealchemy.capability.instinct.ICapabilityInstinct;
+import targoss.hardcorealchemy.capability.misc.ICapabilityMisc;
+import targoss.hardcorealchemy.capability.misc.ProviderMisc;
 import targoss.hardcorealchemy.instinct.api.IInstinctEffectData;
 import targoss.hardcorealchemy.instinct.api.InstinctEffect;
 import targoss.hardcorealchemy.util.Chat;
@@ -60,9 +67,9 @@ public class InstinctEffectHunted extends InstinctEffect {
     
     /** Predator *would* spawn at half player level here
      * if it weren't for the fact that a predator doesn't always spawn */
-    public static float MIN_AMPLIFIER = 0.0F;
+    public static final float MIN_AMPLIFIER = 0.0F;
     /** Predator spawns at player level, and at higher levels will extrapolate */
-    public static float PLAYER_MATCHING_THRESHOLD = 2.5F;
+    public static final float PLAYER_MATCHING_THRESHOLD = 2.5F;
     
     protected float getLevelMultiplier(float amplifier) {
         return 0.5F + (0.5F * (amplifier - MIN_AMPLIFIER) / (PLAYER_MATCHING_THRESHOLD - MIN_AMPLIFIER));
@@ -79,9 +86,9 @@ public class InstinctEffectHunted extends InstinctEffect {
             // Maybe add a different timer for each type
         }
     }
-    public final Object HUNTED_EVENT = new Object();
-    public int PREDATOR_APPEAR_TIME_MIN = 3 * 60 * 20;
-    public int PREDATOR_APPEAR_TIME_MAX = 6 * 60 * 20;
+    
+    public static final int EVENT_TIME_MIN = 3 * 60 * 20;
+    public static final int EVENT_TIME_MAX = 6 * 60 * 20;
     
     protected static class Data implements IInstinctEffectData {
         public EventType eventType = EventType.NONE;
@@ -203,28 +210,44 @@ public class InstinctEffectHunted extends InstinctEffect {
                 case PREDATOR_APPEARS:
                     EntityLivingBase predator = getPredator(player);
                     
-                    int maxSearchDistanceY = 8;
                     BlockPos predatorPos = RandomUtil.findSuitableBlockPosInRangeSigned(
-                        random, 7,
+                        random, 14,
                         player.getPosition(), 5.0F, 10.0F,
                         (BlockPos pos) -> {
                             predator.setPosition(pos.getX(), pos.getY(), pos.getZ());
                             if (predator.isEntityInsideOpaqueBlock()) {
                                 return false;
                             }
-                            MutableBlockPos testPos = new MutableBlockPos(pos);
-                            for (int i = 0; (i <= maxSearchDistanceY && !predator.isEntityInsideOpaqueBlock()); i++) {
-                                
+                            predator.setPosition(pos.getX(), pos.getY() - 1, pos.getZ());
+                            if (!predator.isEntityInsideOpaqueBlock()) {
+                                return false;
                             }
-                            
-                            // TODO: Implement
-                            
                             return true;
                         }
                     );
-                    
-                    // TODO: Implement
-                    
+                    if (predatorPos != null) {
+                        predator.setPosition(predatorPos.getX(), predatorPos.getY(), predatorPos.getZ());
+                        
+                        // Make the player the predator's highest priority target
+                        ICapabilityEntityState entityState = predator.getCapability(ProviderEntityState.CAPABILITY, null);
+                        if (entityState != null) {
+                            ICapabilityMisc misc = player.getCapability(ProviderMisc.MISC_CAPABILITY, null);
+                            if (misc != null) {
+                                entityState.setTargetPlayerID(misc.getLifetimeUUID());
+                            }
+                        }
+                        
+                        // Make predator stronger relative to the player depending on effect strength
+                        ICapabilityCombatLevel combatLevel = predator.getCapability(ProviderCombatLevel.COMBAT_LEVEL_CAPABILITY, null);
+                        if (combatLevel != null) {
+                            float multiplier = getLevelMultiplier(amplifier);
+                            int predatorLevel = (int)Math.ceil(multiplier * (float)player.experienceLevel);
+                            combatLevel.setValue(predatorLevel);
+                        }
+                        
+                        // Predator will now hunt the player
+                        predator.world.spawnEntity(predator);
+                    }
                     break;
                 default:
                     break;
@@ -248,7 +271,7 @@ public class InstinctEffectHunted extends InstinctEffect {
             for (int i = eventTypes.length - 1; i >= 0; i--) {
                 if (newEvent < eventTypes[i].threshold) {
                     data.eventType = eventTypes[i];
-                    data.timer = PREDATOR_APPEAR_TIME_MIN + random.nextInt(1 + PREDATOR_APPEAR_TIME_MAX - PREDATOR_APPEAR_TIME_MIN);
+                    data.timer = EVENT_TIME_MIN + random.nextInt(1 + EVENT_TIME_MAX - EVENT_TIME_MIN);
                     break;
                 }
             }

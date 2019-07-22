@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 asanetargoss
+ * Copyright 2019 asanetargoss
  * 
  * This file is part of Hardcore Alchemy.
  * 
@@ -16,7 +16,7 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.capability.misc;
+package targoss.hardcorealchemy.capability.entitystate;
 
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.EnumFacing;
@@ -24,20 +24,24 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 
-public class ProviderMisc implements ICapabilitySerializable<NBTBase> {
-    @CapabilityInject(ICapabilityMisc.class)
-    public static final Capability<ICapabilityMisc> MISC_CAPABILITY = null;
+public class ProviderEntityState implements ICapabilitySerializable<NBTBase> {
+    @CapabilityInject(ICapabilityEntityState.class)
+    public static final Capability<ICapabilityEntityState> CAPABILITY = null;
     
-    public final ICapabilityMisc instance = MISC_CAPABILITY.getDefaultInstance();
+    public final ICapabilityEntityState instance;
     
+    public ProviderEntityState() {
+        this.instance = CAPABILITY.getDefaultInstance();
+    }
+
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        return capability == MISC_CAPABILITY;
+        return capability == CAPABILITY;
     }
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (capability == MISC_CAPABILITY) {
+        if (capability == CAPABILITY) {
             return (T)instance;
         }
         return null;
@@ -45,12 +49,12 @@ public class ProviderMisc implements ICapabilitySerializable<NBTBase> {
 
     @Override
     public NBTBase serializeNBT() {
-        return MISC_CAPABILITY.writeNBT(instance, null);
+        return CAPABILITY.writeNBT(instance, null);
     }
 
     @Override
     public void deserializeNBT(NBTBase nbt) {
-        MISC_CAPABILITY.readNBT(instance, null, nbt);
+        CAPABILITY.readNBT(instance, null, nbt);
     }
 
 }

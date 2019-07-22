@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 asanetargoss
+ * Copyright 2019 asanetargoss
  * 
  * This file is part of Hardcore Alchemy.
  * 
@@ -16,18 +16,23 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.capability.misc;
+package targoss.hardcorealchemy.capability.entitystate;
 
 import java.util.UUID;
 
+import javax.annotation.Nullable;
+
 /**
- * For information too small to warrant a separate capability
- * Currently does not sync over the network or persist on death, since that's not needed at the moment.
+ * ICapabilityMisc but for entities.
+ * Currently doesn't sync.
+ * Used for AI only, so in a specialized listener for now. 
  */
-public interface ICapabilityMisc {
-    boolean getHasSeenThirstWarning();
-    void setHasSeenThirstWarning(boolean hasSeenThirstWarning);
-    /** Get the player's UUID for their current life. */
-    UUID getLifetimeUUID();
-    void setLifetimeUUID(UUID uuid);
+public interface ICapabilityEntityState {
+    /**
+     * Note that this is NOT the same as the player's
+     * game profile ID. It's ICapabilityMisc.getLifetimeUUID(),
+     * which is unique to the player on each life.
+     */
+    UUID getTargetPlayerID();
+    void setTargetPlayerID(@Nullable UUID playerID);
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 asanetargoss
+ * Copyright 2019 asanetargoss
  * 
  * This file is part of Hardcore Alchemy.
  * 
@@ -16,7 +16,7 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.capability.misc;
+package targoss.hardcorealchemy.capability.entitystate;
 
 import java.util.UUID;
 
@@ -24,41 +24,37 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.Capability.IStorage;
 
-public class StorageMisc implements IStorage<ICapabilityMisc> {
-    private static final String HAS_SEEN_THIRST_WARNING = "has_seen_thirst_warning";
-    private static final String LIFETIME_UUID = "lifetimeUUID";
+public class StorageEntityState implements Capability.IStorage<ICapabilityEntityState> {
+    private static final String TARGET_PLAYER_ID = "targetPlayerID";
+    
     @Override
-    public NBTBase writeNBT(Capability<ICapabilityMisc> capability, ICapabilityMisc instance, EnumFacing side) {
+    public NBTBase writeNBT(Capability<ICapabilityEntityState> capability, ICapabilityEntityState instance,
+            EnumFacing side) {
         NBTTagCompound nbt = new NBTTagCompound();
         
-        nbt.setBoolean(HAS_SEEN_THIRST_WARNING, instance.getHasSeenThirstWarning());
-        
-        {
-            UUID uuid = instance.getLifetimeUUID();
-            if (uuid != null) {
-                nbt.setString(LIFETIME_UUID, uuid.toString());
-            }
+        UUID playerID = instance.getTargetPlayerID();
+        if (playerID != null) {
+            nbt.setString(TARGET_PLAYER_ID, playerID.toString());
         }
         
         return nbt;
     }
 
     @Override
-    public void readNBT(Capability<ICapabilityMisc> capability, ICapabilityMisc instance, EnumFacing side, NBTBase nbtBase) {
+    public void readNBT(Capability<ICapabilityEntityState> capability, ICapabilityEntityState instance, EnumFacing side,
+            NBTBase nbtBase) {
         if (!(nbtBase instanceof NBTTagCompound)) {
             return;
         }
         NBTTagCompound nbt = (NBTTagCompound)nbtBase;
         
-        instance.setHasSeenThirstWarning(nbt.getBoolean(HAS_SEEN_THIRST_WARNING));
-        
-        if (nbt.hasKey(LIFETIME_UUID)) {
+        if (nbt.hasKey(TARGET_PLAYER_ID)) {
             try {
-                UUID uuid = UUID.fromString(nbt.getString(LIFETIME_UUID));
-                instance.setLifetimeUUID(uuid);
+                UUID uuid = UUID.fromString(nbt.getString(TARGET_PLAYER_ID));
+                instance.setTargetPlayerID(uuid);
             } catch (IllegalArgumentException e) {}
         }
     }
+
 }

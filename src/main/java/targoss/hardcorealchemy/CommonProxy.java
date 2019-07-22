@@ -39,6 +39,9 @@ import targoss.hardcorealchemy.capability.CapUtil;
 import targoss.hardcorealchemy.capability.combatlevel.CapabilityCombatLevel;
 import targoss.hardcorealchemy.capability.combatlevel.ICapabilityCombatLevel;
 import targoss.hardcorealchemy.capability.combatlevel.StorageCombatLevel;
+import targoss.hardcorealchemy.capability.entitystate.CapabilityEntityState;
+import targoss.hardcorealchemy.capability.entitystate.ICapabilityEntityState;
+import targoss.hardcorealchemy.capability.entitystate.StorageEntityState;
 import targoss.hardcorealchemy.capability.food.CapabilityFood;
 import targoss.hardcorealchemy.capability.food.ICapabilityFood;
 import targoss.hardcorealchemy.capability.food.StorageFood;
@@ -144,6 +147,7 @@ public class CommonProxy {
         CapabilityManager.INSTANCE.register(ICapabilityMorphState.class, new StorageMorphState(), CapabilityMorphState.class);
         CapabilityManager.INSTANCE.register(ICapabilityInstinct.class, new StorageInstinct(), CapabilityInstinct.class);
         CapabilityManager.INSTANCE.register(ICapabilityMisc.class, new StorageMisc(), CapabilityMisc.class);
+        CapabilityManager.INSTANCE.register(ICapabilityEntityState.class, new StorageEntityState(), CapabilityEntityState.class);
     }
     
     public static final void registerNetworking() {
