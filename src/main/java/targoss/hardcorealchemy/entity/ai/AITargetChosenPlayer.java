@@ -22,9 +22,12 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
+import com.google.common.base.Predicate;
+
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.EntitySelectors;
 import targoss.hardcorealchemy.capability.entitystate.ICapabilityEntityState;
 import targoss.hardcorealchemy.capability.entitystate.ProviderEntityState;
 import targoss.hardcorealchemy.capability.misc.ICapabilityMisc;
@@ -43,8 +46,20 @@ public class AITargetChosenPlayer extends EntityAINearestAttackableTarget<Entity
         }
     }
     
+    ChosenPlayerPredicate chosenPlayerPredicate = new ChosenPlayerPredicate();
+    
     public AITargetChosenPlayer(EntityCreature creature) {
-        super(creature, EntityPlayer.class, 10, true, false, new ChosenPlayerPredicate());
+        super(creature, EntityPlayer.class, 10, true, false, null);
+        this.targetEntitySelector = new Predicate<EntityPlayer>()
+        {
+            public boolean apply(@Nullable EntityPlayer player)
+            {
+                return player != null &&
+                    chosenPlayerPredicate.apply(player) &&
+                    EntitySelectors.NOT_SPECTATING.apply(player) &&
+                    isSuitableTarget(player, false);
+            }
+        };
     }
     
     @Override
@@ -54,7 +69,7 @@ public class AITargetChosenPlayer extends EntityAINearestAttackableTarget<Entity
             return false;
         }
         UUID cachedTargetPlayerUUID = entityState.getTargetPlayerID();
-        ((ChosenPlayerPredicate)targetEntitySelector).cachedTargetPlayerUUID = cachedTargetPlayerUUID;
+        chosenPlayerPredicate.cachedTargetPlayerUUID = cachedTargetPlayerUUID;
         if (cachedTargetPlayerUUID == null) {
             return false;
         }
