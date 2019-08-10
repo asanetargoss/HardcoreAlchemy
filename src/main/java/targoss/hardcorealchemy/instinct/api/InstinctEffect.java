@@ -44,8 +44,9 @@ import net.minecraftforge.fml.common.registry.IForgeRegistryEntry;
  */
 public abstract class InstinctEffect extends IForgeRegistryEntry.Impl<InstinctEffect> {
     /**
-     * If non-null, this constructs data container associated with the player.
-     * All state goes in here.
+     * If non-null, this constructs the data container associated with the effect when needed.
+     * All state goes in here. It is up to the effect creator to decide how to
+     * manage the state. The data will persist until instincts are cleared.
      */
     public IInstinctEffectData createData() {
         return null;

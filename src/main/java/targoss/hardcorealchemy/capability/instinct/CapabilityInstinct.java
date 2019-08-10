@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.instinct.api.IInstinctEffectData;
@@ -39,6 +40,7 @@ public class CapabilityInstinct implements ICapabilityInstinct {
     private List<ICapabilityInstinct.InstinctEntry> instincts = new ArrayList();
     private Map<InstinctEffect, InstinctEffectWrapper> activeEffects = new HashMap<>();
     private Map<InstinctEffect, IInstinctEffectData> effectData = new HashMap<>();
+    private Map<InstinctEffect, NBTTagCompound> uninitializedEffectData = new HashMap<>();
     
     private int instinctMessageTime = 0;
     
@@ -74,6 +76,8 @@ public class CapabilityInstinct implements ICapabilityInstinct {
             wrapper.effect.onDeactivate(player, wrapper.amplifier);
         }
         activeEffects.clear();
+        effectData.clear();
+        uninitializedEffectData.clear();
     }
 
     @Override
@@ -115,9 +119,34 @@ public class CapabilityInstinct implements ICapabilityInstinct {
         IInstinctEffectData data = instinctEffect.createData();
         if (data != null) {
             effectData.put(instinctEffect, data);
+            if (uninitializedEffectData.containsKey(instinctEffect)) {
+                NBTTagCompound nbt = uninitializedEffectData.get(instinctEffect);
+                uninitializedEffectData.remove(instinctEffect);
+                data.deserializeNBT(nbt);
+            }
             return data;
         }
         
         return null;
+    }
+
+    @Override
+    public Map<InstinctEffect, IInstinctEffectData> getEffectData() {
+        return effectData;
+    }
+
+    @Override
+    public void setEffectData(Map<InstinctEffect, IInstinctEffectData> effectData) {
+        this.effectData = effectData;
+    }
+
+    @Override
+    public Map<InstinctEffect, NBTTagCompound> getUninitializedEffectData() {
+        return uninitializedEffectData;
+    }
+
+    @Override
+    public void setUninitializedEffectData(Map<InstinctEffect, NBTTagCompound> uninitializedEffectData) {
+        this.uninitializedEffectData = uninitializedEffectData;
     }
 }

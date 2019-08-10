@@ -22,6 +22,7 @@ import static targoss.hardcorealchemy.util.Serialization.NBT_COMPOUND_ID;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -34,6 +35,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.ModStateException;
 import targoss.hardcorealchemy.capability.instinct.ICapabilityInstinct.InstinctEntry;
+import targoss.hardcorealchemy.instinct.api.IInstinctEffectData;
 import targoss.hardcorealchemy.instinct.api.IInstinctState;
 import targoss.hardcorealchemy.instinct.api.InstinctEffect;
 import targoss.hardcorealchemy.instinct.api.InstinctEffectWrapper;
@@ -68,6 +70,10 @@ public class StorageInstinct implements Capability.IStorage<ICapabilityInstinct>
     
     public static final String ACTIVE_EFFECTS = "active_effects";
     
+    public static final String EFFECT_DATA = "effect_data";
+    public static final String EFFECT_DATA_EFFECT_ID = "id";
+    public static final String EFFECT_DATA_DATA = "data";
+    
     @Override
     public NBTBase writeNBT(Capability<ICapabilityInstinct> capability, ICapabilityInstinct instance, EnumFacing side) {
         NBTTagCompound nbtCompound = new NBTTagCompound();
@@ -91,6 +97,9 @@ public class StorageInstinct implements Capability.IStorage<ICapabilityInstinct>
             activeEffectsNBT.appendTag(serializeEffectWrapper(wrapper));
         }
         nbtCompound.setTag(ACTIVE_EFFECTS, activeEffectsNBT);
+        
+        NBTTagList effectDataNBT = serializeEffectData(instance.getEffectData());
+        nbtCompound.setTag(EFFECT_DATA, effectDataNBT);
         
         return nbtCompound;
     }
@@ -133,6 +142,10 @@ public class StorageInstinct implements Capability.IStorage<ICapabilityInstinct>
             }
             activeEffects.put(effectWrapper.effect, effectWrapper);
         }
+        
+        NBTTagList uninitializeEffectDataNBT = nbtCompound.getTagList(EFFECT_DATA, NBT_COMPOUND_ID);
+        Map<InstinctEffect, NBTTagCompound> uninitializedEffectData = deserializeUninitializedEffectData(uninitializeEffectDataNBT);
+        instance.setUninitializedEffectData(uninitializedEffectData);
     }
     
     public static NBTTagCompound serializeInstinctEntry(InstinctEntry entry) {
@@ -317,5 +330,39 @@ public class StorageInstinct implements Capability.IStorage<ICapabilityInstinct>
         wrapper.maxInstinct = nbt.getFloat(EFFECT_MAX_INSTINCT);
         
         return wrapper;
+    }
+    
+    public static NBTTagList serializeEffectData(Map<InstinctEffect, IInstinctEffectData> effectData) {
+        NBTTagList effectDataNBT = new NBTTagList();
+        
+        for (Map.Entry<InstinctEffect, IInstinctEffectData> entry : effectData.entrySet()) {
+            NBTTagCompound dataNBT = entry.getValue().serializeNBT();
+            if (dataNBT != null) {
+                NBTTagCompound dataContainerNBT = new NBTTagCompound();
+                dataContainerNBT.setString(EFFECT_DATA_EFFECT_ID, entry.getKey().getRegistryName().toString());
+                dataContainerNBT.setTag(EFFECT_DATA_DATA, dataNBT);
+                effectDataNBT.appendTag(dataContainerNBT);
+            }
+        }
+        
+        return effectDataNBT;
+    }
+    
+    public static Map<InstinctEffect, NBTTagCompound> deserializeUninitializedEffectData(NBTTagList nbt) {
+        Map<InstinctEffect, NBTTagCompound> uninitializedEffectData = new HashMap<>();
+        
+        int n = nbt.tagCount();
+        for (int i = 0; i < n; n++) {
+            NBTTagCompound dataContainerNBT = nbt.getCompoundTagAt(i);
+            InstinctEffect effect = Instincts.EFFECT_REGISTRY.getValue(new ResourceLocation(dataContainerNBT.getString(EFFECT_DATA_EFFECT_ID)));
+            if (effect != null) {
+                NBTTagCompound dataNBT = dataContainerNBT.getCompoundTag(EFFECT_DATA_DATA);
+                if (dataNBT != null) {
+                    uninitializedEffectData.put(effect, dataNBT);
+                }
+            }
+        }
+        
+        return uninitializedEffectData;
     }
 }

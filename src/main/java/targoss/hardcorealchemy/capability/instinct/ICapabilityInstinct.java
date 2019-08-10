@@ -28,6 +28,7 @@ import javax.annotation.Nullable;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.instinct.api.IInstinctEffectData;
 import targoss.hardcorealchemy.instinct.api.Instinct;
@@ -125,5 +126,18 @@ public interface ICapabilityInstinct {
      */
     void setInstinctMessageTime(int inactiveInstinctTime);
     
+    /**
+     * Gets the data associated with an instinct effect, if any.
+     * This can be used by effects to store state, or by needs
+     * to modify effects.
+     */
     IInstinctEffectData getInstinctEffectData(InstinctEffect instinctEffect);
+    
+    Map<InstinctEffect, IInstinctEffectData> getEffectData();
+    
+    void setEffectData(Map<InstinctEffect, IInstinctEffectData> effectData);
+    
+    Map<InstinctEffect, NBTTagCompound> getUninitializedEffectData();
+    
+    void setUninitializedEffectData(Map<InstinctEffect, NBTTagCompound> uninitializedEffectData);
 }
