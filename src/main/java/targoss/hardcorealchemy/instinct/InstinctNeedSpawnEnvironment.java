@@ -38,6 +38,7 @@ import targoss.hardcorealchemy.instinct.api.IInstinctNeed;
 import targoss.hardcorealchemy.instinct.api.IInstinctState;
 import targoss.hardcorealchemy.instinct.api.IInstinctState.NeedStatus;
 import targoss.hardcorealchemy.instinct.network.NeedMessengerSpawnEnvironment;
+import targoss.hardcorealchemy.instinct.network.api.INeedMessenger;
 import targoss.hardcorealchemy.util.Chat;
 import targoss.hardcorealchemy.util.EntityUtil;
 import targoss.hardcorealchemy.util.MiscVanilla;
@@ -106,6 +107,11 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
             spawnCheckEntity = proxyEntity;
             usingProxyEntity = true;
         }
+    }
+    
+    @Override
+    public INeedMessenger getCustomMessenger() {
+        return new NeedMessengerSpawnEnvironment();
     }
     
     private static final String NBT_FEELS_AT_HOME = "feelsAtHome";
