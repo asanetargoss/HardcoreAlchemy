@@ -175,7 +175,28 @@ public class MobLists {
         return grassMobs;
     }
     
-    // TODO: DesertMobs, SnowMobs
+    /**
+     * Mobs that are considered natural animals and spawn in a certain location on land
+     */
+    public static Set<String> getLandAnimals() {
+        Set<String> landAnimals = new HashSet();
+        
+        // Minecraft
+        landAnimals.add("Pig");
+        landAnimals.add("Cow");
+        landAnimals.add("Chicken");
+        landAnimals.add("Sheep");
+        landAnimals.add("EntityHorse");
+        landAnimals.add("Wolf");
+        landAnimals.add("Ozelot");
+        landAnimals.add("Rabbit");
+        landAnimals.add("PolarBear");
+        landAnimals.add("MushroomCow");
+        // ToroQuest
+        landAnimals.add("toroquest.toro");
+        
+        return landAnimals;
+    }
 
     /*
      * All classes of this set must be derived from EntityTameable

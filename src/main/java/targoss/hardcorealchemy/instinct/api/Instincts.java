@@ -26,7 +26,10 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.IForgeRegistry;
 import net.minecraftforge.fml.common.registry.RegistryBuilder;
 import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.instinct.IInstinctNeedEnvironment;
 import targoss.hardcorealchemy.instinct.InstinctEffectHinderedMind;
+import targoss.hardcorealchemy.instinct.InstinctEffectHunted;
+import targoss.hardcorealchemy.instinct.InstinctHomesickNature;
 import targoss.hardcorealchemy.instinct.InstinctNeedAttackPrey;
 import targoss.hardcorealchemy.instinct.InstinctPredator;
 
@@ -56,9 +59,13 @@ public class Instincts {
             .create();
 
     public static final Instinct PREDATOR = instinct("predator", new InstinctPredator());
+    public static final Instinct HOMESICK_NATURE = instinct("homesick_nature", new InstinctHomesickNature());
+    
     public static final InstinctNeedFactory NEED_ATTACK_PREY = instinctNeed("attack_prey", new InstinctNeedAttackPrey());
+    public static final InstinctNeedFactory NEED_SPAWN_ENVIRONMENT = instinctNeed("environment", new IInstinctNeedEnvironment.Factory());
     
     public static final InstinctEffect EFFECT_HINDERED_MIND = instinctEffect("hindered_mind", new InstinctEffectHinderedMind());
+    public static final InstinctEffect EFFECT_HUNTED = instinctEffect("hunted", new InstinctEffectHunted());
     
     private static Instinct instinct(String name, Instinct instinct) {
         instinct.setRegistryName(new ResourceLocation(HardcoreAlchemy.MOD_ID, name));
@@ -73,11 +80,17 @@ public class Instincts {
         INSTINCT_CACHE.clear();
     }
     
+    private static InstinctNeedFactory instinctNeed(String name, InstinctNeedFactory factory) {
+        factory.setRegistryName(new ResourceLocation(HardcoreAlchemy.MOD_ID, name));
+        INSTINCT_NEED_FACTORY_CACHE.add(factory);
+        return factory;
+    }
+    
     private static InstinctNeedFactory instinctNeed(String name, IInstinctNeed instinctNeed) {
-        InstinctNeedFactory instinctEntry = new InstinctNeedFactorySimple(instinctNeed);
-        instinctEntry.setRegistryName(new ResourceLocation(HardcoreAlchemy.MOD_ID, name));
-        INSTINCT_NEED_FACTORY_CACHE.add(instinctEntry);
-        return instinctEntry;
+        InstinctNeedFactory factory = new InstinctNeedFactorySimple(instinctNeed);
+        factory.setRegistryName(new ResourceLocation(HardcoreAlchemy.MOD_ID, name));
+        INSTINCT_NEED_FACTORY_CACHE.add(factory);
+        return factory;
     }
     
     public static void registerInstinctNeeds() {
