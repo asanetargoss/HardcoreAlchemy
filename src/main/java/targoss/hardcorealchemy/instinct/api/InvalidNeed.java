@@ -16,32 +16,45 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.instinct;
+package targoss.hardcorealchemy.instinct.api;
+
+import javax.annotation.Nullable;
 
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
-import targoss.hardcorealchemy.instinct.api.IInstinctNeed;
 import targoss.hardcorealchemy.instinct.api.IInstinctState.NeedStatus;
 
-public class InstinctNeedForestPlains extends InstinctNeedSpawnEnvironment {
-    public InstinctNeedForestPlains(EntityLivingBase morphEntity) {
-        super(morphEntity);
+public class InvalidNeed implements IInstinctNeed {
+    
+    private InvalidNeed() {}
+    
+    public static final InvalidNeed INSTANCE = new InvalidNeed();
+
+    @Override
+    public NBTTagCompound serializeNBT() {
+        return new NBTTagCompound();
     }
+
+    @Override
+    public void deserializeNBT(NBTTagCompound nbt) { }
 
     @Override
     public IInstinctNeed createInstanceFromMorphEntity(EntityLivingBase morphEntity) {
-        return new InstinctNeedForestPlains(morphEntity);
-    }
-    
-    @Override
-    public ITextComponent getFeelsAtHomeMessage(NeedStatus needStatus) {
-        return new TextComponentTranslation("hardcorealchemy.instinct.home.nature.fulfilled");
+        return null;
     }
 
     @Override
-    public ITextComponent getNotAtHomeMessage(NeedStatus needStatus) {
-        return new TextComponentTranslation("hardcorealchemy.instinct.home.nature.need");
+    public @Nullable ITextComponent getNeedMessage(NeedStatus needStatus) {
+        return null;
     }
+
+    @Override
+    public @Nullable ITextComponent getNeedUnfulfilledMessage(NeedStatus needStatus) {
+        return null;
+    }
+
+    @Override
+    public void tick(IInstinctState instinctState) { }
 
 }

@@ -173,7 +173,8 @@ public class InstinctNeedAttackPrey implements IInstinctNeed {
     @Override
     public IInstinctNeed createInstanceFromMorphEntity(EntityLivingBase morphEntity) {
         if (!(morphEntity instanceof EntityLiving)) {
-            throw new UnsupportedOperationException("Cannot create an instance of " + InstinctNeedAttackPrey.class.getName() + " with a morph that is not EntityLiving");
+            HardcoreAlchemy.LOGGER.error("Cannot create an instance of " + InstinctNeedAttackPrey.class.getName() + " with a morph that is not EntityLiving");
+            return null;
         }
         return new InstinctNeedAttackPrey((EntityLiving)morphEntity);
     }

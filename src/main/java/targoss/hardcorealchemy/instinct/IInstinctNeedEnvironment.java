@@ -54,7 +54,7 @@ public interface IInstinctNeedEnvironment extends IInstinctNeed {
                     return new InstinctNeedForestPlains(morphEntity);
                 }
             }
-            return null;
+            return new InstinctNeedSpawnEnvironment(morphEntity);
         }
     }
 

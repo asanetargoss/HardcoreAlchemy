@@ -43,7 +43,7 @@ public interface IInstinctNeed extends INBTSerializable<NBTTagCompound> {
      * Create an instance of this need, with the entity as a
      * parameter to allow for some entity-specific traits. 
      */
-    IInstinctNeed createInstanceFromMorphEntity(EntityLivingBase morphEntity);
+    @Nullable IInstinctNeed createInstanceFromMorphEntity(EntityLivingBase morphEntity);
     
     /**
      * Allows the need to stop the effect from being activated after

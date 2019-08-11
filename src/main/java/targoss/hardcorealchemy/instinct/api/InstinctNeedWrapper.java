@@ -22,9 +22,11 @@ import mchorse.metamorph.api.morphs.AbstractMorph;
 import mchorse.metamorph.api.morphs.EntityMorph;
 import mchorse.metamorph.capabilities.morphing.IMorphing;
 import mchorse.metamorph.capabilities.morphing.Morphing;
+import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.instinct.network.api.INeedMessenger;
 
 public class InstinctNeedWrapper {
@@ -54,6 +56,7 @@ public class InstinctNeedWrapper {
             if (factory == null) {
                 throw new IllegalStateException("An instance of " + getClass().getSimpleName() + " has no defined instinct factory");
             }
+            
             IMorphing morphing = Morphing.get(player);
             EntityLivingBase morphEntity = null;
             if (morphing != null) {
@@ -63,18 +66,30 @@ public class InstinctNeedWrapper {
                 }
             }
             if (morphEntity == null) {
-                throw new IllegalStateException("Cannot define an instinct need unless the player is morphed as an EntityLiving");
+                throw new IllegalStateException("Cannot define an instinct need unless the player is an entity morph");
             }
+            
             need = factory.createNeed(morphEntity);
+            if (need == null) {
+                HardcoreAlchemy.LOGGER.error("Failed to create instinct need for factory: '" +
+                        factory.getRegistryName().toString() +
+                        "', when morphed as: '" +
+                        EntityList.getEntityString(morphEntity) +
+                        "'. The instinct and morph may be incompatible.");
+                need = InvalidNeed.INSTANCE;
+            }
+            
             INeedMessenger messenger = need.getCustomMessenger();
             if (messenger != null) {
                 state.messenger = messenger;
             }
+            
             if (needData != null) {
                 need.deserializeNBT(needData);
                 needData = null;
             }
         }
+        
         return need;
     }
     
