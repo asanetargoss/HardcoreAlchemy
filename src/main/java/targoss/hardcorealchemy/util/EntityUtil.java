@@ -132,8 +132,7 @@ public class EntityUtil {
     
     private static void forceInitEntityAI(EntityLiving entity) {
         try {
-            //Method method = InvokeUtil.getPrivateMethod(true, entity.getClass(), EntityLiving.class, INIT_ENTITY_AI.get());
-            Method method = entity.getClass().getDeclaredMethod(INIT_ENTITY_AI.get());
+            Method method = InvokeUtil.getPrivateMethod(true, entity.getClass(), EntityLiving.class, INIT_ENTITY_AI.get());
             method.setAccessible(true);
             method.invoke(entity);
         } catch (NoSuchMethodException | SecurityException | IllegalAccessException |
@@ -224,18 +223,21 @@ public class EntityUtil {
      * Uses reflection.
      */
     public static Set<EntityAITasks.EntityAITaskEntry> getAiTargetTasks(EntityLiving entity) {
-        Set<EntityAITasks.EntityAITaskEntry> aiTargetTasksOriginal = entity.targetTasks.taskEntries;
         if (!entity.world.isRemote) {
-            // Normally we would check isRemote, but some mod authors
-            // populate AI in the constructor rather than initEntityAI()
-            return aiTargetTasksOriginal;
+            return entity.targetTasks.taskEntries;
         }
         else {
+            // Some mod authors populate AI in the constructor
+            // rather than initEntityAI(), so preserve those AI tasks for next time.
+            Set<EntityAITasks.EntityAITaskEntry> aiTargetTasksOriginal = entity.targetTasks.taskEntries;
             Set<EntityAITasks.EntityAITaskEntry> aiTargetTasksCopy = new HashSet<>();
-            forceInitEntityAI(entity);
             aiTargetTasksCopy.addAll(aiTargetTasksOriginal);
+            Set<EntityAITasks.EntityAITaskEntry> aiTargetTasksAll = new HashSet<>();
+            forceInitEntityAI(entity);
+            aiTargetTasksAll.addAll(aiTargetTasksOriginal);
             aiTargetTasksOriginal.clear();
-            return aiTargetTasksCopy;
+            aiTargetTasksOriginal.addAll(aiTargetTasksCopy);
+            return aiTargetTasksAll;
         }
     }
     

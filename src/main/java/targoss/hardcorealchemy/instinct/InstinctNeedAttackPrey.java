@@ -560,7 +560,6 @@ public class InstinctNeedAttackPrey implements IInstinctNeed {
             EntityLivingBase chosenPrey = availablePrey.get(random.nextInt(availablePrey.size()));
             // Also add this to the list of valid targets, if it is not present (reduces issues with unreliable targeting lambdas)
             // Because it's a set, no need to check for duplicates
-            // TODO: AAAAA! It's still complaining about wanting to kill squid instead, when killing squid!
             entityTargetTypes.add(new EntityTargetInfo(chosenPrey.getClass(), null));
             return chosenPrey;
         }

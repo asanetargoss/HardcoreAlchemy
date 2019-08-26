@@ -205,6 +205,7 @@ public class ListenerPlayerInstinct extends ConfiguredListener {
         int entryCount = 0;
         int needCount = 0;
         for (ICapabilityInstinct.InstinctEntry entry : instinct.getInstincts()) {
+            int needCountPerEntry = 0;
             for (InstinctNeedWrapper needWrapper : entry.getNeeds(player)) {
                 InstinctState instinctState = needWrapper.getState(player);
                 
@@ -215,9 +216,10 @@ public class ListenerPlayerInstinct extends ConfiguredListener {
                 instinctChange = Math.min(instinctChange, instinctState.getInstinctChangePerTick());
                 
                 if (!player.world.isRemote && instinctState.messenger.shouldSync()) {
-                    PacketHandler.INSTANCE.sendTo(new MessageInstinctNeedChanged(entryCount, needCount, needWrapper), (EntityPlayerMP)player);
+                    PacketHandler.INSTANCE.sendTo(new MessageInstinctNeedChanged(entryCount, needCountPerEntry, needWrapper), (EntityPlayerMP)player);
                     instinctState.shouldSyncNeed = false;
                 }
+                needCountPerEntry++;
                 needCount++;
             }
             entryCount++;
