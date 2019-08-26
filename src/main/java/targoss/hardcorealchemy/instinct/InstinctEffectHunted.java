@@ -31,11 +31,9 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.SPacketSoundEffect;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
@@ -49,6 +47,7 @@ import targoss.hardcorealchemy.capability.misc.ProviderMisc;
 import targoss.hardcorealchemy.instinct.api.IInstinctEffectData;
 import targoss.hardcorealchemy.instinct.api.InstinctEffect;
 import targoss.hardcorealchemy.util.Chat;
+import targoss.hardcorealchemy.util.EntityUtil;
 import targoss.hardcorealchemy.util.RandomUtil;
 
 /**
@@ -87,8 +86,11 @@ public class InstinctEffectHunted extends InstinctEffect {
         }
     }
     
-    public static final int EVENT_TIME_MIN = 3 * 60 * 20;
-    public static final int EVENT_TIME_MAX = 6 * 60 * 20;
+    // TODO: Revert after testing
+    //public static final int EVENT_TIME_MIN = 3 * 60 * 20;
+    //public static final int EVENT_TIME_MAX = 6 * 60 * 20;
+    public static final int EVENT_TIME_MIN = 10 * 20;
+    public static final int EVENT_TIME_MAX = 20 * 20;
     
     protected static class Data implements IInstinctEffectData {
         public EventType eventType = EventType.NONE;
@@ -192,7 +194,7 @@ public class InstinctEffectHunted extends InstinctEffect {
         }
         Data data = (Data)instinct.getInstinctEffectData(this);
         
-        if (data.timer <= 0.0F) {
+        if (data.timer <= 0) {
             if (data.eventType != EventType.NONE) {
                 switch (data.eventType) {
                 case WARNING_MESSAGE:
@@ -246,6 +248,8 @@ public class InstinctEffectHunted extends InstinctEffect {
                         }
                         
                         // Predator will now hunt the player
+                        // TODO: Give the predator a finite lifetime
+                        // TODO: Prevent the predator from dropping items/experience?
                         predator.world.spawnEntity(predator);
                     }
                     break;
@@ -269,18 +273,39 @@ public class InstinctEffectHunted extends InstinctEffect {
             }
             EventType[] eventTypes = EventType.values();
             for (int i = eventTypes.length - 1; i >= 0; i--) {
-                if (newEvent < eventTypes[i].threshold) {
+                if (newEvent >= eventTypes[i].threshold) {
                     data.eventType = eventTypes[i];
                     data.timer = EVENT_TIME_MIN + random.nextInt(1 + EVENT_TIME_MAX - EVENT_TIME_MIN);
                     break;
                 }
             }
-            
-            
         }
-        
-        // TODO: Serialize effect data
         
         data.timer--;
     }
+    
+    @Override
+    public boolean canAttack(EntityPlayer player, float amplifier, EntityLivingBase entity) {
+        if (amplifier < EventType.PREDATOR_APPEARS.threshold) {
+            return true;
+        }
+        
+        ICapabilityEntityState entityState = entity.getCapability(ProviderEntityState.CAPABILITY, null);
+        if (entityState == null) {
+            return true;
+        }
+        
+        ICapabilityMisc misc = player.getCapability(ProviderMisc.MISC_CAPABILITY, null);
+        if (misc == null) {
+            return true;
+        }
+        
+        if (entityState.getTargetPlayerID().equals(misc.getLifetimeUUID())) {
+            Chat.message(Chat.Type.NOTIFY, (EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.instinct.effect.hunted.cannot_attack", EntityUtil.getEntityName(entity)), 20);
+            return false;
+        } else {
+            return true;
+        }
+    }
+    
 }

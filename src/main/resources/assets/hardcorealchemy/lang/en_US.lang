@@ -49,10 +49,11 @@ hardcorealchemy.instinct.attack_prey.finished=The hunting urges start to fade.
 
 hardcorealchemy.instinct.home.generic.fulfilled=You yearn to be somewhere else.
 hardcorealchemy.instinct.home.generic.need=You feel at home here.
-hardcorealchemy.instinct.home.nature.need=You yearn for sun and leaves above your head and grass beneath your feet.
+hardcorealchemy.instinct.home.nature.need=You yearn for your natural habitat.
 hardcorealchemy.instinct.home.nature.fulfilled=This natural environment makes you feel at ease.
 
 hardcorealchemy.instinct.effect.hunted.warn.variant1=What was that sound?
+hardcorealchemy.instinct.effect.hunted.cannot_attack=You are too afraid to attack the %s.
 
 hardcorealchemy.magic.disabled.item=Your inhuman form prevents you from comprehending this magical item.
 hardcorealchemy.magic.disabled.block=Your inhuman form prevents you from comprehending this magical object.

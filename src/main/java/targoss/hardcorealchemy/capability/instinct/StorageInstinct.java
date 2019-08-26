@@ -352,7 +352,7 @@ public class StorageInstinct implements Capability.IStorage<ICapabilityInstinct>
         Map<InstinctEffect, NBTTagCompound> uninitializedEffectData = new HashMap<>();
         
         int n = nbt.tagCount();
-        for (int i = 0; i < n; n++) {
+        for (int i = 0; i < n; i++) {
             NBTTagCompound dataContainerNBT = nbt.getCompoundTagAt(i);
             InstinctEffect effect = Instincts.EFFECT_REGISTRY.getValue(new ResourceLocation(dataContainerNBT.getString(EFFECT_DATA_EFFECT_ID)));
             if (effect != null) {

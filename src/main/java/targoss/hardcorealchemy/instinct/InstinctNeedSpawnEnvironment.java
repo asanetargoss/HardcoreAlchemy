@@ -256,11 +256,16 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
         maxAtHomeStreak = Math.max(maxAtHomeStreak, atHomeStreak);
         
         historyCapacity = Math.max(MIN_HISTORY_CAPACITY, MAX_HISTORY_CAPACITY - maxAtHomeStreak);
-        averageAtHomeFraction = ((averageAtHomeFraction * (historyCapacity - 1)) + (feelsAtHome ? 1.0F : 0.0F)) / historyCapacity;
+        float atHomeGain = 1.0F / (float)(historyCapacity);
+        float atHomeDecay = (float)(historyCapacity - 1) * atHomeGain;
+        averageAtHomeFraction = (averageAtHomeFraction * atHomeDecay) + (feelsAtHome ? atHomeGain : 0.0F);
         if (atHomeStreak == 0) {
             // Prevent abnormal random output putting the player in a state where they can never feel "at home" anymore
-            if (preferredAtHomeFraction <= MAX_FREQUENCY_ALLOWING_DECAY) {
+            if (maxAtHomeStreak <= MAX_FREQUENCY_ALLOWING_DECAY) {
                 preferredAtHomeFraction -= PREFERRED_FREQUENCY_DECAY_RATE;
+                if (preferredAtHomeFraction < 0.0F) {
+                    preferredAtHomeFraction = 0.0F;
+                }
             }
         }
         else {
@@ -285,7 +290,9 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
             }
         }
         else if (reallyFeelsNotAtHome) {
-            instinctState.setNeedStatus(IInstinctState.NeedStatus.EVENTUALLY);
+            // TODO: Revert after testing
+            //instinctState.setNeedStatus(IInstinctState.NeedStatus.EVENTUALLY);
+            instinctState.setNeedStatus(IInstinctState.NeedStatus.URGENT);
             atHomeMessageEnabled = true;
         }
         
