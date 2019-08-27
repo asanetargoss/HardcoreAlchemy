@@ -81,13 +81,13 @@ public class MessageInstinctNeedState extends MessageToClient implements Runnabl
         }
     }
     
-    private boolean doSizesMatch(List<ICapabilityInstinct.InstinctEntry> instincts, List<List<Byte>> statesPerInstinct) {
+    private boolean doSizesMatch(EntityPlayer player, List<ICapabilityInstinct.InstinctEntry> instincts, List<List<Byte>> statesPerInstinct) {
         if (instincts.size() != statesPerInstinct.size()) {
             return false;
         }
         int n = instincts.size();
         for (int i = 0; i < n; i++) {
-            if (instincts.get(i).needs.size() != statesPerInstinct.get(i).size()) {
+            if (instincts.get(i).getNeeds(player).size() != statesPerInstinct.get(i).size()) {
                 return false;
             }
         }
@@ -107,13 +107,13 @@ public class MessageInstinctNeedState extends MessageToClient implements Runnabl
         
         // Sync which needs are/are not being met
         List<ICapabilityInstinct.InstinctEntry> instincts = instinct.getInstincts();
-        if (!doSizesMatch(instincts, statesPerInstinct)) {
+        if (!doSizesMatch(player, instincts, statesPerInstinct)) {
             HardcoreAlchemy.LOGGER.error("Could not sync instinct need statuses because the instincts are out of sync");
         }
         else {
             int n = instincts.size();
             for (int i = 0; i < n; i++) {
-                List<InstinctNeedWrapper> needs = instincts.get(i).needs;
+                List<InstinctNeedWrapper> needs = instincts.get(i).getNeeds(player);
                 List<Byte> states = statesPerInstinct.get(i);
                 int m = needs.size();
                 for (int j = 0; j < m; j++) {
