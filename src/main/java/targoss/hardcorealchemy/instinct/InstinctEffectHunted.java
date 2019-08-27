@@ -86,11 +86,12 @@ public class InstinctEffectHunted extends InstinctEffect {
         }
     }
     
+    // TODO: Un-revert after un-testing
     // TODO: Revert after testing
-    //public static final int EVENT_TIME_MIN = 3 * 60 * 20;
-    //public static final int EVENT_TIME_MAX = 6 * 60 * 20;
-    public static final int EVENT_TIME_MIN = 10 * 20;
-    public static final int EVENT_TIME_MAX = 20 * 20;
+    public static final int EVENT_TIME_MIN = 3 * 60 * 20;
+    public static final int EVENT_TIME_MAX = 6 * 60 * 20;
+    //public static final int EVENT_TIME_MIN = 10 * 20;
+    //public static final int EVENT_TIME_MAX = 20 * 20;
     
     protected static class Data implements IInstinctEffectData {
         public EventType eventType = EventType.NONE;

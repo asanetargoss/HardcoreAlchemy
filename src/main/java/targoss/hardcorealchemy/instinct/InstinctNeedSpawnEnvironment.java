@@ -290,9 +290,10 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
             }
         }
         else if (reallyFeelsNotAtHome) {
+            // TODO: Un-revert after un-testing
             // TODO: Revert after testing
-            //instinctState.setNeedStatus(IInstinctState.NeedStatus.EVENTUALLY);
-            instinctState.setNeedStatus(IInstinctState.NeedStatus.URGENT);
+            instinctState.setNeedStatus(IInstinctState.NeedStatus.EVENTUALLY);
+            //instinctState.setNeedStatus(IInstinctState.NeedStatus.URGENT);
             atHomeMessageEnabled = true;
         }
         
