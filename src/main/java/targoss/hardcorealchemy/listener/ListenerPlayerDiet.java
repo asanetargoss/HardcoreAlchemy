@@ -98,7 +98,7 @@ public class ListenerPlayerDiet extends ConfiguredListener {
             return;
         }
         MorphDiet.Needs needs;
-        if (humanityCapability.canMorph()) {
+        if (humanityCapability.isHuman()) {
             needs = MorphDiet.PLAYER_NEEDS;
         }
         else {
@@ -180,7 +180,7 @@ public class ListenerPlayerDiet extends ConfiguredListener {
 
         EntityPlayer player = event.getEntityPlayer();
         ICapabilityHumanity capabilityHumanity = player.getCapability(HUMANITY_CAPABILITY, null);
-        if (capabilityHumanity == null || capabilityHumanity.canMorph()) {
+        if (capabilityHumanity == null || capabilityHumanity.isHuman()) {
             return;
         }
         
@@ -232,7 +232,7 @@ public class ListenerPlayerDiet extends ConfiguredListener {
         
         if (!preventLosingThirst) {
             ICapabilityHumanity humanity = player.getCapability(HUMANITY_CAPABILITY, null);
-            if (humanity != null && !humanity.canMorph()) {
+            if (humanity != null && !humanity.isHuman()) {
                 IMorphing morphing = Morphing.get(player);
                 if (morphing != null &&
                         !MorphDiet.getNeeds(morphing.getCurrentMorph()).hasThirst) {

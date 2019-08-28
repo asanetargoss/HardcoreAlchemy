@@ -160,7 +160,7 @@ public class MorphState {
         }
         
         ICapabilityHumanity humanity = player.getCapability(HUMANITY_CAPABILITY, null);
-        if (humanity == null || humanity.canMorph()) {
+        if (humanity == null || humanity.isHuman()) {
             return true;
         }
         

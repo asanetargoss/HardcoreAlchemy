@@ -31,6 +31,7 @@ public class CapabilityHumanity implements ICapabilityHumanity {
     private double humanity;
     // Humanity in the previous tick after humanity tick calculations; allows us to see if humanity was changed in other ways
     private double lastHumanity;
+    private double magicInhibition;
     private boolean hasLostHumanity;
     private boolean hasLostMorphAbility;
     private boolean isMarried;
@@ -51,6 +52,16 @@ public class CapabilityHumanity implements ICapabilityHumanity {
     @Override
     public double getHumanity() {
         return this.humanity;
+    }
+    
+    @Override
+    public void setMagicInhibition(double magicInhibition) {
+        this.magicInhibition = magicInhibition;
+    }
+    
+    @Override
+    public double getMagicInhibition() {
+        return this.magicInhibition;
     }
     
     @Override
@@ -102,6 +113,16 @@ public class CapabilityHumanity implements ICapabilityHumanity {
     }
     
     @Override
+    public boolean isHuman() {
+        return !(hasLostHumanity || hasLostMorphAbility);
+    }
+    
+    @Override
+    public boolean canMorphRightNow() {
+        return !(hasLostHumanity || hasLostMorphAbility || isMarried || magicInhibition >= humanity);
+    }
+    
+    @Override
     public boolean canMorph() {
         return !(hasLostHumanity || hasLostMorphAbility || isMarried);
     }
@@ -121,6 +142,9 @@ public class CapabilityHumanity implements ICapabilityHumanity {
         }
         if (isMarried) {
             return new TextComponentTranslation("hardcorealchemy.morph.disabled.marriage");
+        }
+        if (magicInhibition >= humanity) {
+            return new TextComponentTranslation("hardcorealchemy.morph.disabled.magic_inhibition");
         }
         return new TextComponentString("");
     }

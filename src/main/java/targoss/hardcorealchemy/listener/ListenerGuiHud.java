@@ -94,6 +94,7 @@ public class ListenerGuiHud extends ConfiguredListener {
         }
 
         double humanity = humanityCap.getHumanity();
+        double magicInhibition = humanityCap.getMagicInhibition();
         double maxHumanity = maxHumanityAttribute.getAttributeValue();
         
         if (GuiIngameForge.left_height == 37) {
@@ -108,29 +109,73 @@ public class ListenerGuiHud extends ConfiguredListener {
         // Bind our tileset and set up graphics state.
         mc.getTextureManager().bindTexture(TILESET);
         GlStateManager.enableBlend();
+        
         for (int i = 1; i <= HUMANITY_ICONS; i++) {
             int y = top;
+            
             if (humanity <= HUMANITY_3MIN_LEFT) {
                 //TODO: Freeze shaking in place when the game is paused
                 y += rand.nextInt(2);
             }
-            if (i*2 <= humanity) {
-                // Render full icon
-                mc.ingameGUI.drawTexturedModalRect(left + (i-1)*8, y, 0, 0, 9, 9);
+            
+            if (i*2 <= magicInhibition) {
+                // Full icon
+                if (humanity <= (i*2)+1 && humanity > magicInhibition) {
+                    // Magic inhibition on left, humanity on right
+                    // Per the conservative estimate rule, even though both humanity and magic inhibition are greater than i*2
+                    mc.ingameGUI.drawTexturedModalRect(left + (i-1)*8, y, 18, 9, 9, 9);
+                }
+                else {
+                    // Magic inhibition only
+                    mc.ingameGUI.drawTexturedModalRect(left + (i-1)*8, y, 0, 9, 9, 9);
+                }
             }
-            else if (i*2 <= humanity+1) {
-                // Render partial icon
-                mc.ingameGUI.drawTexturedModalRect(left + (i-1)*8, y, 9, 0, 9, 9);
+            else if (i*2 <= humanity) {
+                // Full icon
+                if (humanity <= magicInhibition) {
+                    // Magic inhibition only
+                    mc.ingameGUI.drawTexturedModalRect(left + (i-1)*8, y, 0, 9, 9, 9);
+                }
+                else if ((i*2)-1 < magicInhibition) {
+                    // Magic inhibition on left, humanity on right
+                    mc.ingameGUI.drawTexturedModalRect(left + (i-1)*8, y, 18, 9, 9, 9);
+                }
+                else {
+                    // Humanity only
+                    mc.ingameGUI.drawTexturedModalRect(left + (i-1)*8, y, 0, 0, 9, 9);
+                }
+            }
+            else if ((i*2)-1 <= humanity) {
+                // Half icon
+                if (humanity <= magicInhibition) {
+                    // Magic inhibition only
+                    mc.ingameGUI.drawTexturedModalRect(left + (i-1)*8, y, 0, 9, 9, 9);
+                }
+                else if ((i-1)*2 < magicInhibition) {
+                    // Magic inhibition on left, humanity on right
+                    mc.ingameGUI.drawTexturedModalRect(left + (i-1)*8, y, 27, 9, 9, 9);
+                }
+                else {
+                    // Humanity only
+                    mc.ingameGUI.drawTexturedModalRect(left + (i-1)*8, y, 9, 0, 9, 9);
+                }
             }
             else if (i*2 <= maxHumanity) {
-                // Render empty icon
-                mc.ingameGUI.drawTexturedModalRect(left + (i-1)*8, y, 18, 0, 9, 9);
+                if ((i*2)-1 <= magicInhibition) {
+                    // Magic inhibition half icon
+                    mc.ingameGUI.drawTexturedModalRect(left + (i-1)*8, y, 9, 9, 9, 9);
+                }
+                else {
+                    // Empty icon
+                    mc.ingameGUI.drawTexturedModalRect(left + (i-1)*8, y, 18, 0, 9, 9);
+                }
             }
             else {
-                // Render dotted icon
+                // Dotted icon
                 mc.ingameGUI.drawTexturedModalRect(left + (i-1)*8, top, 27, 0, 9, 9);
             }
         }
+        
         // Clean up after ourselves. Give the Minecraft GUI their tileset back. Tell them to move.
         GlStateManager.disableBlend();
         mc.getTextureManager().bindTexture(GuiIngameForge.ICONS);

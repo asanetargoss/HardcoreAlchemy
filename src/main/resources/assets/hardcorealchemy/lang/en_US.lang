@@ -32,6 +32,7 @@ hardcorealchemy.morph.suffocation_risk=There is not enough space to morph here.
 hardcorealchemy.morph.disabled.noability=You fail to comprehend other forms.
 hardcorealchemy.morph.disabled.nohumanity=Your humanity is gone. Your mind is confined to this body.
 hardcorealchemy.morph.disabled.marriage=Your humanity is strengthened by the power of love. You cannot find it in you to become a beast.
+hardcorealchemy.morph.disabled.magic_inhibition=A powerful magic interferes with your ability to change forms.
 hardcorealchemy.morph.disabled.dead=Your soul shall always be human.
 
 hardcorealchemy.ability.fishing.beginhunt=You begin the hunt.

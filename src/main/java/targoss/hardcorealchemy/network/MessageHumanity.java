@@ -34,14 +34,18 @@ public class MessageHumanity extends MessageToClient {
     public MessageHumanity() {}
     
     public double humanity;
+    public boolean syncLastHumanity;
     public double lastHumanity;
+    public double magicInhibition;
     public boolean hasLostHumanity;
     public boolean hasLostMorphAbility;
     public boolean isMarried;
     
-    public MessageHumanity(ICapabilityHumanity humanity) {
+    public MessageHumanity(ICapabilityHumanity humanity, boolean syncLastHumanity) {
         this.humanity = humanity.getHumanity();
+        this.syncLastHumanity = syncLastHumanity;
         this.lastHumanity = humanity.getLastHumanity();
+        this.magicInhibition = humanity.getMagicInhibition();
         this.hasLostHumanity = humanity.getHasLostHumanity();
         this.hasLostMorphAbility = humanity.getHasLostMorphAbility();
         this.isMarried = humanity.getIsMarried();
@@ -50,7 +54,11 @@ public class MessageHumanity extends MessageToClient {
     @Override
     public void toBytes(ByteBuf buf) {
         buf.writeDouble(humanity);
-        buf.writeDouble(lastHumanity);
+        buf.writeBoolean(syncLastHumanity);
+        if (syncLastHumanity) {
+            buf.writeDouble(lastHumanity);
+        }
+        buf.writeDouble(magicInhibition);
         buf.writeBoolean(hasLostHumanity);
         buf.writeBoolean(hasLostMorphAbility);
         buf.writeBoolean(isMarried);
@@ -59,7 +67,11 @@ public class MessageHumanity extends MessageToClient {
     @Override
     public void fromBytes(ByteBuf buf) {
         humanity = buf.readDouble();
-        lastHumanity = buf.readDouble();
+        syncLastHumanity = buf.readBoolean();
+        if (syncLastHumanity) {
+            lastHumanity = buf.readDouble();
+        }
+        magicInhibition = buf.readDouble();
         hasLostHumanity = buf.readBoolean();
         hasLostMorphAbility = buf.readBoolean();
         isMarried = buf.readBoolean();
@@ -70,15 +82,19 @@ public class MessageHumanity extends MessageToClient {
         public static final Capability<ICapabilityHumanity> HUMANITY_CAPABILITY = null;
         
         private double humanity;
+        private boolean syncLastHumanity;
         private double lastHumanity;
+        private double magicInhibition;
         private boolean hasLostHumanity;
         private boolean hasLostMorphAbility;
         private boolean isMarried;
         
-        public ReceiveAction(double humanity, double lastHumanity, boolean hasLostHumanity,
-                boolean hasLostMorphAbility, boolean isMarried) {
+        public ReceiveAction(double humanity, boolean syncLastHumanity, double lastHumanity, double magicInhibition,
+                boolean hasLostHumanity, boolean hasLostMorphAbility, boolean isMarried) {
             this.humanity = humanity;
+            this.syncLastHumanity = syncLastHumanity;
             this.lastHumanity = lastHumanity;
+            this.magicInhibition = magicInhibition;
             this.hasLostHumanity = hasLostHumanity;
             this.hasLostMorphAbility = hasLostMorphAbility;
             this.isMarried = isMarried;
@@ -89,7 +105,10 @@ public class MessageHumanity extends MessageToClient {
             ICapabilityHumanity humanity = MiscVanilla.getTheMinecraftPlayer().getCapability(HUMANITY_CAPABILITY, null);
             if (humanity != null) {
                 humanity.setHumanity(this.humanity);
-                humanity.setLastHumanity(this.lastHumanity);
+                if (this.syncLastHumanity) {
+                    humanity.setLastHumanity(this.lastHumanity);
+                }
+                humanity.setMagicInhibition(this.magicInhibition);
                 humanity.setHasLostHumanity(this.hasLostHumanity);
                 humanity.setHasLostMorphAbility(this.hasLostMorphAbility);
                 humanity.setIsMarried(this.isMarried);
@@ -102,8 +121,8 @@ public class MessageHumanity extends MessageToClient {
         public IMessage onMessage(MessageHumanity message, MessageContext ctx) {
             message.getThreadListener().addScheduledTask(
                     new ReceiveAction(
-                            message.humanity, message.lastHumanity, message.hasLostHumanity,
-                            message.hasLostMorphAbility, message.isMarried)
+                            message.humanity, message.syncLastHumanity, message.lastHumanity, message.magicInhibition,
+                            message.hasLostHumanity, message.hasLostMorphAbility, message.isMarried)
                     );
             return null;
         }

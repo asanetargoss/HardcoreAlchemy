@@ -29,6 +29,7 @@ public interface ICapabilityHumanity {
     
     public abstract void setHumanity(double humanity);
     public abstract void setLastHumanity(double lastHumanity);
+    public abstract void setMagicInhibition(double magicInhibition);
     public abstract void setHasLostHumanity(boolean hasLostHumanity);
     public abstract void setHasLostMorphAbility(boolean hasLostMorphAbility);
     public abstract void setIsMarried(boolean isMarried);
@@ -36,10 +37,17 @@ public interface ICapabilityHumanity {
     
     public abstract double getHumanity();
     public abstract double getLastHumanity();
+    public abstract double getMagicInhibition();
     public abstract boolean getHasLostHumanity();
     public abstract boolean getHasLostMorphAbility();
     public abstract boolean getIsMarried();
+    /** Returns false if the player is stuck as a morph */
+    public abstract boolean isHuman();
+    /** Returns false if the player is temporarily unable to morph */
+    public abstract boolean canMorphRightNow();
+    /** Returns false if the player is permanently unable to morph */
     public abstract boolean canMorph();
+    /** Returns temporary or permanent reason the player cannot morph */
     public abstract ITextComponent explainWhyCantMorph();
     public abstract boolean shouldDisplayHumanity();
 }

@@ -86,7 +86,7 @@ public class ListenerPacketUpdatePlayer extends ConfiguredListener {
     public void syncFullCapabilities(EntityPlayerMP player) {
         ICapabilityHumanity humanity = player.getCapability(HUMANITY_CAPABILITY, null);
         if (humanity != null) {
-            PacketHandler.INSTANCE.sendTo(new MessageHumanity(humanity), (EntityPlayerMP)player);
+            PacketHandler.INSTANCE.sendTo(new MessageHumanity(humanity, true), (EntityPlayerMP)player);
         }
         
         ICapabilityKillCount killCount = player.getCapability(KILL_COUNT_CAPABILITY, null);

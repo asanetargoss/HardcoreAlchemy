@@ -129,7 +129,6 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
             return;
         }
         Item item = itemStack.getItem();
-        // Just rotten flesh for now
         if (item != null && (item == ROTTEN_FLESH || item == CHORUS_FRUIT || item == GOLDEN_APPLE || item == WITHER_APPLE)) {
             IMorphing morphing = player.getCapability(MORPHING_CAPABILITY, null);
             if (morphing == null) {
@@ -143,15 +142,28 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
             if (maxHumanity == null) {
                 return;
             }
+            
             double newHumanity = capabilityHumanity.getHumanity();
+            double newMagicInhibition = capabilityHumanity.getMagicInhibition();
             if (item == GOLDEN_APPLE) {
                 // A testing item, but I guess it's balanced enough for regular gameplay
                 newHumanity = MathHelper.clamp(newHumanity+HUMANITY_3MIN_LEFT, 0.0D, maxHumanity.getAttributeValue());
+                newMagicInhibition = MathHelper.clamp(newMagicInhibition-0.25D, 0.0D, maxHumanity.getAttributeValue());
+            }
+            else if (item == CHORUS_FRUIT) {
+                newHumanity = MathHelper.clamp(newHumanity-1.0D, 0.0D, maxHumanity.getAttributeValue());
+                newMagicInhibition = MathHelper.clamp(newMagicInhibition+HUMANITY_2MIN_LEFT, 0.0D, maxHumanity.getAttributeValue());
             }
             else {
                 newHumanity = MathHelper.clamp(newHumanity-1.0D, 0.0D, maxHumanity.getAttributeValue());
             }
             capabilityHumanity.setHumanity(newHumanity);
+            capabilityHumanity.setMagicInhibition(newMagicInhibition);
+            
+            if (!player.world.isRemote) {
+                PacketHandler.INSTANCE.sendTo(new MessageHumanity(capabilityHumanity, false), (EntityPlayerMP)player);
+            }
+            
             if (newHumanity == 0) {
                 if (item == ROTTEN_FLESH) {
                     // If you are already in a morph, then congrats, you get to keep that morph!
@@ -195,7 +207,7 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
         if (capabilityHumanity == null) {
             return;
         }
-        if (!capabilityHumanity.canMorph()) {
+        if (!capabilityHumanity.canMorphRightNow()) {
             event.setCanceled(true);
             Chat.message(Chat.Type.NOTIFY, (EntityPlayerMP)player, capabilityHumanity.explainWhyCantMorph());
         }
@@ -215,7 +227,11 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
             double morphReducedHumanity = capabilityHumanity.getHumanity() - humanityLost;
             if (morphReducedHumanity < 0) morphReducedHumanity = 0;
             capabilityHumanity.setHumanity(morphReducedHumanity);
-            PacketHandler.INSTANCE.sendTo(new MessageHumanity(capabilityHumanity), (EntityPlayerMP)player);
+            // Do the same with magic inhibition, so only casting a spell can truly get you stuck
+            double morphReducedMagicInhibition = capabilityHumanity.getMagicInhibition() - humanityLost;
+            if (morphReducedMagicInhibition < 0) morphReducedMagicInhibition = 0;
+            capabilityHumanity.setMagicInhibition(morphReducedMagicInhibition);
+            PacketHandler.INSTANCE.sendTo(new MessageHumanity(capabilityHumanity, false), (EntityPlayerMP)player);
         }
     }
     
@@ -241,8 +257,13 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
         }
         double oldHumanity = capabilityHumanity.getLastHumanity();
         double newHumanity = capabilityHumanity.getHumanity();
-        // If the player has their morph ability, then their humanity can change
+        // If the player has their morph ability, then their humanity and magicInhibition can change
         if (capabilityHumanity.canMorph()) {
+            // Always reduce magic inhibition at the rate of humanity loss
+            double newMagicInhibition = capabilityHumanity.getMagicInhibition();
+            newMagicInhibition -= HUMANITY_LOSS_RATE;
+            newMagicInhibition = MathHelper.clamp(newMagicInhibition, 0.0D, maxHumanity.getAttributeValue());
+            capabilityHumanity.setMagicInhibition(newMagicInhibition);
             // Are we in a morph? (check if the player's AbstractMorph is not null)
             IMorphing morphing = player.getCapability(MORPHING_CAPABILITY, null);
             if (morphing.isMorphed()) {
@@ -270,15 +291,14 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
                 newHumanity = MathHelper.clamp(newHumanity, 0.0D, maxHumanity.getAttributeValue());
             }
         }
-        // Notify player via chat if humanity reaches a certain threshold or is lost entirely
-        if (player.world.isRemote) {
-            sendHumanityWarnings(player, oldHumanity, newHumanity);
-        }
+        // On client, notify player via chat if humanity reaches a certain threshold or is lost entirely
+        // On server side, send a packet as appropriate
+        sendHumanityWarnings(player, capabilityHumanity, oldHumanity, newHumanity);
         capabilityHumanity.setHumanity(newHumanity);
         capabilityHumanity.setLastHumanity(newHumanity);
     }
     
-    private void sendHumanityWarnings(EntityPlayer player, double oldHumanity, double newHumanity) {
+    private void sendHumanityWarnings(EntityPlayer player, ICapabilityHumanity capabilityHumanity, double oldHumanity, double newHumanity) {
         // We are only interested if humanity decreases
         if (newHumanity >= oldHumanity) {
             return;
@@ -292,15 +312,30 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
         else if (newHumanity <= HUMANITY_3MIN_LEFT) {
             if (newHumanity <= HUMANITY_1MIN_LEFT && oldHumanity > HUMANITY_1MIN_LEFT) {
                 // Display 1 minute left message
-                Chat.messageSP(Chat.Type.WARN, player, new TextComponentTranslation("hardcorealchemy.humanity.warn3.variant1"));
+                if (player.world.isRemote) {
+                    Chat.messageSP(Chat.Type.WARN, player, new TextComponentTranslation("hardcorealchemy.humanity.warn3.variant1"));
+                }
+                else {
+                    PacketHandler.INSTANCE.sendTo(new MessageHumanity(capabilityHumanity, false), (EntityPlayerMP)player);
+                }
             }
             else if (newHumanity <= HUMANITY_2MIN_LEFT && oldHumanity > HUMANITY_2MIN_LEFT) {
                 // Display 2 minutes left message
-                Chat.messageSP(Chat.Type.NOTIFY, player, new TextComponentTranslation("hardcorealchemy.humanity.warn2.variant1"));
+                if (player.world.isRemote) {
+                    Chat.messageSP(Chat.Type.NOTIFY, player, new TextComponentTranslation("hardcorealchemy.humanity.warn2.variant1"));
+                }
+                else {
+                    PacketHandler.INSTANCE.sendTo(new MessageHumanity(capabilityHumanity, false), (EntityPlayerMP)player);
+                }
             }
             else if (oldHumanity > HUMANITY_3MIN_LEFT) {
                 // Display 3 minutes left message
-                Chat.messageSP(Chat.Type.NOTIFY, player, new TextComponentTranslation("hardcorealchemy.humanity.warn1.variant1"));
+                if (player.world.isRemote) {
+                    Chat.messageSP(Chat.Type.NOTIFY, player, new TextComponentTranslation("hardcorealchemy.humanity.warn1.variant1"));
+                }
+                else {
+                    PacketHandler.INSTANCE.sendTo(new MessageHumanity(capabilityHumanity, false), (EntityPlayerMP)player);
+                }
             }
         }
     }

@@ -30,6 +30,7 @@ public class StorageHumanity implements Capability.IStorage<ICapabilityHumanity>
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setDouble("humanity", instance.getHumanity());
         nbt.setDouble("lastHumanity", instance.getLastHumanity());
+        nbt.setDouble("magicInhibition", instance.getMagicInhibition());
         nbt.setBoolean("hasLostHumanity", instance.getHasLostHumanity());
         nbt.setBoolean("hasLostMorphAbility", instance.getHasLostMorphAbility());
         nbt.setBoolean("isMarried", instance.getIsMarried());
@@ -45,6 +46,7 @@ public class StorageHumanity implements Capability.IStorage<ICapabilityHumanity>
         NBTTagCompound nbtCompound = (NBTTagCompound)nbt;
         instance.setHumanity(nbtCompound.getDouble("humanity"));
         instance.setLastHumanity(nbtCompound.getDouble("lastHumanity"));
+        instance.setMagicInhibition(nbtCompound.getDouble("magicInhibition"));
         instance.setHasLostHumanity(nbtCompound.getBoolean("hasLostHumanity"));
         instance.setHasLostMorphAbility(nbtCompound.getBoolean("hasLostMorphAbility"));
         instance.setIsMarried(nbtCompound.getBoolean("isMarried"));
