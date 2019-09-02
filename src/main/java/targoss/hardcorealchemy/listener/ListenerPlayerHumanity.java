@@ -18,9 +18,10 @@
 
 package targoss.hardcorealchemy.listener;
 
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
-import mchorse.metamorph.api.MorphAPI;
 import mchorse.metamorph.api.events.MorphEvent;
 import mchorse.metamorph.api.events.SpawnGhostEvent;
 import mchorse.metamorph.api.morphs.AbstractMorph;
@@ -41,8 +42,10 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -77,12 +80,22 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
     public static final double HUMANITY_3MIN_LEFT = HUMANITY_1MIN_LEFT*3.0D;
     // Time in ticks between sending humanity value updates over the network
     public static final int HUMANITY_UPDATE_TICKS = 7;
+    public static final double INHIBITION_PER_SPELL = HUMANITY_1MIN_LEFT;
     
     private Random random = new Random();
     
     // The capability from Metamorph itself
     @CapabilityInject(IMorphing.class)
     public static final Capability<IMorphing> MORPHING_CAPABILITY = null;
+
+    public static final Set<String> SPELL_ITEMS = new HashSet<>();
+    
+    static {
+        SPELL_ITEMS.add("arsmagica2:spell_component");
+        SPELL_ITEMS.add("arsmagica2:spell_staff_magitech");
+        SPELL_ITEMS.add("arsmagica2:arcane_spellbook");
+        SPELL_ITEMS.add("arsmagica2:spell");
+    }
     
     private static Item ROTTEN_FLESH;
     private static Item CHORUS_FRUIT;
@@ -148,11 +161,11 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
             if (item == GOLDEN_APPLE) {
                 // A testing item, but I guess it's balanced enough for regular gameplay
                 newHumanity = MathHelper.clamp(newHumanity+HUMANITY_3MIN_LEFT, 0.0D, maxHumanity.getAttributeValue());
-                newMagicInhibition = MathHelper.clamp(newMagicInhibition-0.25D, 0.0D, maxHumanity.getAttributeValue());
+                newMagicInhibition = MathHelper.clamp(newMagicInhibition-0.25D, 0.0D, 1.0D+maxHumanity.getAttributeValue());
             }
             else if (item == CHORUS_FRUIT) {
                 newHumanity = MathHelper.clamp(newHumanity-1.0D, 0.0D, maxHumanity.getAttributeValue());
-                newMagicInhibition = MathHelper.clamp(newMagicInhibition+HUMANITY_2MIN_LEFT, 0.0D, maxHumanity.getAttributeValue());
+                newMagicInhibition = MathHelper.clamp(newMagicInhibition+HUMANITY_2MIN_LEFT, 0.0D, 1.0D+maxHumanity.getAttributeValue());
             }
             else {
                 newHumanity = MathHelper.clamp(newHumanity-1.0D, 0.0D, maxHumanity.getAttributeValue());
@@ -255,14 +268,14 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
         if (capabilityHumanity == null) {
             return;
         }
-        double oldHumanity = capabilityHumanity.getLastHumanity();
-        double newHumanity = capabilityHumanity.getHumanity();
         // If the player has their morph ability, then their humanity and magicInhibition can change
         if (capabilityHumanity.canMorph()) {
+            double oldHumanity = capabilityHumanity.getLastHumanity();
+            double newHumanity = capabilityHumanity.getHumanity();
             // Always reduce magic inhibition at the rate of humanity loss
             double newMagicInhibition = capabilityHumanity.getMagicInhibition();
             newMagicInhibition -= HUMANITY_LOSS_RATE;
-            newMagicInhibition = MathHelper.clamp(newMagicInhibition, 0.0D, maxHumanity.getAttributeValue());
+            newMagicInhibition = MathHelper.clamp(newMagicInhibition, 0.0D, 1.0D+maxHumanity.getAttributeValue());
             capabilityHumanity.setMagicInhibition(newMagicInhibition);
             // Are we in a morph? (check if the player's AbstractMorph is not null)
             IMorphing morphing = player.getCapability(MORPHING_CAPABILITY, null);
@@ -290,12 +303,12 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
                 newHumanity = newHumanity + HUMANITY_GAIN_RATE;
                 newHumanity = MathHelper.clamp(newHumanity, 0.0D, maxHumanity.getAttributeValue());
             }
+            // On client, notify player via chat if humanity reaches a certain threshold or is lost entirely
+            // On server side, send a packet as appropriate
+            sendHumanityWarnings(player, capabilityHumanity, oldHumanity, newHumanity);
+            capabilityHumanity.setHumanity(newHumanity);
+            capabilityHumanity.setLastHumanity(newHumanity);
         }
-        // On client, notify player via chat if humanity reaches a certain threshold or is lost entirely
-        // On server side, send a packet as appropriate
-        sendHumanityWarnings(player, capabilityHumanity, oldHumanity, newHumanity);
-        capabilityHumanity.setHumanity(newHumanity);
-        capabilityHumanity.setLastHumanity(newHumanity);
     }
     
     private void sendHumanityWarnings(EntityPlayer player, ICapabilityHumanity capabilityHumanity, double oldHumanity, double newHumanity) {
@@ -337,6 +350,33 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
                     PacketHandler.INSTANCE.sendTo(new MessageHumanity(capabilityHumanity, false), (EntityPlayerMP)player);
                 }
             }
+        }
+    }
+    
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public void onPlayerCastSpell(PlayerInteractEvent.RightClickItem event) {
+        EntityPlayer player = event.getEntityPlayer();
+        ICapabilityHumanity capabilityHumanity = player.getCapability(HUMANITY_CAPABILITY, null);
+        if (capabilityHumanity == null || !capabilityHumanity.canMorph()) {
+            return;
+        }
+        IAttributeInstance maxHumanity = player.getEntityAttribute(MAX_HUMANITY);
+        if (maxHumanity == null) {
+            return;
+        }
+        ItemStack itemStack = event.getItemStack();
+        if (InventoryUtil.isEmptyItemStack(itemStack)) {
+            return;
+        }
+        if (!SPELL_ITEMS.contains(itemStack.getItem().getRegistryName().toString())) {
+            return;
+        }
+        double newMagicInhibition = capabilityHumanity.getMagicInhibition();
+        newMagicInhibition += INHIBITION_PER_SPELL;
+        newMagicInhibition = MathHelper.clamp(newMagicInhibition, 0.0D, 1.0D+maxHumanity.getAttributeValue());
+        capabilityHumanity.setMagicInhibition(newMagicInhibition);
+        if (!player.world.isRemote) {
+            PacketHandler.INSTANCE.sendTo(new MessageHumanity(capabilityHumanity, false), (EntityPlayerMP)player);
         }
     }
 
