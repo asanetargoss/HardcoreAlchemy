@@ -95,6 +95,7 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
         SPELL_ITEMS.add("arsmagica2:spell_staff_magitech");
         SPELL_ITEMS.add("arsmagica2:arcane_spellbook");
         SPELL_ITEMS.add("arsmagica2:spell");
+        SPELL_ITEMS.add("arsmagica2:spell_book");
     }
     
     private static Item ROTTEN_FLESH;
