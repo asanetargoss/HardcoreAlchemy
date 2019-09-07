@@ -18,9 +18,6 @@
 
 package targoss.hardcorealchemy.entity.ai;
 
-import static targoss.hardcorealchemy.HardcoreAlchemy.LOGGER;
-
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -29,11 +26,6 @@ import javax.annotation.Nullable;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 
-import mchorse.metamorph.api.morphs.AbstractMorph;
-import mchorse.metamorph.capabilities.morphing.IMorphing;
-import mchorse.metamorph.capabilities.morphing.MorphingProvider;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
@@ -56,47 +48,66 @@ public class AIAttackTargetMobOrMorph<T extends EntityLivingBase> extends Entity
     // This would be heckuva lot easier if it weren't for those stinkin' generics! But I digress...
 
     public EntityLiving entity;
-    public Predicate <? super EntityPlayer> targetPlayerEntitySelector;
+    public Predicate <? super T> targetEntitySelectorNotMorphed;
+    public Predicate <? super EntityPlayer> targetPlayerSelector;
     public EntityLivingBase targetEntityNotStrict;
-    
+
+    // NOTE: This code could break if EntityUtil is made to handle entities other than the player being morphed. For now, try to be most efficient.
     public AIAttackTargetMobOrMorph(EntityAINearestAttackableTarget<T> AIIgnoringMorph, EntityLiving entity) {
         super(AIIgnoringMorph.taskOwner, AIIgnoringMorph.targetClass, AIIgnoringMorph.targetChance,
                 AIIgnoringMorph.shouldCheckSight, AIIgnoringMorph.nearbyOnly, null);
-        this.targetEntitySelector = AIIgnoringMorph.targetEntitySelector;
-        this.targetPlayerEntitySelector = new Predicate<EntityPlayer>()
+        this.targetEntitySelector = new Predicate<T>() {
+            public boolean apply(@Nullable T candidate) {
+                if (candidate instanceof EntityPlayer) {
+                    return targetPlayerSelector.apply((EntityPlayer)candidate);
+                }
+                return targetEntitySelectorNotMorphed.apply(candidate);
+            }
+        };
+        this.targetEntitySelectorNotMorphed = AIIgnoringMorph.targetEntitySelector;
+        this.targetPlayerSelector = new Predicate<EntityPlayer>()
         {
-            public boolean apply(@Nullable EntityPlayer p_apply_1_)
+            public boolean apply(@Nullable EntityPlayer candidate)
             {
-                return p_apply_1_ == null ? false :(!EntitySelectors.NOT_SPECTATING.apply(p_apply_1_) ? false : isSuitableTarget(p_apply_1_, false));
+                if (candidate == null) {
+                    return false;
+                }
+                if (!EntitySelectors.NOT_SPECTATING.apply(candidate)) {
+                    return false;
+                }
+                EntityLivingBase effectiveCandidate = EntityUtil.getEffectiveEntity(candidate);
+                if (!targetClass.isInstance(effectiveCandidate)) {
+                    return false;
+                }
+                if (entity.getClass().isInstance(effectiveCandidate)) {
+                    // Attacking own kind
+                    return false;
+                }
+                if (!targetEntitySelectorNotMorphed.apply((T)effectiveCandidate)) {
+                    return false;
+                }
+                return isSuitableTarget(candidate, false);
             }
         };
         this.entity = entity;
     }
     
-    private boolean shouldTarget(EntityLivingBase candidate) {
-        return EntityUtil.isEntityLike(candidate, targetClass) && !EntityUtil.isEntityLike(candidate, entity.getClass());
-    }
-    
-    // Copyright Mojang blah blah
     @Override
     public boolean shouldExecute() {
-        if (this.targetChance > 0 && this.taskOwner.getRNG().nextInt(this.targetChance) != 0)
-        {
+        if (this.targetChance > 0 && this.taskOwner.getRNG().nextInt(this.targetChance) != 0) {
             return false;
         }
-        if (this.targetClass != EntityPlayer.class && this.targetClass != EntityPlayerMP.class)
-        {
-            List<EntityLivingBase> list = (List<EntityLivingBase>)this.taskOwner.world.<T>getEntitiesWithinAABB(this.targetClass, this.getTargetableArea(this.getTargetDistance()), this.targetEntitySelector);
-            list.addAll(this.taskOwner.world.<EntityPlayer>getEntitiesWithinAABB(EntityPlayer.class, this.getTargetableArea(this.getTargetDistance()), this.targetPlayerEntitySelector));
-            
-            // Remove entities that do not look like the entity this AI is trying to target
-            for (int i = list.size() - 1; i >= 0; i--) {
-                if (!shouldTarget(list.get(i))) {
-                    list.remove(i);
-                }
+        if (this.targetClass != EntityPlayer.class && this.targetClass != EntityPlayerMP.class) {
+            List<EntityLivingBase> list;
+            if (this.targetClass.isAssignableFrom(EntityPlayer.class)) {
+                list = (List<EntityLivingBase>)this.taskOwner.world.<T>getEntitiesWithinAABB(this.targetClass, this.getTargetableArea(this.getTargetDistance()), this.targetEntitySelector);
             }
-            if (list.isEmpty())
-            {
+            else {
+                list = (List<EntityLivingBase>)this.taskOwner.world.<T>getEntitiesWithinAABB(this.targetClass, this.getTargetableArea(this.getTargetDistance()), this.targetEntitySelectorNotMorphed);
+                list.addAll(this.taskOwner.world.<EntityPlayer>getEntitiesWithinAABB(EntityPlayer.class, this.getTargetableArea(this.getTargetDistance()), this.targetPlayerSelector));
+            }
+            
+            if (list.isEmpty()) {
                 return false;
             }
             
@@ -132,7 +143,7 @@ public class AIAttackTargetMobOrMorph<T extends EntityLivingBase> extends Entity
 
                     return Double.valueOf(1.0D);
                 }
-            }, (Predicate<EntityPlayer>)this.targetEntitySelector);
+            }, (Predicate<EntityPlayer>)this.targetEntitySelectorNotMorphed);
             return this.targetEntityNotStrict != null;
         }
     }
