@@ -20,6 +20,7 @@ package targoss.hardcorealchemy.metamorph;
 
 import mchorse.metamorph.api.MorphManager;
 import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.metamorph.action.PrimitiveSustenance;
 import targoss.hardcorealchemy.metamorph.action.UnderwaterFishing;
 
 public class HcAMetamorphPack {
@@ -27,5 +28,6 @@ public class HcAMetamorphPack {
         MorphManager manager = MorphManager.INSTANCE;
         
         manager.actions.put(HardcoreAlchemy.MOD_ID + ":underwater_fishing", new UnderwaterFishing());
+        manager.actions.put(HardcoreAlchemy.MOD_ID + ":primitive_sustenance", new PrimitiveSustenance());
     }
 }

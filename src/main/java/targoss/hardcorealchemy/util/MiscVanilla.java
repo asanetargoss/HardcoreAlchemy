@@ -151,4 +151,8 @@ public class MiscVanilla {
     public static void setHeldItemTooltips(boolean heldItemTooltips) {
         Minecraft.getMinecraft().gameSettings.heldItemTooltips = heldItemTooltips;
     }
+    
+    public static float getPlayerReachDistance(EntityPlayer player) {
+        return 4.5F;
+    }
 }
