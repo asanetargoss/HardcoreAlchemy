@@ -120,6 +120,19 @@ public class ListenerPlayerMagic extends ConfiguredListener {
         MAGIC_ITEM_ALLOW_CRAFT.add("projecte:alchemical_chest");
         MAGIC_ITEM_ALLOW_CRAFT.add("arsmagica2:magicians_workbench");
         MAGIC_ITEM_ALLOW_CRAFT.add("arsmagica2:workbench_upgrade");
+        MAGIC_ITEM_ALLOW_CRAFT.add("arsmagica2:witchwood_sapling");
+        MAGIC_ITEM_ALLOW_CRAFT.add("arsmagica2:witchwood_log");
+        MAGIC_ITEM_ALLOW_CRAFT.add("arsmagica2:witchwood_leaves");
+        MAGIC_ITEM_ALLOW_CRAFT.add("arsmagica2:witchwood_planks");
+        MAGIC_ITEM_ALLOW_CRAFT.add("arsmagica2:witchwood_stairs");
+        MAGIC_ITEM_ALLOW_CRAFT.add("arsmagica2:witchwood_slab");
+        MAGIC_ITEM_ALLOW_CRAFT.add("thaumcraft:sapling");
+        MAGIC_ITEM_ALLOW_CRAFT.add("thaumcraft:log");
+        MAGIC_ITEM_ALLOW_CRAFT.add("thaumcraft:leaf");
+        MAGIC_ITEM_ALLOW_CRAFT.add("thaumcraft:plank");
+        MAGIC_ITEM_ALLOW_CRAFT.add("thaumcraft:greatwood_stairs");
+        MAGIC_ITEM_ALLOW_CRAFT.add("thaumcraft:silverwood_stairs");
+        MAGIC_ITEM_ALLOW_CRAFT.add("thaumcraft:slab_wood");
         
         MAGIC_BLOCK_ALLOW_USE = new HashSet<String>();
         MAGIC_BLOCK_ALLOW_USE.add("projecte:alchemical_chest");
