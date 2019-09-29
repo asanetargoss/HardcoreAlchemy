@@ -44,7 +44,7 @@ hardcorealchemy.ability.sustenance.not_available.drink=There is nothing to drink
 hardcorealchemy.ability.sustenance.not_available.grass_drink=There is no grass or water here.
 hardcorealchemy.ability.sustenance.not_ready.grass=You are not desperate enough to eat this grass.
 hardcorealchemy.ability.sustenance.not_ready.drink=You are not desperate enough to drink this water.
-hardcorealchemy.ability.sustenance.disabled=Your instincts are not strong enough to find sustenance.
+hardcorealchemy.ability.sustenance.disabled=Your instincts are not strong enough to find sustenance here.
 hardcorealchemy.ability.sustenance.invalid=Invalid sustenance message. Please report to mod developer.
 
 hardcorealchemy.instinct.attack_prey.need=You yearn to hunt %s.

@@ -30,6 +30,7 @@ import amerifrance.guideapi.api.impl.abstraction.EntryAbstract;
 import amerifrance.guideapi.api.util.PageHelper;
 import amerifrance.guideapi.category.CategoryItemStack;
 import amerifrance.guideapi.entry.EntryItemStack;
+import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -60,9 +61,18 @@ public class CategoryBuilder {
                     252));
         }
         
+        Item item = Item.getByNameOrId(itemId);
+        // TODO: See if this actually fixes the crash
+        if (item == null) {
+            Block block = Block.getBlockFromName(itemId);
+            if (block != null) {
+                item = Item.getItemFromBlock(block);
+            }
+        }
+        
         Entry entry = new EntryItemStack(pageList,
                 categoryName + "." + entryName + ".title",
-                new ItemStack(Item.getByNameOrId(itemId)));
+                new ItemStack(item));
         
         this.entryList.put(new ResourceLocation(categoryName + "." + entryName), entry);
         // Just in case...
