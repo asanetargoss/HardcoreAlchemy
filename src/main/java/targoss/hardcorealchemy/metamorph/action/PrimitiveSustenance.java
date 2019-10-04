@@ -21,6 +21,9 @@ package targoss.hardcorealchemy.metamorph.action;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
+import ca.wescook.nutrition.capabilities.CapInterface;
+import ca.wescook.nutrition.nutrients.Nutrient;
+import ca.wescook.nutrition.nutrients.NutrientList;
 import mchorse.metamorph.api.abilities.IAction;
 import mchorse.metamorph.api.morphs.AbstractMorph;
 import mchorse.metamorph.api.morphs.EntityMorph;
@@ -42,6 +45,8 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.fml.common.Optional;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
@@ -183,6 +188,9 @@ public class PrimitiveSustenance implements IAction {
             }
             foodStats.setFoodLevel(Math.min(foodStats.getFoodLevel() + 2, FOOD_SUSTAIN));
             foodStats.addStats(0, FOOD_SATURATION_SUSTAIN);
+            if (ModState.isNutritionLoaded) {
+                restoreNutrient(player, "grain", 0.5f);
+            }
             return Success.SUCCESS;
         }
         
@@ -197,10 +205,31 @@ public class PrimitiveSustenance implements IAction {
             }
             foodStats.setFoodLevel(Math.min(foodStats.getFoodLevel() + 2, FOOD_SUSTAIN));
             foodStats.addStats(0, FOOD_SATURATION_SUSTAIN);
+            if (ModState.isNutritionLoaded) {
+                restoreNutrient(player, "grain", 0.5f);
+            }
             return Success.SUCCESS;
         }
         
         return Success.NOT_AVAILABLE;
+    }
+    
+    @CapabilityInject(CapInterface.class)
+    public static final Capability<CapInterface> NUTRITION_CAPABILITY = null;
+    
+    @Optional.Method(modid = ModState.NUTRITION_ID)
+    protected void restoreNutrient(EntityPlayer player, String nutrientName, float amount) {
+        CapInterface nutrition = player.getCapability(NUTRITION_CAPABILITY, null);
+        if (nutrition == null) {
+            return;
+        }
+        
+        Nutrient nutrient = NutrientList.getByName(nutrientName);
+        if (nutrient == null) {
+            return;
+        }
+        
+        nutrition.add(nutrient, amount, true);
     }
     
     @Optional.Method(modid = ModState.TAN_ID)
@@ -216,7 +245,7 @@ public class PrimitiveSustenance implements IAction {
                 return Success.NOT_READY;
             }
             thirst.setThirst(Math.min(THIRST_SUSTAIN, thirst.getThirst() + 2));
-            thirst.setHydration(Math.min(THIRST_SATURATION_SUSTAIN, thirst.getHydration()));
+            thirst.setHydration(Math.min(THIRST_SATURATION_SUSTAIN, thirst.getHydration() + THIRST_SATURATION_SUSTAIN));
             if (!player.world.isRemote) {
                 player.world.playSound(null, player.posX, player.posY, player.posZ, SoundEvents.ENTITY_GENERIC_DRINK, SoundCategory.PLAYERS, 0.5F, player.world.rand.nextFloat() * 0.1F + 0.9F);
             }
