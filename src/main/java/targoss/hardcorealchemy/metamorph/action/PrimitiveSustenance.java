@@ -186,10 +186,9 @@ public class PrimitiveSustenance implements IAction {
             if (!player.world.isRemote) {
                 player.world.destroyBlock(pos, false);
             }
-            foodStats.setFoodLevel(Math.min(foodStats.getFoodLevel() + 2, FOOD_SUSTAIN));
-            foodStats.addStats(0, FOOD_SATURATION_SUSTAIN);
-            if (ModState.isNutritionLoaded) {
-                restoreNutrient(player, "grain", 0.5f);
+            restoreHunger(player, foodStats);
+            if (ModState.isTanLoaded) {
+                restoreThirst(player, needs);
             }
             return Success.SUCCESS;
         }
@@ -203,15 +202,22 @@ public class PrimitiveSustenance implements IAction {
                 player.world.playEvent(2001, pos, Block.getIdFromBlock(Blocks.GRASS));
                 player.world.setBlockState(pos, Blocks.DIRT.getDefaultState(), 2);
             }
-            foodStats.setFoodLevel(Math.min(foodStats.getFoodLevel() + 2, FOOD_SUSTAIN));
-            foodStats.addStats(0, FOOD_SATURATION_SUSTAIN);
-            if (ModState.isNutritionLoaded) {
-                restoreNutrient(player, "grain", 0.5f);
+            restoreHunger(player, foodStats);
+            if (ModState.isTanLoaded) {
+                restoreThirst(player, needs);
             }
             return Success.SUCCESS;
         }
         
         return Success.NOT_AVAILABLE;
+    }
+    
+    protected void restoreHunger(EntityPlayer player, FoodStats foodStats) {
+        foodStats.setFoodLevel(Math.min(foodStats.getFoodLevel() + 2, FOOD_SUSTAIN));
+        foodStats.addStats(0, FOOD_SATURATION_SUSTAIN);
+        if (ModState.isNutritionLoaded) {
+            restoreNutrient(player, "grain", 0.5f);
+        }
     }
     
     @CapabilityInject(CapInterface.class)
@@ -244,8 +250,7 @@ public class PrimitiveSustenance implements IAction {
             if (thirst.getThirst() >= THIRST_SUSTAIN) {
                 return Success.NOT_READY;
             }
-            thirst.setThirst(Math.min(THIRST_SUSTAIN, thirst.getThirst() + 2));
-            thirst.setHydration(Math.min(THIRST_SATURATION_SUSTAIN, thirst.getHydration() + THIRST_SATURATION_SUSTAIN));
+            restoreThirst(player, needs);
             if (!player.world.isRemote) {
                 player.world.playSound(null, player.posX, player.posY, player.posZ, SoundEvents.ENTITY_GENERIC_DRINK, SoundCategory.PLAYERS, 0.5F, player.world.rand.nextFloat() * 0.1F + 0.9F);
             }
@@ -254,5 +259,20 @@ public class PrimitiveSustenance implements IAction {
         }
         
         return Success.NOT_AVAILABLE;
+    }
+    
+    @Optional.Method(modid = ModState.TAN_ID)
+    protected void restoreThirst(EntityPlayer player, MorphDiet.Needs needs) {
+        if (!needs.hasThirst) {
+            return;
+        }
+        
+        IThirst thirst = ThirstHelper.getThirstData(player);
+        if (thirst.getThirst() >= THIRST_SUSTAIN) {
+            return;
+        }
+        
+        thirst.setThirst(Math.min(THIRST_SUSTAIN, thirst.getThirst() + 2));
+        thirst.setHydration(Math.min(THIRST_SATURATION_SUSTAIN, thirst.getHydration() + THIRST_SATURATION_SUSTAIN));
     }
 }
