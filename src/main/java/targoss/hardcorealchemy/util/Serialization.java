@@ -21,7 +21,12 @@ package targoss.hardcorealchemy.util;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
+import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.BlockPos;
 import targoss.hardcorealchemy.ModStateException;
 
 public class Serialization {
@@ -36,4 +41,55 @@ public class Serialization {
     
     public static final int NBT_STRING_ID = checkForNBTType("STRING");
     public static final int NBT_COMPOUND_ID = checkForNBTType("COMPOUND");
+    
+    public static void setBlockPosNBT(NBTTagCompound parent, String key, @Nullable BlockPos pos) {
+        if (pos == null) {
+            return;
+        }
+        NBTTagCompound posNBT = new NBTTagCompound();
+        posNBT.setInteger("x", pos.getX());
+        posNBT.setInteger("y", pos.getY());
+        posNBT.setInteger("z", pos.getZ());
+        parent.setTag(key, posNBT);
+    }
+    
+    public static @Nullable BlockPos getBlockPosNBT(NBTTagCompound parent, String key) {
+        if (!parent.hasKey(key)) {
+            return null;
+        }
+        NBTTagCompound posNBT = parent.getCompoundTag(key);
+        if (posNBT.getSize() == 0) {
+            return null;
+        }
+        
+        int x, y, z;
+        if (!posNBT.hasKey("x")) {
+            return null;
+        }
+        x = posNBT.getInteger("x");
+        if (!posNBT.hasKey("y")) {
+            return null;
+        }
+        y = posNBT.getInteger("y");
+        if (!posNBT.hasKey("z")) {
+            return null;
+        }
+        z = posNBT.getInteger("z");
+        
+        return new BlockPos(x, y, z);
+    }
+    
+    public static BlockPos readBlockPosFromBuf(ByteBuf buf) {
+        int x, y, z;
+        x = buf.readInt();
+        y = buf.readInt();
+        z = buf.readInt();
+        return new BlockPos(x, y, z);
+    }
+    
+    public static void writeBlockPosToBuf(ByteBuf buf, BlockPos pos) {
+        buf.writeInt(pos.getX());
+        buf.writeInt(pos.getY());
+        buf.writeInt(pos.getZ());
+    }
 }

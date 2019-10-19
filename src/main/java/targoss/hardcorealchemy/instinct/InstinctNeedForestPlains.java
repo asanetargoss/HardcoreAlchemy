@@ -40,7 +40,12 @@ public class InstinctNeedForestPlains extends InstinctNeedSpawnEnvironment {
     }
 
     @Override
-    public ITextComponent getNotAtHomeMessage(NeedStatus needStatus) {
+    public ITextComponent getNearHomeMessage() {
+        return new TextComponentTranslation("hardcorealchemy.instinct.home.nature.need_nearby");
+    }
+
+    @Override
+    public ITextComponent getFarFromHomeMessage() {
         return new TextComponentTranslation("hardcorealchemy.instinct.home.nature.need");
     }
 

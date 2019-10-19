@@ -22,25 +22,36 @@ import io.netty.buffer.ByteBuf;
 import targoss.hardcorealchemy.instinct.InstinctNeedSpawnEnvironment;
 import targoss.hardcorealchemy.instinct.api.IInstinctNeed;
 import targoss.hardcorealchemy.instinct.network.api.INeedMessenger;
+import targoss.hardcorealchemy.util.Serialization;
 
 public class NeedMessengerSpawnEnvironment implements INeedMessenger<InstinctNeedSpawnEnvironment> {
     protected boolean shouldSync = false;
+    
     protected boolean feltAtHome = false;
+    protected boolean hadAtHomeTestPos = false;
+    
     protected static final int DATA_SEND_COOLDOWN_TIME = 20 * 20;
+    protected boolean shouldSyncLater = false;
     protected int dataSendCooldown = 0;
     
     public void serverTick(InstinctNeedSpawnEnvironment need) {
-        if (dataSendCooldown > 0) {
-            dataSendCooldown--;
-            if (dataSendCooldown == 0) {
+        if (shouldSyncLater ||
+                feltAtHome != need.feelsAtHome ||
+                hadAtHomeTestPos != (need.atHomeTestPos != null)) {
+            if (dataSendCooldown > 0) {
+                shouldSyncLater = true;
+            } else  {
+                shouldSyncLater = false;
                 shouldSync = true;
-            }
-        } else {
-            if (feltAtHome != need.feelsAtHome) {
                 dataSendCooldown = DATA_SEND_COOLDOWN_TIME;
             }
         }
+        
+        if (dataSendCooldown > 0) {
+            dataSendCooldown--;
+        }
         feltAtHome = need.feelsAtHome;
+        hadAtHomeTestPos = need.atHomeTestPos != null;
     }
 
     @Override
@@ -56,6 +67,12 @@ public class NeedMessengerSpawnEnvironment implements INeedMessenger<InstinctNee
         buf.writeFloat(need.averageAtHomeFraction);
         buf.writeFloat(need.preferredAtHomeFraction);
         
+        boolean hasTestPos = need.atHomeTestPos != null;
+        buf.writeBoolean(hasTestPos);
+        if (hasTestPos) {
+            Serialization.writeBlockPosToBuf(buf, need.atHomeTestPos);
+        }
+        
         shouldSync = false;
     }
     @Override
@@ -65,5 +82,12 @@ public class NeedMessengerSpawnEnvironment implements INeedMessenger<InstinctNee
         need.maxAtHomeStreak = buf.readInt();
         need.averageAtHomeFraction = buf.readFloat();
         need.preferredAtHomeFraction = buf.readFloat();
+        
+        boolean hasTestPos = buf.readBoolean();
+        if (hasTestPos) {
+            need.atHomeTestPos = Serialization.readBlockPosFromBuf(buf);
+        } else {
+            need.atHomeTestPos = null;
+        }
     }
 }

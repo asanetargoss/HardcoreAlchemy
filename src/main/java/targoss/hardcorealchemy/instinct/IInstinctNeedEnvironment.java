@@ -21,6 +21,8 @@ package targoss.hardcorealchemy.instinct;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -62,7 +64,7 @@ public interface IInstinctNeedEnvironment extends IInstinctNeed {
      * Calculates how well-suited the player is to their current environment.
      * Potentially called every tick.
      * */
-    boolean doesPlayerFeelAtHome(EntityPlayer player);
+    boolean doesPlayerFeelAtHome(EntityPlayer player, @Nullable EntityLivingBase morphEntity);
     
     public boolean doesReallyFeelAtHome();
 

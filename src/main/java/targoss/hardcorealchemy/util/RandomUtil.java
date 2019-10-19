@@ -24,6 +24,7 @@ import javax.annotation.Nullable;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
+import net.minecraft.util.math.Vec3d;
 
 public class RandomUtil {
     public static float getRandomInRangeSigned(Random random, float min, float max) {
@@ -58,5 +59,16 @@ public class RandomUtil {
         }
         
         return null;
+    }
+    
+    public static Vec3d getRandomDirection(Random random) {
+        float x = random.nextFloat();
+        float y = random.nextFloat();
+        float z = random.nextFloat();
+        float s = (float)Math.sqrt((double)(x*x + y*y + z*z));
+        if (s == 0.0f) {
+            return new Vec3d(1.0f, 1.0f, 1.0f);
+        }
+        return new Vec3d(x/s, y/s, z/s);
     }
 }

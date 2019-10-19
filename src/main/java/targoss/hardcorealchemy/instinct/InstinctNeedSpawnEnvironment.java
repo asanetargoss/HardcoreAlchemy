@@ -18,6 +18,10 @@
 
 package targoss.hardcorealchemy.instinct;
 
+import java.util.Random;
+
+import javax.annotation.Nullable;
+
 import mchorse.metamorph.api.morphs.AbstractMorph;
 import mchorse.metamorph.api.morphs.EntityMorph;
 import mchorse.metamorph.capabilities.morphing.IMorphing;
@@ -29,6 +33,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
@@ -43,6 +49,8 @@ import targoss.hardcorealchemy.util.Chat;
 import targoss.hardcorealchemy.util.EntityUtil;
 import targoss.hardcorealchemy.util.MiscVanilla;
 import targoss.hardcorealchemy.util.MorphSpawnEnvironment;
+import targoss.hardcorealchemy.util.RandomUtil;
+import targoss.hardcorealchemy.util.Serialization;
 
 /**
  * A general purpose instinct need class which determines if a player
@@ -58,6 +66,8 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
     
     @CapabilityInject(IMorphing.class)
     private static final Capability<IMorphing> MORPHING_CAPABILITY = null;
+    
+    protected Random random = new Random();
     
     protected static final int MIN_HISTORY_CAPACITY = 10 * 20;
     protected static final int MAX_HISTORY_CAPACITY = 4096;
@@ -82,9 +92,12 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
      * The maximum number of times to queue displaying a message to the player that they feel at home,
      * at the moment when the environment is definitively favorable
      */
-    protected static final int MAX_FEEL_AT_HOME_MESSAGE_QUEUE = 3;
+    protected static final int MAX_AT_HOME_MESSAGE_QUEUE = 3;
     protected int atHomeMessageQueue = 0;
+    protected static final int MAX_SEES_HOME_MESSAGE_QUEUE = 1;
+    protected int seesHomeMessageQueue = 0;
     protected boolean atHomeMessageEnabled = true;
+    protected boolean seesHomeMessageEnabled = false;
     
     protected EntityLivingBase spawnCheckEntity = null;
     protected boolean usingProxyEntity = false;
@@ -99,6 +112,9 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
      * The value of this will be no greater than the maximum recorded averageAtHomeFraction / 2
      */
     public float preferredAtHomeFraction = 0.0F;
+    
+    protected static final int MAX_HOME_DESIRE_DISTANCE = 20;
+    public BlockPos atHomeTestPos = null;
     
     public InstinctNeedSpawnEnvironment(EntityLivingBase morphEntity) {
         spawnCheckEntity = morphEntity;
@@ -119,6 +135,7 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
     private static final String NBT_MAX_AT_HOME_STREAK = "maxAtHomeStreak";
     private static final String NBT_AVERAGE_AT_HOME_FRACTION = "averageAtHomeFraction";
     private static final String NBT_PREFERRED_AT_HOME_FRACTION = "preferredAtHomeFraction";
+    private static final String NBT_AT_HOME_TEST_POS = "atHomeTestPos";
 
     @Override
     public NBTTagCompound serializeNBT() {
@@ -129,6 +146,7 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
         nbt.setInteger(NBT_MAX_AT_HOME_STREAK, maxAtHomeStreak);
         nbt.setFloat(NBT_AVERAGE_AT_HOME_FRACTION, averageAtHomeFraction);
         nbt.setFloat(NBT_PREFERRED_AT_HOME_FRACTION, preferredAtHomeFraction);
+        Serialization.setBlockPosNBT(nbt, NBT_AT_HOME_TEST_POS, atHomeTestPos);
         
         return nbt;
     }
@@ -140,6 +158,7 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
         maxAtHomeStreak = nbt.getInteger(NBT_MAX_AT_HOME_STREAK);
         averageAtHomeFraction = nbt.getFloat(NBT_AVERAGE_AT_HOME_FRACTION);
         preferredAtHomeFraction = nbt.getFloat(NBT_PREFERRED_AT_HOME_FRACTION);
+        atHomeTestPos = Serialization.getBlockPosNBT(nbt, NBT_AT_HOME_TEST_POS);
     }
 
     @Override
@@ -149,21 +168,7 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
     
     // TODO: Cache biomes the entity is known to spawn in, and check during initialization if spawning of that entity was disabled in at least one of those biomes. If that happens, reset this need to avoid issues.
 
-    @Override
-    public boolean doesPlayerFeelAtHome(EntityPlayer player) {
-        IMorphing morphing = player.getCapability(MORPHING_CAPABILITY, null);
-        if (morphing == null) {
-            return true;
-        }
-        
-        AbstractMorph morph = morphing.getCurrentMorph();
-        if (morph == null || !(morph instanceof EntityMorph)) {
-            return true;
-        }
-        World world = player.world;
-        EntityLivingBase morphEntity = ((EntityMorph)morph).getEntity(world);
-        BlockPos pos = player.getPosition();
-        
+    public static boolean isGoodHomeLocation(World world, BlockPos pos, EntityLivingBase morphEntity) {
         // Adapted from vanilla spawn mechanics, with a few simplifications
         if (morphEntity instanceof EntityLiving && EntityUtil.canEntitySpawnHere((EntityLiving)morphEntity, world, pos)) {
             // World gen surface chunk spawning criteria
@@ -195,15 +200,100 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
         
         return false;
     }
+    
+    @Override
+    public boolean doesPlayerFeelAtHome(EntityPlayer player, @Nullable EntityLivingBase morphEntity) {
+        if (morphEntity == null) {
+            return true;
+        }
+        
+        return isGoodHomeLocation(player.world, player.getPosition(), morphEntity);
+    }
+    
+    protected void updatePlayerFeelsAtHome(EntityPlayer player, @Nullable EntityLivingBase morphEntity) {
+        feelsAtHome = doesPlayerFeelAtHome(player, morphEntity);
+        if (feelsAtHome) {
+            atHomeTestPos = player.getPosition();
+        }
+    }
+    
+    /**
+     * Updates atHomeTestPos to be non-null if the new (possibly unchanged) test position is a valid place for the player to spawn.
+     * The test position must be in line of sight at first, but otherwise continues to entice the player
+     * until it is no longer a valid home position, or is too far away.
+     * */
+    protected void updateAtHomeTestPos(EntityPlayer player, @Nullable EntityLivingBase morphEntity) {
+        if (morphEntity == null) {
+            atHomeTestPos = null;
+            return;
+        }
+        if (feelsAtHome) {
+            // Already non-null after updatePlayerFeelsAtHome called
+            return;
+        }
+        
+        if (atHomeTestPos != null) {
+            BlockPos playerPos = player.getPosition();
+            int dx = playerPos.getX() - atHomeTestPos.getX();
+            int dy = playerPos.getY() - atHomeTestPos.getY();
+            int dz = playerPos.getZ() - atHomeTestPos.getZ();
+            int distanceSquared = (dx*dx) + (dy*dy) + (dz*dz);
+            if (distanceSquared > MAX_HOME_DESIRE_DISTANCE*MAX_HOME_DESIRE_DISTANCE) {
+                atHomeTestPos = null;
+            }
+        }
+        
+        BlockPos testPos;
+        if (atHomeTestPos == null) {
+            // Need new candidate test position
+            Vec3d playerPosD = new Vec3d(player.getPosition());
+            Vec3d traceDirection = RandomUtil.getRandomDirection(random).scale(MAX_HOME_DESIRE_DISTANCE);
+            Vec3d lastTracePos = playerPosD.add(traceDirection);
+            RayTraceResult res = player.world.rayTraceBlocks(playerPosD, lastTracePos, false, true, false);
+            if (res == null) {
+                // Could not find candidate test position this time
+                return;
+            }
+            testPos = res.getBlockPos();
+            if (testPos == null) {
+                // Could not find candidate test position this time
+                return;
+            }
+            // Wherever the block hits, check one block higher for the actual spawn test location
+            testPos = testPos.up();
+            
+        } else {
+            testPos = atHomeTestPos;
+        }
+        
+        // testPos is valid and the player fits there, but is it a good place for the player to be?
+        if (isGoodHomeLocation(player.world, testPos, morphEntity)) {
+            atHomeTestPos = testPos;
+        } else {
+            atHomeTestPos = null;
+        }
+    }
 
     @Override
     public ITextComponent getFeelsAtHomeMessage(NeedStatus needStatus) {
         return new TextComponentTranslation("hardcorealchemy.instinct.home.generic.fulfilled");
     }
+    
+    public ITextComponent getNearHomeMessage() {
+        return new TextComponentTranslation("hardcorealchemy.instinct.home.generic.need_nearby");
+    }
+    
+    public ITextComponent getFarFromHomeMessage() {
+        return new TextComponentTranslation("hardcorealchemy.instinct.home.generic.need");
+    }
 
     @Override
     public ITextComponent getNotAtHomeMessage(NeedStatus needStatus) {
-        return new TextComponentTranslation("hardcorealchemy.instinct.home.generic.need");
+        if (atHomeTestPos == null) {
+            return getFarFromHomeMessage();
+        } else {
+            return getNearHomeMessage();
+        }
     }
     
     @Override
@@ -220,12 +310,14 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
     public ITextComponent getNeedMessage(NeedStatus needStatus) {
         // Display a message only if it's clear if the player is "at home" or not
         if (doesReallyFeelAtHome()) {
+            seesHomeMessageQueue = Math.min(seesHomeMessageQueue + 1, MAX_SEES_HOME_MESSAGE_QUEUE);
             return getFeelsAtHomeMessage(needStatus);
         }
         else if (doesReallyNotFeelAtHome()) {
             return getNotAtHomeMessage(needStatus);
         }
-        atHomeMessageQueue = Math.max(atHomeMessageQueue + 1, MAX_FEEL_AT_HOME_MESSAGE_QUEUE);
+        atHomeMessageQueue = Math.min(atHomeMessageQueue + 1, MAX_AT_HOME_MESSAGE_QUEUE);
+        seesHomeMessageQueue = Math.min(seesHomeMessageQueue + 1, MAX_SEES_HOME_MESSAGE_QUEUE);
         return null;
     }
 
@@ -238,13 +330,23 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
     public void tick(IInstinctState instinctState) {
         EntityPlayer player = instinctState.getPlayer();
         
+        EntityLivingBase morphEntity = null;
+        IMorphing morphing = player.getCapability(MORPHING_CAPABILITY, null);
+        if (morphing != null) {
+            AbstractMorph morph = morphing.getCurrentMorph();
+            if (morph != null && (morph instanceof EntityMorph)) {
+                morphEntity = ((EntityMorph)morph).getEntity(player.world);
+            }
+        }
+        
         if (usingProxyEntity) {
             spawnCheckEntity.world = player.world;
             spawnCheckEntity.setPosition(player.posX, player.posY, player.posZ);
             
         }
         
-        feelsAtHome = doesPlayerFeelAtHome(player);
+        updatePlayerFeelsAtHome(player, morphEntity);
+        updateAtHomeTestPos(player, morphEntity);
         if (feelsAtHome) {
             if (atHomeStreak < Integer.MAX_VALUE) {
                 atHomeStreak++;
@@ -280,20 +382,29 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
             if (atHomeMessageEnabled) {
                 if (atHomeMessageQueue > 0) {
                     if (!player.world.isRemote) {
-                        ITextComponent feelsAtHomeMessage = getFeelsAtHomeMessage(NeedStatus.NONE);
+                        ITextComponent feelsAtHomeMessage = getNeedMessage(NeedStatus.NONE);
                         Chat.message(Chat.Type.NOTIFY, (EntityPlayerMP)player, feelsAtHomeMessage);
                     }
-                    
                     atHomeMessageQueue--;
                 }
                 atHomeMessageEnabled = false;
             }
+            seesHomeMessageEnabled = true;
         }
         else if (reallyFeelsNotAtHome) {
-            // TODO: Un-revert after un-testing
-            // TODO: Revert after testing
-            instinctState.setNeedStatus(IInstinctState.NeedStatus.EVENTUALLY);
-            //instinctState.setNeedStatus(IInstinctState.NeedStatus.URGENT);
+            if (atHomeTestPos == null) {
+                instinctState.setNeedStatus(IInstinctState.NeedStatus.EVENTUALLY);
+            } else {
+                instinctState.setNeedStatus(IInstinctState.NeedStatus.URGENT);
+                if (seesHomeMessageQueue > 0) {
+                    if (!player.world.isRemote) {
+                        ITextComponent feelsAtHomeMessage = getNeedMessage(NeedStatus.URGENT);
+                        Chat.message(Chat.Type.NOTIFY, (EntityPlayerMP)player, feelsAtHomeMessage);
+                    }
+                    seesHomeMessageQueue--;
+                }
+                seesHomeMessageEnabled = false;
+            }
             atHomeMessageEnabled = true;
         }
         
