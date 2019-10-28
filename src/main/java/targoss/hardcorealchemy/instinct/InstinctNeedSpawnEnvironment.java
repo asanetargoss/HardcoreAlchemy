@@ -115,6 +115,7 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
     
     protected static final int MAX_HOME_DESIRE_DISTANCE = 20;
     public BlockPos atHomeTestPos = null;
+    public boolean atHomeTestPosNotQueued = false;
     
     public InstinctNeedSpawnEnvironment(EntityLivingBase morphEntity) {
         spawnCheckEntity = morphEntity;
@@ -201,6 +202,14 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
         return false;
     }
     
+    public static boolean canPlayerFitAtPos(EntityPlayer player, BlockPos pos) {
+        BlockPos originalPos = player.getPosition();
+        player.setPosition(pos.getX(), pos.getY(), pos.getZ());
+        boolean canFit = player.world.getCollisionBoxes(player.getEntityBoundingBox()).isEmpty();
+        player.setPosition(originalPos.getX(), originalPos.getY(), originalPos.getZ());
+        return canFit;
+    }
+    
     @Override
     public boolean doesPlayerFeelAtHome(EntityPlayer player, @Nullable EntityLivingBase morphEntity) {
         if (morphEntity == null) {
@@ -232,13 +241,16 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
             return;
         }
         
-        if (atHomeTestPos != null) {
+        boolean atHomeTestPosWasNull = atHomeTestPos == null;
+        if (!atHomeTestPosWasNull) {
             BlockPos playerPos = player.getPosition();
             int dx = playerPos.getX() - atHomeTestPos.getX();
             int dy = playerPos.getY() - atHomeTestPos.getY();
             int dz = playerPos.getZ() - atHomeTestPos.getZ();
             int distanceSquared = (dx*dx) + (dy*dy) + (dz*dz);
-            if (distanceSquared > MAX_HOME_DESIRE_DISTANCE*MAX_HOME_DESIRE_DISTANCE) {
+            if (distanceSquared > MAX_HOME_DESIRE_DISTANCE*MAX_HOME_DESIRE_DISTANCE ||
+                    !isGoodHomeLocation(player.world, playerPos, morphEntity) ||
+                    !canPlayerFitAtPos(player, atHomeTestPos)) {
                 atHomeTestPos = null;
             }
         }
@@ -252,11 +264,13 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
             RayTraceResult res = player.world.rayTraceBlocks(playerPosD, lastTracePos, false, true, false);
             if (res == null) {
                 // Could not find candidate test position this time
+                atHomeTestPosNotQueued |= !atHomeTestPosWasNull;
                 return;
             }
             testPos = res.getBlockPos();
             if (testPos == null) {
                 // Could not find candidate test position this time
+                atHomeTestPosNotQueued |= !atHomeTestPosWasNull;
                 return;
             }
             // Wherever the block hits, check one block higher for the actual spawn test location
@@ -267,10 +281,13 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
         }
         
         // testPos is valid and the player fits there, but is it a good place for the player to be?
-        if (isGoodHomeLocation(player.world, testPos, morphEntity)) {
+        if (isGoodHomeLocation(player.world, testPos, morphEntity) &&
+               canPlayerFitAtPos(player, testPos)) {
             atHomeTestPos = testPos;
+            atHomeTestPosNotQueued = true;
         } else {
             atHomeTestPos = null;
+            atHomeTestPosNotQueued |= !atHomeTestPosWasNull;
         }
     }
 

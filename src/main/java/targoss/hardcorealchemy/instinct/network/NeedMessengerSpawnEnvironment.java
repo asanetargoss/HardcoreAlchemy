@@ -28,7 +28,6 @@ public class NeedMessengerSpawnEnvironment implements INeedMessenger<InstinctNee
     protected boolean shouldSync = false;
     
     protected boolean feltAtHome = false;
-    protected boolean hadAtHomeTestPos = false;
     
     protected static final int DATA_SEND_COOLDOWN_TIME = 20 * 20;
     protected boolean shouldSyncLater = false;
@@ -37,7 +36,8 @@ public class NeedMessengerSpawnEnvironment implements INeedMessenger<InstinctNee
     public void serverTick(InstinctNeedSpawnEnvironment need) {
         if (shouldSyncLater ||
                 feltAtHome != need.feelsAtHome ||
-                hadAtHomeTestPos != (need.atHomeTestPos != null)) {
+                need.atHomeTestPosNotQueued) {
+            need.atHomeTestPosNotQueued = false;
             if (dataSendCooldown > 0) {
                 shouldSyncLater = true;
             } else  {
@@ -51,7 +51,6 @@ public class NeedMessengerSpawnEnvironment implements INeedMessenger<InstinctNee
             dataSendCooldown--;
         }
         feltAtHome = need.feelsAtHome;
-        hadAtHomeTestPos = need.atHomeTestPos != null;
     }
 
     @Override
