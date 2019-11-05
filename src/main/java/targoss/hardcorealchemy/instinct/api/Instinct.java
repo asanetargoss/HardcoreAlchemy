@@ -37,19 +37,22 @@ import net.minecraftforge.fml.common.registry.IForgeRegistryEntry;
  * 
  * A single instinct can be divided into two main components: needs and effects.
  * 
- * Needs (IInstinctNeed) are responsible for keeping track of the player's
+ * Needs ({@link targoss.hardcorealchemy.instinct.api.IInstinctNeed IInstinctNeed})
+ * are responsible for keeping track of the player's
  * behavior, and determining if the behavior over time meets certain criteria.
- * The need can signal to the instinct system if it isn't being satisfied, and
- * in response, the instinct bar will stop increasing, or decrease, according to the
- * urgency of the need. Needs also get the last say in whether or not effects are applied,
- * and how strong the effects should be.
+ * The need can signal to the instinct state if it isn't being satisfied, and
+ * in response, the instinct system will lower the instinct bar and
+ * apply effects of varying severity.
+ * Needs can also send messages to the player, queue custom update packets,
+ * stop effects from being applied, and increase the amplitude of effects.
  * 
- * Effects (InstinctEffect) influence a player's stats and abilities.
- * When the instinct bar drops at or below a threshold,
+ * Effects ({@link targoss.hardcorealchemy.instinct.api.InstinctEffect InstinctEffect})
+ * influence a player's stats and abilities.
+ * When a need's instinct drops at or below a threshold,
  * the effect will usually become activated, and will not
- * deactivate until the instinct bar rises above the threshold.
+ * deactivate until that need's instinct level rises above the threshold.
  * Effects have a default amplifier upon activation, but can also be given a
- * higher amplifier by other needs.
+ * higher amplifier over time by other needs.
  */
 public abstract class Instinct extends IForgeRegistryEntry.Impl<Instinct> {
     public Instinct() {}

@@ -19,8 +19,21 @@
 package targoss.hardcorealchemy.instinct.api;
 
 /**
- * When returned from Instinct.getEffects(), a list of effect definitions.
+ * When returned from {@link targoss.hardcorealchemy.instinct.api.Instinct#getEffects Instinct.getEffects()},
+ * a list of effect definitions.
  * Otherwise, an internal class used by the instinct system.
+ * 
+ * Recommended maxInstinct values for InstinctEffects of different severity:
+ * 
+ * At or above 15.0:  No instinct effects active
+ * 15.0 to 10.0: Effect amplifiers between 0.0 and 1.0. The player becomes aware their instinct
+ *   needs are not being met.
+ * 10.0 to 5.0: Effect amplifiers between 1.0 and 2.0. More effects become active or become more
+ *   severe.
+ * Below 5.0: Effects applied without prejudice.
+ * 
+ * See {@link targoss.hardcorealchemy.instinct.api.InstinctEffect InstinctEffect} for recommendations for
+ * meanings of different effect amplifier levels. 
  */
 public class InstinctEffectWrapper {
     public InstinctEffect effect;

@@ -41,6 +41,8 @@ import net.minecraftforge.fml.common.registry.IForgeRegistryEntry;
  *   increasing necessity to fulfill their instincts.
  * At or above 2.0: All aspects of the InstinctEffect are active, although may become even more severe at
  *   higher amplifier values.
+ * 
+ * When using effects not affected by the amplifier, an amplifier value of 1.0 is recommended.
  */
 public abstract class InstinctEffect extends IForgeRegistryEntry.Impl<InstinctEffect> {
     /**
