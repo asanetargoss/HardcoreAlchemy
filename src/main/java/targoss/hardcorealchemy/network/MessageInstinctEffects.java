@@ -30,9 +30,9 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import targoss.hardcorealchemy.capability.instinct.ICapabilityInstinct;
 import targoss.hardcorealchemy.capability.instinct.ProviderInstinct;
+import targoss.hardcorealchemy.instinct.Instincts;
 import targoss.hardcorealchemy.instinct.api.InstinctEffect;
-import targoss.hardcorealchemy.instinct.api.InstinctEffectWrapper;
-import targoss.hardcorealchemy.instinct.api.Instincts;
+import targoss.hardcorealchemy.instinct.internal.InstinctEffectWrapper;
 import targoss.hardcorealchemy.util.MiscVanilla;
 
 /**

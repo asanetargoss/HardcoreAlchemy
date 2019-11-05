@@ -16,7 +16,7 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.instinct;
+package targoss.hardcorealchemy.instinct.internal;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,9 +37,6 @@ import targoss.hardcorealchemy.capability.instinct.ICapabilityInstinct;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.instinct.api.IInstinctState;
 import targoss.hardcorealchemy.instinct.api.InstinctEffect;
-import targoss.hardcorealchemy.instinct.api.InstinctEffectWrapper;
-import targoss.hardcorealchemy.instinct.api.InstinctNeedWrapper;
-import targoss.hardcorealchemy.instinct.api.InstinctState;
 import targoss.hardcorealchemy.network.MessageInstinctEffects;
 import targoss.hardcorealchemy.network.MessageInstinctNeedChanged;
 import targoss.hardcorealchemy.network.MessageInstinctNeedState;

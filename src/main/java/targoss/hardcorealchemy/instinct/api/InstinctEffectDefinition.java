@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 asanetargoss
+ * Copyright 2019 asanetargoss
  * 
  * This file is part of Hardcore Alchemy.
  * 
@@ -19,9 +19,8 @@
 package targoss.hardcorealchemy.instinct.api;
 
 /**
- * When returned from {@link targoss.hardcorealchemy.instinct.api.Instinct#getEffects Instinct.getEffects()},
- * a list of effect definitions.
- * Otherwise, an internal class used by the instinct system.
+ * Returned from {@link targoss.hardcorealchemy.instinct.api.Instinct#getEffects Instinct.getEffects()}.
+ * Defines an InstinctEffect to be activated for a given instinct.
  * 
  * Recommended maxInstinct values for InstinctEffects of different severity:
  * 
@@ -35,34 +34,34 @@ package targoss.hardcorealchemy.instinct.api;
  * See {@link targoss.hardcorealchemy.instinct.api.InstinctEffect InstinctEffect} for recommendations for
  * meanings of different effect amplifier levels. 
  */
-public class InstinctEffectWrapper {
+public class InstinctEffectDefinition {
     public InstinctEffect effect;
     public float amplifier = 0.0F;
     public float maxInstinct = 10.0F;
     
-    public InstinctEffectWrapper () {}
+    public InstinctEffectDefinition () {}
     
-    public InstinctEffectWrapper(InstinctEffect effect) {
+    public InstinctEffectDefinition(InstinctEffect effect) {
         this.effect = effect;
     }
     
-    public InstinctEffectWrapper(InstinctEffectWrapper wrapper) {
-        this.effect = wrapper.effect;
-        this.maxInstinct = wrapper.maxInstinct;
-        this.amplifier = wrapper.amplifier;
+    public InstinctEffectDefinition(InstinctEffectDefinition definition) {
+        this.effect = definition.effect;
+        this.maxInstinct = definition.maxInstinct;
+        this.amplifier = definition.amplifier;
     }
     
-    public InstinctEffectWrapper setAmplifier(float amplifier) {
+    public InstinctEffectDefinition setAmplifier(float amplifier) {
         this.amplifier = amplifier;
         return this;
     }
     
-    public InstinctEffectWrapper setMaxInstinct(float maxInstinct) {
+    public InstinctEffectDefinition setMaxInstinct(float maxInstinct) {
         this.maxInstinct = maxInstinct;
         return this;
     }
     
-    public void combine(InstinctEffectWrapper wrapper) {
+    public void combine(InstinctEffectDefinition wrapper) {
         if (effect != wrapper.effect) {
             throw new IllegalArgumentException("Attempted to combine two InstinctEffectWrappers of different types");
         }

@@ -26,9 +26,8 @@ import com.google.common.collect.Lists;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import targoss.hardcorealchemy.instinct.api.Instinct;
-import targoss.hardcorealchemy.instinct.api.InstinctEffectWrapper;
+import targoss.hardcorealchemy.instinct.api.InstinctEffectDefinition;
 import targoss.hardcorealchemy.instinct.api.InstinctNeedFactory;
-import targoss.hardcorealchemy.instinct.api.Instincts;
 import targoss.hardcorealchemy.util.EntityUtil;
 
 public class InstinctPredator extends Instinct {
@@ -43,13 +42,13 @@ public class InstinctPredator extends Instinct {
     }
 
     @Override
-    public List<InstinctEffectWrapper> getEffects(EntityLivingBase morphEntity) {
-        List<InstinctEffectWrapper> effects = new ArrayList<>();
-        effects.add(new InstinctEffectWrapper(Instincts.EFFECT_HINDERED_MIND).setMaxInstinct(15.0F).setAmplifier(0.5F));
-        effects.add(new InstinctEffectWrapper(Instincts.EFFECT_HINDERED_MIND).setMaxInstinct(10.0F).setAmplifier(1.0F));
-        effects.add(new InstinctEffectWrapper(Instincts.EFFECT_HINDERED_MIND).setMaxInstinct(6.5F).setAmplifier(1.5F));
-        effects.add(new InstinctEffectWrapper(Instincts.EFFECT_HINDERED_MIND).setMaxInstinct(5.0F).setAmplifier(1.75F));
-        effects.add(new InstinctEffectWrapper(Instincts.EFFECT_HINDERED_MIND).setMaxInstinct(0.0F).setAmplifier(2.0F));
+    public List<InstinctEffectDefinition> getEffects(EntityLivingBase morphEntity) {
+        List<InstinctEffectDefinition> effects = new ArrayList<>();
+        effects.add(new InstinctEffectDefinition(Instincts.EFFECT_HINDERED_MIND).setMaxInstinct(15.0F).setAmplifier(0.5F));
+        effects.add(new InstinctEffectDefinition(Instincts.EFFECT_HINDERED_MIND).setMaxInstinct(10.0F).setAmplifier(1.0F));
+        effects.add(new InstinctEffectDefinition(Instincts.EFFECT_HINDERED_MIND).setMaxInstinct(6.5F).setAmplifier(1.5F));
+        effects.add(new InstinctEffectDefinition(Instincts.EFFECT_HINDERED_MIND).setMaxInstinct(5.0F).setAmplifier(1.75F));
+        effects.add(new InstinctEffectDefinition(Instincts.EFFECT_HINDERED_MIND).setMaxInstinct(0.0F).setAmplifier(2.0F));
         return effects;
     }
 

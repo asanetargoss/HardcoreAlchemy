@@ -16,7 +16,7 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.instinct.api;
+package targoss.hardcorealchemy.instinct;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,12 +26,11 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.IForgeRegistry;
 import net.minecraftforge.fml.common.registry.RegistryBuilder;
 import targoss.hardcorealchemy.HardcoreAlchemy;
-import targoss.hardcorealchemy.instinct.IInstinctNeedEnvironment;
-import targoss.hardcorealchemy.instinct.InstinctEffectHinderedMind;
-import targoss.hardcorealchemy.instinct.InstinctEffectHunted;
-import targoss.hardcorealchemy.instinct.InstinctHomesickNature;
-import targoss.hardcorealchemy.instinct.InstinctNeedAttackPrey;
-import targoss.hardcorealchemy.instinct.InstinctPredator;
+import targoss.hardcorealchemy.instinct.api.IInstinctNeed;
+import targoss.hardcorealchemy.instinct.api.Instinct;
+import targoss.hardcorealchemy.instinct.api.InstinctEffect;
+import targoss.hardcorealchemy.instinct.api.InstinctNeedFactory;
+import targoss.hardcorealchemy.instinct.api.InstinctNeedFactorySimple;
 
 public class Instincts {
     private static List<Instinct> INSTINCT_CACHE = new ArrayList<>();

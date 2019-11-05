@@ -26,9 +26,8 @@ import java.util.Set;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import targoss.hardcorealchemy.instinct.api.Instinct;
-import targoss.hardcorealchemy.instinct.api.InstinctEffectWrapper;
+import targoss.hardcorealchemy.instinct.api.InstinctEffectDefinition;
 import targoss.hardcorealchemy.instinct.api.InstinctNeedFactory;
-import targoss.hardcorealchemy.instinct.api.Instincts;
 import targoss.hardcorealchemy.util.MobLists;
 
 public class InstinctHomesickNature extends Instinct {
@@ -58,16 +57,16 @@ public class InstinctHomesickNature extends Instinct {
     }
 
     @Override
-    public List<InstinctEffectWrapper> getEffects(EntityLivingBase morphEntity) {
-        List<InstinctEffectWrapper> effects = new ArrayList<>();
+    public List<InstinctEffectDefinition> getEffects(EntityLivingBase morphEntity) {
+        List<InstinctEffectDefinition> effects = new ArrayList<>();
         
-        effects.add(new InstinctEffectWrapper(Instincts.EFFECT_HUNTED).setMaxInstinct(15.0F).setAmplifier(0.5F));
-        effects.add(new InstinctEffectWrapper(Instincts.EFFECT_HUNTED).setMaxInstinct(10.0F).setAmplifier(1.0F));
-        effects.add(new InstinctEffectWrapper(Instincts.EFFECT_HUNTED).setMaxInstinct(7.5F).setAmplifier(1.5F));
-        effects.add(new InstinctEffectWrapper(Instincts.EFFECT_HUNTED).setMaxInstinct(5.0F).setAmplifier(2.0F));
-        effects.add(new InstinctEffectWrapper(Instincts.EFFECT_HUNTED).setMaxInstinct(4.0F).setAmplifier(3.0F));
-        effects.add(new InstinctEffectWrapper(Instincts.EFFECT_HUNTED).setMaxInstinct(2.0F).setAmplifier(4.0F));
-        effects.add(new InstinctEffectWrapper(Instincts.EFFECT_HUNTED).setMaxInstinct(1.0F).setAmplifier(5.0F));
+        effects.add(new InstinctEffectDefinition(Instincts.EFFECT_HUNTED).setMaxInstinct(15.0F).setAmplifier(0.5F));
+        effects.add(new InstinctEffectDefinition(Instincts.EFFECT_HUNTED).setMaxInstinct(10.0F).setAmplifier(1.0F));
+        effects.add(new InstinctEffectDefinition(Instincts.EFFECT_HUNTED).setMaxInstinct(7.5F).setAmplifier(1.5F));
+        effects.add(new InstinctEffectDefinition(Instincts.EFFECT_HUNTED).setMaxInstinct(5.0F).setAmplifier(2.0F));
+        effects.add(new InstinctEffectDefinition(Instincts.EFFECT_HUNTED).setMaxInstinct(4.0F).setAmplifier(3.0F));
+        effects.add(new InstinctEffectDefinition(Instincts.EFFECT_HUNTED).setMaxInstinct(2.0F).setAmplifier(4.0F));
+        effects.add(new InstinctEffectDefinition(Instincts.EFFECT_HUNTED).setMaxInstinct(1.0F).setAmplifier(5.0F));
         
         return effects;
     }

@@ -29,7 +29,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import targoss.hardcorealchemy.capability.instinct.ICapabilityInstinct;
 import targoss.hardcorealchemy.capability.instinct.ProviderInstinct;
 import targoss.hardcorealchemy.instinct.api.IInstinctNeed;
-import targoss.hardcorealchemy.instinct.api.InstinctNeedWrapper;
+import targoss.hardcorealchemy.instinct.internal.InstinctNeedWrapper;
 import targoss.hardcorealchemy.instinct.network.api.INeedMessenger;
 import targoss.hardcorealchemy.util.MiscVanilla;
 

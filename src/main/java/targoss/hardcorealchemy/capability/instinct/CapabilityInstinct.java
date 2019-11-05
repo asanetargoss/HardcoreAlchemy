@@ -30,7 +30,7 @@ import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.instinct.api.IInstinctEffectData;
 import targoss.hardcorealchemy.instinct.api.Instinct;
 import targoss.hardcorealchemy.instinct.api.InstinctEffect;
-import targoss.hardcorealchemy.instinct.api.InstinctEffectWrapper;
+import targoss.hardcorealchemy.instinct.internal.InstinctEffectWrapper;
 
 public class CapabilityInstinct implements ICapabilityInstinct {
     public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(HardcoreAlchemy.MOD_ID, "instinct");

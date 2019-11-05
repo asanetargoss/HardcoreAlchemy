@@ -67,8 +67,8 @@ import targoss.hardcorealchemy.coremod.CoremodHook;
 import targoss.hardcorealchemy.event.EventDrawInventoryItem;
 import targoss.hardcorealchemy.event.EventDrawWorldItem;
 import targoss.hardcorealchemy.event.EventRenderSlotTooltip;
-import targoss.hardcorealchemy.instinct.api.InstinctEffectWrapper;
-import targoss.hardcorealchemy.instinct.api.Instincts;
+import targoss.hardcorealchemy.instinct.Instincts;
+import targoss.hardcorealchemy.instinct.internal.InstinctEffectWrapper;
 import targoss.hardcorealchemy.util.InventoryUtil;
 import targoss.hardcorealchemy.util.MiscVanilla;
 

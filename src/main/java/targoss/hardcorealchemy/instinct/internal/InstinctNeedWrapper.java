@@ -16,7 +16,7 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.instinct.api;
+package targoss.hardcorealchemy.instinct.internal;
 
 import mchorse.metamorph.api.morphs.AbstractMorph;
 import mchorse.metamorph.api.morphs.EntityMorph;
@@ -27,6 +27,11 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.instinct.api.IInstinctNeed;
+import targoss.hardcorealchemy.instinct.api.IInstinctState;
+import targoss.hardcorealchemy.instinct.api.InstinctNeedFactory;
+import targoss.hardcorealchemy.instinct.api.InvalidNeed;
+import targoss.hardcorealchemy.instinct.api.IInstinctState.NeedStatus;
 import targoss.hardcorealchemy.instinct.network.api.INeedMessenger;
 
 public class InstinctNeedWrapper {

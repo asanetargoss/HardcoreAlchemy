@@ -33,9 +33,10 @@ import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.instinct.api.IInstinctEffectData;
 import targoss.hardcorealchemy.instinct.api.Instinct;
 import targoss.hardcorealchemy.instinct.api.InstinctEffect;
-import targoss.hardcorealchemy.instinct.api.InstinctEffectWrapper;
+import targoss.hardcorealchemy.instinct.api.InstinctEffectDefinition;
 import targoss.hardcorealchemy.instinct.api.InstinctNeedFactory;
-import targoss.hardcorealchemy.instinct.api.InstinctNeedWrapper;
+import targoss.hardcorealchemy.instinct.internal.InstinctEffectWrapper;
+import targoss.hardcorealchemy.instinct.internal.InstinctNeedWrapper;
 import targoss.hardcorealchemy.util.EntityUtil;
 
 public interface ICapabilityInstinct {
@@ -75,7 +76,11 @@ public interface ICapabilityInstinct {
         
         public List<InstinctEffectWrapper> getEffects(@Nonnull EntityPlayer player) {
             if (effects == null) {
-                effects = instinct.getEffects(EntityUtil.getEffectiveEntity(player));
+                List<InstinctEffectDefinition> effectDefinitions = instinct.getEffects(EntityUtil.getEffectiveEntity(player));
+                effects = new ArrayList<>(effectDefinitions.size());
+                for (InstinctEffectDefinition definition : effectDefinitions) {
+                    effects.add(new InstinctEffectWrapper(definition));
+                }
             }
             return effects;
         }

@@ -16,7 +16,7 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.instinct.api;
+package targoss.hardcorealchemy.instinct.internal;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +25,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.capability.instinct.ICapabilityInstinct;
+import targoss.hardcorealchemy.instinct.api.IInstinctState;
+import targoss.hardcorealchemy.instinct.api.InstinctEffect;
+import targoss.hardcorealchemy.instinct.api.IInstinctState.NeedStatus;
 import targoss.hardcorealchemy.instinct.network.api.INeedMessenger;
 import targoss.hardcorealchemy.network.MessageInstinctNeedChanged;
 import targoss.hardcorealchemy.network.PacketHandler;

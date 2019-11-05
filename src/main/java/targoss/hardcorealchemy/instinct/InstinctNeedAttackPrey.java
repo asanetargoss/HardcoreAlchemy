@@ -53,7 +53,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.instinct.api.IInstinctNeed;
 import targoss.hardcorealchemy.instinct.api.IInstinctState;
-import targoss.hardcorealchemy.instinct.api.InstinctState;
+import targoss.hardcorealchemy.instinct.internal.InstinctState;
 import targoss.hardcorealchemy.instinct.network.api.NeedMessengerFullSync;
 import targoss.hardcorealchemy.util.Chat;
 import targoss.hardcorealchemy.util.EntityUtil;

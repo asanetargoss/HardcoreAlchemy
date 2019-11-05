@@ -30,7 +30,7 @@ import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.capability.instinct.ICapabilityInstinct;
 import targoss.hardcorealchemy.capability.instinct.ProviderInstinct;
 import targoss.hardcorealchemy.instinct.api.IInstinctState;
-import targoss.hardcorealchemy.instinct.api.InstinctNeedWrapper;
+import targoss.hardcorealchemy.instinct.internal.InstinctNeedWrapper;
 import targoss.hardcorealchemy.util.MiscVanilla;
 
 /**

@@ -35,13 +35,13 @@ import net.minecraftforge.common.capabilities.Capability;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.ModStateException;
 import targoss.hardcorealchemy.capability.instinct.ICapabilityInstinct.InstinctEntry;
+import targoss.hardcorealchemy.instinct.Instincts;
 import targoss.hardcorealchemy.instinct.api.IInstinctEffectData;
 import targoss.hardcorealchemy.instinct.api.IInstinctState;
 import targoss.hardcorealchemy.instinct.api.InstinctEffect;
-import targoss.hardcorealchemy.instinct.api.InstinctEffectWrapper;
-import targoss.hardcorealchemy.instinct.api.InstinctNeedWrapper;
-import targoss.hardcorealchemy.instinct.api.InstinctState;
-import targoss.hardcorealchemy.instinct.api.Instincts;
+import targoss.hardcorealchemy.instinct.internal.InstinctEffectWrapper;
+import targoss.hardcorealchemy.instinct.internal.InstinctNeedWrapper;
+import targoss.hardcorealchemy.instinct.internal.InstinctState;
 import targoss.hardcorealchemy.util.Serialization;
 
 public class StorageInstinct implements Capability.IStorage<ICapabilityInstinct> {

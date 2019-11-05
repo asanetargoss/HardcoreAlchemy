@@ -74,5 +74,5 @@ public abstract class Instinct extends IForgeRegistryEntry.Impl<Instinct> {
      * meter drops below a certain value.
      * Each InstinctEffect object itself is a singleton and should be registered to Forge.
      */
-    public abstract List<InstinctEffectWrapper> getEffects(EntityLivingBase morphEntity);
+    public abstract List<InstinctEffectDefinition> getEffects(EntityLivingBase morphEntity);
 }
