@@ -96,7 +96,7 @@ public class MessageInstinctNeedChanged extends MessageToClient {
             }
             List<InstinctNeedWrapper> needs = instincts.get(instinctID).getNeeds(player);
             InstinctNeedWrapper wrapper = needs.get(needID);
-            IInstinctNeed need = wrapper.need;
+            IInstinctNeed need = wrapper.getNeed(player);
             INeedMessenger messenger = wrapper.state.messenger;
             messenger.fromBytes(need, payload);
         }
