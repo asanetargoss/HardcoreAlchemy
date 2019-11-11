@@ -32,6 +32,7 @@ import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -203,11 +204,15 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
     }
     
     public static boolean canPlayerFitAtPos(EntityPlayer player, BlockPos pos) {
-        BlockPos originalPos = player.getPosition();
-        player.setPosition(pos.getX(), pos.getY(), pos.getZ());
-        boolean canFit = player.world.getCollisionBoxes(player.getEntityBoundingBox()).isEmpty();
-        player.setPosition(originalPos.getX(), originalPos.getY(), originalPos.getZ());
-        return canFit;
+        AxisAlignedBB playerBB = player.getEntityBoundingBox();
+        double centerX = (playerBB.maxX + playerBB.minX) * 0.5D;
+        double bottomY = playerBB.minY;
+        double centerZ = (playerBB.maxZ + playerBB.minZ) * 0.5D;
+        double halfWidth = (playerBB.maxX - playerBB.minX) * 0.5D;
+        double height = playerBB.maxY - playerBB.minY;
+        AxisAlignedBB testBB = new AxisAlignedBB(centerX - halfWidth, bottomY,          centerZ - halfWidth,
+                                                 centerX + halfWidth, bottomY + height, centerZ + halfWidth);
+        return player.world.getCollisionBoxes(testBB).isEmpty();
     }
     
     @Override
