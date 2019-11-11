@@ -31,7 +31,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
-import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import targoss.hardcorealchemy.capability.instinct.ICapabilityInstinct;
 import targoss.hardcorealchemy.config.Configs;
@@ -70,16 +69,36 @@ public class InstinctSystem {
         this.configs = configs;
     }
     
-    public static void addInstinct(EntityPlayer player, ICapabilityInstinct instinct, float instinctChange) {
+    public static void updateInstinct(EntityPlayer player, ICapabilityInstinct instinctCapability) {
         float maxInstinct;
         IAttributeInstance maxInstinctAttribute = player.getEntityAttribute(ICapabilityInstinct.MAX_INSTINCT);
         if (maxInstinctAttribute != null) {
             maxInstinct = (float)maxInstinctAttribute.getAttributeValue();
         }
         else {
-            maxInstinct = 20.0F;
+            maxInstinct = (float)ICapabilityInstinct.MAX_INSTINCT.getDefaultValue();
         }
-        instinct.setInstinct(MathHelper.clamp(instinct.getInstinct() + instinctChange, 0.0F, maxInstinct));
+        float lowestNeedInstinct = maxInstinct;
+        
+        for (ICapabilityInstinct.InstinctEntry entry : instinctCapability.getInstincts()) {
+            float entryInstinct = maxInstinct;
+            
+            for (InstinctNeedWrapper needWrapper : entry.getNeeds(player)) {
+                InstinctState instinctState = needWrapper.getState(player);
+                float instinct = instinctState.instinct;
+                instinct += instinctState.getInstinctChangePerTick();
+                instinct = MathHelper.clamp(instinct, 0.0F, maxInstinct);
+                
+                instinctState.instinct = instinct;
+                
+                entryInstinct = Math.min(entryInstinct, instinct);
+            }
+            entry.instinctValue = entryInstinct;
+            
+            lowestNeedInstinct = Math.min(lowestNeedInstinct, entryInstinct);
+        }
+        
+        instinctCapability.setInstinct(lowestNeedInstinct);
     }
     
     /**
@@ -159,9 +178,17 @@ public class InstinctSystem {
     }
     
     public static Map<InstinctEffect, InstinctEffectWrapper> computeNewActiveEffects(EntityPlayer player, ICapabilityInstinct instinct) {
-        float currentInstinct = instinct.getInstinct();
         Map<InstinctEffect, InstinctEffectWrapper> pastEffects = instinct.getActiveEffects();
         Map<InstinctEffect, InstinctEffectWrapper> newEffects = new HashMap<>();
+        
+        float maxInstinct;
+        IAttributeInstance maxInstinctAttribute = player.getEntityAttribute(ICapabilityInstinct.MAX_INSTINCT);
+        if (maxInstinctAttribute != null) {
+            maxInstinct = (float)maxInstinctAttribute.getAttributeValue();
+        }
+        else {
+            maxInstinct = (float)ICapabilityInstinct.MAX_INSTINCT.getDefaultValue();
+        }
         
         for (ICapabilityInstinct.InstinctEntry entry : instinct.getInstincts()) {
             // First, see if any needs in this instinct are not being met
@@ -173,9 +200,11 @@ public class InstinctSystem {
                 needsMet &= needWrapper.state.needStatus == IInstinctState.NeedStatus.NONE;
             }
             
-            // Then find all the effect amplifiers to apply
+            // Then find new effects amplitudes
             Map<InstinctEffect, Float> effectAmplifiers = new HashMap<>();
             for (InstinctNeedWrapper needWrapper : entry.getNeeds(player)) {
+                // Instinct needs may choose to amplify existing instinct effects
+                //NOTE: This feature is currently unused. Maybe it should be removed? IInstinctEffectData is more flexible and does less unneeded work.
                 for (Map.Entry<InstinctEffect, Float> amplifierEntry : needWrapper.state.effectAmplifiers.entrySet()) {
                     InstinctEffect effect = amplifierEntry.getKey();
                     Float amplifier = effectAmplifiers.get(effect);
@@ -192,7 +221,7 @@ public class InstinctSystem {
             // Then, see if we actually want to apply each effect
         checkEffect:
             for (InstinctEffectWrapper effectWrapper : entry.getEffects(player)) {
-                if (currentInstinct > effectWrapper.maxInstinct) {
+                if (entry.instinctValue > effectWrapper.maxInstinct) {
                     // Instinct is too high
                     continue;
                 }
@@ -336,7 +365,6 @@ public class InstinctSystem {
         }
         
         float currentInstinct = instinct.getInstinct();
-        float instinctChange = InstinctState.getInstinctChangePerTick(IInstinctState.NeedStatus.NONE);
         
         // Check needs
         
@@ -351,8 +379,6 @@ public class InstinctSystem {
                 
                 needStatusChanged |= instinctState.needStatus != instinctState.lastNeedStatus;
                 instinctState.lastNeedStatus = instinctState.needStatus;
-                
-                instinctChange = Math.min(instinctChange, instinctState.getInstinctChangePerTick());
                 
                 if (!player.world.isRemote && instinctState.messenger.shouldSync()) {
                     PacketHandler.INSTANCE.sendTo(new MessageInstinctNeedChanged(entryCount, needCountPerEntry, needWrapper), (EntityPlayerMP)player);
@@ -382,6 +408,7 @@ public class InstinctSystem {
             PacketHandler.INSTANCE.sendTo(new MessageInstinctEffects(effectChanges), (EntityPlayerMP)player);
         }
         
-        addInstinct(player, instinct, instinctChange);
+        // Finally, given all of the above, change the instinct value of the player
+        updateInstinct(player, instinct);
     }
 }

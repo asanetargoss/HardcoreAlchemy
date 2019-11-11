@@ -47,12 +47,22 @@ public interface ICapabilityInstinct {
     
     void setEnabled(boolean enabled);
     
+    /**
+     * NOTE: This is updated each tick in InstinctSystem
+     * and should be treated as read-only in other places.
+     */
     float getInstinct();
-    
+
+    /**
+     * NOTE: This is updated each tick in InstinctSystem
+     * and should be treated as read-only in other places.
+     */
     void setInstinct(float instinct);
     
     public static class InstinctEntry {
         public Instinct instinct;
+        // Updated each tick by InstinctSystem
+        public float instinctValue = DEFAULT_INSTINCT_VALUE;
         public List<InstinctNeedWrapper> needs;
         public List<InstinctEffectWrapper> effects;
         
@@ -106,14 +116,14 @@ public interface ICapabilityInstinct {
     void setInstincts(List<InstinctEntry> instincts);
     
     /**
-     * NOTE: This map is re-created each tick in ListenerPlayerInstinct
+     * NOTE: This map is re-created each tick in InstinctSystem
      * and should be treated as read-only in other places. To change instinct
      * state in a way that will persist, use clearInstincts/addInstinct, or getInstincts/setInstincts
      */
     Map<InstinctEffect, InstinctEffectWrapper> getActiveEffects();
     
     /**
-     * NOTE: This map is re-created each tick in ListenerPlayerInstinct
+     * NOTE: This map is re-created each tick in InstinctSystem
      * and should be treated as read-only in other places. To change instinct
      * state in a way that will persist, use clearInstincts/addInstinct, or getInstincts/setInstincts
      */

@@ -36,6 +36,8 @@ public class InstinctState implements IInstinctState {
     public InstinctState() {}
     
     public EntityPlayer player = null;
+    // Updated each tick by InstinctSystem
+    public float instinct = ICapabilityInstinct.DEFAULT_INSTINCT_VALUE;
     public NeedStatus needStatus = NeedStatus.NONE;
     // A historic value checked and reset by the instinct system (ListenerPlayerInstinct)
     public NeedStatus lastNeedStatus = NeedStatus.NONE;

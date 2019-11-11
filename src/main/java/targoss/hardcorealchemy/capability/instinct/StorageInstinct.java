@@ -51,6 +51,7 @@ public class StorageInstinct implements Capability.IStorage<ICapabilityInstinct>
 
     public static final String INSTINCTS = "instincts";
     public static final String INSTINCT_ID = "id";
+    public static final String INSTINCT_VALUE_PER_INSTINCT = "instinct";
     
     public static final String NEEDS = "needs";
     public static final String NEED_ID = "id";
@@ -58,6 +59,7 @@ public class StorageInstinct implements Capability.IStorage<ICapabilityInstinct>
     public static final String NEED_DATA = "data";
     
     public static final String INSTINCT_STATE = "instinct_state";
+    public static final String INSTINCT_STATE_INSTINCT = "instinct";
     public static final String INSTINCT_STATE_NEED_STATUS = "need_status";
     public static final String INSTINCT_STATE_EFFECT_AMPLIFIERS = "effect_amplifiers";
     public static final String EFFECT_AMPLIFIER_ID = "id";
@@ -151,6 +153,7 @@ public class StorageInstinct implements Capability.IStorage<ICapabilityInstinct>
     public static NBTTagCompound serializeInstinctEntry(InstinctEntry entry) {
         NBTTagCompound instinctNBT = new NBTTagCompound();
         
+        instinctNBT.setFloat(INSTINCT_VALUE_PER_INSTINCT, entry.instinctValue);
         instinctNBT.setString(INSTINCT_ID, entry.instinct.getRegistryName().toString());
         
         if (entry.needs != null) {
@@ -180,6 +183,10 @@ public class StorageInstinct implements Capability.IStorage<ICapabilityInstinct>
     
     public static InstinctEntry deserializeInstinctEntry(NBTTagCompound nbt) {
         InstinctEntry instinctEntry = new InstinctEntry();
+        
+        if (nbt.hasKey(INSTINCT_VALUE_PER_INSTINCT)) {
+            instinctEntry.instinctValue = nbt.getFloat(INSTINCT_VALUE_PER_INSTINCT);
+        }
         
         instinctEntry.instinct = Instincts.REGISTRY.getValue(new ResourceLocation(nbt.getString(INSTINCT_ID)));
         if (instinctEntry.instinct == null) {
@@ -267,6 +274,7 @@ public class StorageInstinct implements Capability.IStorage<ICapabilityInstinct>
     
     public static NBTTagCompound serializeInstinctState(InstinctState state) {
         NBTTagCompound nbt = new NBTTagCompound();
+        nbt.setFloat(INSTINCT_STATE_INSTINCT, state.instinct);
         nbt.setByte(INSTINCT_STATE_NEED_STATUS, (byte)state.needStatus.ordinal());
         
         NBTTagList amplifiersNBT = new NBTTagList();
@@ -282,6 +290,10 @@ public class StorageInstinct implements Capability.IStorage<ICapabilityInstinct>
     
     public static InstinctState deserializeInstinctState(NBTTagCompound nbt) {
         InstinctState state = new InstinctState();
+        
+        if (nbt.hasKey(INSTINCT_STATE_INSTINCT)) {
+            state.instinct = nbt.getFloat(INSTINCT_STATE_INSTINCT);
+        }
         
         byte needStatusValue = nbt.getByte(INSTINCT_STATE_NEED_STATUS);
         if (needStatusValue < 0 || needStatusValue >= IInstinctState.NeedStatus.values().length) {

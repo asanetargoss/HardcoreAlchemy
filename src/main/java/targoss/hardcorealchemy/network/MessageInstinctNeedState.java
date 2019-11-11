@@ -40,54 +40,63 @@ public class MessageInstinctNeedState extends MessageToClient implements Runnabl
 
     public MessageInstinctNeedState() { }
     
-    public float instinct;
-    // (byte)NeedStatus.ordinal()
-    public List<List<Byte>> statesPerInstinct = new ArrayList<>();
+    public static class NeedStateData {
+        public float level;
+        // (byte)NeedStatus.ordinal()
+        public byte state;
+    }
+    
+    public List<List<NeedStateData>> needStatesPerInstinct = new ArrayList<>();
     
     public MessageInstinctNeedState(ICapabilityInstinct instinct) {
-        this.instinct = instinct.getInstinct();
         for (ICapabilityInstinct.InstinctEntry entry : instinct.getInstincts()) {
-            List<Byte> instinctStates = new ArrayList<>();
+            List<NeedStateData> states = new ArrayList<>();
             for (InstinctNeedWrapper wrapper : entry.needs) {
-                instinctStates.add((byte)wrapper.state.needStatus.ordinal());
+                NeedStateData state = new NeedStateData();
+                state.level = wrapper.state.instinct;
+                state.state = (byte)wrapper.state.needStatus.ordinal();
+                states.add(state);
             }
-            statesPerInstinct.add(instinctStates);
+            needStatesPerInstinct.add(states);
         }
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        buf.writeFloat(instinct);
-        buf.writeInt(statesPerInstinct.size());
-        for (List<Byte> statuses : statesPerInstinct) {
-            buf.writeInt(statuses.size());
-            for (Byte status : statuses) {
-                buf.writeByte(status);
+        int numInstincts = needStatesPerInstinct.size();
+        buf.writeInt(numInstincts);
+        for (List<NeedStateData> states : needStatesPerInstinct) {
+            buf.writeInt(states.size());
+            for (NeedStateData state : states) {
+                buf.writeFloat(state.level);
+                buf.writeFloat(state.state);
             }
         }
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        this.instinct = buf.readFloat();
         int numInstincts = buf.readInt();
         for (int i = 0; i < numInstincts; i++) {
-            List<Byte> statuses = new ArrayList<>();
-            int numStatuses = buf.readInt();
-            for (int j = 0; j < numStatuses; j++) {
-                statuses.add(buf.readByte());
+            List<NeedStateData> states = new ArrayList<>();
+            int numStates = buf.readInt();
+            for (int j = 0; j < numStates; j++) {
+                NeedStateData state = new NeedStateData();
+                state.level = buf.readFloat();
+                state.state = buf.readByte();
+                states.add(state);
             }
-            statesPerInstinct.add(statuses);
+            needStatesPerInstinct.add(states);
         }
     }
     
-    private boolean doSizesMatch(EntityPlayer player, List<ICapabilityInstinct.InstinctEntry> instincts, List<List<Byte>> statesPerInstinct) {
-        if (instincts.size() != statesPerInstinct.size()) {
+    private boolean doSizesMatch(EntityPlayer player, List<ICapabilityInstinct.InstinctEntry> instincts, List<List<NeedStateData>> needStatesPerInstinct) {
+        if (instincts.size() != needStatesPerInstinct.size()) {
             return false;
         }
         int n = instincts.size();
         for (int i = 0; i < n; i++) {
-            if (instincts.get(i).getNeeds(player).size() != statesPerInstinct.get(i).size()) {
+            if (instincts.get(i).getNeeds(player).size() != needStatesPerInstinct.get(i).size()) {
                 return false;
             }
         }
@@ -103,21 +112,22 @@ public class MessageInstinctNeedState extends MessageToClient implements Runnabl
             return;
         }
         
-        instinct.setInstinct(this.instinct);
-        
         // Sync which needs are/are not being met
         List<ICapabilityInstinct.InstinctEntry> instincts = instinct.getInstincts();
-        if (!doSizesMatch(player, instincts, statesPerInstinct)) {
+        if (!doSizesMatch(player, instincts, needStatesPerInstinct)) {
             HardcoreAlchemy.LOGGER.error("Could not sync instinct need statuses because the instincts are out of sync");
         }
         else {
             int n = instincts.size();
             for (int i = 0; i < n; i++) {
                 List<InstinctNeedWrapper> needs = instincts.get(i).getNeeds(player);
-                List<Byte> states = statesPerInstinct.get(i);
+                List<NeedStateData> newStates = needStatesPerInstinct.get(i);
                 int m = needs.size();
                 for (int j = 0; j < m; j++) {
-                    needs.get(j).state.needStatus = IInstinctState.NeedStatus.values()[states.get(j)];
+                    InstinctNeedWrapper need = needs.get(j);
+                    NeedStateData newState = newStates.get(j);
+                    need.state.instinct = newState.level;
+                    need.state.needStatus = IInstinctState.NeedStatus.values()[newState.state];
                 }
             }
         }
