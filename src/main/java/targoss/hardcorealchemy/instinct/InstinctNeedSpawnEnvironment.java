@@ -204,14 +204,13 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
     }
     
     public static boolean canPlayerFitAtPos(EntityPlayer player, BlockPos pos) {
-        AxisAlignedBB playerBB = player.getEntityBoundingBox();
-        double centerX = (playerBB.maxX + playerBB.minX) * 0.5D;
-        double bottomY = playerBB.minY;
-        double centerZ = (playerBB.maxZ + playerBB.minZ) * 0.5D;
-        double halfWidth = (playerBB.maxX - playerBB.minX) * 0.5D;
-        double height = playerBB.maxY - playerBB.minY;
-        AxisAlignedBB testBB = new AxisAlignedBB(centerX - halfWidth, bottomY,          centerZ - halfWidth,
-                                                 centerX + halfWidth, bottomY + height, centerZ + halfWidth);
+        double halfWidth = player.width * 0.5D;
+        double height = player.height;
+        double x = pos.getX();
+        double y = pos.getY();
+        double z = pos.getZ();
+        AxisAlignedBB testBB = new AxisAlignedBB(x - halfWidth, y,          z - halfWidth,
+                                                 x + halfWidth, y + height, z + halfWidth);
         return player.world.getCollisionBoxes(testBB).isEmpty();
     }
     
@@ -320,7 +319,7 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
     
     @Override
     public boolean doesReallyNotFeelAtHome() {
-        return !feelsAtHome && averageAtHomeFraction <= (1.0F / historyCapacity);
+        return !feelsAtHome && preferredAtHomeFraction != 0.0F && averageAtHomeFraction <= (preferredAtHomeFraction * 0.5);
     }
     
     @Override

@@ -69,7 +69,7 @@ public class MessageInstinctNeedState extends MessageToClient implements Runnabl
             buf.writeInt(states.size());
             for (NeedStateData state : states) {
                 buf.writeFloat(state.level);
-                buf.writeFloat(state.state);
+                buf.writeByte(state.state);
             }
         }
     }
