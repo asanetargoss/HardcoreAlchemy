@@ -32,8 +32,8 @@ import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
@@ -199,19 +199,37 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
                 }
             }
         }
-        
+
         return false;
     }
     
     public static boolean canPlayerFitAtPos(EntityPlayer player, BlockPos pos) {
-        double halfWidth = player.width * 0.5D;
-        double height = player.height;
-        double x = pos.getX();
-        double y = pos.getY();
-        double z = pos.getZ();
-        AxisAlignedBB testBB = new AxisAlignedBB(x - halfWidth, y,          z - halfWidth,
-                                                 x + halfWidth, y + height, z + halfWidth);
-        return player.world.getCollisionBoxes(testBB).isEmpty();
+        // Adapted from Entity.isEntityInsideOpaqueBlock()
+        //TODO: Consider stronger criteria of the player being able to stand there in the first place, regardless of whether or not they would suffocate there
+        
+        BlockPos.PooledMutableBlockPos testPos = BlockPos.PooledMutableBlockPos.retain();
+
+        for (int i = 0; i < 8; ++i)
+        {
+            int checkY = MathHelper.floor(pos.getY() + (double)(((float)((i >> 0) % 2) - 0.5F) * 0.1F) + (double)player.getEyeHeight());
+            int checkX = MathHelper.floor(pos.getX() + (double)(((float)((i >> 1) % 2) - 0.5F) * player.width * 0.8F));
+            int checkZ = MathHelper.floor(pos.getZ() + (double)(((float)((i >> 2) % 2) - 0.5F) * player.width * 0.8F));
+
+            if (testPos.getX() != checkX || testPos.getY() != checkY || testPos.getZ() != checkZ)
+            {
+                testPos.setPos(checkX, checkY, checkZ);
+
+                IBlockState blockState = player.world.getBlockState(testPos);
+                if (blockState.getBlock().causesSuffocation())
+                {
+                    testPos.release();
+                    return false;
+                }
+            }
+        }
+
+        testPos.release();
+        return true;
     }
     
     @Override
@@ -253,16 +271,18 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
             int dz = playerPos.getZ() - atHomeTestPos.getZ();
             int distanceSquared = (dx*dx) + (dy*dy) + (dz*dz);
             if (distanceSquared > MAX_HOME_DESIRE_DISTANCE*MAX_HOME_DESIRE_DISTANCE ||
-                    !isGoodHomeLocation(player.world, playerPos, morphEntity) ||
+                    !isGoodHomeLocation(player.world, atHomeTestPos, morphEntity) ||
                     !canPlayerFitAtPos(player, atHomeTestPos)) {
                 atHomeTestPos = null;
+            } else {
+                return;
             }
         }
         
         BlockPos testPos;
         if (atHomeTestPos == null) {
             // Need new candidate test position
-            Vec3d playerPosD = new Vec3d(player.getPosition());
+            Vec3d playerPosD = new Vec3d(player.getPosition()).addVector(0.0D, player.height * 0.5D, 0.0D);
             Vec3d traceDirection = RandomUtil.getRandomDirection(random).scale(MAX_HOME_DESIRE_DISTANCE);
             Vec3d lastTracePos = playerPosD.add(traceDirection);
             RayTraceResult res = player.world.rayTraceBlocks(playerPosD, lastTracePos, false, true, false);
