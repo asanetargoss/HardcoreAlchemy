@@ -169,39 +169,4 @@ public class ListenerMobAI extends ConfiguredListener {
         targetTaskList.addTask(firstPriority, new AITargetChosenPlayer(entityCreature));
     }
     
-    // TODO: Remove this commented out code once we confirm that an AI task is enough
-    
-    /*public static boolean shouldKeepOldAttackTarget(ICapabilityEntityState entityState) {
-        UUID targetPlayerUUID = entityState.getTargetPlayerID();
-        if (targetPlayerUUID == null) {
-            return false;
-        }
-        EntityLivingBase lastTarget = entityState.getLastAttackTarget();
-        if (!(lastTarget instanceof EntityPlayer)) {
-            return false;
-        }
-        // If the creature is currently targeting the player they are supposed to be targeting, do not allow them to change targets
-        ICapabilityMisc misc = lastTarget.getCapability(ProviderMisc.MISC_CAPABILITY, null);
-        return (misc != null && misc.getLifetimeUUID().equals(targetPlayerUUID));
-    }*/
-    
-    /*@SubscribeEvent
-    public void onEntityIgnoreChosenTarget(LivingSetAttackTargetEvent event) {
-        Entity entity = event.getEntity();
-        if (!(entity instanceof EntityLiving)) {
-            return;
-        }
-        EntityLiving entityLiving = (EntityLiving)entity;
-        ICapabilityEntityState entityState = entityLiving.getCapability(ProviderEntityState.CAPABILITY, null);
-        if (entityState == null) {
-            return;
-        }
-        
-        if (shouldKeepOldAttackTarget(entityState)) {
-            entityLiving.attackTarget = entityState.getLastAttackTarget();
-        } else {
-            entityState.setLastAttackTarget(entityLiving.attackTarget);
-        }
-    }*/
-    
 }
