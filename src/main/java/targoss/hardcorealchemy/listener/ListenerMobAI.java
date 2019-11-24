@@ -119,7 +119,7 @@ public class ListenerMobAI extends ConfiguredListener {
             if (entityLiving instanceof EntityCreature) {
                 EntityCreature entityCreature = (EntityCreature)entityLiving;
                 
-                addTargetSpecficPlayerTask(entityCreature);
+                addTargetSpecificPlayerTask(entityCreature);
             }
         }
     }
@@ -168,7 +168,7 @@ public class ListenerMobAI extends ConfiguredListener {
         }
     }
     
-    private static void addTargetSpecficPlayerTask(EntityCreature entityCreature) {
+    private static void addTargetSpecificPlayerTask(EntityCreature entityCreature) {
         int firstPriority = 1;
         EntityAITasks targetTaskList = entityCreature.targetTasks;
         for (EntityAITasks.EntityAITaskEntry targetTask : targetTaskList.taskEntries) {
