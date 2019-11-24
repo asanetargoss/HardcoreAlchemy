@@ -35,4 +35,17 @@ public interface ICapabilityEntityState {
      */
     UUID getTargetPlayerID();
     void setTargetPlayerID(@Nullable UUID playerID);
+
+    /**
+     * The age of the entity in ticks.
+     */
+    int getAge();
+    void setAge(int age);
+    /**
+     * If set to a non-negative value, indicates the total time
+     * the entity will exist.
+     * If the entity's age reaches their lifetime, they will despawn.
+     */
+    int getLifetime();
+    void setLifetime(int lifetime);
 }

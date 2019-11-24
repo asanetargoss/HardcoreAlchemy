@@ -27,6 +27,8 @@ import net.minecraftforge.common.capabilities.Capability;
 
 public class StorageEntityState implements Capability.IStorage<ICapabilityEntityState> {
     private static final String TARGET_PLAYER_ID = "targetPlayerID";
+    private static final String AGE = "age";
+    private static final String LIFETIME = "lifetime";
     
     @Override
     public NBTBase writeNBT(Capability<ICapabilityEntityState> capability, ICapabilityEntityState instance,
@@ -37,6 +39,9 @@ public class StorageEntityState implements Capability.IStorage<ICapabilityEntity
         if (playerID != null) {
             nbt.setString(TARGET_PLAYER_ID, playerID.toString());
         }
+        
+        nbt.setInteger(AGE, instance.getAge());
+        nbt.setInteger(LIFETIME, instance.getLifetime());
         
         return nbt;
     }
@@ -54,6 +59,11 @@ public class StorageEntityState implements Capability.IStorage<ICapabilityEntity
                 UUID uuid = UUID.fromString(nbt.getString(TARGET_PLAYER_ID));
                 instance.setTargetPlayerID(uuid);
             } catch (IllegalArgumentException e) {}
+        }
+        
+        instance.setAge(nbt.getInteger(AGE));
+        if (nbt.hasKey(LIFETIME)) {
+            instance.setLifetime(nbt.getInteger(LIFETIME));
         }
     }
 

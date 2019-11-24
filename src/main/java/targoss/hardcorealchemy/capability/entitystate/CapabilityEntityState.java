@@ -31,6 +31,8 @@ public class CapabilityEntityState implements ICapabilityEntityState {
     
     private UUID targetPlayerID = null;
     private EntityLivingBase lastAttackTarget = null;
+    int age = 0;
+    int lifetime = -1;
 
     @Override
     public UUID getTargetPlayerID() {
@@ -40,5 +42,25 @@ public class CapabilityEntityState implements ICapabilityEntityState {
     @Override
     public void setTargetPlayerID(@Nullable UUID playerID) {
         this.targetPlayerID = playerID;
+    }
+
+    @Override
+    public int getAge() {
+        return age;
+    }
+
+    @Override
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    @Override
+    public int getLifetime() {
+        return lifetime;
+    }
+
+    @Override
+    public void setLifetime(int lifetime) {
+        this.lifetime = lifetime;
     }
 }

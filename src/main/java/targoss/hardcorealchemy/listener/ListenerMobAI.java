@@ -28,6 +28,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.EntityAIFindEntityNearestPlayer;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
@@ -39,12 +40,15 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.combatlevel.CapabilityCombatLevel;
 import targoss.hardcorealchemy.capability.combatlevel.ICapabilityCombatLevel;
 import targoss.hardcorealchemy.capability.entitystate.CapabilityEntityState;
+import targoss.hardcorealchemy.capability.entitystate.ICapabilityEntityState;
 import targoss.hardcorealchemy.capability.entitystate.ProviderEntityState;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.entity.ai.AIAttackTargetMobOrMorph;
@@ -62,6 +66,10 @@ public class ListenerMobAI extends ConfiguredListener {
     @CapabilityInject(ICapabilityCombatLevel.class)
     public static Capability<ICapabilityCombatLevel> COMBAT_LEVEL_CAPABILITY = null;
     public static final ResourceLocation COMBAT_LEVEL_RESOURCE_LOCATION = CapabilityCombatLevel.RESOURCE_LOCATION;
+
+    @CapabilityInject(ICapabilityEntityState.class)
+    public static Capability<ICapabilityEntityState> ENTITY_STATE_CAPABILITY = null;
+    public static final ResourceLocation ENTITY_STATE_RESOURCE_LOCATION = CapabilityEntityState.RESOURCE_LOCATION;
     
     public static Set<String> mobAIIgnoreMorphList = new HashSet();
     
@@ -167,6 +175,27 @@ public class ListenerMobAI extends ConfiguredListener {
             firstPriority = Math.min(firstPriority, targetTask.priority - 1);
         }
         targetTaskList.addTask(firstPriority, new AITargetChosenPlayer(entityCreature));
+    }
+    
+    @SubscribeEvent(priority=EventPriority.HIGHEST)
+    void onCheckEntityAlive(LivingUpdateEvent event) {
+        EntityLivingBase entity = event.getEntityLiving();
+        if (entity.getHealth() <= 0.0F) {
+            return;
+        }
+        ICapabilityEntityState state = entity.getCapability(ENTITY_STATE_CAPABILITY, null);
+        if (state == null) {
+            return;
+        }
+        
+        int age = state.getAge() + 1;
+        state.setAge(age);
+        int lifetime = state.getLifetime();
+        if (lifetime >= 0 && age <= lifetime) {
+            // Entity has reached end of specified lifetime; remove it.
+            // Later, we might want to increment the liftime if the entity is chasing a player
+            entity.world.removeEntity(entity);
+        }
     }
     
 }
