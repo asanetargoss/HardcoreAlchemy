@@ -227,13 +227,15 @@ public class InstinctEffectHunted extends InstinctEffect {
                     if (predatorPos != null) {
                         predator.setPosition(predatorPos.getX(), predatorPos.getY(), predatorPos.getZ());
                         
-                        // Make the player the predator's highest priority target
                         ICapabilityEntityState entityState = predator.getCapability(ProviderEntityState.CAPABILITY, null);
                         if (entityState != null) {
                             ICapabilityMisc misc = player.getCapability(ProviderMisc.MISC_CAPABILITY, null);
                             if (misc != null) {
+                                // Make the player the predator's highest priority target
                                 entityState.setTargetPlayerID(misc.getLifetimeUUID());
                             }
+                            // Prevent the entity from existing forever, to prevent lag
+                            entityState.setLifetime(EVENT_TIME_MAX);
                         }
                         
                         // Make predator stronger relative to the player depending on effect strength
@@ -245,7 +247,6 @@ public class InstinctEffectHunted extends InstinctEffect {
                         }
                         
                         // Predator will now hunt the player
-                        // TODO: Give the predator a finite lifetime
                         // TODO: Prevent the predator from dropping items/experience?
                         predator.world.spawnEntity(predator);
                     }

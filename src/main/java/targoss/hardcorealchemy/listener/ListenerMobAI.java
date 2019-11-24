@@ -191,7 +191,7 @@ public class ListenerMobAI extends ConfiguredListener {
         int age = state.getAge() + 1;
         state.setAge(age);
         int lifetime = state.getLifetime();
-        if (lifetime >= 0 && age <= lifetime) {
+        if (!entity.world.isRemote && lifetime >= 0 && age >= lifetime) {
             // Entity has reached end of specified lifetime; remove it.
             // Later, we might want to increment the liftime if the entity is chasing a player
             entity.world.removeEntity(entity);
