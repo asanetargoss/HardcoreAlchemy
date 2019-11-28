@@ -91,6 +91,7 @@ public class HCAModpackGuide {
                 .addEntry("lost_humanity", "rotten_flesh", numStrings(1, 3))
                 .addEntry("instinct_attack_prey", "magma_cream", "1")
                 .addEntry("ability_primitive_sustenance", "grass", "1")
+                .addEntry("instinct_homesick_nature", "sapling", "1")
                 .getCategory());
         
         guide = book;
