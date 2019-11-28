@@ -244,6 +244,7 @@ public class InstinctEffectHunted extends InstinctEffect {
                             float multiplier = getLevelMultiplier(amplifier);
                             int predatorLevel = (int)Math.ceil(multiplier * (float)player.experienceLevel);
                             combatLevel.setValue(predatorLevel);
+                            combatLevel.setHasCombatLevel(true);
                         }
                         
                         // Predator will now hunt the player
