@@ -96,6 +96,9 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
         SPELL_ITEMS.add("arsmagica2:arcane_spellbook");
         SPELL_ITEMS.add("arsmagica2:spell");
         SPELL_ITEMS.add("arsmagica2:spell_book");
+        SPELL_ITEMS.add("alchemicash:Skystone");
+        SPELL_ITEMS.add("alchemicash:Skystone2");
+        SPELL_ITEMS.add("thaumcraft:caster_basic");
     }
     
     private static Item ROTTEN_FLESH;
