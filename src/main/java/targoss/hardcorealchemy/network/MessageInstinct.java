@@ -28,7 +28,7 @@ import targoss.hardcorealchemy.capability.instinct.ICapabilityInstinct;
 import targoss.hardcorealchemy.capability.instinct.ProviderInstinct;
 import targoss.hardcorealchemy.util.MiscVanilla;
 
-public class MessageInstinct extends MessageToClient implements Runnable {
+public class MessageInstinct extends MessageToClient {
     
     public MessageInstinct() { }
     
@@ -48,23 +48,30 @@ public class MessageInstinct extends MessageToClient implements Runnable {
         instinctNBT = ByteBufUtils.readTag(buf);
     }
     
-    // TODO: Move to static class because this ends up getting called on the wrong thread
-    @Override
-    public void run() {
-        ICapabilityInstinct instinct = MiscVanilla
-                .getTheMinecraftPlayer()
-                .getCapability(ProviderInstinct.INSTINCT_CAPABILITY, null);
-        if (instinct == null) {
-            return;
+    public static class ReceiveAction implements Runnable {
+        private NBTTagCompound instinctNBT;
+        
+        public ReceiveAction(NBTTagCompound instinctNBT) {
+            this.instinctNBT = instinctNBT;
         }
         
-        ProviderInstinct.INSTINCT_CAPABILITY.readNBT(instinct, null, instinctNBT);
+        @Override
+        public void run() {
+            ICapabilityInstinct instinct = MiscVanilla
+                    .getTheMinecraftPlayer()
+                    .getCapability(ProviderInstinct.INSTINCT_CAPABILITY, null);
+            if (instinct == null) {
+                return;
+            }
+            
+            ProviderInstinct.INSTINCT_CAPABILITY.readNBT(instinct, null, instinctNBT);
+        }
     }
     
     public static class Handler implements IMessageHandler<MessageInstinct, IMessage> {
         @Override
         public IMessage onMessage(MessageInstinct message, MessageContext ctx) {
-            message.getThreadListener().addScheduledTask(message);
+            message.getThreadListener().addScheduledTask(new ReceiveAction(message.instinctNBT));
             return null;
         }
     }
