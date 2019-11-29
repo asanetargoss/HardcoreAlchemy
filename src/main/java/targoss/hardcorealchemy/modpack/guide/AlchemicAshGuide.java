@@ -88,11 +88,10 @@ public class AlchemicAshGuide {
         
         book.addCategory(CategoryBuilder.withCategory(base + "ash", idBase + "FloweringAsh")
                 .addEntry("discovery", idBase + "AshenBale", "1")
-                .addEntry("cinder_bale", idBase + "CinderBale", numStrings(1, 2))
+                .addEntry("cinder_bale", idBase + "CinderBale", numStrings(1, 3))
                 .addEntry("blazing_bale", idBase + "BlazingBale", numStrings(1, 2))
-                .addEntry("inferno_bale", idBase + "InfernoBale", numStrings(1, 2))
+                .addEntry("inferno_bale", idBase + "InfernoBale", numStrings(1, 3))
                 .addEntry("fuel", "coal", "1")
-                .addEntry("wands", idBase + "CinderWand", "1")
                 .getCategory());
         
         book.addCategory(CategoryBuilder.withCategory(base + "automation", "hopper")

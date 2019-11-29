@@ -1,5 +1,5 @@
 #
-# Copyright 2017-2018 asanetargoss
+# Copyright 2019 asanetargoss
 # 
 # This file is part of Hardcore Alchemy.
 # 
@@ -85,24 +85,22 @@ alchemicash.guide.ash.discovery.1=Back in the early days of vital alchemy, ashen
 alchemicash.guide.ash.cinder_bale.title=Cinder Bale
 alchemicash.guide.ash.cinder_bale.1=As it turns out, there is a more efficient way to "overheat" an ashen bale, by taking nine bales and sifting them together to retrieve the hottest embers within. The resulting bale is known as a cinder bale. You can then replicate the original discovery by touching alchemic ash near the bale to create quartz. The reagent is not consumed in this process. Five other materials can be created with this technique:
 alchemicash.guide.ash.cinder_bale.2=Clay Ball: From Slimeball\nMycelium: From Mushroom Stew\nEnd Stone: From Clay Ball\nGold Nugget: From Glowstone Dust\nGunpowder: From Coal
+alchemicash.guide.ash.cinder_bale.3=A vital alchemical wand with an extraordinary heat, known as a cinder wand, can produced using cinder bales and stabilizing materials. While the wand is unsuitable for spellcasting, it can be used in various alchemical recipes.
 
 ## Ashen Conversion: Blazing Bale
 alchemicash.guide.ash.blazing_bale.title=Blazing Bale
-alchemicash.guide.ash.blazing_bale.1=The cinder bale can be sifted by a factor of 9 yet again for its hottest embers to create a blazing bale. Seven materials total can be produced from a cinder bale:
+alchemicash.guide.ash.blazing_bale.1=The blazing bale is a step up from a cinder bale. It cannot be produced by any heat from this world. A suitably hot blazing wand can be crafted using blaze rods, a cinder wand, and stabilizing catalysts. The cinder wand is not consumed by the crafting process. Seven materials total can be produced from the resulting blazing bales:
 alchemicash.guide.ash.blazing_bale.2=Emerald: From Alchemic Ash\nLapis Ore: From Slimeball\nSoulsand: From Mushroom Stew\nEnder Pearl: From Clay Ball\nIron Ingot: From Redstone Dust\nGold Ingot: From Glowstone Dust\nBlaze Dust: From Coal
 
 ## Ashen Conversion: Inferno Bale
 alchemicash.guide.ash.inferno_bale.title=Inferno Bale
-alchemicash.guide.ash.inferno_bale.1=Finally, the blazing bale can be sifted by a factor of 9 once more to create the venerable inferno bale, whose alchemical products are as follows:
+alchemicash.guide.ash.inferno_bale.1=The venerable inferno bale requires an order of magnitude more heated ash than the blazing bale, and a formidable inferno wand crafted from rare and arcane materials. But the products of the inferno bale are also more valuable:
 alchemicash.guide.ash.inferno_bale.2=Diamond: From Alchemic Ash\nGhast Tear: From Slimeball\nNetherwart: From Mushroom Stew\nIron Block: From Redstone Dust\nGold Block: From Glowstone Dust\nBlaze Rod: From Coal
+alchemicash.guide.ash.inferno_bale.3=The inferno wand also has additional uses in advanced alchemical crafting.
 
 ## Ashen Conversion: Bale Burning
 alchemicash.guide.ash.fuel.title=Bale Burning
-alchemicash.guide.ash.fuel.1=In addition to being used for summoning these useful materials, bales can also be used as fuel. It is theoretically possible to heat infinite amounts of alchemic ash using merely the heat of some of its output bales, making it an excellent way to cut back on fuel use.
-
-## Ashen Conversion: Wands
-alchemicash.guide.ash.wands.title=Wands
-alchemicash.guide.ash.wands.1=The conversion of bales to hotter forms can be done slightly more efficiently with the use of specialized wands, referred to as the cinder, blazing, and inferno wands respectively. The wands are created with slime, the hot embers of six bales of the desired target heat, and a bit of crystal catalyst to hold it all together.
+alchemicash.guide.ash.fuel.1=In addition to being used for summoning these useful materials, bales can also be used as fuel. It is theoretically possible to heat infinite amounts of alchemic ash using merely the heat of some of its output bales.
 
 # Alchemical Automation
 alchemicash.guide.automation.title=Alchemical Automation
