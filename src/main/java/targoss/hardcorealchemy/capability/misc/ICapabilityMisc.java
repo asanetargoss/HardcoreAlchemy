@@ -27,6 +27,8 @@ import java.util.UUID;
 public interface ICapabilityMisc {
     boolean getHasSeenThirstWarning();
     void setHasSeenThirstWarning(boolean hasSeenThirstWarning);
+    boolean getHasSeenMagicInhibitionWarning();
+    void setHasSeenMagicInhibitionWarning(boolean hasSeenMagicInhibitionWarning);
     /** Get the player's UUID for their current life. */
     UUID getLifetimeUUID();
     void setLifetimeUUID(UUID uuid);

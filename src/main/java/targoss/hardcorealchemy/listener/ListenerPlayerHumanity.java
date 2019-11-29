@@ -55,6 +55,7 @@ import targoss.hardcorealchemy.capability.humanity.CapabilityHumanity;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.capability.humanity.LostMorphReason;
 import targoss.hardcorealchemy.capability.humanity.ProviderHumanity;
+import targoss.hardcorealchemy.capability.misc.ICapabilityMisc;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.network.MessageHumanity;
 import targoss.hardcorealchemy.network.PacketHandler;
@@ -87,6 +88,9 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
     // The capability from Metamorph itself
     @CapabilityInject(IMorphing.class)
     public static final Capability<IMorphing> MORPHING_CAPABILITY = null;
+    
+    @CapabilityInject(ICapabilityMisc.class)
+    private static final Capability<ICapabilityMisc> MISC_CAPABILITY = null;
 
     public static final Set<String> SPELL_ITEMS = new HashSet<>();
     
@@ -375,12 +379,26 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
         if (!SPELL_ITEMS.contains(itemStack.getItem().getRegistryName().toString())) {
             return;
         }
+        
         double newMagicInhibition = capabilityHumanity.getMagicInhibition();
         newMagicInhibition += INHIBITION_PER_SPELL;
         newMagicInhibition = MathHelper.clamp(newMagicInhibition, 0.0D, 1.0D+maxHumanity.getAttributeValue());
         capabilityHumanity.setMagicInhibition(newMagicInhibition);
         if (!player.world.isRemote) {
             PacketHandler.INSTANCE.sendTo(new MessageHumanity(capabilityHumanity, false), (EntityPlayerMP)player);
+        }
+        
+        // Warn the player that using spells (or other select magic items) may interfere with their ability to morph
+        ICapabilityMisc misc = player.getCapability(MISC_CAPABILITY, null);
+        if (misc != null) {
+            IMorphing morphing = player.getCapability(MORPHING_CAPABILITY, null);
+            boolean hasAMorph = morphing != null && !morphing.getAcquiredMorphs().isEmpty() && capabilityHumanity.canMorph();
+            if (hasAMorph && !misc.getHasSeenMagicInhibitionWarning()) {
+                misc.setHasSeenMagicInhibitionWarning(true);
+                if (!player.world.isRemote) {
+                    Chat.message(Chat.Type.NOTIFY, (EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.humanity.magic_inhibition_warning"));
+                }
+            }
         }
     }
 

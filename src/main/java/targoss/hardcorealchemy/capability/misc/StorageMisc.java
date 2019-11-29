@@ -28,12 +28,14 @@ import net.minecraftforge.common.capabilities.Capability.IStorage;
 
 public class StorageMisc implements IStorage<ICapabilityMisc> {
     private static final String HAS_SEEN_THIRST_WARNING = "has_seen_thirst_warning";
+    private static final String HAS_SEEN_MAGIC_INHIBITION_WARNING = "has_seen_magic_inhibition_warning";
     private static final String LIFETIME_UUID = "lifetimeUUID";
     @Override
     public NBTBase writeNBT(Capability<ICapabilityMisc> capability, ICapabilityMisc instance, EnumFacing side) {
         NBTTagCompound nbt = new NBTTagCompound();
         
         nbt.setBoolean(HAS_SEEN_THIRST_WARNING, instance.getHasSeenThirstWarning());
+        nbt.setBoolean(HAS_SEEN_MAGIC_INHIBITION_WARNING, instance.getHasSeenMagicInhibitionWarning());
         
         {
             UUID uuid = instance.getLifetimeUUID();
@@ -53,6 +55,7 @@ public class StorageMisc implements IStorage<ICapabilityMisc> {
         NBTTagCompound nbt = (NBTTagCompound)nbtBase;
         
         instance.setHasSeenThirstWarning(nbt.getBoolean(HAS_SEEN_THIRST_WARNING));
+        instance.setHasSeenMagicInhibitionWarning(nbt.getBoolean(HAS_SEEN_MAGIC_INHIBITION_WARNING));
         
         if (nbt.hasKey(LIFETIME_UUID)) {
             try {

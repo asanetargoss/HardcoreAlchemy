@@ -26,16 +26,23 @@ import targoss.hardcorealchemy.HardcoreAlchemy;
 public class CapabilityMisc implements ICapabilityMisc {
     public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(HardcoreAlchemy.MOD_ID, "misc");
     
-    private boolean hasSeenThirstWarning;
+    private boolean hasSeenThirstWarning = false;
+    private boolean hasSeenMagicInhibitionWarning = false;
     private UUID lifetimeUUID = null;
-    
-    public CapabilityMisc() {
-        hasSeenThirstWarning = false;
-    }
     
     @Override
     public boolean getHasSeenThirstWarning() {
         return hasSeenThirstWarning;
+    }
+
+    @Override
+    public boolean getHasSeenMagicInhibitionWarning() {
+        return hasSeenMagicInhibitionWarning;
+    }
+
+    @Override
+    public void setHasSeenMagicInhibitionWarning(boolean hasSeenMagicInhibitionWarning) {
+        this.hasSeenMagicInhibitionWarning = hasSeenMagicInhibitionWarning;
     }
 
     @Override

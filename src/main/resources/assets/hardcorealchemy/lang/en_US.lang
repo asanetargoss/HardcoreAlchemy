@@ -26,6 +26,7 @@ hardcorealchemy.humanity.warn1.variant1=You begin to tire of remembering your hu
 hardcorealchemy.humanity.warn2.variant1=You fantasize a life without thought or inhibition.
 hardcorealchemy.humanity.warn3.variant1=You panic as you realize you don't remember who you are.
 hardcorealchemy.humanity.lost=You feel your humanity fade away.
+hardcorealchemy.humanity.magic_inhibition_warning=You fear powerful magic will interfere with your ability to morph.
 
 hardcorealchemy.morph.suffocation_risk=There is not enough space to morph here.
 
