@@ -128,9 +128,6 @@ public class ListenerPlayerInstinct extends ConfiguredListener {
         if (!(event.getEntity() instanceof EntityPlayer)) {
             return;
         }
-        if (Metamorph.proxy.config.keep_morphs) {
-            return;
-        }
         
         EntityPlayer player = (EntityPlayer)(event.getEntity());
         ICapabilityInstinct instinct = player.getCapability(INSTINCT_CAPABILITY, null);
