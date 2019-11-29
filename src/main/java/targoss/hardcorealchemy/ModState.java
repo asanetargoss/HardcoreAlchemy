@@ -37,6 +37,7 @@ public final class ModState {
     public static final String ALCHEMIC_ASH_ID = "AlchemicAsh";
     public static final String JEI_ID = "JEI";
     public static final String WAWLA_ID = "Waila";
+    public static final String SPICE_OF_LIFE_ID = "SpiceOfLife";
     public static boolean isDissolutionLoaded = false;
     public static boolean isNutritionLoaded = false;
     public static boolean isBloodMagicLoaded = false;
@@ -49,6 +50,7 @@ public final class ModState {
     public static boolean isThaumcraftLoaded = false;
     public static boolean isAlchemicAshLoaded = false;
     public static boolean isJEILoaded = false;
+    public static boolean isSpiceOfLifeLoaded = false;
 
     private ModState() { }
 }

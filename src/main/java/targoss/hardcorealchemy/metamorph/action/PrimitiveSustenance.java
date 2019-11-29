@@ -38,6 +38,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.FoodStats;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
@@ -48,6 +50,8 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.fml.common.Optional;
+import squeek.spiceoflife.foodtracker.FoodEaten;
+import squeek.spiceoflife.foodtracker.FoodHistory;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.capability.humanity.ProviderHumanity;
@@ -190,6 +194,9 @@ public class PrimitiveSustenance implements IAction {
             if (ModState.isTanLoaded) {
                 restoreThirst(player, needs);
             }
+            if (ModState.isSpiceOfLifeLoaded) {
+                addGrassToFoodHistory(player);
+            }
             return Success.SUCCESS;
         }
         
@@ -205,6 +212,9 @@ public class PrimitiveSustenance implements IAction {
             restoreHunger(player, foodStats);
             if (ModState.isTanLoaded) {
                 restoreThirst(player, needs);
+            }
+            if (ModState.isSpiceOfLifeLoaded) {
+                addGrassToFoodHistory(player);
             }
             return Success.SUCCESS;
         }
@@ -236,6 +246,16 @@ public class PrimitiveSustenance implements IAction {
         }
         
         nutrition.add(nutrient, amount, true);
+    }
+    
+    @Optional.Method(modid = ModState.SPICE_OF_LIFE_ID)
+    protected void addGrassToFoodHistory(EntityPlayer player) {
+        FoodHistory foodHistory = FoodHistory.get(player);
+        if (foodHistory == null) {
+            return;
+        }
+        ItemStack grassStack = new ItemStack(Item.getItemFromBlock(Blocks.GRASS));
+        foodHistory.addFood(new FoodEaten(grassStack, player));
     }
     
     @Optional.Method(modid = ModState.TAN_ID)
