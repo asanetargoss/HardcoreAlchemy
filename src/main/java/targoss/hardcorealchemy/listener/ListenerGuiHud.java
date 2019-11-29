@@ -20,7 +20,6 @@ package targoss.hardcorealchemy.listener;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Random;
 
 import mchorse.metamorph.capabilities.morphing.IMorphing;
 import mchorse.metamorph.capabilities.morphing.Morphing;
@@ -49,10 +48,9 @@ import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.capability.instinct.ICapabilityInstinct;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.coremod.CoremodHook;
-import targoss.hardcorealchemy.util.MorphState;
-import toughasnails.handler.thirst.ThirstOverlayHandler;
 import targoss.hardcorealchemy.util.MorphDiet;
 import targoss.hardcorealchemy.util.MorphState;
+import targoss.hardcorealchemy.util.RandomWithPublicSeed;
 
 @SideOnly(Side.CLIENT)
 public class ListenerGuiHud extends ConfiguredListener {
@@ -62,7 +60,9 @@ public class ListenerGuiHud extends ConfiguredListener {
     
     private static final Minecraft mc = Minecraft.getMinecraft();
     public static final ResourceLocation TILESET = new ResourceLocation(HardcoreAlchemy.MOD_ID, "textures/gui/icon_tileset.png");
-    private Random rand = new Random();
+    // Settable seed helps to freeze GUI elements in place when the game is paused
+    private RandomWithPublicSeed rand = new RandomWithPublicSeed();
+    private long randSeed = rand.getSeed();
     
     @CapabilityInject(ICapabilityHumanity.class)
     public static final Capability<ICapabilityHumanity> HUMANITY_CAPABILITY = null;
@@ -75,6 +75,15 @@ public class ListenerGuiHud extends ConfiguredListener {
     public void onRenderHumanity(RenderGameOverlayEvent.Pre event) {
         if (event.getType() != ElementType.ARMOR) {
             return;
+        }
+        
+        // Freeze GUI elements in place when the game is paused
+        // I *think* this event subscriber gets called first due to being defined first in the class.
+        // We'll find out soon enough if that's true...
+        if (Minecraft.getMinecraft().isGamePaused()) {
+            rand.setSeed(randSeed);
+        } else {
+            randSeed = rand.getSeed();
         }
         
         EntityPlayer player = mc.player;
@@ -114,7 +123,6 @@ public class ListenerGuiHud extends ConfiguredListener {
             int y = top;
             
             if (humanity <= HUMANITY_3MIN_LEFT) {
-                //TODO: Freeze shaking in place when the game is paused
                 y += rand.nextInt(2);
             }
             
