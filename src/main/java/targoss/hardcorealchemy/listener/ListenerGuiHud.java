@@ -122,7 +122,7 @@ public class ListenerGuiHud extends ConfiguredListener {
         for (int i = 1; i <= HUMANITY_ICONS; i++) {
             int y = top;
             
-            if (humanity <= HUMANITY_3MIN_LEFT) {
+            if (humanity <= HUMANITY_3MIN_LEFT && magicInhibition < humanity) {
                 y += rand.nextInt(2);
             }
             
