@@ -15,6 +15,9 @@ About the Hardcore Alchemy mod:
 # Developing/building
 
 ## Dependencies
+
+**NOTE: There is currently an issue with Spice of Life/AppleCore causing crashes in the development build. For now, please disable those mods and comment out code that references it. I am working on creating a custom build that should resolve the issue.**
+
 This branch targets the 0.3.11+ version of the modpack. Download the 0.3.11 zip file from the link below and add its contents to libs/ (create the folder if it does not exist):
 
 http://www.mediafire.com/folder/grwn2vsjr2lce/Hardcore_Alchemy_Libs
