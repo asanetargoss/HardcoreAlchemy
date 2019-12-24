@@ -27,10 +27,13 @@ import java.util.List;
 
 import org.lwjgl.util.Color;
 
+import com.google.common.collect.Lists;
+
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
@@ -52,12 +55,16 @@ public class Items {
     private static List<PotionType> POTION_TYPE_CACHE = new ArrayList<>();
     
     public static final Item ESSENCE_MAGE = item("essence_mage");
+    public static final Item DROWNED_ENDER_PEARL = item("drowned_ender_pearl");
     
     public static final Potion POTION_ALLOW_MAGIC = potion("allow_magic", GOOD_EFFECT, new Color(113, 80, 182), 0, true);
     public static final PotionType POTION_TYPE_ALLOW_MAGIC = potionType(POTION_ALLOW_MAGIC, 5*60*20);
     public static final Potion POTION_AIR_BREATHING = potion("air_breathing", new PotionAirBreathing(GOOD_EFFECT, new Color(205, 205, 205), 1, false));
     public static final PotionType POTION_TYPE_AIR_BREATHING = potionType(POTION_AIR_BREATHING, 3*60*20);
     public static final PotionType POTION_TYPE_AIR_BREATHING_EXTENDED = potionType(POTION_AIR_BREATHING, "_extended", 8*60*20);
+    public static final Potion POTION_WATER_RESISTANCE = potion("water_resistance", GOOD_EFFECT, new Color(47, 107, 58), 2, false);
+    public static final PotionType POTION_TYPE_WATER_RESISTANCE = potionType(POTION_WATER_RESISTANCE, 3*60*20);
+    public static final PotionType POTION_TYPE_WATER_RESISTANCE_EXTENDED = potionType(POTION_WATER_RESISTANCE, "_extended", 8*60*20);
     
     private static Item item(String itemName, Item item) {
         item.setRegistryName(HardcoreAlchemy.MOD_ID, itemName);
@@ -156,6 +163,9 @@ public class Items {
         
         ItemStack lapis = new ItemStack(Item.getByNameOrId("dye"));
         lapis.setItemDamage(EnumDyeColor.BLUE.getDyeDamage());
+
+        ItemStack flint = new ItemStack(Item.getByNameOrId("flint"));
+        
         GameRegistry.addShapelessRecipe(
                 new ItemStack(ESSENCE_MAGE),
                 new ItemStack(Item.getByNameOrId("rotten_flesh")),
@@ -163,6 +173,21 @@ public class Items {
                 new ItemStack(Item.getByNameOrId("book")),
                 lapis
                 );
+        
+        {
+            List<ItemStack> ingredients = Lists.<ItemStack>newArrayList(
+                lapis,
+                new ItemStack(Item.getByNameOrId("water_bucket")),
+                flint,
+                new ItemStack(Item.getByNameOrId("ender_pearl"))
+                );
+            List<ItemStack> toReuse = Lists.<ItemStack>newArrayList(flint);
+            CraftingManager.getInstance().addRecipe(new ReusableShapelessRecipe(
+                    new ItemStack(DROWNED_ENDER_PEARL),
+                    ingredients,
+                    toReuse
+                ));
+        }
         
         IForgeRegistry<PotionType> potionTypeRegistry = GameRegistry.findRegistry(PotionType.class);
 
@@ -186,6 +211,16 @@ public class Items {
                 POTION_TYPE_AIR_BREATHING,
                 new ItemStack(REDSTONE),
                 POTION_TYPE_AIR_BREATHING_EXTENDED
+                );
+        addPotionRecipe(
+                potionTypeRegistry.getValue(new ResourceLocation("awkward")),
+                new ItemStack(DROWNED_ENDER_PEARL),
+                POTION_TYPE_WATER_RESISTANCE
+                );
+        addPotionRecipe(
+                POTION_TYPE_WATER_RESISTANCE,
+                new ItemStack(REDSTONE),
+                POTION_TYPE_WATER_RESISTANCE_EXTENDED
                 );
     }
 }

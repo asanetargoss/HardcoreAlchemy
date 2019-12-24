@@ -18,9 +18,13 @@
 
 package targoss.hardcorealchemy.listener;
 
+import java.util.Map;
 import java.util.Random;
 
+import mchorse.metamorph.api.MorphManager;
+import mchorse.metamorph.api.abilities.IAbility;
 import mchorse.metamorph.api.events.MorphEvent;
+import mchorse.vanilla_pack.abilities.WaterAllergy;
 import net.minecraft.block.material.Material;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -33,6 +37,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -42,6 +47,7 @@ import targoss.hardcorealchemy.capability.morphstate.ICapabilityMorphState;
 import targoss.hardcorealchemy.capability.morphstate.ProviderMorphState;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.entity.EntityFishSwarm;
+import targoss.hardcorealchemy.metamorph.ability.PotionAwareWaterAllergy;
 import targoss.hardcorealchemy.util.Chat;
 import targoss.hardcorealchemy.util.EntityUtil;
 import targoss.hardcorealchemy.util.MiscVanilla;
@@ -51,6 +57,17 @@ import targoss.hardcorealchemy.util.RandomUtil;
 public class ListenerPlayerMorphState extends ConfiguredListener {
     public ListenerPlayerMorphState(Configs configs) {
         super(configs);
+    }
+    
+    @Override
+    public void postInit(FMLPostInitializationEvent event) {
+        Map<String, IAbility> abilities = MorphManager.INSTANCE.abilities;
+        // Make Metamorph's Water Allergy effect countered by Potion of Water Resistance
+        String WATER_ALLERGY = "water_allergy";
+        if (abilities.containsKey(WATER_ALLERGY)) {
+            WaterAllergy waterAllergy = (WaterAllergy)abilities.get(WATER_ALLERGY);
+            abilities.put(WATER_ALLERGY, new PotionAwareWaterAllergy(waterAllergy));
+        }
     }
 
     @CapabilityInject(ICapabilityMorphState.class)

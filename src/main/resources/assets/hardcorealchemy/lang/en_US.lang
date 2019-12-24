@@ -1,5 +1,5 @@
 #
-# Copyright 2017-2018 asanetargoss
+# Copyright 2017 asanetargoss
 # 
 # This file is part of Hardcore Alchemy.
 # 
@@ -98,14 +98,23 @@ entity.hardcorealchemy.fish_swarm.name=Fish Swarm
 # Items, Potions
 
 item.hardcorealchemy:essence_mage.name=Mage Essence
+item.hardcorealchemy:drowned_ender_pearl.name=Drowned Ender Pearl
 
 potion.hardcorealchemy:allow_magic=Unhindered Magic
 potion.effect.hardcorealchemy:allow_magic=Potion of Unhindered Magic
 splash_potion.effect.hardcorealchemy:allow_magic=Splash Potion of Unhindered Magic
 lingering_potion.effect.hardcorealchemy:allow_magic=Lingering Potion of Unhindered Magic
 tipped_arrow.effect.hardcorealchemy:allow_magic=Arrow of Unhindered Magic
+
 potion.hardcorealchemy:air_breathing=Air Breathing
 potion.effect.hardcorealchemy:air_breathing=Potion of Air Breathing
 splash_potion.effect.hardcorealchemy:air_breathing=Splash Potion of Air Breathing
 lingering_potion.effect.hardcorealchemy:air_breathing=Lingering Potion of Air Breathing
 tipped_arrow.effect.hardcorealchemy:air_breathing=Arrow of Air Breathing
+
+potion.hardcorealchemy:water_resistance=Water Resistance
+potion.effect.hardcorealchemy:water_resistance=Potion of Water Resistance
+splash_potion.effect.hardcorealchemy:water_resistance=Splash Potion of Water Resistance
+lingering_potion.effect.hardcorealchemy:water_resistance=Lingering Potion of Water Resistance
+tipped_arrow.effect.hardcorealchemy:water_resistance=Arrow of Water Resistance
+
