@@ -63,6 +63,45 @@ public class InventoryUtil {
     public static boolean isEmptyItemStack(ItemStack itemStack) {
         return itemStack == null;
     }
+    
+    /**
+     * Are items same in terms of item, meta, tagCompound (but not stack size)
+     */
+    public static boolean areItemsSameType(ItemStack a, ItemStack b) {
+        if (a == b) {
+            return true;
+        }
+        
+        // Compare emptiness
+        boolean aIsEmpty = isEmptyItemStack(a);
+        boolean bIsEmpty = isEmptyItemStack(b);
+        if (aIsEmpty != bIsEmpty) {
+            return false;
+        }
+        if (aIsEmpty) {
+            return true;
+        }
+        
+        // Compare meta
+        if (a.getItem() != b.getItem()) {
+            return false;
+        }
+        if (a.getItemDamage() != b.getItemDamage()) {
+            return false;
+        }
+        
+        // Compare compound tags
+        boolean aIsCompound = a.hasTagCompound();
+        boolean bIsCompound = b.hasTagCompound();
+        if (aIsCompound != bIsCompound) {
+            return false;
+        }
+        if (aIsCompound && !a.getTagCompound().equals(b.getTagCompound())) {
+            return false;
+        }
+        
+        return true;
+    }
 
     /**
      * Check if the slot is a crafting table output slot.
