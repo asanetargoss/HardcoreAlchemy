@@ -16,13 +16,13 @@ About the Hardcore Alchemy mod:
 
 ## Dependencies
 
-**NOTE: There is currently an issue with Spice of Life/AppleCore causing crashes in the development build. For now, please disable those mods and comment out code that references it. I am working on creating a custom build that should resolve the issue.**
+**NOTE: The new libs file contains a version of [AppleCore](https://github.com/asanetargoss/AppleCore) which fixes crashes in a dev environment.**
 
-This branch targets the 0.3.11+ version of the modpack. Download the 0.3.11 zip file from the link below and add its contents to libs/ (create the folder if it does not exist):
+This branch targets the 0.3.12+ version of the modpack. Download the 0.3.12 zip file from the link below and add its contents to libs/ (create the folder if it does not exist):
 
 http://www.mediafire.com/folder/grwn2vsjr2lce/Hardcore_Alchemy_Libs
 
-The SHA-256 checksum of the 0.3.11 zip is: 5b9f140d324185861d08ba94947d77dfaa86cda6eca82d7310475a1b29b1a870
+The SHA-256 checksum of the 0.3.12 zip is: a7dcf987ecf4eed69e05be29efe6fed9ccb98e9f18593500ee1bdb228d7c7696
 
 Please note: the following mods included in the HcA_libs zip file above are custom forks:
 * Nutrition: https://github.com/asanetargoss/Nutrition
@@ -30,9 +30,9 @@ Please note: the following mods included in the HcA_libs zip file above are cust
 * Dissolution ([permission](https://i.imgur.com/b7sN6lL.png))
 * Iberia: https://github.com/asanetargoss/iberia
 * Guide-API (Custom build for development use only. Do not distribute.)
-* AppleCore (Technically not a fork, but is a rebuild from source.)
+* AppleCore: https://github.com/asanetargoss/AppleCore
 
-In addition, you may also want to take take an appropriate config zip from the same folder and place its contents in run/config/. This will make some aspects of development easier, such as not losing your spawnpoint when testing deaths.
+In addition, you may also want to take the latest available config zip from the same folder and place its contents in run/config/. This will make some aspects of development easier, such as not losing your spawnpoint when testing deaths.
 
 ## Setup
 * Run "./gradlew setupDecompWorkspace" to set up Minecraft Forge and access transformers.
