@@ -82,6 +82,8 @@ else {
     ...
 }
 ```
+
+*
     * Spaces go between binary operators: `(x + 1)`
     * Prefer static utility functions which are either stateless, or only do what they are told
     * Prefer namespaced objects over lambdas and anonymous classes
