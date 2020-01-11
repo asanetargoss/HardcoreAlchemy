@@ -16,11 +16,11 @@ The Hardcore Alchemy capstone mod is released under the LGPL 3, so you are allow
 
 What the Hardcore Alchemy mod is designed for:
 
-* **Random respawn on death** - Hardcore Alchemy has many features that only work well when death is not just a minor setback. I recommend using either [my Iberia fork](https://github.com/asanetargoss/iberia/releases) or [Better with Mods](https://minecraft.curseforge.com/projects/better-with-mods). Hardcore mode should in principle also work.
-* **Balanced shapeshifting** - [Changeling](https://github.com/asanetargoss/metamorph/releases)'s morphing code is a deeply integral part of Hardcore Alchemy. As such, is a required dependency. Morphing can be disabled if needed.
+* **Random respawn on death** - The Hardcore Alchemy mod has many features that only work well when death is not just a minor setback. I recommend using either [my Iberia fork](https://github.com/asanetargoss/iberia/releases) or [Better with Mods](https://minecraft.curseforge.com/projects/better-with-mods). Hardcore mode should in principle also work.
+* **Balanced shapeshifting** - [Changeling](https://github.com/asanetargoss/Changeling/releases)'s morphing code is a deeply integral part of the mod. As such, it is a required dependency. Morphing can be disabled if needed.
 * **QoL/tweaks not included** - With the exception of non-vanilla maps (which trivialize random respawn deaths), all QoL mods/recipe changes should be included liberally, and are the responsibility of the pack developer.
-    * Please note HcA only supports [Wawla](https://minecraft.curseforge.com/projects/wawla-what-are-we-looking-at) for in-game overlays.
-* **Custom Nutrition integration** - If you use the Nutrition mod, please use [my custom Nutrition Build](https://github.com/asanetargoss/Nutrition). The official version of Nutrition will not work.
+    * Please note HcA only supports [Hwyla](https://www.curseforge.com/minecraft/mc-mods/hwyla) for in-game overlays.
+* **Custom Nutrition integration** - If you use the Nutrition mod, please use [my custom Nutrition Build](https://github.com/asanetargoss/Nutrition/releases). The official version of Nutrition will not work.
 * **Opinionated** - I don't add config options to the capstone mod unless a feature has the potential to conflict severely with vanilla hardcore mode. Currently the only config option is to disable the instinct system. This allows me to focus more closely on providing a unified experience. 
 
 Overall, the main draw of the HcA capstone mod currently is the hardcore-compatible balanced morphing features. Aside from that, the mod implements lots of small fixes and features across the board, mainly focused on adding a bit of challenge. See the [capstone mod releases page](https://github.com/asanetargoss/HardcoreAlchemy/releases) to browse the recent changelogs, and the [modpack wiki](https://github.com/asanetargoss/HardcoreAlchemy/wiki) to get a better feel for the mod's direction. Feel free to reach out if you have any questions.
