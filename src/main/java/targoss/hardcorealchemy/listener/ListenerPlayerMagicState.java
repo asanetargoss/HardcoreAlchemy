@@ -127,8 +127,10 @@ public class ListenerPlayerMagicState extends ConfiguredListener {
             }
         }
         
-        // Store away player's thaumcraft knowledge and warp
-        forgetThaumicKnowledgeAndWarp(player);
+        if (ModState.isThaumcraftLoaded) {
+            // Store away player's Thaumcraft knowledge and warp
+            forgetThaumicKnowledgeAndWarp(player);
+        }
     }
     
     /**
