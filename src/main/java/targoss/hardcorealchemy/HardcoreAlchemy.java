@@ -75,7 +75,8 @@ public class HardcoreAlchemy
             "after:" + ModState.ARS_MAGICA_ID + ";" +
             "after:" + ModState.HARVESTCRAFT_ID + ";" +
             "after:" + ModState.THAUMCRAFT_ID + ";" +
-            "after:" + ModState.JEI_ID + ";";
+            "after:" + ModState.JEI_ID + ";" +
+            "after:" + ModState.ASTRAL_SORCERY_ID + ";";
     public static final String MC_VERSIONS = "[1.10.2]";
     public static final String CLIENT_PROXY = "targoss.hardcorealchemy.ClientProxy";
     public static final String COMMON_PROXY = "targoss.hardcorealchemy.CommonProxy";
@@ -113,6 +114,7 @@ public class HardcoreAlchemy
         ModState.isAlchemicAshLoaded = modMap.containsKey(ModState.ALCHEMIC_ASH_ID);
         ModState.isJEILoaded = modMap.containsKey(ModState.JEI_ID);
         ModState.isSpiceOfLifeLoaded = modMap.containsKey(ModState.SPICE_OF_LIFE_ID);
+        ModState.isAstralSorceryLoaded = modMap.containsKey(ModState.ASTRAL_SORCERY_ID);
         
         proxy.preInit(event);
         
