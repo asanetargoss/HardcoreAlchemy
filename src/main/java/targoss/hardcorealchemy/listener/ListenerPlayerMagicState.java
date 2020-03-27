@@ -18,6 +18,9 @@
 
 package targoss.hardcorealchemy.listener;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +34,10 @@ import com.google.common.collect.Sets;
 
 import am2.api.affinity.Affinity;
 import am2.api.extensions.IAffinityData;
+import hellfirepvp.astralsorcery.common.constellation.ConstellationRegistry;
+import hellfirepvp.astralsorcery.common.constellation.IConstellation;
+import hellfirepvp.astralsorcery.common.data.research.PlayerProgress;
+import hellfirepvp.astralsorcery.common.data.research.ResearchManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -46,6 +53,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
+import net.minecraftforge.fml.relauncher.Side;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.CapUtil;
@@ -114,6 +122,13 @@ public class ListenerPlayerMagicState extends ConfiguredListener {
         IInactiveCapabilities inactives = player.getCapability(INACTIVE_CAPABILITIES, null);
         if (inactives == null) {
             return;
+        }
+        
+        if (ModState.isAstralSorceryLoaded) {
+            // Undo any hackery from deactivating stellar alignment
+            activateStellarAlignment(player);
+            // Then properly clear the stellar alignment only
+            clearStellarAlignment(player);
         }
         
         // Remove stored caps not persistent on death
@@ -235,6 +250,9 @@ public class ListenerPlayerMagicState extends ConfiguredListener {
             if (ModState.isThaumcraftLoaded) {
                 activateThaumicKnowledgeAndWarp(player);
             }
+            if (ModState.isAstralSorceryLoaded) {
+            	activateStellarAlignment(player);
+            }
         }
         else {
             if (ModState.isArsMagicaLoaded) {
@@ -243,6 +261,9 @@ public class ListenerPlayerMagicState extends ConfiguredListener {
             if (ModState.isThaumcraftLoaded) {
                 deactivateThaumicKnowledgeAndWarp(player);
             }
+            if (ModState.isAstralSorceryLoaded) {
+            	deactivateStellarAlignment(player);
+            }
         }
     }
     
@@ -250,6 +271,7 @@ public class ListenerPlayerMagicState extends ConfiguredListener {
     public static final String INACTIVE_WARP = HardcoreAlchemy.MOD_ID + ":inactive_warp";
     public static final String PAST_LIFE_THAUMIC_KNOWLEDGE = HardcoreAlchemy.MOD_ID + ":past_life_thaumic_knowledge";
     public static final String PAST_LIFE_WARP = HardcoreAlchemy.MOD_ID + ":past_life_warp";
+    public static final String INACTIVE_STELLAR_ALIGNMENT = HardcoreAlchemy.MOD_ID + ":stellar_alignment";
     
     /**
      * Re-applies Thaumcraft research progress and warp that has been stored
@@ -647,5 +669,92 @@ public class ListenerPlayerMagicState extends ConfiguredListener {
         for (Affinity affinity : affinities.getAffinities().keySet()) {
             affinities.setAffinityDepth(affinity, 0.0D);
         }
+    }
+    
+    @Optional.Method(modid=ModState.ASTRAL_SORCERY_ID)
+    public static void activateStellarAlignment(EntityPlayer player) {
+        PlayerProgress playerProgress = ResearchManager.getProgress(player, player.world.isRemote ? Side.CLIENT : Side.SERVER);
+        if (playerProgress == null) {
+            return;
+        }
+        
+        IInactiveCapabilities inactives = player.getCapability(INACTIVE_CAPABILITIES, null);
+        if (inactives == null) {
+            return;
+        }
+        
+        ConcurrentMap<String, IInactiveCapabilities.Cap> caps = inactives.getCapabilityMap();
+        IInactiveCapabilities.Cap cap = caps.get(INACTIVE_STELLAR_ALIGNMENT);
+        if (cap != null) {
+            caps.remove(INACTIVE_STELLAR_ALIGNMENT);
+            // This completely overrides the player's previous progress. In principle, should be okay...
+            playerProgress.load(cap.data);
+            ResearchManager.savePlayerKnowledge(player);
+        }
+    }
+    
+    @Optional.Method(modid=ModState.ASTRAL_SORCERY_ID)
+    public static void deactivateStellarAlignment(EntityPlayer player) {
+        PlayerProgress playerProgress = ResearchManager.getProgress(player, player.world.isRemote ? Side.CLIENT : Side.SERVER);
+        if (playerProgress == null) {
+            return;
+        }
+        
+        IInactiveCapabilities inactives = player.getCapability(INACTIVE_CAPABILITIES, null);
+        if (inactives == null) {
+            return;
+        }
+        
+        ConcurrentMap<String, IInactiveCapabilities.Cap> caps = inactives.getCapabilityMap();
+        IInactiveCapabilities.Cap cap = caps.get(INACTIVE_STELLAR_ALIGNMENT);
+        if (cap == null) {
+            cap = new IInactiveCapabilities.Cap();
+            cap.data = new NBTTagCompound();
+            playerProgress.store(cap.data);
+            caps.put(INACTIVE_STELLAR_ALIGNMENT, cap);
+            
+            try {
+                clearStellarAlignmentProgress(playerProgress);
+                // Prevent the player from discovering constellations
+                List<String> knownConstellations = playerProgress.getKnownConstellations();
+                knownConstellations.clear();
+                for (IConstellation constellation : ConstellationRegistry.getAllConstellations()) {
+                    knownConstellations.add(constellation.getUnlocalizedName());
+                }
+                ResearchManager.savePlayerKnowledge(player);
+            }
+            catch (Exception e) {
+                HardcoreAlchemy.LOGGER.error("Stellar alignment could not be deactivated for player ID " + player.getUniqueID(), e);
+                playerProgress.load(cap.data);
+            }
+        }
+    }
+
+    @Optional.Method(modid=ModState.ASTRAL_SORCERY_ID)
+    public static void clearStellarAlignment(EntityPlayer player) {
+        PlayerProgress playerProgress = ResearchManager.getProgress(player, player.world.isRemote ? Side.CLIENT : Side.SERVER);
+        if (playerProgress == null) {
+            return;
+        }
+        try {
+            clearStellarAlignmentProgress(playerProgress);
+        }
+        catch (Exception e) {
+            HardcoreAlchemy.LOGGER.error("Stellar alignment could not be cleared for player ID " + player.getUniqueID(), e);
+        }
+    }
+
+    @Optional.Method(modid=ModState.ASTRAL_SORCERY_ID)
+    public static void clearStellarAlignmentProgress(PlayerProgress playerProgress) throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchFieldException {
+        playerProgress.clearPerks();
+        Method forceChargeMethod = PlayerProgress.class.getDeclaredMethod("forceCharge", null, int.class);
+        forceChargeMethod.setAccessible(true);
+        forceChargeMethod.invoke(playerProgress, 0);
+        Field attunedConstellationField = PlayerProgress.class.getDeclaredField("attunedConstellation");
+        attunedConstellationField.setAccessible(true);
+        attunedConstellationField.set(playerProgress, null);
+        Field wasOnceAttunedField = PlayerProgress.class.getDeclaredField("wasOnceAttuned");
+        wasOnceAttunedField.setAccessible(true);
+        wasOnceAttunedField.set(playerProgress, false);
     }
 }
