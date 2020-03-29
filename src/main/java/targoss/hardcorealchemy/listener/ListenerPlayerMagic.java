@@ -21,11 +21,15 @@ package targoss.hardcorealchemy.listener;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import com.google.common.collect.Sets;
 
+import WayofTime.bloodmagic.api.event.RitualEvent.RitualRunEvent;
+import WayofTime.bloodmagic.api.ritual.Ritual.BreakType;
 import WayofTime.bloodmagic.api.saving.SoulNetwork;
 import WayofTime.bloodmagic.api.util.helper.NetworkHelper;
+import WayofTime.bloodmagic.tile.TileMasterRitualStone;
 import am2.api.affinity.Affinity;
 import am2.api.extensions.IAffinityData;
 import am2.api.extensions.IEntityExtension;
@@ -42,10 +46,12 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
@@ -55,6 +61,10 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.IForgeRegistryEntry;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
+import targoss.hardcorealchemy.capability.misc.ICapabilityMisc;
+import targoss.hardcorealchemy.capability.tilehistory.CapabilityTileHistory;
+import targoss.hardcorealchemy.capability.tilehistory.ICapabilityTileHistory;
+import targoss.hardcorealchemy.capability.tilehistory.ProviderTileHistory;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.coremod.CoremodHook;
 import targoss.hardcorealchemy.event.EventTakeStack;
@@ -86,6 +96,12 @@ public class ListenerPlayerMagic extends ConfiguredListener {
     
     @CapabilityInject(ICapabilityHumanity.class)
     public static final Capability<ICapabilityHumanity> HUMANITY_CAPABILITY = null;
+    
+    @CapabilityInject(ICapabilityTileHistory.class)
+    public static final Capability<ICapabilityTileHistory> TILE_HISTORY_CAPABILITY = null;
+    
+    @CapabilityInject(ICapabilityMisc.class)
+    public static final Capability<ICapabilityMisc> MISC_CAPABILITY = null;
     
     static {
         /* Note: There is no need to add ItemBlocks, ItemFoods,
@@ -143,6 +159,16 @@ public class ListenerPlayerMagic extends ConfiguredListener {
      */
     
     private static final String MAGIC_NOT_ALLOWED = "magic_not_allowed";
+    
+    @SubscribeEvent
+    @Optional.Method(modid=ModState.BLOOD_MAGIC_ID)
+    @SuppressWarnings("deprecation")
+    public void onAttachTileCapability(AttachCapabilitiesEvent.TileEntity event) {
+        TileEntity tileEntity = event.getObject();
+        if (tileEntity instanceof TileMasterRitualStone) {
+            event.addCapability(CapabilityTileHistory.RESOURCE_LOCATION, new ProviderTileHistory());
+        }
+    }
     
     @SubscribeEvent
     public void onRightClickItem(PlayerInteractEvent.RightClickItem event) {
@@ -289,6 +315,36 @@ public class ListenerPlayerMagic extends ConfiguredListener {
         SoulNetwork network = NetworkHelper.getSoulNetwork(player);
         network.setOrbTier(0);
         network.setCurrentEssence(0);
+    }
+
+    @SubscribeEvent
+    @Optional.Method(modid=ModState.BLOOD_MAGIC_ID)
+    public void onRunPastLifeBloodRitual(RitualRunEvent event) {
+        SoulNetwork soulNetwork = NetworkHelper.getSoulNetwork(event.ownerName);
+        if (soulNetwork == null) {
+            return;
+        }
+        EntityPlayer player = soulNetwork.getPlayer();
+        if (player == null) {
+            return;
+        }
+        ICapabilityMisc misc = player.getCapability(MISC_CAPABILITY, null);
+        if (misc == null) {
+            return;
+        }
+        UUID lifetimeUUID = misc.getLifetimeUUID();
+        if (!(event.mrs instanceof TileMasterRitualStone)) {
+            return;
+        }
+        ICapabilityTileHistory tileHistory = ((TileMasterRitualStone)event.mrs).getCapability(TILE_HISTORY_CAPABILITY, null);
+        if (tileHistory == null) {
+            return;
+        }
+        if (tileHistory.getOwnerLifetimeUUID() != lifetimeUUID) {
+            // This Master Ritual Stone was activated in a past life, so it should no longer work
+            event.setCanceled(true);
+            event.mrs.stopRitual(BreakType.DEACTIVATE);
+        }
     }
     
     /*
