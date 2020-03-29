@@ -244,7 +244,7 @@ public class ListenerPlayerMagic extends ConfiguredListener {
         eraseAllMortalMagic(event.player);
     }
     
-    public static boolean requiresFullMoon(IForgeRegistryEntry.Impl useTarget) {
+    public static boolean requiresFullMoon(IForgeRegistryEntry.Impl<?> useTarget) {
         if (useTarget == null) {
             return false;
         }
@@ -252,7 +252,7 @@ public class ListenerPlayerMagic extends ConfiguredListener {
         return resource != null && MAGIC_OBJECT_REQUIRES_FULL_MOON.contains(resource.toString());
     }
     
-    public static boolean isHinderedByMoonPhase(EntityPlayer player, IForgeRegistryEntry.Impl useTarget) {
+    public static boolean isHinderedByMoonPhase(EntityPlayer player, IForgeRegistryEntry.Impl<?> useTarget) {
         if (useTarget != null &&
                 player.world.provider.getMoonPhase(player.world.getWorldTime()) != MiscVanilla.MoonPhase.FULL_MOON.ordinal()
                 && requiresFullMoon(useTarget)) {
@@ -301,7 +301,6 @@ public class ListenerPlayerMagic extends ConfiguredListener {
         if (ModState.isProjectELoaded) {
             eraseEMC(player);
         }
-        //TODO: Clear Astral Sorcery passive buffs?
     }
     
     /*
