@@ -34,6 +34,7 @@ import com.google.common.collect.Sets;
 
 import am2.api.affinity.Affinity;
 import am2.api.extensions.IAffinityData;
+import am2.extensions.EntityExtension;
 import hellfirepvp.astralsorcery.common.constellation.ConstellationRegistry;
 import hellfirepvp.astralsorcery.common.constellation.IConstellation;
 import hellfirepvp.astralsorcery.common.data.research.PlayerProgress;
@@ -245,7 +246,7 @@ public class ListenerPlayerMagicState extends ConfiguredListener {
         
         if (MorphState.canUseHighMagic(player)) {
             if (ModState.isArsMagicaLoaded) {
-                activateAffinities(player);
+                activateSpellcasting(player);
             }
             if (ModState.isThaumcraftLoaded) {
                 activateThaumicKnowledgeAndWarp(player);
@@ -256,7 +257,7 @@ public class ListenerPlayerMagicState extends ConfiguredListener {
         }
         else {
             if (ModState.isArsMagicaLoaded) {
-                deactivateAffinities(player);
+                deactivateSpellcasting(player);
             }
             if (ModState.isThaumcraftLoaded) {
                 deactivateThaumicKnowledgeAndWarp(player);
@@ -271,6 +272,7 @@ public class ListenerPlayerMagicState extends ConfiguredListener {
     public static final String INACTIVE_WARP = HardcoreAlchemy.MOD_ID + ":inactive_warp";
     public static final String PAST_LIFE_THAUMIC_KNOWLEDGE = HardcoreAlchemy.MOD_ID + ":past_life_thaumic_knowledge";
     public static final String PAST_LIFE_WARP = HardcoreAlchemy.MOD_ID + ":past_life_warp";
+    public static final String INACTIVE_MANA_POOL = HardcoreAlchemy.MOD_ID + ":mana_pool";
     public static final String INACTIVE_STELLAR_ALIGNMENT = HardcoreAlchemy.MOD_ID + ":stellar_alignment";
     
     /**
@@ -610,11 +612,11 @@ public class ListenerPlayerMagicState extends ConfiguredListener {
     public static final String INACTIVE_AFFINITIES = HardcoreAlchemy.MOD_ID + ":inactive_affinities";
     
     /**
-     * Re-applies Ars Magica affinity state that has been stored
-     * due to the player's past inability to use high magic
+     * Re-applies Ars Magica affinity state and level that has been stored
+     * due to the player's past inability to use high magic.
      */
     @Optional.Method(modid=ModState.ARS_MAGICA_ID)
-    public static void activateAffinities(EntityPlayer player) {
+    public static void activateSpellcasting(EntityPlayer player) {
         IAffinityData affinities = player.getCapability(AFFINITY_CAPABILITY, null);
         if (affinities == null) {
             return;
@@ -635,39 +637,58 @@ public class ListenerPlayerMagicState extends ConfiguredListener {
             
             caps.remove(INACTIVE_AFFINITIES);
         }
+        
+        IInactiveCapabilities.Cap manaPoolCap = caps.get(INACTIVE_MANA_POOL);
+        if (manaPoolCap != null) {
+            EntityExtension.For(player).deserializeNBT(manaPoolCap.data);
+            caps.remove(INACTIVE_MANA_POOL);
+        }
     }
     
     /**
-     * Stores away Ars Magica affinity state
-     * due to the player's new inability to use high magic
+     * Stores away Ars Magica affinity state and level
+     * due to the player's new inability to use high magic.
      */
     @Optional.Method(modid=ModState.ARS_MAGICA_ID)
-    public static void deactivateAffinities(EntityPlayer player) {
-        IAffinityData affinities = player.getCapability(AFFINITY_CAPABILITY, null);
-        if (affinities == null) {
-            return;
-        }
-        
+    public static void deactivateSpellcasting(EntityPlayer player) {
         IInactiveCapabilities inactives = player.getCapability(INACTIVE_CAPABILITIES, null);
         if (inactives == null) {
             return;
         }
         
         ConcurrentMap<String, IInactiveCapabilities.Cap> caps = inactives.getCapabilityMap();
+
         IInactiveCapabilities.Cap affinityCap = caps.get(INACTIVE_AFFINITIES);
         if (affinityCap == null) {
-            /* The affinity capability is not deactivated yet.
-             * Store the existing Ars Magica affinity capability here.
-             */
-            affinityCap = new IInactiveCapabilities.Cap();
-            affinityCap.data = (NBTTagCompound)(AFFINITY_CAPABILITY.getStorage().writeNBT(AFFINITY_CAPABILITY, affinities, null));
-            affinityCap.persistsOnDeath = false;
-            caps.put(INACTIVE_AFFINITIES, affinityCap);
+            IAffinityData affinities = player.getCapability(AFFINITY_CAPABILITY, null);
+            if (affinities != null) {
+                /* The affinity capability is not deactivated yet.
+                 * Store the existing Ars Magica affinity capability here.
+                 */
+                affinityCap = new IInactiveCapabilities.Cap();
+                affinityCap.data = (NBTTagCompound)(AFFINITY_CAPABILITY.getStorage().writeNBT(AFFINITY_CAPABILITY, affinities, null));
+                affinityCap.persistsOnDeath = false;
+                caps.put(INACTIVE_AFFINITIES, affinityCap);
+                
+                // Set all affinity depths to zero to prevent magical effects
+                for (Affinity affinity : affinities.getAffinities().keySet()) {
+                    affinities.setAffinityDepth(affinity, 0.0D);
+                }
+            }
         }
-        
-        // Set all affinity depths to zero to prevent magical effects
-        for (Affinity affinity : affinities.getAffinities().keySet()) {
-            affinities.setAffinityDepth(affinity, 0.0D);
+
+        IInactiveCapabilities.Cap manaPoolCap = caps.get(INACTIVE_MANA_POOL);
+        if (manaPoolCap == null) {
+            EntityExtension extension = EntityExtension.For(player);
+            if (extension != null) {
+                manaPoolCap = new IInactiveCapabilities.Cap();
+                manaPoolCap.data = (NBTTagCompound)extension.serializeNBT();
+                manaPoolCap.persistsOnDeath = false;
+                caps.put(INACTIVE_MANA_POOL, manaPoolCap);
+                
+                extension.setMagicLevelWithMana(1);
+                extension.setCurrentXP(0.0F);
+            }
         }
     }
     
