@@ -275,6 +275,7 @@ public class InventoryUtil {
     
     @Optional.Method(modid = ModState.TAN_ID)
     public static boolean isTANDrink(Item item) {
-        return item instanceof IDrink;
+        return item instanceof IDrink ||
+                item.getRegistryName().getResourcePath().equals("canteen");
     }
 }
