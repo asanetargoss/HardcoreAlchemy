@@ -21,7 +21,6 @@ package targoss.hardcorealchemy.util;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -34,13 +33,13 @@ import net.minecraft.entity.monster.EntityEndermite;
 import net.minecraft.entity.monster.EntityGuardian;
 import net.minecraft.entity.monster.EntityPolarBear;
 import net.minecraft.entity.monster.EntityShulker;
+import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.monster.EntitySlime;
 import net.minecraft.entity.passive.EntityChicken;
 import net.minecraft.entity.passive.EntityPig;
 import net.minecraft.entity.passive.EntitySquid;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 
@@ -54,7 +53,10 @@ public class MorphDiet {
     public static final Needs IDEALIST_VEGAN_NEEDS = new Needs(Needs.DEFAULT_NUTRIENTS, Restriction.VEGAN);
     public static final Needs GRAZER_NEEDS = new Needs(new String[]{"grain"}, Restriction.VEGAN);
     public static final Needs NIGHT_MOB_NEEDS = new Needs(Needs.CARNIVORE_NUTRIENTS, Restriction.CARNIVORE);
-    public static final Needs NETHER_MOB_NEEDS = new Needs(Needs.CARNIVORE_NUTRIENTS, Restriction.CARNIVORE, false);
+    public static final Needs NETHER_MOB_NEEDS = new Needs(Needs.CARNIVORE_NUTRIENTS, Restriction.UNFEEDING, false);
+    public static final Needs AURA_MOB_NEEDS = new Needs(Needs.NO_NUTRIENTS, Restriction.UNFEEDING, false);
+    public static final Needs TAINT_MOB_NEEDS = new Needs(Needs.NO_NUTRIENTS, Restriction.UNFEEDING, false);
+    public static final Needs ELDRITCH_MOB_NEEDS = new Needs(Needs.NO_NUTRIENTS, Restriction.UNFEEDING, false);
     
     static {
         /* With some exceptions, hostile mobs and tameables are carnivores,
@@ -75,12 +77,22 @@ public class MorphDiet {
         for (String passiveMob : MobLists.getPassiveMobs()) {
             morphDiets.put(passiveMob, GRAZER_NEEDS);
         }
+        for (String auraMob : MobLists.getAuraMobs()) {
+            morphDiets.put(auraMob, AURA_MOB_NEEDS);
+        }
+        for (String taintMob : MobLists.getTaintMobs()) {
+            morphDiets.put(taintMob, AURA_MOB_NEEDS);
+        }
+        for (String eldritchMob : MobLists.getEldritchMobs()) {
+            morphDiets.put(eldritchMob, ELDRITCH_MOB_NEEDS);
+        }
         
         morphDiets.put(entityName(EntityCreeper.class), IDEALIST_VEGAN_NEEDS);
         morphDiets.put(entityName(EntitySlime.class), PLAYER_NEEDS);
         morphDiets.put(entityName(EntityChicken.class), IDEALIST_VEGAN_NEEDS);
         morphDiets.put(entityName(EntityPig.class), IDEALIST_VEGAN_NEEDS);
         morphDiets.put("toroquest.toro", GRAZER_NEEDS);
+        morphDiets.put(entityName(EntitySkeleton.class), new Needs(Needs.NO_NUTRIENTS, Restriction.UNFEEDING, false));
         morphDiets.put(entityName(EntityEnderman.class), new Needs(Needs.DEFAULT_NUTRIENTS, Restriction.OMNIVORE, false));
         morphDiets.put(entityName(EntityEndermite.class), new Needs(Needs.NO_NUTRIENTS, Restriction.OMNIVORE, false));
         morphDiets.put(entityName(EntitySquid.class), new Needs(Needs.CARNIVORE_NUTRIENTS, Restriction.OMNIVORE, false));
@@ -212,6 +224,7 @@ public class MorphDiet {
         protected final Set<String> nutrientSet;
         public final Restriction restriction;
         public final boolean hasThirst;
+        public final boolean hasHunger;
         
         public Needs() {
             this(DEFAULT_NUTRIENTS, Restriction.OMNIVORE, true);
@@ -224,6 +237,7 @@ public class MorphDiet {
         public Needs(String[] nutrients, Restriction restriction, boolean thirst) {
             this.nutrients = (restriction != Restriction.UNFEEDING) ? nutrients : NO_NUTRIENTS;
             this.hasThirst = thirst;
+            this.hasHunger = restriction != Restriction.UNFEEDING;
             this.restriction = restriction;
             
             Set<String> nutrientSet = new HashSet<String>();

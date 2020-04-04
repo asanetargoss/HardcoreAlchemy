@@ -250,11 +250,25 @@ public class ListenerPlayerDiet extends ConfiguredListener {
         }
     }
     
+    protected static boolean needsToEat(EntityPlayer player) {
+        if (ModState.isDissolutionLoaded && !MorphState.isIncorporeal(player)) {
+            return true;
+        }
+        ICapabilityHumanity humanity = player.getCapability(HUMANITY_CAPABILITY, null);
+        if (humanity == null || humanity.isHuman()) {
+            return true;
+        }
+        IMorphing morphing = Morphing.get(player);
+        if (morphing == null) {
+            return true;
+        }
+        return MorphDiet.getNeeds(morphing.getCurrentMorph()).hasHunger;
+    }
+    
     /**
-     * If a player is a ghost, keep hunger filled to spawn level
+     * If a player is a ghost or unfeeding, keep hunger filled to spawn level
      */
     @SubscribeEvent
-    @Optional.Method(modid = ModState.TAN_ID)
     public void onPlayerLoseHunger(PlayerTickEvent event) {
         if (event.phase != Phase.START || event.player.world.isRemote) {
             return;
@@ -262,12 +276,10 @@ public class ListenerPlayerDiet extends ConfiguredListener {
         
         EntityPlayer player = event.player;
         
-        if (!ModState.isDissolutionLoaded || !MorphState.isIncorporeal(player)) {
-            return;
+        if (!needsToEat(player)) {
+            FoodStats food = player.getFoodStats();
+            food.setFoodLevel(20);
+            food.setFoodSaturationLevel(5.0F);
         }
-        
-        FoodStats food = player.getFoodStats();
-        food.setFoodLevel(20);
-        food.setFoodSaturationLevel(5.0F);
     }
 }

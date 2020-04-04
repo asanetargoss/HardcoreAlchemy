@@ -59,7 +59,7 @@ import targoss.hardcorealchemy.entity.Entities;
 public class MobLists {
     
     public static Set<String> getBosses() {
-        Set<String> bosses = new HashSet();
+        Set<String> bosses = new HashSet<>();
         
         // Vanilla
         bosses.add("EnderDragon");
@@ -89,12 +89,18 @@ public class MobLists {
         bosses.add("voidcraft.Witherbrine");
         bosses.add("voidcraft.ZolXia");
         bosses.add("voidcraft.VoidBoss");
+        // Thaumcraft
+        // (pretty sure these are not implemented yet...)
+        bosses.add("thaumcraft.EldritchWarden");
+        bosses.add("thaumcraft.EldritchGolem");
+        bosses.add("thaumcraft.CultistLeader");
+        bosses.add("thaumcraft.TaintacleGiant");
         
         return bosses;
     }
 
     public static Set<String> getNonMobs() {
-        Set<String> nonMobs = new HashSet();
+        Set<String> nonMobs = new HashSet<>();
         
         // Hardcore Alchemy
         nonMobs.add(Entities.FISH_SWARM);
@@ -110,12 +116,31 @@ public class MobLists {
         nonMobs.add("arsmagica2.WinterGuardianArm");
         // Thaumcraft
         nonMobs.add("thaumcraft.EntityTaintSwarm");
+        nonMobs.add("thaumcraft.CultistPortalGreater");
+        nonMobs.add("thaumcraft.CultistPortalLesser");
+        nonMobs.add("thaumcraft.SpecialItem");
+        nonMobs.add("thaumcraft.FollowItem");
+        nonMobs.add("thaumcraft.FallingTaint");
+        nonMobs.add("thaumcraft.Alumentum");
+        nonMobs.add("thaumcraft.GolemDart");
+        nonMobs.add("thaumcraft.EldritchOrb");
+        nonMobs.add("thaumcraft.BottleTaint");
+        nonMobs.add("thaumcraft.GolemOrb");
+        nonMobs.add("thaumcraft.Grapple");
+        nonMobs.add("thaumcraft.FocusProjectile");
+        nonMobs.add("thaumcraft.FocusCloud");
+        nonMobs.add("thaumcraft.Focusmine");
+        nonMobs.add("thaumcraft.TurretBasic");
+        nonMobs.add("thaumcraft.TurretAdvanced");
+        nonMobs.add("thaumcraft.ArcaneBore");
+        nonMobs.add("thaumcraft.Golem");
+        nonMobs.add("thaumcraft.Spellbat");
         
         return nonMobs;
     }
 
     public static Set<String> getHumans() {
-        Set<String> humans = new HashSet();
+        Set<String> humans = new HashSet<>();
         
         // Vanilla
         humans.add("Villager");
@@ -136,12 +161,15 @@ public class MobLists {
         humans.add("toroquest.village_lord");
         // Village Box
         humans.add("villagebox.villager");
+        // Thaumcraft
+        // Yes I realize this is technically not human, but close enough.
+        humans.add("thaumcraft.Pech");
         
         return humans;
     }
 
     public static Set<String> getPassiveMobs() {
-        Set<String> passiveMobs = new HashSet();
+        Set<String> passiveMobs = new HashSet<>();
         
         // Minecraft
         passiveMobs.add("Pig");
@@ -158,7 +186,7 @@ public class MobLists {
      * Mobs that like spawning on grass during the day
      */
     public static Set<String> getGrassMobs() {
-        Set<String> grassMobs = new HashSet();
+        Set<String> grassMobs = new HashSet<>();
         
         // Minecraft
         grassMobs.add("Pig");
@@ -179,7 +207,7 @@ public class MobLists {
      * Mobs that are considered natural animals and spawn in a certain location on land
      */
     public static Set<String> getLandAnimals() {
-        Set<String> landAnimals = new HashSet();
+        Set<String> landAnimals = new HashSet<>();
         
         // Minecraft
         landAnimals.add("Pig");
@@ -202,7 +230,7 @@ public class MobLists {
      * All classes of this set must be derived from EntityTameable
      */
     public static Set<String> getEntityTameables() {
-        Set<String> entityTameables = new HashSet();
+        Set<String> entityTameables = new HashSet<>();
         
         // Minecraft
         entityTameables.add("Wolf");
@@ -219,7 +247,7 @@ public class MobLists {
      * Overworld mobs which spawn in darkness
      */
     public static Set<String> getNightMobs() {
-        Set<String> nightMobs = new HashSet();
+        Set<String> nightMobs = new HashSet<>();
         
         // Minecraft
         nightMobs.add("Zombie");
@@ -240,17 +268,16 @@ public class MobLists {
         nightMobs.add("dmonsters.wideman");
         nightMobs.add("dmonsters.woman");
         nightMobs.add("dmonsters.zombieChicken");
-        // Ars Magica Elementals
-        nightMobs.add("arsmagica2.EarthElemental");
-        nightMobs.add("arsmagica2.FireElemental");
-        nightMobs.add("arsmagica2.ManaElemental");
-        nightMobs.add("arsmagica2.WaterElemental");
+        // Thaumcraft
+        nightMobs.add("thaumcraft.BrainyZombie");
+        nightMobs.add("thaumcraft.GiantBrainyZombie");
+        nightMobs.add("thaumcraft.InhabitedZombie");
         
         return nightMobs;
     }
 
     public static Set<String> getNetherMobs() {
-        Set<String> netherMobs = new HashSet();
+        Set<String> netherMobs = new HashSet<>();
         
         // Minecraft
         netherMobs.add("PigZombie");
@@ -271,7 +298,48 @@ public class MobLists {
         netherMobs.add("adinferos.Reaper");
         netherMobs.add("adinferos.SkeletonHorse");
         netherMobs.add("adinferos.Summoner");
+        // Thaumcraft
+        netherMobs.add("thaumcraft.Firebat");
         
         return netherMobs;
     }
+
+    public static Set<String> getAuraMobs() {
+        Set<String> auraMobs = new HashSet<>();
+        
+        // Thaumcraft
+        auraMobs.add("thaumcraft.Wisp");
+        // Ars Magica Elementals
+        auraMobs.add("arsmagica2.EarthElemental");
+        auraMobs.add("arsmagica2.FireElemental");
+        auraMobs.add("arsmagica2.ManaElemental");
+        auraMobs.add("arsmagica2.WaterElemental");
+        
+        return auraMobs;
+    }
+
+    public static Set<String> getTaintMobs() {
+        Set<String> taintMobs = new HashSet<>();
+
+        taintMobs.add("ThaumSlime");
+        taintMobs.add("TaintCrawler");
+        taintMobs.add("Taintacle");
+        taintMobs.add("TaintacleTiny");
+        taintMobs.add("TaintSwarm");
+        taintMobs.add("TaintSeed");
+        taintMobs.add("TaintSeedPrime");
+        
+        return taintMobs;
+    }
+
+    public static Set<String> getEldritchMobs() {
+        Set<String> eldritchMobs = new HashSet<>();
+
+        eldritchMobs.add("thaumcraft.MindSpider");
+        eldritchMobs.add("thaumcraft.EldritchGuardian");
+        eldritchMobs.add("thaumcraft.EldritchCrab");
+        
+        return eldritchMobs;
+    }
+
 }
