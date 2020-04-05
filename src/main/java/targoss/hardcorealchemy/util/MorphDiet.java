@@ -24,7 +24,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+
 import mchorse.metamorph.api.morphs.AbstractMorph;
+import mchorse.metamorph.capabilities.morphing.IMorphing;
+import mchorse.metamorph.capabilities.morphing.Morphing;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.monster.EntityCreeper;
@@ -38,12 +42,20 @@ import net.minecraft.entity.monster.EntitySlime;
 import net.minecraft.entity.passive.EntityChicken;
 import net.minecraft.entity.passive.EntityPig;
 import net.minecraft.entity.passive.EntitySquid;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityInject;
+import targoss.hardcorealchemy.ModState;
+import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 
 public class MorphDiet {
+
+    @CapabilityInject(ICapabilityHumanity.class)
+    public static final Capability<ICapabilityHumanity> HUMANITY_CAPABILITY = null;
     
     /**
      * Dietary needs indexed by the fully-qualified name of the entity class which the morph represents
@@ -258,5 +270,38 @@ public class MorphDiet {
             }
             return DEFAULT_NUTRIENTS.length / nutrientCount;
         }
+    }
+    
+    public static boolean hasHunger(EntityPlayer player) {
+        if (ModState.isDissolutionLoaded && !MorphState.isIncorporeal(player)) {
+            return true;
+        }
+        ICapabilityHumanity humanity = player.getCapability(HUMANITY_CAPABILITY, null);
+        if (humanity == null || humanity.isHuman()) {
+            return true;
+        }
+        IMorphing morphing = Morphing.get(player);
+        if (morphing == null) {
+            return true;
+        }
+        return MorphDiet.getNeeds(morphing.getCurrentMorph()).hasHunger;
+    }
+    
+    /**
+     * Whether a player has thirst (NOTE: Does NOT check if a thirst mod is installed)
+     */
+    public static boolean hasThirst(@Nonnull EntityPlayer player) {
+        if (ModState.isDissolutionLoaded && MorphState.isIncorporeal(player)) {
+            return false;
+        }
+        ICapabilityHumanity humanityCap = player.getCapability(HUMANITY_CAPABILITY, null);
+        if (humanityCap == null || humanityCap.getHumanity() > 0) {
+            return true;
+        }
+        IMorphing morphing = Morphing.get(player);
+        if (morphing == null) {
+            return true;
+        }
+        return MorphDiet.getNeeds(morphing.getCurrentMorph()).hasThirst;
     }
 }

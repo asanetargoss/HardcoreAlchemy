@@ -305,6 +305,22 @@ public class ListenerGuiHud extends ConfiguredListener {
         GuiIngameForge.left_height += 10;
     }
     
+    @SubscribeEvent
+    public void onRenderHunger(RenderGameOverlayEvent.Pre event) {
+        if (event.getType() != ElementType.FOOD) {
+            return;
+        }
+
+        EntityPlayer player = mc.player;
+        if (player == null) {
+            return;
+        }
+
+        if (!MorphDiet.hasHunger(player)) {
+            event.setCanceled(true);
+        }
+    }
+    
     @CoremodHook
     @Optional.Method(modid = ModState.TAN_ID)
     public static boolean clientHasThirst() {
@@ -313,21 +329,7 @@ public class ListenerGuiHud extends ConfiguredListener {
             return true;
         }
         
-        if (ModState.isDissolutionLoaded && MorphState.isIncorporeal(player)) {
-            return false;
-        }
-        
-        ICapabilityHumanity humanityCap = player.getCapability(HUMANITY_CAPABILITY, null);
-        if (humanityCap == null || humanityCap.getHumanity() > 0) {
-            return true;
-        }
-        
-        IMorphing morphing = Morphing.get(player);
-        if (morphing == null) {
-            return true;
-        }
-        
-        return MorphDiet.getNeeds(morphing.getCurrentMorph()).hasThirst;
+        return MorphDiet.hasThirst(player);
     }
     
     @SubscribeEvent

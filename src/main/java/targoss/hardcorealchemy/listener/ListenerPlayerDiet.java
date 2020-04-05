@@ -53,7 +53,6 @@ import targoss.hardcorealchemy.util.Chat;
 import targoss.hardcorealchemy.util.FoodLists;
 import targoss.hardcorealchemy.util.InventoryUtil;
 import targoss.hardcorealchemy.util.MorphDiet;
-import targoss.hardcorealchemy.util.MorphState;
 import toughasnails.api.TANCapabilities;
 import toughasnails.thirst.ThirstHandler;
 
@@ -224,45 +223,14 @@ public class ListenerPlayerDiet extends ConfiguredListener {
         }
         
         EntityPlayer player = event.player;
-        boolean preventLosingThirst = false;
         
-        if (ModState.isDissolutionLoaded && MorphState.isIncorporeal(player)) {
-            preventLosingThirst = true;
-        }
-        
-        if (!preventLosingThirst) {
-            ICapabilityHumanity humanity = player.getCapability(HUMANITY_CAPABILITY, null);
-            if (humanity != null && !humanity.isHuman()) {
-                IMorphing morphing = Morphing.get(player);
-                if (morphing != null &&
-                        !MorphDiet.getNeeds(morphing.getCurrentMorph()).hasThirst) {
-                    preventLosingThirst = true;
-                }
-            }
-        }
-        
-        if (preventLosingThirst) {
+        if (!MorphDiet.hasThirst(player)) {
             ThirstHandler thirstStats = (ThirstHandler)player.getCapability(TANCapabilities.THIRST, null);
             if (thirstStats != null) {
                 thirstStats.addStats(20, 20.0F);
                 thirstStats.setExhaustion(0.0F);
             }
         }
-    }
-    
-    protected static boolean needsToEat(EntityPlayer player) {
-        if (ModState.isDissolutionLoaded && !MorphState.isIncorporeal(player)) {
-            return true;
-        }
-        ICapabilityHumanity humanity = player.getCapability(HUMANITY_CAPABILITY, null);
-        if (humanity == null || humanity.isHuman()) {
-            return true;
-        }
-        IMorphing morphing = Morphing.get(player);
-        if (morphing == null) {
-            return true;
-        }
-        return MorphDiet.getNeeds(morphing.getCurrentMorph()).hasHunger;
     }
     
     /**
@@ -276,7 +244,7 @@ public class ListenerPlayerDiet extends ConfiguredListener {
         
         EntityPlayer player = event.player;
         
-        if (!needsToEat(player)) {
+        if (!MorphDiet.hasHunger(player)) {
             FoodStats food = player.getFoodStats();
             food.setFoodLevel(20);
             food.setFoodSaturationLevel(5.0F);
