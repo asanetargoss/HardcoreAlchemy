@@ -168,6 +168,7 @@ public class InstinctNeedAttackPrey implements IInstinctNeed {
     }
     // This will contain information from just the AI at first, but more entries will be added as entities are identified as prey
     private Set<EntityTargetInfo<? extends EntityLivingBase>> entityTargetTypes = new HashSet<>();
+    private Set<Class<? extends EntityLivingBase>> seenEntities = new HashSet<>();
     private static final int MAX_SIMPLE_TARGET_TYPES_SERIALIZED = 10;
     
     @Override
@@ -193,14 +194,13 @@ public class InstinctNeedAttackPrey implements IInstinctNeed {
             return null;
         }
         
-        int indexToSelect = random.nextInt(entityTargetTypes.size());
+        int indexToSelect = random.nextInt(seenEntities.size());
         int i = 0;
         
-        String chosenEntityName = null;
         Class<? extends EntityLivingBase> chosenEntityClass = null;
-        for (EntityTargetInfo targetInfo : entityTargetTypes) {
+        for (Class<? extends EntityLivingBase> entity : seenEntities) {
             if (i++ == indexToSelect) {
-                chosenEntityClass = targetInfo.entityClass;
+                chosenEntityClass = entity;
                 break;
             }
         }
@@ -230,8 +230,7 @@ public class InstinctNeedAttackPrey implements IInstinctNeed {
         
         ITextComponent targetName = getYearnedTargetName();
         if (targetName == null) {
-            HardcoreAlchemy.LOGGER.error("No known instinct prey. Entity class: " + ownEntityClass.getName());
-            return null;
+            return new TextComponentTranslation("hardcorealchemy.instinct.attack_prey.need.generic");
         }
         
         return new TextComponentTranslation("hardcorealchemy.instinct.attack_prey.need", targetName);
@@ -292,6 +291,7 @@ public class InstinctNeedAttackPrey implements IInstinctNeed {
     private static final String NBT_HAS_KILLED = "hasKilled";
     private static final String NBT_SUDDEN_URGE_TIMER = "suddenUrgeTimer";
     private static final String NBT_KNOWN_TARGETS = "knownTargets";
+    private static final String NBT_SEEN_TARGETS = "seenTargets";
     
     @Override
     public NBTTagCompound serializeNBT() {
@@ -325,6 +325,19 @@ public class InstinctNeedAttackPrey implements IInstinctNeed {
             }
         }
         nbt.setTag(NBT_KNOWN_TARGETS, knownTargetsList);
+
+        NBTTagList seenTargetsList = new NBTTagList();
+        int witnessedCacheAllowance = MAX_SIMPLE_TARGET_TYPES_SERIALIZED;
+        for (Class<? extends EntityLivingBase> entityClass : seenEntities) {
+            String entityString = EntityList.getEntityStringFromClass(entityClass);
+            if (entityString != null && !entityString.isEmpty()) {
+                seenTargetsList.appendTag(new NBTTagString(entityString));
+                if (--witnessedCacheAllowance <= 0) {
+                    break;
+                }
+            }
+        }
+        nbt.setTag(NBT_SEEN_TARGETS, seenTargetsList);
         
         return nbt;
     }
@@ -561,6 +574,7 @@ public class InstinctNeedAttackPrey implements IInstinctNeed {
             // Also add this to the list of valid targets, if it is not present (reduces issues with unreliable targeting lambdas)
             // Because it's a set, no need to check for duplicates
             entityTargetTypes.add(new EntityTargetInfo(chosenPrey.getClass(), null));
+            seenEntities.add(chosenPrey.getClass());
             return chosenPrey;
         }
         else {

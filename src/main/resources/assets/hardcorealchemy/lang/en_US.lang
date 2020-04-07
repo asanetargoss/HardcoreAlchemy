@@ -49,6 +49,7 @@ hardcorealchemy.ability.sustenance.disabled=Your instincts are not strong enough
 hardcorealchemy.ability.sustenance.invalid=Invalid sustenance message. Please report to mod developer.
 
 hardcorealchemy.instinct.attack_prey.need=You yearn to hunt %s.
+hardcorealchemy.instinct.attack_prey.need.generic=You yearn to hunt.
 hardcorealchemy.instinct.attack_prey.detect=You sense a %s.
 hardcorealchemy.instinct.attack_prey.gone=You no longer sense prey.
 hardcorealchemy.instinct.attack_prey.kill_another=You kill the %s, but you feel the urge to kill more.

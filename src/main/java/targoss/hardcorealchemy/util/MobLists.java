@@ -143,8 +143,6 @@ public class MobLists {
         // Meme in a Bottle
         humans.add("miab.JohnCena");
         humans.add("miab.BillCipher");
-        // Wait... this could result in a chat message telling the player to kill Donald Trump. Oh god what have I done...
-        // TODO: Fix this
         humans.add("miab.Donaldtrump");
         humans.add("miab.EduardKhil");
         humans.add("miab.MoonMan");
@@ -359,6 +357,11 @@ public class MobLists {
         trollMobs.add("miab.NyanCat");
         trollMobs.add("miab.TacNyan");
         trollMobs.add("miab.DankeyKang");
+        trollMobs.add("miab.Donaldtrump");
+        trollMobs.add("miab.EduardKhil");
+        trollMobs.add("miab.MoonMan");
+        trollMobs.add("miab.RottenRobbie");
+        trollMobs.add("miab.Nigelthornberry");
         
         return trollMobs;
     }
