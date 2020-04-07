@@ -109,6 +109,8 @@ public class MobLists {
         nonMobs.add("thaumcraft.ArcaneBore");
         nonMobs.add("thaumcraft.Golem");
         nonMobs.add("thaumcraft.Spellbat");
+        // Jon's Useless Mod
+        nonMobs.add("jum.Useless Arrow");
         
         return nonMobs;
     }
@@ -138,6 +140,16 @@ public class MobLists {
         // Thaumcraft
         // Yes I realize this is technically not human, but close enough.
         humans.add("thaumcraft.Pech");
+        // Meme in a Bottle
+        humans.add("miab.JohnCena");
+        humans.add("miab.BillCipher");
+        // Wait... this could result in a chat message telling the player to kill Donald Trump. Oh god what have I done...
+        // TODO: Fix this
+        humans.add("miab.Donaldtrump");
+        humans.add("miab.EduardKhil");
+        humans.add("miab.MoonMan");
+        humans.add("miab.RottenRobbie");
+        humans.add("miab.Nigelthornberry");
         
         return humans;
     }
@@ -152,6 +164,8 @@ public class MobLists {
         passiveMobs.add("Sheep");
         passiveMobs.add("EntityHorse");
         passiveMobs.add("Rabbit");
+        // Ender Zoo
+        passiveMobs.add("EnderZoo.Owl");
         
         return passiveMobs;
     }
@@ -196,6 +210,10 @@ public class MobLists {
         landAnimals.add("MushroomCow");
         // ToroQuest
         landAnimals.add("toroquest.toro");
+        // Ender Zoo
+        landAnimals.add("EnderZoo.DireWolf");
+        // Sophisticated Wolves
+        landAnimals.add("SophisticatedWolves.SWWolf");
         
         return landAnimals;
     }
@@ -246,6 +264,12 @@ public class MobLists {
         nightMobs.add("thaumcraft.BrainyZombie");
         nightMobs.add("thaumcraft.GiantBrainyZombie");
         nightMobs.add("thaumcraft.InhabitedZombie");
+        // Ender Zoo
+        nightMobs.add("EnderZoo.Enderminy");
+        nightMobs.add("EnderZoo.ConcussionCreeper");
+        nightMobs.add("EnderZoo.FallenKnight");
+        nightMobs.add("EnderZoo.FallenMount");
+        nightMobs.add("EnderZoo.WitherCat");
         
         return nightMobs;
     }
@@ -295,13 +319,13 @@ public class MobLists {
     public static Set<String> getTaintMobs() {
         Set<String> taintMobs = new HashSet<>();
 
-        taintMobs.add("ThaumSlime");
-        taintMobs.add("TaintCrawler");
-        taintMobs.add("Taintacle");
-        taintMobs.add("TaintacleTiny");
-        taintMobs.add("TaintSwarm");
-        taintMobs.add("TaintSeed");
-        taintMobs.add("TaintSeedPrime");
+        taintMobs.add("thaumcraft.ThaumSlime");
+        taintMobs.add("thaumcraft.TaintCrawler");
+        taintMobs.add("thaumcraft.Taintacle");
+        taintMobs.add("thaumcraft.TaintacleTiny");
+        taintMobs.add("thaumcraft.TaintSwarm");
+        taintMobs.add("thaumcraft.TaintSeed");
+        taintMobs.add("thaumcraft.TaintSeedPrime");
         
         return taintMobs;
     }
@@ -314,6 +338,29 @@ public class MobLists {
         eldritchMobs.add("thaumcraft.EldritchCrab");
         
         return eldritchMobs;
+    }
+
+    public static Set<String> getTrollMobs() {
+        Set<String> trollMobs = new HashSet<>();
+
+        // Jon's Useless Mod
+        trollMobs.add("jum.Dave the Useless");
+        // Meme in a Bottle
+        trollMobs.add("miab.memeSplash");
+        trollMobs.add("miab.DogeWolf");
+        trollMobs.add("miab.GrumpyCat");
+        trollMobs.add("miab.PPAPGuy");
+        trollMobs.add("miab.Shrek");
+        trollMobs.add("miab.DatBoi");
+        trollMobs.add("miab.GrandDad");
+        trollMobs.add("miab.Sanic");
+        trollMobs.add("miab.Pepe");
+        trollMobs.add("miab.ForeverAlone");
+        trollMobs.add("miab.NyanCat");
+        trollMobs.add("miab.TacNyan");
+        trollMobs.add("miab.DankeyKang");
+        
+        return trollMobs;
     }
 
 }

@@ -104,6 +104,7 @@ public class MorphDiet {
         morphDiets.put(entityName(EntityChicken.class), IDEALIST_VEGAN_NEEDS);
         morphDiets.put(entityName(EntityPig.class), IDEALIST_VEGAN_NEEDS);
         morphDiets.put("toroquest.toro", GRAZER_NEEDS);
+        morphDiets.put("EnderZoo.Owl", new Needs(Needs.CARNIVORE_NUTRIENTS, Restriction.CARNIVORE, true));
         morphDiets.put(entityName(EntitySkeleton.class), new Needs(Needs.NO_NUTRIENTS, Restriction.UNFEEDING, false));
         morphDiets.put(entityName(EntityEnderman.class), new Needs(Needs.DEFAULT_NUTRIENTS, Restriction.OMNIVORE, false));
         morphDiets.put(entityName(EntityEndermite.class), new Needs(Needs.NO_NUTRIENTS, Restriction.OMNIVORE, false));

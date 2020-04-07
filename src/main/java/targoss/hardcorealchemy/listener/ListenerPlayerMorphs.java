@@ -128,6 +128,7 @@ public class ListenerPlayerMorphs extends ConfiguredListener {
         morphBlacklist.addAll(MobLists.getHumans());
         morphBlacklist.addAll(MobLists.getNonMobs());
         morphBlacklist.addAll(MobLists.getBosses());
+        morphBlacklist.addAll(MobLists.getTrollMobs());
     }
 
     @SubscribeEvent
