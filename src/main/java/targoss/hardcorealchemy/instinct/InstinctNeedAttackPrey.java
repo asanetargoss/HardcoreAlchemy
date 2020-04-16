@@ -389,13 +389,21 @@ public class InstinctNeedAttackPrey implements IInstinctNeed {
         }
         
         boolean covetedPrey = covetsPrey;
+        boolean hadSuddenUrge = suddenUrgeTimer > 0;
         EntityLivingBase lastTrackedEntity = trackedEntity;
         updateTrackedEntity(player);
-        boolean hasSeenPrey = hasSeenPreyRecently(player);
-        
         if (trackedEntity != null) {
             suddenUrgeTimer = 0;
-            instinctState.setNeedStatus(IInstinctState.NeedStatus.URGENT);
+        }
+        if (suddenUrgeTimer > 0) {
+            suddenUrgeTimer--;
+        }
+        boolean hasSeenPrey = hasSeenPreyRecently(player);
+        boolean hasSuddenUrge = suddenUrgeTimer > 0;
+
+        boolean fulfilledNeed = false;
+        
+        if (trackedEntity != null) {
             if (lastTrackedEntity == null ||
                     (lastTrackedEntity != trackedEntity && !isKilled(lastTrackedEntity))) {
                 if (player.world.isRemote) {
@@ -406,7 +414,6 @@ public class InstinctNeedAttackPrey implements IInstinctNeed {
         }
         else {
             if (!hasSeenPrey && covetsPrey) {
-                instinctState.setNeedStatus(IInstinctState.NeedStatus.WAITING);
                 if (sawPrey) {
                     // The last prey fell out of their line of sight, but has not died
                     if (player.world.isRemote) {
@@ -414,17 +421,25 @@ public class InstinctNeedAttackPrey implements IInstinctNeed {
                                 EntityUtil.getEntityName(lastSeenPrey)));
                     }
                 }
-                if (suddenUrgeTimer > 0) {
-                    instinctState.setNeedStatus(InstinctState.NeedStatus.URGENT);
-                    suddenUrgeTimer--;
-                }
             }
             else if (!covetsPrey && covetedPrey && lastTrackedEntity != null) {
+                fulfilledNeed = true;
                 if (!player.world.isRemote) {
-                    instinctState.setNeedStatus(InstinctState.NeedStatus.NONE);
                     Chat.message(Chat.Type.NOTIFY, (EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.instinct.attack_prey.gone"));
                     ((NeedMessengerFullSync)instinctState.getNeedMessenger()).sync();
                 }
+            }
+        }
+
+        if (fulfilledNeed) {
+            suddenUrgeTimer = 0;
+            instinctState.setNeedStatus(InstinctState.NeedStatus.NONE);
+        }
+        else {
+            if (covetsPrey || hasSuddenUrge) {
+                instinctState.setNeedStatus(InstinctState.NeedStatus.URGENT);
+            } else if (covetsPrey != covetedPrey || hasSuddenUrge != hadSuddenUrge) {
+                instinctState.setNeedStatus(IInstinctState.NeedStatus.WAITING);
             }
         }
         
@@ -455,7 +470,6 @@ public class InstinctNeedAttackPrey implements IInstinctNeed {
             if (!covetsPrey) {
                 Chat.message(Chat.Type.NOTIFY, (EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.instinct.attack_prey.something_else", getYearnedTargetName()), 2, "wrong_prey");
             }
-            covetsPrey = true;
             suddenUrgeTimer = SUDDEN_URGE_TIME;
             ((NeedMessengerFullSync)instinctState.getNeedMessenger()).sync();
         }
