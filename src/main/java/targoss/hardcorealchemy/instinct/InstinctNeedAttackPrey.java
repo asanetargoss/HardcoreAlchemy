@@ -190,7 +190,7 @@ public class InstinctNeedAttackPrey implements IInstinctNeed {
     }
     
     private ITextComponent getRandomTargetName() {
-        if (entityTargetTypes.size() == 0) {
+        if (seenEntities.size() == 0) {
             return null;
         }
         
