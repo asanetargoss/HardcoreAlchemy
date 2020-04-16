@@ -248,9 +248,9 @@ public class MorphDiet {
         }
         
         public Needs(String[] nutrients, Restriction restriction, boolean thirst) {
-            this.nutrients = (restriction != Restriction.UNFEEDING) ? nutrients : NO_NUTRIENTS;
+            this.nutrients = !restriction.equals(Restriction.UNFEEDING) ? nutrients : NO_NUTRIENTS;
             this.hasThirst = thirst;
-            this.hasHunger = restriction != Restriction.UNFEEDING;
+            this.hasHunger = !restriction.equals(Restriction.UNFEEDING);
             this.restriction = restriction;
             
             Set<String> nutrientSet = new HashSet<String>();
@@ -296,7 +296,7 @@ public class MorphDiet {
             return false;
         }
         ICapabilityHumanity humanityCap = player.getCapability(HUMANITY_CAPABILITY, null);
-        if (humanityCap == null || humanityCap.getHumanity() > 0) {
+        if (humanityCap == null || humanityCap.isHuman()) {
             return true;
         }
         IMorphing morphing = Morphing.get(player);
