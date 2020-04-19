@@ -56,6 +56,7 @@ hardcorealchemy.instinct.attack_prey.kill_another=You kill the %s, but you feel 
 hardcorealchemy.instinct.attack_prey.resist=You resist the urge to kill the %s, but it only makes the urge stronger.
 hardcorealchemy.instinct.attack_prey.preserve_own_kind=You refuse to hunt your own kind.
 hardcorealchemy.instinct.attack_prey.something_else=You want badly to kill %s instead.
+hardcorealchemy.instinct.attack_prey.something_else.generic=You want badly to kill something else.
 hardcorealchemy.instinct.attack_prey.finished=The hunting urges start to fade.
 
 hardcorealchemy.instinct.home.generic.need=You yearn to be somewhere else.

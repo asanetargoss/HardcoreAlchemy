@@ -95,6 +95,19 @@ public class EntityUtil {
         return getEntityName(entity.getClass());
     }
     
+    @SuppressWarnings("unchecked")
+    public static @Nullable Class<? extends EntityLivingBase> getLivingEntityClassFromString(String entityString) {
+        // If you don't check the string is valid, vanilla could return a pig instead as the entity ID, which we don't want
+        if (entityString == null || entityString.isEmpty()) {
+            return null;
+        }
+        Class<? extends Entity> entityClass = EntityList.NAME_TO_CLASS.get(entityString);
+        if (entityClass == null || !EntityLivingBase.class.isAssignableFrom(entityClass)) {
+            return null;
+        }
+        return (Class<? extends EntityLivingBase>)entityClass;
+    }
+    
     public static ITextComponent getEntityName(Class<? extends EntityLivingBase> entityClass) {
         if (customEntityStrings.containsKey(entityClass)) {
             return customEntityStrings.get(entityClass);

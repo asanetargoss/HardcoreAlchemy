@@ -69,7 +69,7 @@ public class InstinctNeedAttackPrey implements IInstinctNeed {
     public InstinctNeedAttackPrey() { }
     
     /** Make time (ticks) the player can not see prey they have coveted (ie have seen) */
-    private static final int MAX_TICKS_OUT_OF_SIGHT = 20 * 20;
+    private static final int MAX_TICKS_OUT_OF_SIGHT = 10 * 20;
     /** Max distance (per axis) that player will search for nearby creatures  */
     private static final int SIGHT_RANGE = 20;
     /** How long the player will continue to "crave" the same type of prey in the need messages after they have seen it */
@@ -348,12 +348,9 @@ public class InstinctNeedAttackPrey implements IInstinctNeed {
         timeSinceSeenPrey = nbt.getInteger(NBT_TIME_SINCE_SEEN_PREY);
         if (nbt.hasKey(NBT_LAST_SEEN_PREY)) {
             String entityString = nbt.getString(NBT_LAST_SEEN_PREY);
-            // If you don't check the string is valid, vanilla could return a pig instead as the entity ID, which we don't want
-            if (EntityList.isStringValidEntityName(entityString)) {
-                Class<? extends Entity> possibleLastSeenPrey = EntityList.getClassFromID(EntityList.getIDFromString(entityString));
-                if (EntityLivingBase.class.isAssignableFrom(possibleLastSeenPrey)) {
-                    lastSeenPrey = (Class<? extends EntityLivingBase>)possibleLastSeenPrey;
-                }
+            Class<? extends EntityLivingBase> entityClass = EntityUtil.getLivingEntityClassFromString(entityString);
+            if (entityClass != null) {
+                lastSeenPrey = entityClass;
             }
         }
         hasKilled = nbt.getBoolean(NBT_HAS_KILLED);
@@ -363,14 +360,19 @@ public class InstinctNeedAttackPrey implements IInstinctNeed {
             int n = Math.min(knownTargetsList.tagCount(), MAX_SIMPLE_TARGET_TYPES_SERIALIZED);
             for (int i = 0; i < n; i++) {
                 String knownTargetString = knownTargetsList.getStringTagAt(i);
-                if (knownTargetString == "") {
-                    continue;
+                Class<? extends EntityLivingBase> knownTargetClass = EntityUtil.getLivingEntityClassFromString(knownTargetString);
+                if (knownTargetClass != null) {
+                    entityTargetTypes.add(new EntityTargetInfo(knownTargetClass, null));
                 }
-                Class<? extends Entity> entityClass = EntityList.NAME_TO_CLASS.get(knownTargetString);
-                if (entityClass == null || !EntityLivingBase.class.isAssignableFrom(entityClass)) {
-                    continue;
-                }
-                entityTargetTypes.add(new EntityTargetInfo((Class<? extends EntityLivingBase>)entityClass, null));
+            }
+        }
+        {
+            NBTTagList seenTargetsList = nbt.getTagList(NBT_SEEN_TARGETS, NBT_STRING_ID);
+            int n = Math.min(seenTargetsList.tagCount(), MAX_SIMPLE_TARGET_TYPES_SERIALIZED);
+            for (int i = 0; i < n; i++) {
+                String seenTargetsString = seenTargetsList.getStringTagAt(i);
+                Class<? extends EntityLivingBase> seentTargetsClass = EntityUtil.getLivingEntityClassFromString(seenTargetsString);
+                seenEntities.add(seentTargetsClass);
             }
         }
     }
@@ -421,6 +423,7 @@ public class InstinctNeedAttackPrey implements IInstinctNeed {
                                 EntityUtil.getEntityName(lastSeenPrey)));
                     }
                 }
+                covetsPrey = false;
             }
             else if (!covetsPrey && covetedPrey && lastTrackedEntity != null) {
                 fulfilledNeed = true;
@@ -468,7 +471,13 @@ public class InstinctNeedAttackPrey implements IInstinctNeed {
         }
         else if (hasKilled) {
             if (!covetsPrey) {
-                Chat.message(Chat.Type.NOTIFY, (EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.instinct.attack_prey.something_else", getYearnedTargetName()), 2, "wrong_prey");
+                ITextComponent yearnedTarget = getYearnedTargetName();
+                if (yearnedTarget != null) {
+                    Chat.message(Chat.Type.NOTIFY, (EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.instinct.attack_prey.something_else", yearnedTarget), 2, "wrong_prey");
+                }
+                else {
+                    Chat.message(Chat.Type.NOTIFY, (EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.instinct.attack_prey.something_else.generic"), 2, "wrong_prey");
+                }
             }
             suddenUrgeTimer = SUDDEN_URGE_TIME;
             ((NeedMessengerFullSync)instinctState.getNeedMessenger()).sync();
@@ -539,7 +548,7 @@ public class InstinctNeedAttackPrey implements IInstinctNeed {
      * Otherwise, the tracked entity will be null.
      */
     private void updateTrackedEntity(EntityPlayer player) {
-        if (trackedEntity == null || isKilled(trackedEntity)) {
+        if (trackedEntity != null && isKilled(trackedEntity)) {
             covetsPrey = false;
             trackedEntity = null;
         }
