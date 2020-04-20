@@ -8,28 +8,34 @@ You are currently in the source code repository for the Hardcore Alchemy capston
 Aside from feedback on the modpack itself, the following contributions are welcome:
 
 - **Translations** - Are always welcome. There are several language files in the [resource folder](https://github.com/asanetargoss/HardcoreAlchemy/tree/master/src/main/resources/), for example `hardcorealchemy_modpack_guide/lang/en_US.lang`.
-- **Code** - If it's a bugfix, and it's faster to write the code than it is to explain it, go right ahead. If it's a feature, open an issue first. For the rest, use your best judgement. Development information is lower down.
+- **Code** - If it's a bugfix, and it's faster to write the code than it is to explain it, go right ahead. Otherwise, let's talk about it first
 
 ## Using the capstone mod
 
-The Hardcore Alchemy capstone mod is released under the LGPL 3, so you are allowed to use it in your own modpack. However, the mod was built for the HcA modpack, and as such, was designed with a particular gameplay experience in mind.
+The Hardcore Alchemy capstone mod is released under the LGPL 3, so you are allowed to use it in your own modpack. However, the mod was built for the HcA modpack, and as such, was designed with a particular gameplay experience in mind. Config options will not be added except for compatibility with vanilla hardcore mode and serious accessibility concerns.
 
 What the Hardcore Alchemy mod is designed for:
 
-* **Random respawn on death** - The Hardcore Alchemy mod has many features that only work well when death is not just a minor setback. I recommend using either [my Iberia fork](https://github.com/asanetargoss/iberia/releases) or [Better with Mods](https://minecraft.curseforge.com/projects/better-with-mods). Hardcore mode should in principle also work.
-* **Balanced shapeshifting** - [Changeling](https://github.com/asanetargoss/Changeling/releases)'s morphing code is a deeply integral part of the mod. As such, it is a required dependency. Morphing can be disabled if needed.
-* **QoL/tweaks not included** - With the exception of non-vanilla maps (which trivialize random respawn deaths), all QoL mods/recipe changes should be included liberally, and are the responsibility of the pack developer.
-    * Please note HcA only supports [Hwyla](https://www.curseforge.com/minecraft/mc-mods/hwyla) for in-game overlays.
-* **Custom Nutrition integration** - If you use the Nutrition mod, please use [my custom Nutrition Build](https://github.com/asanetargoss/Nutrition/releases). The official version of Nutrition will not work.
-* **Opinionated** - I don't add config options to the capstone mod unless a feature has the potential to conflict severely with vanilla hardcore mode. Currently the only config option is to disable the instinct system. This allows me to focus more closely on providing a unified experience. 
+* **Balanced shapeshifting** - [Changeling](https://github.com/asanetargoss/Changeling/releases) powers Hardcore Alchemy's balanced morphing features, and is a required dependency.
+  * Config settings: acquire_immediately=false, disable_morph_disguise=true, keep_morphs=false, others defaults
+* **Random respawn on death** - The Hardcore Alchemy mod is designed around hardcore respawn. For this, I recommend [Iberia HcA edition](https://github.com/asanetargoss/iberia/releases).
 
-Overall, the main draw of the HcA capstone mod currently is the hardcore-compatible balanced morphing features. Aside from that, the mod implements lots of small fixes and features across the board, mainly focused on adding a bit of challenge. See the [capstone mod releases page](https://github.com/asanetargoss/HardcoreAlchemy/releases) to browse the recent changelogs, and the [modpack wiki](https://github.com/asanetargoss/HardcoreAlchemy/wiki) to get a better feel for the mod's direction. Feel free to reach out if you have any questions.
+Hardcore Alchemy also has special integration with various other mods. These mods are not required dependencies, but should be used instead of the alternatives:
+
+* [Hwyla](https://www.curseforge.com/minecraft/mc-mods/hwyla) - In-game overlays.
+* [Nutrition HcA Edition](https://github.com/asanetargoss/Nutrition/releases) and/or [Spice of Life](https://www.curseforge.com/minecraft/mc-mods/the-spice-of-life) - For nutrition.
+  * The official version of the Nutrition mod will not work, and HcA assumes the default 5 nutrients
+* [Pam's Harvestcraft](https://www.curseforge.com/minecraft/mc-mods/pams-harvestcraft) - Right-click harvesting and food support
+* [Tough as Nails](https://www.curseforge.com/minecraft/mc-mods/tough-as-nails) - Thirst
+* [Minecraft Comes Alive](https://www.minecraftforum.net/forums/mapping-and-modding-java-edition/minecraft-mods/1280154-mc-1-12-x-minecraft-comes-alive-v6-0-0-millions) and/or [Village Box](https://www.curseforge.com/minecraft/mc-mods/village-box) - Villager alternatives
+
+Finally, the Hardcore Alchemy capstone mod integrates with many magic mods.
+
+There is a lot more in terms of mod selection, configuration, and tweaking, in order for a hardcore modpack to work well. The stakes are so high, that issues which would be small annoyances in a typical modpack can become deal-breakers that ruin the experience. In the hardcore respawn case, there is an additional issue of balancing what the player gets to retain after death. So, keep that in mind. There's a reason the Hardcore Alchemy modpack has been in development for so long. :)
 
 ## Developing/building
 
 ### Dependencies
-
-**NOTE: The new libs file contains a version of [AppleCore](https://github.com/asanetargoss/AppleCore) which fixes crashes in a dev environment.**
 
 This branch targets the 0.3.12+ version of the modpack. Download the 0.3.12 zip file from the link below and add its contents to libs/ (create the folder if it does not exist):
 
@@ -65,41 +71,4 @@ In addition, you may also want to take the latest available config zip from the 
 * Decompiler plugin: http://jd.benow.ca/ (Why: Required to view source code for all the mods in /libs, since most do not have dev builds)
 * MCP Mapping Viewer: https://github.com/bspkrs/MCPMappingViewer/ (Why: To figure out the meaning of func_12345 and their ilk, and translate to them when needed in a release environment)
 * Bytecode outline for Eclipse: http://andrei.gmxhome.de/bytecode/index.html (Why: Only if you need to coremod. It will help you understand the Java bytecode better. Do not trust the stack feature.)
-
-### Coding guidelines
-
-* Code style:
-    * Tabs are four spaces
-    * Brackets go like this:
-```
-if () {
-    ...
-}
-else if {
-    ...
-}
-else {
-    ...
-}
-```
-
-*
-    * Spaces go between binary operators: `(x + 1)`
-    * Prefer static utility functions which are either stateless, or only do what they are told
-    * Prefer namespaced objects over lambdas and anonymous classes
-    * Prefer Collections over arrays
-    * Prefer Java's built-in libraries over third-party libraries
-* Git
-    * Branch off of master
-    * Aim for one change per commit when possible
-    * Use descriptive commit messages which describe what you changed
-    * Don't change things that don't need to be changed
-* Modding hacks
-    * Avoid reflection, access transformers, and coremodding where possible
-    * If you must use reflection, follow convention and use ObfuscatedName
-    * If you must use access transformers, explain why you used them
-    * If you must add a coremod patch...
-        * Keep patch size VERY small. Use hooks. Never replace a function signature.
-        * Follow convention and use ObfuscatedName, MethodPatcher
-        * Only use ClassWriter flags if you need them. Be aware COMPUTE_FRAMES can trigger classloading.
 
