@@ -26,12 +26,11 @@ import javax.annotation.Nullable;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.ITextComponent;
 import targoss.hardcorealchemy.instinct.api.IInstinctNeed;
-import targoss.hardcorealchemy.instinct.api.IInstinctState;
 import targoss.hardcorealchemy.instinct.api.IInstinctState.NeedStatus;
 import targoss.hardcorealchemy.instinct.api.InstinctNeedFactory;
+import targoss.hardcorealchemy.util.EntityUtil;
 import targoss.hardcorealchemy.util.MobLists;
 
 /**
@@ -42,7 +41,7 @@ public interface IInstinctNeedEnvironment extends IInstinctNeed {
         private static List<Class<? extends EntityLivingBase>> grassMobs = new ArrayList<>();
         static {
             for (String grassMobName : MobLists.getGrassMobs()) {
-                if (!EntityList.isStringValidEntityName(grassMobName)) {
+                if (!EntityUtil.isValidEntityName(grassMobName)) {
                     continue;
                 }
                 grassMobs.add((Class<? extends EntityLivingBase>)EntityList.getClassFromID(EntityList.getIDFromString(grassMobName)));

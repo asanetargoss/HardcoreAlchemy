@@ -28,6 +28,7 @@ import net.minecraft.entity.EntityLivingBase;
 import targoss.hardcorealchemy.instinct.api.Instinct;
 import targoss.hardcorealchemy.instinct.api.InstinctEffectDefinition;
 import targoss.hardcorealchemy.instinct.api.InstinctNeedFactory;
+import targoss.hardcorealchemy.util.EntityUtil;
 import targoss.hardcorealchemy.util.MobLists;
 
 public class InstinctHomesickNature extends Instinct {
@@ -35,7 +36,7 @@ public class InstinctHomesickNature extends Instinct {
     protected static Set<String> validMobs = new HashSet<>();
     static {
         for (String mob : MobLists.getLandAnimals()) {
-            if (!EntityList.isStringValidEntityName(mob)) {
+            if (!EntityUtil.isValidEntityName(mob)) {
                 continue;
             }
             validMobs.add(mob);
