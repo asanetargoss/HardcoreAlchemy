@@ -20,7 +20,7 @@ What the Hardcore Alchemy mod is designed for:
   * Config settings: acquire_immediately=false, disable_morph_disguise=true, keep_morphs=false, others defaults
 * **Random respawn on death** - The Hardcore Alchemy mod is designed around hardcore respawn. For this, I recommend [Iberia HcA edition](https://github.com/asanetargoss/iberia/releases).
 
-Hardcore Alchemy also has special integration with various other mods. These mods are not required dependencies, but should be used instead of the alternatives:
+The Hardcore Alchemy mod also has special integration with various other mods. These mods are not required dependencies, but should be used instead of the alternatives:
 
 * [Hwyla](https://www.curseforge.com/minecraft/mc-mods/hwyla) - In-game overlays.
 * [Nutrition HcA Edition](https://github.com/asanetargoss/Nutrition/releases) and/or [Spice of Life](https://www.curseforge.com/minecraft/mc-mods/the-spice-of-life) - For nutrition.
@@ -31,7 +31,7 @@ Hardcore Alchemy also has special integration with various other mods. These mod
 
 Finally, the Hardcore Alchemy capstone mod integrates with many magic mods.
 
-There is a lot more in terms of mod selection, configuration, and tweaking, in order for a hardcore modpack to work well. The stakes are so high, that issues which would be small annoyances in a typical modpack can become deal-breakers that ruin the experience. In the hardcore respawn case, there is an additional issue of balancing what the player gets to retain after death. So, keep that in mind. There's a reason the Hardcore Alchemy modpack has been in development for so long. :)
+There is a lot more in terms of mod selection, configuration, and tweaking, in order for a hardcore modpack to work well. The stakes are so high, that issues which would be small annoyances in a typical modpack can become deal-breakers that ruin the experience. In the hardcore respawn case, there is an additional issue of balancing what the player gets to retain after death. So, keep that in mind. :)
 
 ## Developing/building
 
