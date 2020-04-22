@@ -96,16 +96,20 @@ public class EntityUtil {
         return getEntityName(entity.getClass());
     }
     
-    @SuppressWarnings("unchecked")
-    public static @Nullable Class<? extends EntityLivingBase> getLivingEntityClassFromString(String entityString) {
+    public static boolean isValidEntityName(String entityString) {
         // If you don't check the string is valid, vanilla could return a pig instead as the entity ID, which we don't want
         if (entityString == null || entityString.isEmpty()) {
+            return false;
+        }
+        return EntityList.NAME_TO_CLASS.containsKey(entityString);
+    }
+    
+    @SuppressWarnings("unchecked")
+    public static @Nullable Class<? extends EntityLivingBase> getLivingEntityClassFromString(String entityString) {
+        if (!isValidEntityName(entityString)) {
             return null;
         }
         Class<? extends Entity> entityClass = EntityList.NAME_TO_CLASS.get(entityString);
-        if (entityClass == null || !EntityLivingBase.class.isAssignableFrom(entityClass)) {
-            return null;
-        }
         return (Class<? extends EntityLivingBase>)entityClass;
     }
     
