@@ -768,7 +768,7 @@ public class ListenerPlayerMagicState extends ConfiguredListener {
     @Optional.Method(modid=ModState.ASTRAL_SORCERY_ID)
     public static void clearStellarAlignmentProgress(PlayerProgress playerProgress) throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchFieldException {
         playerProgress.clearPerks();
-        Method forceChargeMethod = PlayerProgress.class.getDeclaredMethod("forceCharge", null, int.class);
+        Method forceChargeMethod = PlayerProgress.class.getDeclaredMethod("forceCharge", int.class);
         forceChargeMethod.setAccessible(true);
         forceChargeMethod.invoke(playerProgress, 0);
         Field attunedConstellationField = PlayerProgress.class.getDeclaredField("attunedConstellation");
