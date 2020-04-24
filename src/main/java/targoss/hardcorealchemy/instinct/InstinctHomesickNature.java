@@ -33,8 +33,13 @@ import targoss.hardcorealchemy.util.MobLists;
 
 public class InstinctHomesickNature extends Instinct {
     
-    protected static Set<String> validMobs = new HashSet<>();
-    static {
+    protected Set<String> validMobs = null;
+    
+    protected void initMobCache() {
+        if (validMobs != null) {
+            return;
+        }
+        validMobs = new HashSet<>();
         for (String mob : MobLists.getLandAnimals()) {
             if (!EntityUtil.isValidEntityName(mob)) {
                 continue;
@@ -45,6 +50,7 @@ public class InstinctHomesickNature extends Instinct {
 
     @Override
     public boolean doesMorphEntityHaveInstinct(EntityLivingBase morphEntity) {
+        initMobCache();
         return validMobs.contains(EntityList.getEntityString(morphEntity));
     }
 

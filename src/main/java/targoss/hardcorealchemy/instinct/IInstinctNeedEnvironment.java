@@ -18,7 +18,6 @@
 
 package targoss.hardcorealchemy.instinct;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -38,8 +37,13 @@ import targoss.hardcorealchemy.util.MobLists;
  */
 public interface IInstinctNeedEnvironment extends IInstinctNeed {
     public static class Factory extends InstinctNeedFactory {
-        private static List<Class<? extends EntityLivingBase>> grassMobs = new ArrayList<>();
-        static {
+        private List<Class<? extends EntityLivingBase>> grassMobs = null;
+        
+        @SuppressWarnings("unchecked")
+        protected void initMobCache() {
+            if (grassMobs != null) {
+                return;
+            }
             for (String grassMobName : MobLists.getGrassMobs()) {
                 if (!EntityUtil.isValidEntityName(grassMobName)) {
                     continue;
@@ -50,6 +54,7 @@ public interface IInstinctNeedEnvironment extends IInstinctNeed {
         
         @Override
         public IInstinctNeed createNeed(EntityLivingBase morphEntity) {
+            initMobCache();
             for (Class<? extends EntityLivingBase> grassMobType : grassMobs) {
                 if (grassMobType.isInstance(morphEntity)) {
                     return new InstinctNeedForestPlains(morphEntity);
