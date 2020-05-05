@@ -66,6 +66,9 @@ import targoss.hardcorealchemy.capability.morphstate.StorageMorphState;
 import targoss.hardcorealchemy.capability.serverdata.CapabilityServerData;
 import targoss.hardcorealchemy.capability.serverdata.ICapabilityServerData;
 import targoss.hardcorealchemy.capability.serverdata.StorageServerData;
+import targoss.hardcorealchemy.capability.tilehistory.CapabilityTileHistory;
+import targoss.hardcorealchemy.capability.tilehistory.ICapabilityTileHistory;
+import targoss.hardcorealchemy.capability.tilehistory.StorageTileHistory;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.listener.ConfiguredListener;
 import targoss.hardcorealchemy.listener.ListenerConfigs;
@@ -89,6 +92,7 @@ import targoss.hardcorealchemy.network.PacketHandler;
 public class CommonProxy {
     public Configs configs = new Configs();
     
+    @SuppressWarnings("unchecked")
     public static final ImmutableList<Class<? extends ConfiguredListener>> LISTENER_TYPES = ImmutableList.of(
                 ListenerPacketUpdatePlayer.class,
                 ListenerPlayerMorphs.class,
@@ -148,6 +152,7 @@ public class CommonProxy {
         CapabilityManager.INSTANCE.register(ICapabilityInstinct.class, new StorageInstinct(), CapabilityInstinct.class);
         CapabilityManager.INSTANCE.register(ICapabilityMisc.class, new StorageMisc(), CapabilityMisc.class);
         CapabilityManager.INSTANCE.register(ICapabilityEntityState.class, new StorageEntityState(), CapabilityEntityState.class);
+        CapabilityManager.INSTANCE.register(ICapabilityTileHistory.class, new StorageTileHistory(), CapabilityTileHistory.class);
     }
     
     public static final void registerNetworking() {

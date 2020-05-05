@@ -33,7 +33,10 @@ public class StorageTileHistory implements IStorage<ICapabilityTileHistory> {
     public NBTBase writeNBT(Capability<ICapabilityTileHistory> capability, ICapabilityTileHistory instance,
             EnumFacing side) {
         NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setString(LIFETIME_UUID, instance.getOwnerLifetimeUUID().toString());
+        UUID ownerLifetimeUUID = instance.getOwnerLifetimeUUID();
+        if (ownerLifetimeUUID != null) {
+            nbt.setString(LIFETIME_UUID, ownerLifetimeUUID.toString());
+        }
         return nbt;
     }
 

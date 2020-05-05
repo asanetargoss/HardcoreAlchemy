@@ -18,6 +18,7 @@
 
 package targoss.hardcorealchemy.listener;
 
+import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -25,6 +26,7 @@ import java.util.UUID;
 
 import com.google.common.collect.Sets;
 
+import WayofTime.bloodmagic.api.event.RitualEvent.RitualActivatedEvent;
 import WayofTime.bloodmagic.api.event.RitualEvent.RitualRunEvent;
 import WayofTime.bloodmagic.api.ritual.Ritual.BreakType;
 import WayofTime.bloodmagic.api.saving.SoulNetwork;
@@ -242,6 +244,9 @@ public class ListenerPlayerMagic extends ConfiguredListener {
     @SubscribeEvent
     public void onMageDie(PlayerRespawnEvent event) {
         eraseAllMortalMagic(event.player);
+        if (ModState.isBloodMagicLoaded) {
+            fixSoulNetworkCachingDeadPlayer(event.player);
+        }
     }
     
     public static boolean requiresFullMoon(IForgeRegistryEntry.Impl<?> useTarget) {
@@ -303,6 +308,28 @@ public class ListenerPlayerMagic extends ConfiguredListener {
         }
     }
     
+    //TODO: Fork Blood Magic for 1.10 and properly fix this bug
+    /** The dead player that Blood Magic uses for caching has an
+     * old version of the MISC_CAPABILITY, which we need in order
+     * to figure out if the player has died since a ritual
+     * was activated. See ListenerPlayerMagic.onRunPastLifeBloodRitual
+     */
+    @Optional.Method(modid=ModState.BLOOD_MAGIC_ID)
+    public static void fixSoulNetworkCachingDeadPlayer(EntityPlayer player) {
+        SoulNetwork soulNetwork = NetworkHelper.getSoulNetwork(player);
+        if (soulNetwork == null) {
+            return;
+        }
+        try {
+            Field cachedPlayerField = SoulNetwork.class.getDeclaredField("cachedPlayer");
+            cachedPlayerField.setAccessible(true);
+            cachedPlayerField.set(soulNetwork, null);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
     /*
      * What it does: Makes it as if the player never used a blood orb.
      * Why it does it: 1) Prevents syphoning effect from Life Drain mod
@@ -314,6 +341,32 @@ public class ListenerPlayerMagic extends ConfiguredListener {
         SoulNetwork network = NetworkHelper.getSoulNetwork(player);
         network.setOrbTier(0);
         network.setCurrentEssence(0);
+    }
+    
+    @SubscribeEvent
+    @Optional.Method(modid=ModState.BLOOD_MAGIC_ID)
+    public void onStartBloodRitual(RitualActivatedEvent event) {
+        SoulNetwork soulNetwork = NetworkHelper.getSoulNetwork(event.ownerName);
+        if (soulNetwork == null) {
+            return;
+        }
+        EntityPlayer player = soulNetwork.getPlayer();
+        if (player == null) {
+            return;
+        }
+        ICapabilityMisc misc = player.getCapability(MISC_CAPABILITY, null);
+        if (misc == null) {
+            return;
+        }
+        UUID lifetimeUUID = misc.getLifetimeUUID();
+        if (!(event.mrs instanceof TileMasterRitualStone)) {
+            return;
+        }
+        ICapabilityTileHistory tileHistory = ((TileMasterRitualStone)event.mrs).getCapability(TILE_HISTORY_CAPABILITY, null);
+        if (tileHistory == null) {
+            return;
+        }
+        tileHistory.setOwnerLifetimeUUID(lifetimeUUID);
     }
 
     @SubscribeEvent
