@@ -130,6 +130,11 @@ public class ListenerPlayerMagicState extends ConfiguredListener {
             activateStellarAlignment(player);
             // Then properly clear the stellar alignment only
             clearStellarAlignment(player);
+            // Then sync alignment to client manually here.
+            // We can do this because this event only fires on the server.
+            // We don't want to do this elsewhere because
+            // it could lead to nasty nasty desyncs (theoretically).
+            syncStellarAlignment(player);
         }
         
         // Remove stored caps not persistent on death
@@ -777,5 +782,18 @@ public class ListenerPlayerMagicState extends ConfiguredListener {
         Field wasOnceAttunedField = PlayerProgress.class.getDeclaredField("wasOnceAttuned");
         wasOnceAttunedField.setAccessible(true);
         wasOnceAttunedField.set(playerProgress, false);
+    }
+
+    @Optional.Method(modid=ModState.ASTRAL_SORCERY_ID)
+    public static void syncStellarAlignment(EntityPlayer player) {
+        assert(!player.world.isRemote);
+        try {
+            Method syncMethod = ResearchManager.class.getDeclaredMethod("pushProgressToClientUnsafe", EntityPlayer.class);
+            syncMethod.setAccessible(true);
+            syncMethod.invoke(null, player);
+        }
+        catch (Exception e) {
+            HardcoreAlchemy.LOGGER.error("Stellar alignment could not be synced to client for player ID " + player.getUniqueID(), e);
+        }
     }
 }
