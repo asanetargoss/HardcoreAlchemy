@@ -144,6 +144,19 @@ public class ListenerPlayerHinderedMind extends ConfiguredListener {
         return wrapper.amplifier;
     }
     
+    public static float getPlayerFear(EntityPlayer player) {
+        ICapabilityInstinct instinct = player.getCapability(ProviderInstinct.INSTINCT_CAPABILITY, null);
+        if (instinct == null) {
+            return 0.0F;
+        }
+        
+        InstinctEffectWrapper wrapper = instinct.getActiveEffects().get(Instincts.EFFECT_HUNTED);
+        if (wrapper == null) {
+            return 0.0F;
+        }
+        return wrapper.amplifier;
+    }
+    
     @CoremodHook
     public static boolean canPlayerUseSneakToPreventFall(Entity entity) {
         return (entity instanceof EntityPlayer) && getPlayerHindrance((EntityPlayer)entity) < 1.0F;
@@ -274,7 +287,7 @@ public class ListenerPlayerHinderedMind extends ConfiguredListener {
         GuiIngameForge.renderExperiance = renderExperience;
         GuiIngameForge.renderJumpBar = renderJumpBar;
     }
-    
+
     public static class RiggedMovementInput extends MovementInput {
         private final MovementInput delegate;
         public RiggedMovementInput(MovementInput movementInput) {
@@ -309,7 +322,9 @@ public class ListenerPlayerHinderedMind extends ConfiguredListener {
                     moveStrafe = moveStrafe / 0.3F;
                     moveForward = moveForward / 0.3F;
                 }
-                player.setSprinting(false);
+                if (forwardKeyDown) {
+                    player.setSprinting(getPlayerFear(player) >= 2.0);
+                }
 
                 // Auto-swim if the player is in water and doesn't have the swim ability
                 if ((player.isInWater() || player.isInLava()) && player.getRNG().nextFloat() < 0.8F) {
