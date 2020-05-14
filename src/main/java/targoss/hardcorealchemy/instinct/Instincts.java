@@ -65,6 +65,8 @@ public class Instincts {
     
     public static final InstinctEffect EFFECT_HINDERED_MIND = instinctEffect("hindered_mind", new InstinctEffectHinderedMind());
     public static final InstinctEffect EFFECT_HUNTED = instinctEffect("hunted", new InstinctEffectHunted());
+
+    // TODO: Nether instinct/effect (need will be the same)
     
     private static Instinct instinct(String name, Instinct instinct) {
         instinct.setRegistryName(new ResourceLocation(HardcoreAlchemy.MOD_ID, name));

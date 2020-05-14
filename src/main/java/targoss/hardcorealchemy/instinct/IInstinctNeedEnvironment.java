@@ -50,6 +50,7 @@ public interface IInstinctNeedEnvironment extends IInstinctNeed {
                 }
                 grassMobs.add((Class<? extends EntityLivingBase>)EntityList.getClassFromID(EntityList.getIDFromString(grassMobName)));
             }
+            // TODO: Nether mobs once those are included
         }
         
         @Override
