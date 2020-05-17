@@ -18,15 +18,21 @@
 
 package targoss.hardcorealchemy.instinct;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 import java.util.function.Predicate;
+
+import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.MobEffects;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
@@ -35,10 +41,16 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.DimensionType;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import targoss.hardcorealchemy.capability.instinct.ICapabilityInstinct;
 import targoss.hardcorealchemy.instinct.api.IInstinctEffectData;
 import targoss.hardcorealchemy.instinct.api.InstinctEffect;
 import targoss.hardcorealchemy.listener.ListenerInstinctOverheat;
+import targoss.hardcorealchemy.util.InventoryUtil;
 import targoss.hardcorealchemy.util.WorldUtil;
 import targoss.hardcorealchemy.util.WorldUtil.BlockInfo;
 
@@ -47,7 +59,7 @@ public class InstinctEffectTemperedFlame extends InstinctEffect {
     @CapabilityInject(ICapabilityInstinct.class)
     private static final Capability<ICapabilityInstinct> INSTINCT_CAPABILITY = null;
     
-    /*  Overheat is 2 days, so we need to make sure we don't overlap.
+    /*  The overheat effect lasts 2 days, so we need to make sure we don't overlap.
      *  Note also, the overheat amplifier is usually lower when
      *  we're paired with InstinctEffectNetherFever, so the gap is more than 2 days.
      *  Note also, we do check if we're overheating, and not apply cold effects in that case.
@@ -69,17 +81,24 @@ public class InstinctEffectTemperedFlame extends InstinctEffect {
                 ++coolingTime;
             }
         }
+        
+        protected static final String NBT_COOLING_TIME = "cooling_time";
+        protected static final String NBT_MAX_COOLING_TIME = "max_cooling_time";
 
         @Override
         public NBTTagCompound serializeNBT() {
-            // TODO Auto-generated method stub
-            return null;
+            NBTTagCompound nbt = new NBTTagCompound();
+            nbt.setInteger(NBT_COOLING_TIME, coolingTime);
+            nbt.setInteger(NBT_MAX_COOLING_TIME, maxCoolingTime);
+            return nbt;
         }
 
         @Override
         public void deserializeNBT(NBTTagCompound nbt) {
-            // TODO Auto-generated method stub
-            
+            if (nbt.hasKey(NBT_COOLING_TIME)) {
+                coolingTime = nbt.getInteger(NBT_COOLING_TIME);
+                maxCoolingTime = nbt.getInteger(NBT_MAX_COOLING_TIME);
+            }
         }
     }
     
@@ -87,26 +106,102 @@ public class InstinctEffectTemperedFlame extends InstinctEffect {
     public IInstinctEffectData createData() {
         return new Data();
     }
+    
+    protected static boolean isIcyBlock(Block block, @Nullable IBlockState state) {
+        @SuppressWarnings("deprecation")
+        Material steppingMaterial = block.getMaterial(state != null ? state : block.getDefaultState());
+        boolean icy = (steppingMaterial == Material.ICE ||
+                steppingMaterial == Material.PACKED_ICE ||
+                steppingMaterial == Material.SNOW ||
+                steppingMaterial == Material.CRAFTED_SNOW);
+        return icy;
+    }
+    
+    protected static class ColdAmplifier {
+        public final float required;
+        public final float amount;
+        public final Predicate<ItemStack> condition;
+        public ColdAmplifier(float required, float amount, Predicate<ItemStack> condition) {
+            this.required = required;
+            this.amount = amount;
+            this.condition = condition;
+        }
+        public ColdAmplifier(float required, float amount) {
+            this(required, amount, null);
+        }
+    }
+    protected static final Map<String, ColdAmplifier> coldAmplifiers = new HashMap<>();
+    static {
+        Map<String, ColdAmplifier> c = coldAmplifiers;
+        {
+            ColdAmplifier veryCold = new ColdAmplifier(0.0F, 1.0F);
+            c.put("snow", veryCold);
+            c.put("snow_layer", veryCold);
+            c.put("snowball", veryCold);
+            c.put("ice", veryCold);
+            c.put("packed_ice", veryCold);
+            c.put("frosted_ice", veryCold);
+        }
+        {
+            ColdAmplifier prettyCold = new ColdAmplifier(1.0F, 0.9F);
+            c.put("potion", prettyCold);
+            c.put("harvestcraft:freshwateritem", prettyCold);
+        }
+        {
+            ColdAmplifier cool = new ColdAmplifier(2.0F, 0.5F);
+            c.put("alchemicash:CrystalCatalyst", cool);
+            c.put("alchemicash:Skystone", cool);
+            c.put("alchemicash:Skystone2", cool);
+            c.put("mysticalagriculture:water_essence", cool);
+            c.put("villagebox:water_shard", cool);
+        }
+    }
 
+    /** This function assumes itemStack is valid and non-empty */
     public float getItemColdAmplifier(EntityPlayer player, ItemStack itemStack, float amplifier) {
-        // TODO: Depends on the item...
-        /*
-        if (ice/snow) {
-            return amplifier * 1.0F;
+        Item item = itemStack.getItem();
+
+        // A filled bucket, tank, etc is "cold" for a nether being if its temperature is less than the boiling point of water.
+        // And a bucket of water (temperature 300) is defined to have a cold amplifier of 0.9.
+        if (amplifier >= 1.0F) {
+            IFluidHandler bucket = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null);
+            if (bucket != null) {
+                IFluidTankProperties[] fluids = bucket.getTankProperties();
+                for (IFluidTankProperties fluidProperties : fluids) {
+                    FluidStack fluidStack = fluidProperties.getContents();
+                    if (InventoryUtil.isEmptyFluidStack(fluidStack)) {
+                        continue;
+                    }
+                    Fluid fluid = fluidStack.getFluid();
+                    int temperature = fluid.getTemperature(fluidStack);
+                    if (temperature < 373) {
+                        return (0.9F * (373.0F - (float)temperature) / 73.0F) * amplifier;
+                    }
+                }
+                
+            }
         }
-        if (water/potion) {
-            return amplifier * 0.9F;
+
+        // If it's not a fluid, then look at the item name
+        String itemName = item.getRegistryName().toString();
+        if (coldAmplifiers.containsKey(itemName)) {
+            ColdAmplifier coldAmplifier = coldAmplifiers.get(itemName);
+            if (coldAmplifier.required <= amplifier &&
+                    (coldAmplifier.condition == null || coldAmplifier.condition.test(itemStack))) {
+                return coldAmplifier.amount * amplifier;
+            }
         }
-        if (water essence, etc) {
-            return amplifier * 0.5F;
-        }
-         */
+
         return 0.0F;
     }
     
     public float getColdAmplifier(EntityPlayer player, Data data, float amplifier) {
-        // TODO: Check for cold sources, sensitivity depends on how long we have been cold + amplifier, returned amplifier depends on sensitivity and the coldness of the object
-        // NOTE: For consistency with InstinctEffectOverheat, cooling debuffs should occur after the overheat effects go away (ideally, with a sweet spot in between)
+        // Check for cold sources.
+        // Sensitivity depends on how long it has been since the player has been exposed to heat,
+        //   the current effect amplifier,
+        //   and the coldness of various nearby things.
+        // The higher the amplifier, the more things can make the player cold,
+        //   and the more cold those things feel.
         float maxAllowedColdAmplifier = Math.max(0.0F, 
                 (data.coolingTime - (UNTIL_COLD_TIME_PER_AMP * amplifier)) * COLD_PER_TICK_PER_AMP * amplifier
                 );
@@ -114,39 +209,60 @@ public class InstinctEffectTemperedFlame extends InstinctEffect {
             return 0.0F;
         }
         float baseColdAmplifier = 0.0F;
+
+        // Check if the player is standing on a cold block
         if (amplifier >= 0.5F) {
             BlockPos steppingPos = new BlockPos((int)player.posX, (int)Math.floor(player.posY - 0.2), (int)player.posZ);
             IBlockState steppingState = player.world.getBlockState(steppingPos);
             if (steppingState != null) {
                 Block steppingBlock = steppingState.getBlock();
-                //TODO
-                /*
-                if (standing on/in ice/snow) {
+                boolean standingOnColdBlock = isIcyBlock(steppingBlock, steppingState);
+                // Also check one block above
+                if (!standingOnColdBlock) {
+                    IBlockState snowLayerState = player.world.getBlockState(steppingPos.up());
+                    if (snowLayerState != null) {
+                        Block snowLayerBlock = snowLayerState.getBlock();
+                        if (snowLayerBlock != null) {
+                            @SuppressWarnings("deprecation")
+                            boolean isOnSnowLayer = snowLayerBlock.getMaterial(snowLayerState) == Material.SNOW;
+                            standingOnColdBlock &= isOnSnowLayer;
+                        }
+                    }
+                }
+                if (standingOnColdBlock) {
                     baseColdAmplifier = Math.max(baseColdAmplifier, amplifier * 1.0F);
                 }
-                */
             }
         }
-        //TODO
-        /*
+
+        // Check if the player is in water or rain
         if (amplifier >= 1.25F) {
-            if (in water) {
+            if (player.isInWater()) {
                 baseColdAmplifier = Math.max(baseColdAmplifier, amplifier * 0.9F);
             }
-            if (outside and is raining) {
+            BlockPos playerPos = player.getPosition();
+            if (player.world.canSeeSky(playerPos) && player.world.isRainingAt(playerPos)) {
                 baseColdAmplifier = Math.max(baseColdAmplifier, amplifier * 0.5F);
             }
         }
+
+        // Check if the player is holding cold items in their inventory
+        // Items inside of backpacks don't count
         if (amplifier >= 2.0F) {
-            // Items inside of backpacks don't count
             float maxItemAmplifier = 0.0F;
-            for (each item in inventory) {
-                float itemAmplifier
+            InventoryPlayer inventory = player.inventory;
+            int n = inventory.getSizeInventory();
+            for (int i = 0; i < n; i++) {
+                ItemStack itemStack = inventory.getStackInSlot(i);
+                if (InventoryUtil.isEmptyItemStack(itemStack)) {
+                    continue;
+                }
+                float itemAmplifier = getItemColdAmplifier(player, itemStack, amplifier);
                 maxItemAmplifier = Math.max(maxItemAmplifier, itemAmplifier);
             }
             baseColdAmplifier = Math.max(baseColdAmplifier, maxItemAmplifier);
         }
-         */
+
         float coldAmplifier = Math.max(baseColdAmplifier, maxAllowedColdAmplifier);
         return coldAmplifier;
     }
@@ -156,7 +272,8 @@ public class InstinctEffectTemperedFlame extends InstinctEffect {
         if (amplifier >= 0.5F) {
             if (amplifier >= 2.0F) {
                 // Slowness II
-                player.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, effectTime, 1));
+                // And, theoretically, higher.
+                player.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, effectTime, (int)(amplifier - 1.0F)));
             }
             else {
                 player.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, effectTime));
@@ -210,9 +327,8 @@ public class InstinctEffectTemperedFlame extends InstinctEffect {
                 0.5F, 2.6F + (data.random.nextFloat() - data.random.nextFloat()) * 0.8F);
     }
     
-    public static boolean needsHeat(Data data) {
-        // TODO: data.coolingTime > something
-        return false;
+    public static boolean needsHeat(Data data, float amplifier) {
+        return data.coolingTime >= (UNTIL_COLD_TIME_PER_AMP * amplifier);
     }
     
     protected static void exposeToHeat(EntityPlayer player, Data data) {
@@ -241,8 +357,7 @@ public class InstinctEffectTemperedFlame extends InstinctEffect {
 
     @Override
     public void onDeactivate(EntityPlayer player, float amplifier) {
-        // TODO Auto-generated method stub
-
+        return;
     }
 
     @Override
@@ -257,7 +372,7 @@ public class InstinctEffectTemperedFlame extends InstinctEffect {
         }
         Data data = (Data)instinct.getInstinctEffectData(this);
         if (InstinctEffectNetherFever.isInHeat(player)) {
-            if (needsHeat(data)) {
+            if (needsHeat(data, amplifier)) {
                 consumeLesserHeat(player, data);
             }
             exposeToHeat(player, data);

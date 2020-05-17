@@ -45,6 +45,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -62,6 +63,10 @@ public class InventoryUtil {
 
     public static boolean isEmptyItemStack(ItemStack itemStack) {
         return itemStack == null;
+    }
+
+    public static boolean isEmptyFluidStack(FluidStack fluidStack) {
+        return fluidStack == null;
     }
     
     /**
