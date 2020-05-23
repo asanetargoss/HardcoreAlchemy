@@ -40,7 +40,10 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.inventory.SlotCrafting;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemSword;
+import net.minecraft.item.ItemTool;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
@@ -282,5 +285,26 @@ public class InventoryUtil {
     public static boolean isTANDrink(Item item) {
         return item instanceof IDrink ||
                 item.getRegistryName().getResourcePath().equals("canteen");
+    }
+
+    /** Get the material for swords, tools, and armor */
+    public static ItemStack getMaterialStack(ItemStack itemStack) {
+        if (isEmptyItemStack(itemStack)) {
+            return ITEM_STACK_EMPTY;
+        }
+        Item item = itemStack.getItem();
+        if (item instanceof ItemSword) {
+            String materialName =  ((ItemSword)item).getToolMaterialName();
+            Item.ToolMaterial material = Item.ToolMaterial.valueOf(materialName);
+            return material.getRepairItemStack();
+        }
+        if (item instanceof ItemTool) {
+            return ((ItemTool)item).getToolMaterial().getRepairItemStack();
+        }
+        if (item instanceof ItemArmor) {
+            Item materialItem = ((ItemArmor)item).getArmorMaterial().getRepairItem();
+            return new ItemStack(materialItem);
+        }
+        return ITEM_STACK_EMPTY;
     }
 }

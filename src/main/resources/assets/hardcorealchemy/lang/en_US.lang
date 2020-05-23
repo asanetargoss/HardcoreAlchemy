@@ -48,6 +48,10 @@ hardcorealchemy.ability.sustenance.not_ready.drink=You are not desperate enough 
 hardcorealchemy.ability.sustenance.disabled=Your instincts are not strong enough to find sustenance here.
 hardcorealchemy.ability.sustenance.invalid=Invalid sustenance message. Please report to mod developer.
 
+hardcorealchemy.effect.tempered_flame.fulfilled=The heat restores you and drives away the cold.
+
+hardcorealchemy.effect.overheat.exposed=Your form overflows with uncontrollable heat.
+
 hardcorealchemy.instinct.attack_prey.need=You yearn to hunt %s.
 hardcorealchemy.instinct.attack_prey.need.generic=You yearn to hunt.
 hardcorealchemy.instinct.attack_prey.detect=You sense a %s.

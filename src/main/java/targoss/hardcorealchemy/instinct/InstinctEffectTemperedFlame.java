@@ -29,6 +29,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.MobEffects;
 import net.minecraft.init.SoundEvents;
@@ -36,8 +37,10 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.DimensionType;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
@@ -50,6 +53,7 @@ import targoss.hardcorealchemy.capability.instinct.ICapabilityInstinct;
 import targoss.hardcorealchemy.instinct.api.IInstinctEffectData;
 import targoss.hardcorealchemy.instinct.api.InstinctEffect;
 import targoss.hardcorealchemy.listener.ListenerInstinctOverheat;
+import targoss.hardcorealchemy.util.Chat;
 import targoss.hardcorealchemy.util.InventoryUtil;
 import targoss.hardcorealchemy.util.WorldUtil;
 import targoss.hardcorealchemy.util.WorldUtil.BlockInfo;
@@ -130,30 +134,30 @@ public class InstinctEffectTemperedFlame extends InstinctEffect {
             this(required, amount, null);
         }
     }
-    protected static final Map<String, ColdAmplifier> coldAmplifiers = new HashMap<>();
+    protected static final Map<ResourceLocation, ColdAmplifier> coldAmplifiers = new HashMap<>();
     static {
-        Map<String, ColdAmplifier> c = coldAmplifiers;
+        Map<ResourceLocation, ColdAmplifier> c = coldAmplifiers;
         {
             ColdAmplifier veryCold = new ColdAmplifier(0.0F, 1.0F);
-            c.put("snow", veryCold);
-            c.put("snow_layer", veryCold);
-            c.put("snowball", veryCold);
-            c.put("ice", veryCold);
-            c.put("packed_ice", veryCold);
-            c.put("frosted_ice", veryCold);
+            c.put(new ResourceLocation("snow"), veryCold);
+            c.put(new ResourceLocation("snow_layer"), veryCold);
+            c.put(new ResourceLocation("snowball"), veryCold);
+            c.put(new ResourceLocation("ice"), veryCold);
+            c.put(new ResourceLocation("packed_ice"), veryCold);
+            c.put(new ResourceLocation("frosted_ice"), veryCold);
         }
         {
             ColdAmplifier prettyCold = new ColdAmplifier(1.0F, 0.9F);
-            c.put("potion", prettyCold);
-            c.put("harvestcraft:freshwateritem", prettyCold);
+            c.put(new ResourceLocation("potion"), prettyCold);
+            c.put(new ResourceLocation("harvestcraft:freshwateritem"), prettyCold);
         }
         {
             ColdAmplifier cool = new ColdAmplifier(2.0F, 0.5F);
-            c.put("alchemicash:CrystalCatalyst", cool);
-            c.put("alchemicash:Skystone", cool);
-            c.put("alchemicash:Skystone2", cool);
-            c.put("mysticalagriculture:water_essence", cool);
-            c.put("villagebox:water_shard", cool);
+            c.put(new ResourceLocation("alchemicash:CrystalCatalyst"), cool);
+            c.put(new ResourceLocation("alchemicash:Skystone"), cool);
+            c.put(new ResourceLocation("alchemicash:Skystone2"), cool);
+            c.put(new ResourceLocation("mysticalagriculture:water_essence"), cool);
+            c.put(new ResourceLocation("villagebox:water_shard"), cool);
         }
     }
 
@@ -183,9 +187,9 @@ public class InstinctEffectTemperedFlame extends InstinctEffect {
         }
 
         // If it's not a fluid, then look at the item name
-        String itemName = item.getRegistryName().toString();
-        if (coldAmplifiers.containsKey(itemName)) {
-            ColdAmplifier coldAmplifier = coldAmplifiers.get(itemName);
+        ResourceLocation itemResource = item.getRegistryName();
+        if (coldAmplifiers.containsKey(itemResource)) {
+            ColdAmplifier coldAmplifier = coldAmplifiers.get(itemResource);
             if (coldAmplifier.required <= amplifier &&
                     (coldAmplifier.condition == null || coldAmplifier.condition.test(itemStack))) {
                 return coldAmplifier.amount * amplifier;
@@ -332,7 +336,10 @@ public class InstinctEffectTemperedFlame extends InstinctEffect {
     }
     
     protected static void exposeToHeat(EntityPlayer player, Data data) {
-        // TODO: Message that the player did something good (for now)
+        assert(!player.world.isRemote);
+        if (!player.world.isRemote) {
+            Chat.message(Chat.Type.NOTIFY, (EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.effect.tempered_flame.fulfilled"));
+        }
         data.coolingTime = 0;
     }
 
@@ -357,7 +364,12 @@ public class InstinctEffectTemperedFlame extends InstinctEffect {
 
     @Override
     public void onDeactivate(EntityPlayer player, float amplifier) {
-        return;
+        ICapabilityInstinct instinct = player.getCapability(INSTINCT_CAPABILITY, null);
+        if (instinct == null) {
+            return;
+        }
+        Data data = (Data)instinct.getInstinctEffectData(this);
+        data.coolingTime = 0;
     }
 
     @Override

@@ -39,7 +39,7 @@ public class InstinctEffectNetherFever extends InstinctEffect {
         if (amplifier < 1.0F) {
             return 0.0F;
         }
-        return amplifier - 1.0F;
+        return (amplifier - 1.0F) * 2.0F;
     }
 
     public static float toCoolingAmplifier(float amplifier) {
