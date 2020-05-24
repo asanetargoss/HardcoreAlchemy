@@ -23,6 +23,7 @@ import java.util.EnumSet;
 import java.util.List;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import am2.container.slot.SlotMagiciansWorkbenchCrafting;
 import gr8pefish.ironbackpacks.capabilities.IronBackpacksCapabilities;
@@ -306,5 +307,25 @@ public class InventoryUtil {
             return new ItemStack(materialItem);
         }
         return ITEM_STACK_EMPTY;
+    }
+    
+    /** Get the material name for swords, tools, and armor.
+     *  Block materials don't reflect the underlying ingredients,
+     *  so are not checked here. */
+    public static @Nullable String getMaterialName(ItemStack itemStack) {
+        if (isEmptyItemStack(itemStack)) {
+            return null;
+        }
+        Item item = itemStack.getItem();
+        if (item instanceof ItemSword) {
+            return ((ItemSword)item).getToolMaterialName();
+        }
+        if (item instanceof ItemTool) {
+            return ((ItemTool)item).getToolMaterial().name();
+        }
+        if (item instanceof ItemArmor) {
+            return ((ItemArmor)item).getArmorMaterial().name();
+        }
+        return null;
     }
 }

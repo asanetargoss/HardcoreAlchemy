@@ -19,19 +19,26 @@
 package targoss.hardcorealchemy.instinct;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemPotion;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
@@ -40,10 +47,12 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
+import net.minecraftforge.oredict.OreDictionary;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.instinct.ICapabilityInstinct;
 import targoss.hardcorealchemy.instinct.api.IInstinctEffectData;
 import targoss.hardcorealchemy.instinct.api.InstinctEffect;
+import targoss.hardcorealchemy.item.Items;
 import targoss.hardcorealchemy.util.Chat;
 import targoss.hardcorealchemy.util.InventoryUtil;
 import targoss.hardcorealchemy.util.NamedItem;
@@ -142,32 +151,78 @@ public class InstinctEffectOverheat extends InstinctEffect {
         }
         return itemStack;
     }
-    
+
+    protected static Set<ResourceLocation> iceMeltables = new HashSet<>();
+    static {
+        iceMeltables.add(new ResourceLocation("snowballs"));
+        iceMeltables.add(new ResourceLocation("ice"));
+        iceMeltables.add(new ResourceLocation("packed_ice"));
+        iceMeltables.add(new ResourceLocation("frosted_ice"));
+        iceMeltables.add(new ResourceLocation("snow"));
+    }
     protected static ItemStack meltIceInItemStack(ItemStack itemStack) {
         if (InventoryUtil.isEmptyItemStack(itemStack)) {
             return itemStack;
         }
 
-        // TODO
+        Item item = itemStack.getItem();
+        ResourceLocation id = item.getRegistryName();
+        if (iceMeltables.contains(id)) {
+            return InventoryUtil.ITEM_STACK_EMPTY;
+        }
+
         return itemStack;
     }
 
+    protected static Set<String> flammableCraftMaterials = new HashSet<>();
+    static {
+        flammableCraftMaterials.add("WOOD");
+    }
+    protected static Set<Material> flammableBlockMaterials = new HashSet<>();
+    static {
+        flammableBlockMaterials.add(Material.WOOD);
+        flammableBlockMaterials.add(Material.LEAVES);
+        flammableBlockMaterials.add(Material.PLANTS);
+        flammableBlockMaterials.add(Material.VINE);
+        flammableBlockMaterials.add(Material.CLOTH);
+        flammableBlockMaterials.add(Material.CARPET);
+        flammableBlockMaterials.add(Material.GOURD);
+        flammableBlockMaterials.add(Material.WEB);
+    }
     protected static ItemStack burnItemInItemStack(ItemStack itemStack) {
         if (InventoryUtil.isEmptyItemStack(itemStack)) {
             return itemStack;
         }
 
-        // TODO: ItemSword flammable by material
-        // TODO: ItemTool flammable by material
-        // TODO: Block flammable by material
-        // TODO: For the rest, look up in a map (sticks, food, etc)
-        // TODO: If aflame then return ash (new item)
+        String craftMaterial = InventoryUtil.getMaterialName(itemStack);
+        if (flammableCraftMaterials.contains(craftMaterial)) {
+            return new ItemStack(Items.ASH, itemStack.stackSize);
+        }
+        Item item = itemStack.getItem();
+        if (item instanceof ItemBlock) {
+            Block block = ((ItemBlock)item).getBlock();
+            @SuppressWarnings("deprecation")
+            Material blockMaterial = block.getMaterial(block.getDefaultState());
+            if (flammableBlockMaterials.contains(blockMaterial)) {
+                return new ItemStack(Items.ASH, itemStack.stackSize);
+            }
+        }
+        if (item instanceof ItemFood) {
+            return new ItemStack(Items.ASH, itemStack.stackSize);
+        }
+        for (int ore : OreDictionary.getOreIDs(itemStack)) {
+            String oreName = OreDictionary.getOreName(ore);
+            if (oreName.toLowerCase().contains("wood")) {
+                return new ItemStack(Items.ASH, itemStack.stackSize);
+            }
+        }
+
         return itemStack;
     }
 
-    protected static Map<ResourceLocation, NamedItem> itemToMelted = new HashMap<>();
     protected static NamedItem IRON_INGOT = new NamedItem("iron_ingot");
     protected static NamedItem GOLD_INGOT = new NamedItem("gold_ingot");
+    protected static Map<ResourceLocation, NamedItem> itemToMelted = new HashMap<>();
     static {
         itemToMelted.put(new ResourceLocation("bucket"), IRON_INGOT);
         itemToMelted.put(new ResourceLocation("shears"), IRON_INGOT);
@@ -179,12 +234,13 @@ public class InstinctEffectOverheat extends InstinctEffect {
             return itemStack;
         }
 
-        // Melt a tool/sword/armor/etc if its material is an ingot
+        // Melt a tool/sword/armor/etc if its material is a metal ingot
         {
             ItemStack meltStack = InventoryUtil.getMaterialStack(itemStack);
             if (!InventoryUtil.isEmptyItemStack(meltStack)) {
                 Item meltItem = meltStack.getItem();
-                boolean isMeltable = meltItem.getRegistryName().toString().contains("ingot");
+                String registryString = meltItem.getRegistryName().toString();
+                boolean isMeltable = registryString.contains("ingot") && !registryString.contains("obsidian");
                 if (isMeltable) {
                     // A single ingot is fine
                     return meltStack;
@@ -207,11 +263,19 @@ public class InstinctEffectOverheat extends InstinctEffect {
         return itemStack;
     }
 
-    protected static void setWorldAflame(EntityPlayer player) {
-        // TODO
-        // n times
-        // Get random pos
-        // Touching block and exposed to air? -> Make fire
+    protected static void setWorldAflame(EntityPlayer player, Data data) {
+        int minFlames = 3;
+        int maxFlames = 12;
+        int flames = data.random.nextInt(maxFlames - minFlames + 1) - minFlames;
+        for (int i = 0; i < flames; ++i) {
+            double randomRayX = 1.0 - (2.0 * data.random.nextDouble());
+            double randomRayZ = 1.0 - (2.0 * data.random.nextDouble());
+            // Bias toward negative y.
+            double randomRayY = 1.0 - (2.0 * Math.pow(data.random.nextDouble(), 3.0));
+            Vec3d randomRay = new Vec3d(randomRayX, randomRayY, randomRayZ);
+            randomRay.normalize();
+            // TODO: Raycast from player head -> hit block and exposed to air? -> Make fire
+        }
     }
     
     public void doOverheatEvent(EntityPlayer player, Data data, float amplifier) {
@@ -245,7 +309,7 @@ public class InstinctEffectOverheat extends InstinctEffect {
         }
 
         if (amplifier >= 2.0F) {
-            setWorldAflame(player);
+            setWorldAflame(player, data);
         }
 
         player.world.playSound(null, player.getPosition(), SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS,

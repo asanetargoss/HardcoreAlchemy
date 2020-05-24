@@ -105,6 +105,7 @@ entity.hardcorealchemy.fish_swarm.name=Fish Swarm
 
 item.hardcorealchemy:essence_mage.name=Mage Essence
 item.hardcorealchemy:drowned_ender_pearl.name=Drowned Ender Pearl
+item.hardcorealchemy:ash.name=Ash
 
 potion.hardcorealchemy:allow_magic=Unhindered Magic
 potion.effect.hardcorealchemy:allow_magic=Potion of Unhindered Magic

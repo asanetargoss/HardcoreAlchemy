@@ -56,6 +56,7 @@ public class Items {
     
     public static final Item ESSENCE_MAGE = item("essence_mage");
     public static final Item DROWNED_ENDER_PEARL = item("drowned_ender_pearl");
+    public static final Item ASH = item("ash");
     
     public static final Potion POTION_ALLOW_MAGIC = potion("allow_magic", GOOD_EFFECT, new Color(113, 80, 182), 0, true);
     public static final PotionType POTION_TYPE_ALLOW_MAGIC = potionType(POTION_ALLOW_MAGIC, 5*60*20);
