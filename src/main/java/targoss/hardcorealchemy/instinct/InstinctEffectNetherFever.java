@@ -20,18 +20,37 @@ package targoss.hardcorealchemy.instinct;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.DimensionType;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import targoss.hardcorealchemy.capability.instinct.ICapabilityInstinct;
 import targoss.hardcorealchemy.instinct.api.IInstinctEffectData;
 import targoss.hardcorealchemy.instinct.api.InstinctEffect;
+import targoss.hardcorealchemy.util.WorldUtil;
 
 public class InstinctEffectNetherFever extends InstinctEffect {
     @CapabilityInject(ICapabilityInstinct.class)
     private static final Capability<ICapabilityInstinct> INSTINCT_CAPABILITY = null;
     
     public static boolean isInHeat(EntityPlayer player) {
-        // TODO: Check for player being in fire/in lava
+        if (player.dimension != DimensionType.NETHER.getId()) {
+            if (player.onGround) {
+                boolean collidesWithFire = WorldUtil.doesCollide(player,
+                        WorldUtil.CollisionPredicate.FIRE,
+                        WorldUtil.CollisionMethod.FIRE);
+                if (collidesWithFire) {
+                    return true;
+                }
+            }
+
+            boolean collidesWithLava = WorldUtil.doesCollide(player,
+                    WorldUtil.CollisionPredicate.FIRE,
+                    WorldUtil.CollisionMethod.LAVA);
+            if (collidesWithLava) {
+                return true;
+            }
+        }
+        
         return false;
     }
     
@@ -47,26 +66,31 @@ public class InstinctEffectNetherFever extends InstinctEffect {
     }
 
     protected static class Data implements IInstinctEffectData {
-        InstinctEffectOverheat overheatEffect = new InstinctEffectOverheat();
-        InstinctEffectTemperedFlame coolingEffect = new InstinctEffectTemperedFlame();
+        InstinctEffect overheatEffect = Instincts.EFFECT_OVERHEAT;
+        InstinctEffect coolingEffect = Instincts.EFFECT_TEMPERED_FLAME;
+        
+        protected static final String NBT_OVERHEAT_EFFECT = "overheat";
+        protected static final String NBG_COOLING_EFFECT = "cooling";
+        
+        /* Everything is stored in the child effects, which are managed by
+         * the instinct capability. So, nothing has to be saved here.
+         */
 
         @Override
         public NBTTagCompound serializeNBT() {
-            // TODO Auto-generated method stub
-            return null;
+            return new NBTTagCompound();
         }
 
         @Override
-        public void deserializeNBT(NBTTagCompound nbt) {
-            // TODO Auto-generated method stub
-            
-        }
+        public void deserializeNBT(NBTTagCompound nbt) {}
     }
     
     @Override
     public IInstinctEffectData createData() {
         return new Data();
     }
+
+    // TODO: Rather than call the effects directly, use the forced effect API in ICapabilityInstinct, and store the forced effect IDs.
 
     @Override
     public void onActivate(EntityPlayer player, float amplifier) {

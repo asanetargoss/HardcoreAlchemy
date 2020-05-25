@@ -297,12 +297,10 @@ public class InstinctEffectTemperedFlame extends InstinctEffect {
         // The player will also no longer be on fire (even if in the Nether)
         if (player.dimension != DimensionType.NETHER.getId()) {
             if (player.onGround) {
-                BlockInfo fireInfo = WorldUtil.getRandomCollidingState(data.random, player, new Predicate<BlockInfo>() {
-                    @Override
-                    public boolean test(BlockInfo info) {
-                        return info.getState().getBlock() == net.minecraft.init.Blocks.FIRE;
-                    }
-                }, WorldUtil.CollisionMethod.FIRE);
+                BlockInfo fireInfo = WorldUtil.getRandomCollidingState(data.random,
+                        player, 
+                        WorldUtil.CollisionPredicate.FIRE,
+                        WorldUtil.CollisionMethod.FIRE);
                 if (fireInfo != null) {
                     player.world.setBlockToAir(fireInfo.getPos());
                     BlockPos fuelPos = WorldUtil.getFireFuelPos(player.world, fireInfo.getPos());
@@ -312,13 +310,10 @@ public class InstinctEffectTemperedFlame extends InstinctEffect {
                 }
             }
 
-            BlockInfo lavaInfo = WorldUtil.getRandomCollidingState(data.random, player, new Predicate<BlockInfo>() {
-                @SuppressWarnings("deprecation")
-                @Override
-                public boolean test(BlockInfo info) {
-                    return info.getState().getBlock().getMaterial(info.getState()) == Material.LAVA;
-                }
-            }, WorldUtil.CollisionMethod.LAVA);
+            BlockInfo lavaInfo = WorldUtil.getRandomCollidingState(data.random,
+                    player,
+                    WorldUtil.CollisionPredicate.LAVA,
+                    WorldUtil.CollisionMethod.LAVA);
             if (lavaInfo != null) {
                 if (data.random.nextFloat() <= 0.05F) {
                     player.world.setBlockToAir(lavaInfo.getPos());

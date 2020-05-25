@@ -65,6 +65,11 @@ public class Instincts {
     
     public static final InstinctEffect EFFECT_HINDERED_MIND = instinctEffect("hindered_mind", new InstinctEffectHinderedMind());
     public static final InstinctEffect EFFECT_HUNTED = instinctEffect("hunted", new InstinctEffectHunted());
+    public static final InstinctEffect EFFECT_NETHER_FEVER = instinctEffect("nether_fever", new InstinctEffectNetherFever());
+    // These two effects are not used directly
+    // TODO: Think about this carefully
+    public static final InstinctEffect EFFECT_TEMPERED_FLAME = instinctEffect("overheat", new InstinctEffectTemperedFlame());
+    public static final InstinctEffect EFFECT_OVERHEAT = instinctEffect("overheat", new InstinctEffectOverheat());
 
     // TODO: Nether instinct/effect (need will be the same)
     

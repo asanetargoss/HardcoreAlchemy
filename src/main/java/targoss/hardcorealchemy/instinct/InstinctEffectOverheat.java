@@ -29,6 +29,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -38,6 +39,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.Capability;
@@ -263,6 +265,7 @@ public class InstinctEffectOverheat extends InstinctEffect {
         return itemStack;
     }
 
+    /** Scatter some fire near the player */
     protected static void setWorldAflame(EntityPlayer player, Data data) {
         int minFlames = 3;
         int maxFlames = 12;
@@ -274,7 +277,12 @@ public class InstinctEffectOverheat extends InstinctEffect {
             double randomRayY = 1.0 - (2.0 * Math.pow(data.random.nextDouble(), 3.0));
             Vec3d randomRay = new Vec3d(randomRayX, randomRayY, randomRayZ);
             randomRay.normalize();
-            // TODO: Raycast from player head -> hit block and exposed to air? -> Make fire
+            Vec3d playerRayStart = new Vec3d(player.posX, player.posY + player.getEyeHeight(), player.posZ);
+            Vec3d playerRayEnd = playerRayStart.add(randomRay);
+            RayTraceResult result = player.world.rayTraceBlocks(playerRayStart, playerRayEnd, true, true, false);
+            if (result.typeOfHit == RayTraceResult.Type.BLOCK) {
+                player.world.setBlockState(result.getBlockPos(), Blocks.FIRE.getDefaultState());
+            }
         }
     }
     

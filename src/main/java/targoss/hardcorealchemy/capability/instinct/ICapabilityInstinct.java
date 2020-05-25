@@ -23,7 +23,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+
+import com.google.common.collect.Multimap;
 
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
@@ -114,6 +115,15 @@ public interface ICapabilityInstinct {
     List<InstinctEntry> getInstincts();
     
     void setInstincts(List<InstinctEntry> instincts);
+
+    /**
+     * Force an instinct effect to be active with the given amplitude.
+     * Hold on to the returned ID and use it to clear the effect when
+     * you no longer want it to be active.
+     */
+    int addForcedEffect(InstinctEffect effect, float amplitude);
+    
+    void removeForcedEffect(int effectForceKey);
     
     /**
      * NOTE: This map is re-created each tick in InstinctSystem
@@ -155,4 +165,15 @@ public interface ICapabilityInstinct {
     Map<InstinctEffect, NBTTagCompound> getUninitializedEffectData();
     
     void setUninitializedEffectData(Map<InstinctEffect, NBTTagCompound> uninitializedEffectData);
+    
+    public static class ForcedEffectEntry {
+        public int owningID;
+        public float amplitude;
+    }
+    
+    Multimap<InstinctEffect, ForcedEffectEntry> getForcedEffects();
+    void setForcedEffects(Multimap<InstinctEffect, ForcedEffectEntry> forcedEffects);
+    
+    // TODO: getForcedEffectIDs
+    // TODO: Implement interface stubs
 }

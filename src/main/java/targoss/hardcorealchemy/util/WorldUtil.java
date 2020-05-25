@@ -26,6 +26,7 @@ import java.util.function.Predicate;
 import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
@@ -40,6 +41,22 @@ public class WorldUtil {
         FULL,
         FIRE,
         LAVA
+    }
+    
+    public static class CollisionPredicate {
+        public static final Predicate<BlockInfo> FIRE = new Predicate<BlockInfo>() {
+            @Override
+            public boolean test(BlockInfo info) {
+                return info.getState().getBlock() == net.minecraft.init.Blocks.FIRE;
+            }
+        };
+        public static final Predicate<BlockInfo> LAVA = new Predicate<BlockInfo>() {
+            @SuppressWarnings("deprecation")
+            @Override
+            public boolean test(BlockInfo info) {
+                return info.getState().getBlock().getMaterial(info.getState()) == Material.LAVA;
+            }
+        };
     }
     
     public static class BlockInfo {
@@ -133,6 +150,56 @@ public class WorldUtil {
         mPos.release();
         
         return matching;
+    }
+    
+    /**
+     * Ignores air/anything null.
+     * Need CollisionMethod because Minecraft is inconsistent about colliding with things.
+     * */
+    public static boolean doesCollide(Entity entity, Predicate<BlockInfo> predicate, CollisionMethod collisionMethod) {
+        AxisAlignedBB box;
+        switch (collisionMethod) {
+        case FIRE:
+            box = entity.getEntityBoundingBox().contract(0.001);
+            break;
+        case LAVA:
+            box = entity.getEntityBoundingBox().expand(-0.1, -0.4, -0.1);
+            break;
+        default:
+            box = entity.getEntityBoundingBox();
+            break;
+        }
+        
+        int xMin = MathHelper.floor(box.minX);
+        int xMax = MathHelper.ceil(box.maxX);
+        int yMin = MathHelper.floor(box.minY);
+        int yMax = MathHelper.ceil(box.maxY);
+        int zMin = MathHelper.floor(box.minZ);
+        int zMax = MathHelper.ceil(box.maxZ);
+        BlockPos.PooledMutableBlockPos mPos = BlockPos.PooledMutableBlockPos.retain();
+        MutableBlockInfo blockInfo = new MutableBlockInfo();
+        for (int x = xMin; x < xMax; ++x) {
+            for (int y = yMin; y < yMax; ++y) {
+                for (int z = zMin; z < zMax; ++z) {
+                    IBlockState state = entity.world.getBlockState(mPos.setPos(x, y, z));
+                    if (state == null) {
+                        continue;
+                    }
+                    Block block = state.getBlock();
+                    if (block == null || block.isAir(state, entity.world, mPos)) {
+                        continue;
+                    }
+                    blockInfo.setPos(mPos);
+                    blockInfo.setState(state);
+                    if (predicate.test(blockInfo)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        mPos.release();
+        
+        return false;
     }
     
     public static @Nullable BlockInfo getRandomCollidingState(Random random, Entity entity, Predicate<BlockInfo> predicate, CollisionMethod collisionMethod) {
