@@ -21,7 +21,6 @@ package targoss.hardcorealchemy.capability.instinct;
 import static targoss.hardcorealchemy.util.Serialization.NBT_COMPOUND_ID;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +32,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
 import targoss.hardcorealchemy.HardcoreAlchemy;
-import targoss.hardcorealchemy.ModStateException;
+import targoss.hardcorealchemy.capability.instinct.ICapabilityInstinct.ForcedEffectEntry;
 import targoss.hardcorealchemy.capability.instinct.ICapabilityInstinct.InstinctEntry;
 import targoss.hardcorealchemy.instinct.Instincts;
 import targoss.hardcorealchemy.instinct.api.IInstinctEffectData;
@@ -42,7 +41,7 @@ import targoss.hardcorealchemy.instinct.api.InstinctEffect;
 import targoss.hardcorealchemy.instinct.internal.InstinctEffectWrapper;
 import targoss.hardcorealchemy.instinct.internal.InstinctNeedWrapper;
 import targoss.hardcorealchemy.instinct.internal.InstinctState;
-import targoss.hardcorealchemy.util.Serialization;
+import targoss.hardcorealchemy.util.IDList;
 
 public class StorageInstinct implements Capability.IStorage<ICapabilityInstinct> {
     public static final String INSTINCT = "instinct";
@@ -75,6 +74,10 @@ public class StorageInstinct implements Capability.IStorage<ICapabilityInstinct>
     public static final String EFFECT_DATA = "effect_data";
     public static final String EFFECT_DATA_EFFECT_ID = "id";
     public static final String EFFECT_DATA_DATA = "data";
+
+    public static final String FORCED_EFFECTS = "forced_effects";
+    public static final String FORCED_EFFECT_TYPE = "effect";
+    public static final String FORCED_EFFECT_AMPLITUDE = "amplitude";
     
     @Override
     public NBTBase writeNBT(Capability<ICapabilityInstinct> capability, ICapabilityInstinct instance, EnumFacing side) {
@@ -102,6 +105,9 @@ public class StorageInstinct implements Capability.IStorage<ICapabilityInstinct>
         
         NBTTagList effectDataNBT = serializeEffectData(instance.getEffectData());
         nbtCompound.setTag(EFFECT_DATA, effectDataNBT);
+        
+        NBTTagList forcedEffectNBT = serializeForcedEffects(instance.getForcedEffects());
+        nbtCompound.setTag(FORCED_EFFECTS, forcedEffectNBT);
         
         return nbtCompound;
     }
@@ -148,8 +154,18 @@ public class StorageInstinct implements Capability.IStorage<ICapabilityInstinct>
         NBTTagList uninitializeEffectDataNBT = nbtCompound.getTagList(EFFECT_DATA, NBT_COMPOUND_ID);
         Map<InstinctEffect, NBTTagCompound> uninitializedEffectData = deserializeUninitializedEffectData(uninitializeEffectDataNBT);
         instance.setUninitializedEffectData(uninitializedEffectData);
+        
+        List<ICapabilityInstinct.ForcedEffectEntry> forcedEffects = instance.getForcedEffects().getInternalList();
+        forcedEffects.clear();
+        NBTTagList forcedEffectsNBT = nbtCompound.getTagList(FORCED_EFFECTS, NBT_COMPOUND_ID);
+        int numForcedEffects = forcedEffectsNBT.tagCount();
+        for (int i = 0; i < numForcedEffects; i++) {
+            ICapabilityInstinct.ForcedEffectEntry forcedEffect = deserializeForcedEffect(forcedEffectsNBT.getCompoundTagAt(i));
+            forcedEffects.add(forcedEffect);
+        }
+        instance.getForcedEffects().setInternalList(forcedEffects);
     }
-    
+
     public static NBTTagCompound serializeInstinctEntry(InstinctEntry entry) {
         NBTTagCompound instinctNBT = new NBTTagCompound();
         
@@ -334,7 +350,7 @@ public class StorageInstinct implements Capability.IStorage<ICapabilityInstinct>
         
         wrapper.effect = Instincts.EFFECT_REGISTRY.getValue(new ResourceLocation(nbt.getString(EFFECT_ID)));
         if (wrapper.effect == null) {
-            HardcoreAlchemy.LOGGER.warn("Invalid effect name '' when deserializing instinct effect wrapper.");
+            HardcoreAlchemy.LOGGER.warn("Invalid effect name '" + nbt.getString(EFFECT_ID) + "' when deserializing instinct effect wrapper.");
             return wrapper;
         }
         
@@ -376,5 +392,34 @@ public class StorageInstinct implements Capability.IStorage<ICapabilityInstinct>
         }
         
         return uninitializedEffectData;
+    }
+
+    public static NBTTagList serializeForcedEffects(IDList<ForcedEffectEntry> forcedEffects) {
+        NBTTagList forcedEffectsNBT = new NBTTagList();
+        for (ForcedEffectEntry forcedEffect : forcedEffects.getInternalList()) {
+            NBTTagCompound forcedEffectNBT = new NBTTagCompound();
+            if (forcedEffect != null) {
+                forcedEffectNBT.setString(FORCED_EFFECT_TYPE, forcedEffect.effect.getRegistryName().toString());
+                forcedEffectNBT.setFloat(FORCED_EFFECT_AMPLITUDE, forcedEffect.amplitude);
+            }
+            forcedEffectsNBT.appendTag(forcedEffectNBT);
+        }
+        return forcedEffectsNBT;
+    }
+    
+    private static ForcedEffectEntry deserializeForcedEffect(NBTTagCompound nbt) {
+        if (nbt.getSize() == 0) {
+            return null;
+        }
+
+        ForcedEffectEntry entry = new ForcedEffectEntry();
+        entry.effect = Instincts.EFFECT_REGISTRY.getValue(new ResourceLocation(nbt.getString(FORCED_EFFECT_TYPE)));
+        if (entry.effect == null) {
+            HardcoreAlchemy.LOGGER.warn("Invalid effect name '" + nbt.getString(FORCED_EFFECT_TYPE) + "' when deserializing forced instinct effect.");
+            return null;
+        }
+        entry.amplitude = nbt.getFloat(FORCED_EFFECT_AMPLITUDE);
+
+        return entry;
     }
 }

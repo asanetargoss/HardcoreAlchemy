@@ -22,13 +22,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class IDList<E> {
-    protected List<E> internalList = new ArrayList<E>();
-    protected int nextFreeID = 0;
+    protected List<E> internalList = new ArrayList<>();
+    protected List<Integer> freeIDs = new ArrayList<>();
 
     public void setInternalList(List<E> internalList) {
-        int i;
-        for (i = 0; (i < internalList.size()) && (internalList.get(i) != null); ++i) {}
-        this.nextFreeID = i;
+        // First, remove trailing null values
+        for (int i = internalList.size() - 1; i >= 0; --i) {
+            if (internalList.get(i) != null) {
+                break;
+            }
+            internalList.remove(i);
+        }
+        // Then find all the free IDs
+        for (int i = 0; i < internalList.size(); ++i) {
+            E element = internalList.get(i);
+            if (element == null) {
+                freeIDs.add(i);
+            }
+        }
         this.internalList = internalList;
     }
 
@@ -41,17 +52,15 @@ public class IDList<E> {
             throw new NullPointerException("Null objects not supported");
         }
 
-        int id = nextFreeID;
-        if (id >= internalList.size()) {
+        if (freeIDs.isEmpty()) {
+            int id = internalList.size();
             internalList.add(element);
-            nextFreeID = internalList.size();
+            return id;
         } else {
+            int id = freeIDs.remove(freeIDs.size() - 1);
             internalList.set(id, element);
-            do {
-                ++nextFreeID;
-            } while (nextFreeID < internalList.size() && internalList.get(nextFreeID) != null);
+            return id;
         }
-        return id;
     }
 
     public E get(int id) {
@@ -74,5 +83,6 @@ public class IDList<E> {
         }
         
         internalList.set(id, null);
+        freeIDs.add(id);
     }
 }

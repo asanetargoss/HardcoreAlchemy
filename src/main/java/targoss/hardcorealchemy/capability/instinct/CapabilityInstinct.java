@@ -155,14 +155,15 @@ public class CapabilityInstinct implements ICapabilityInstinct {
 
     @Override
     public int addForcedEffect(InstinctEffect effect, float amplitude) {
-        // TODO Auto-generated method stub
-        return 0;
+        ForcedEffectEntry entry = new ForcedEffectEntry();
+        entry.effect = effect;
+        entry.amplitude = amplitude;
+        return forcedEffects.add(entry);
     }
 
     @Override
     public void removeForcedEffect(int effectForceKey) {
-        // TODO Auto-generated method stub
-        
+        forcedEffects.remove(effectForceKey);
     }
 
     @Override

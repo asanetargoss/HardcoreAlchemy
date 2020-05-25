@@ -169,10 +169,17 @@ public interface ICapabilityInstinct {
         InstinctEffect effect;
         public float amplitude;
     }
-    
-    // TODO: Serialize forced effects
-    
+
+    /**
+     * Internal instinct function, do not use!
+     * Use addForcedEffect, removeForcedEffect instead.
+     * */
     IDList<ForcedEffectEntry> getForcedEffects();
+
+    /**
+     * Internal instinct function, do not use!
+     * Use addForcedEffect, removeForcedEffect instead.
+     * */
     void setForcedEffects(IDList<ForcedEffectEntry> forcedEffects);
 
 }
