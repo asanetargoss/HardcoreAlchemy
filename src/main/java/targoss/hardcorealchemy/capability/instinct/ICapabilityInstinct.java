@@ -24,8 +24,6 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 
-import com.google.common.collect.Multimap;
-
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.entity.player.EntityPlayer;
@@ -39,6 +37,7 @@ import targoss.hardcorealchemy.instinct.api.InstinctNeedFactory;
 import targoss.hardcorealchemy.instinct.internal.InstinctEffectWrapper;
 import targoss.hardcorealchemy.instinct.internal.InstinctNeedWrapper;
 import targoss.hardcorealchemy.util.EntityUtil;
+import targoss.hardcorealchemy.util.IDList;
 
 public interface ICapabilityInstinct {
     public static final IAttribute MAX_INSTINCT = new RangedAttribute(null, HardcoreAlchemy.MOD_ID + ":max_instinct", 20.0D, Double.MIN_VALUE, Double.MAX_VALUE).setShouldWatch(true);
@@ -167,13 +166,13 @@ public interface ICapabilityInstinct {
     void setUninitializedEffectData(Map<InstinctEffect, NBTTagCompound> uninitializedEffectData);
     
     public static class ForcedEffectEntry {
-        public int owningID;
+        InstinctEffect effect;
         public float amplitude;
     }
     
-    Multimap<InstinctEffect, ForcedEffectEntry> getForcedEffects();
-    void setForcedEffects(Multimap<InstinctEffect, ForcedEffectEntry> forcedEffects);
+    // TODO: Serialize forced effects
     
-    // TODO: getForcedEffectIDs
-    // TODO: Implement interface stubs
+    IDList<ForcedEffectEntry> getForcedEffects();
+    void setForcedEffects(IDList<ForcedEffectEntry> forcedEffects);
+
 }

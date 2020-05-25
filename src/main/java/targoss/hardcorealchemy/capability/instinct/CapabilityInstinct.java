@@ -31,16 +31,19 @@ import targoss.hardcorealchemy.instinct.api.IInstinctEffectData;
 import targoss.hardcorealchemy.instinct.api.Instinct;
 import targoss.hardcorealchemy.instinct.api.InstinctEffect;
 import targoss.hardcorealchemy.instinct.internal.InstinctEffectWrapper;
+import targoss.hardcorealchemy.util.IDList;
 
 public class CapabilityInstinct implements ICapabilityInstinct {
     public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(HardcoreAlchemy.MOD_ID, "instinct");
     
     protected boolean enabled = true;
     private float instinct = ICapabilityInstinct.DEFAULT_INSTINCT_VALUE;
-    private List<ICapabilityInstinct.InstinctEntry> instincts = new ArrayList();
+    private List<ICapabilityInstinct.InstinctEntry> instincts = new ArrayList<>();
     private Map<InstinctEffect, InstinctEffectWrapper> activeEffects = new HashMap<>();
     private Map<InstinctEffect, IInstinctEffectData> effectData = new HashMap<>();
     private Map<InstinctEffect, NBTTagCompound> uninitializedEffectData = new HashMap<>();
+    int lastForcedEffectIndex = -1;
+    private IDList<ForcedEffectEntry> forcedEffects = new IDList<>();
     
     private int instinctMessageTime = 0;
     
@@ -148,5 +151,27 @@ public class CapabilityInstinct implements ICapabilityInstinct {
     @Override
     public void setUninitializedEffectData(Map<InstinctEffect, NBTTagCompound> uninitializedEffectData) {
         this.uninitializedEffectData = uninitializedEffectData;
+    }
+
+    @Override
+    public int addForcedEffect(InstinctEffect effect, float amplitude) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public void removeForcedEffect(int effectForceKey) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public IDList<ForcedEffectEntry> getForcedEffects() {
+        return forcedEffects;
+    }
+
+    @Override
+    public void setForcedEffects(IDList<ForcedEffectEntry> forcedEffects) {
+        this.forcedEffects = forcedEffects;
     }
 }
