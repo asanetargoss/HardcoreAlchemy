@@ -180,16 +180,7 @@ public class InstinctSystem {
     public static Map<InstinctEffect, InstinctEffectWrapper> computeNewActiveEffects(EntityPlayer player, ICapabilityInstinct instinct) {
         Map<InstinctEffect, InstinctEffectWrapper> pastEffects = instinct.getActiveEffects();
         Map<InstinctEffect, InstinctEffectWrapper> newEffects = new HashMap<>();
-        
-        float maxInstinct;
-        IAttributeInstance maxInstinctAttribute = player.getEntityAttribute(ICapabilityInstinct.MAX_INSTINCT);
-        if (maxInstinctAttribute != null) {
-            maxInstinct = (float)maxInstinctAttribute.getAttributeValue();
-        }
-        else {
-            maxInstinct = (float)ICapabilityInstinct.MAX_INSTINCT.getDefaultValue();
-        }
-        
+
         for (ICapabilityInstinct.InstinctEntry entry : instinct.getInstincts()) {
             // First, see if any needs in this instinct are not being met
             // If all needs are satisfied, new effects will not be activated
@@ -269,6 +260,33 @@ public class InstinctSystem {
                         needWrapper.state.effectAmplifiers.remove(effect);
                     }
                 }
+            }
+        }
+
+        // Forced effects
+        /* A maxInstinct of -infinity makes the effect go away immediately when
+         * the forced effect is no longer in place UNLESS
+         * there is another non-forced effect that has already
+         * been applied.
+         */
+        for (ICapabilityInstinct.ForcedEffectEntry forcedEffectEntry : instinct.getForcedEffects().getInternalList()) {
+            if (forcedEffectEntry == null) {
+                continue;
+            }
+
+            InstinctEffect forcedEffect = forcedEffectEntry.effect;
+            float forcedAmplitude = forcedEffectEntry.amplitude;
+            InstinctEffectWrapper newEffect = newEffects.get(forcedEffect);
+            if (newEffect == null) {
+                newEffect = new InstinctEffectWrapper();
+                newEffect.effect = forcedEffect;
+                newEffect.amplifier = forcedAmplitude;
+                newEffect.maxInstinct = Float.NEGATIVE_INFINITY;
+                newEffects.put(forcedEffect, newEffect);
+            }
+            else {
+                // There are multiple effects of this type. Combine them.
+                newEffect.amplify(forcedAmplitude);
             }
         }
         
@@ -364,14 +382,11 @@ public class InstinctSystem {
             return;
         }
         
-        float currentInstinct = instinct.getInstinct();
-        
         // Check needs
         
         // Tick each need, get the associated instinct change, and sync if needed
         boolean needStatusChanged = false;
         int entryCount = 0;
-        int needCount = 0;
         for (ICapabilityInstinct.InstinctEntry entry : instinct.getInstincts()) {
             int needCountPerEntry = 0;
             for (InstinctNeedWrapper needWrapper : entry.getNeeds(player)) {
@@ -385,7 +400,6 @@ public class InstinctSystem {
                     instinctState.shouldSyncNeed = false;
                 }
                 needCountPerEntry++;
-                needCount++;
             }
             entryCount++;
         }

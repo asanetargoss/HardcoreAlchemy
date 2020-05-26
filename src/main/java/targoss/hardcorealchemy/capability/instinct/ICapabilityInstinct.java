@@ -166,7 +166,7 @@ public interface ICapabilityInstinct {
     void setUninitializedEffectData(Map<InstinctEffect, NBTTagCompound> uninitializedEffectData);
     
     public static class ForcedEffectEntry {
-        InstinctEffect effect;
+        public InstinctEffect effect;
         public float amplitude;
     }
 

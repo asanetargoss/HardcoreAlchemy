@@ -21,6 +21,7 @@ package targoss.hardcorealchemy.instinct.internal;
 import targoss.hardcorealchemy.instinct.api.InstinctEffect;
 import targoss.hardcorealchemy.instinct.api.InstinctEffectDefinition;
 
+/** Internal to the instinct system. Use InstinctEffectDefinition instead. */
 public class InstinctEffectWrapper extends InstinctEffectDefinition {
     public InstinctEffectWrapper () {}
     
