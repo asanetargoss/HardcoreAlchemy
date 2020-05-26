@@ -263,7 +263,8 @@ public class InstinctSystem {
             }
         }
 
-        // Forced effects
+        // Forced effects - instinct effects that are active without being bound to a particular instinct.
+        //NOTE: This method of handling effects looks way simpler. I wonder if all the code above could be reduced by 50%...
         /* A maxInstinct of -infinity makes the effect go away immediately when
          * the forced effect is no longer in place UNLESS
          * there is another non-forced effect that has already

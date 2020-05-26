@@ -66,31 +66,40 @@ public class InstinctEffectNetherFever extends InstinctEffect {
     }
 
     protected static class Data implements IInstinctEffectData {
-        InstinctEffect overheatEffect = Instincts.EFFECT_OVERHEAT;
-        InstinctEffect coolingEffect = Instincts.EFFECT_TEMPERED_FLAME;
+        // Just store the IDs of our forced effects
+        public int overheatEffectID = -1;
+        public int coolingEffectID = -1;
         
-        protected static final String NBT_OVERHEAT_EFFECT = "overheat";
-        protected static final String NBG_COOLING_EFFECT = "cooling";
-        
-        /* Everything is stored in the child effects, which are managed by
-         * the instinct capability. So, nothing has to be saved here.
-         */
+        protected static final String NBT_OVERHEAT_EFFECT_ID = "overheat";
+        protected static final String NBT_COOLING_EFFECT_ID = "cooling";
 
         @Override
         public NBTTagCompound serializeNBT() {
-            return new NBTTagCompound();
+            NBTTagCompound nbt = new NBTTagCompound();
+            nbt.setInteger(NBT_OVERHEAT_EFFECT_ID, overheatEffectID);
+            nbt.setInteger(NBT_COOLING_EFFECT_ID, coolingEffectID);
+            return nbt;
         }
 
         @Override
-        public void deserializeNBT(NBTTagCompound nbt) {}
+        public void deserializeNBT(NBTTagCompound nbt) {
+            if (nbt.hasKey(NBT_OVERHEAT_EFFECT_ID)) {
+                overheatEffectID = nbt.getInteger(NBT_OVERHEAT_EFFECT_ID);
+            } else {
+                overheatEffectID = -1;
+            }
+            if (nbt.hasKey(NBT_COOLING_EFFECT_ID)) {
+                coolingEffectID = nbt.getInteger(NBT_COOLING_EFFECT_ID);
+            } else {
+                coolingEffectID = -1;
+            }
+        }
     }
     
     @Override
     public IInstinctEffectData createData() {
         return new Data();
     }
-
-    // TODO: Rather than call the effects directly, use the forced effect API in ICapabilityInstinct, and store the forced effect IDs.
 
     @Override
     public void onActivate(EntityPlayer player, float amplifier) {
@@ -100,8 +109,8 @@ public class InstinctEffectNetherFever extends InstinctEffect {
         }
         Data data = (Data)instinct.getInstinctEffectData(this);
 
-        data.overheatEffect.onActivate(player, toOverheatAmplifier(amplifier));
-        data.coolingEffect.onActivate(player, toCoolingAmplifier(amplifier));
+        data.overheatEffectID = instinct.addForcedEffect(Instincts.EFFECT_OVERHEAT, toOverheatAmplifier(amplifier));
+        data.coolingEffectID = instinct.addForcedEffect(Instincts.EFFECT_TEMPERED_FLAME, toCoolingAmplifier(amplifier));
     }
 
     @Override
@@ -112,20 +121,15 @@ public class InstinctEffectNetherFever extends InstinctEffect {
         }
         Data data = (Data)instinct.getInstinctEffectData(this);
 
-        data.overheatEffect.onDeactivate(player, toOverheatAmplifier(amplifier));
-        data.coolingEffect.onDeactivate(player, toCoolingAmplifier(amplifier));
+        instinct.removeForcedEffect(data.overheatEffectID);
+        data.overheatEffectID = -1;
+        instinct.removeForcedEffect(data.coolingEffectID);
+        data.coolingEffectID = -1;
     }
 
     @Override
     public void tick(EntityPlayer player, float amplifier) {
-        ICapabilityInstinct instinct = player.getCapability(INSTINCT_CAPABILITY, null);
-        if (instinct == null) {
-            return;
-        }
-        Data data = (Data)instinct.getInstinctEffectData(this);
-
-        data.overheatEffect.tick(player, toOverheatAmplifier(amplifier));
-        data.coolingEffect.tick(player, toCoolingAmplifier(amplifier));
+        // All fancy behavior handled by the "child" forced effects
     }
 
 }
