@@ -23,7 +23,12 @@ import java.util.ListIterator;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.FrameNode;
 import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.InsnNode;
+import org.objectweb.asm.tree.JumpInsnNode;
+import org.objectweb.asm.tree.LabelNode;
+import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
@@ -34,6 +39,7 @@ import targoss.hardcorealchemy.coremod.ObfuscatedName;
 public class TWorld extends MethodPatcher {
     private static final String WORLD = "net.minecraft.world.World";
     private static final ObfuscatedName GET_WORLD_TIME = new ObfuscatedName("func_72820_D" /*getWorldTime*/);
+    private static final ObfuscatedName EXTINGUISH_FIRE = new ObfuscatedName("func_175719_a" /*extinguishFire*/);
 
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
@@ -61,6 +67,24 @@ public class TWorld extends MethodPatcher {
                     instructions.insertBefore(insn, patch);
                 }
             }
+        }
+        if (method.name.equals(EXTINGUISH_FIRE.get())) {
+            InsnList patch = new InsnList();
+            patch.add(new VarInsnNode(Opcodes.ALOAD, 1)); // player
+            patch.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
+                    "targoss/hardcorealchemy/event/EventExtinguishFire",
+                    "onExtinguishFire",
+                    "(Lnet/minecraft/entity/player/EntityPlayer;)Z",
+                    false));
+            LabelNode businessAsUsual = new LabelNode();
+            patch.add(new JumpInsnNode(Opcodes.IFNE, businessAsUsual));
+            patch.add(new LdcInsnNode(0));
+            patch.add(new InsnNode(Opcodes.IRETURN));
+            patch.add(businessAsUsual);
+            // Not sure if we need this opcode or not
+            patch.add(new FrameNode(Opcodes.F_SAME, 0, null, 0, null));
+            
+            method.instructions.insert(patch);
         }
     }
 

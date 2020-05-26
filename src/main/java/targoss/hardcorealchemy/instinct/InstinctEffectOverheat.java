@@ -68,7 +68,7 @@ public class InstinctEffectOverheat extends InstinctEffect {
     public static final int OVERHEAT_EVENT_FREQUENCY = 12000 / 3;
     public static final float OVERHEAT_EVENT_CHANCE = 0.333F;
 
-    protected static class Data implements IInstinctEffectData {
+    public static class Data implements IInstinctEffectData {
         public Random random = new Random();
         /** If >0 then morph is overheating (measured in ticks) */
         public int overheatTimer;
@@ -104,6 +104,10 @@ public class InstinctEffectOverheat extends InstinctEffect {
             overheatTimer = nbt.getInteger(NBT_OVERHEAT_TIMER);
             maxOverheatTimer = nbt.getInteger(NBT_MAX_OVERHEAT_TIMER);
             nextOverheatEventTime = nbt.getInteger(NBT_NEXT_OVERHEAT_TIME);
+        }
+        
+        public boolean isOverheating() {
+            return overheatTimer > 0;
         }
     }
     

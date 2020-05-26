@@ -65,7 +65,7 @@ public class InstinctEffectNetherFever extends InstinctEffect {
         return amplifier;
     }
 
-    protected static class Data implements IInstinctEffectData {
+    public static class Data implements IInstinctEffectData {
         // Just store the IDs of our forced effects
         public int overheatEffectID = -1;
         public int coolingEffectID = -1;

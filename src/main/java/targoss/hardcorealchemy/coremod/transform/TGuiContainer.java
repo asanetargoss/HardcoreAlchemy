@@ -46,8 +46,6 @@ public class TGuiContainer extends MethodPatcher {
     private final ObfuscatedName GET_STACK = new ObfuscatedName("func_75211_c" /*Slot.getStack*/);
     private final ObfuscatedName GET_HAS_STACK = new ObfuscatedName("func_75216_d" /*Slot.getHasStack*/);
     private final ObfuscatedName STACK_SIZE = new ObfuscatedName("field_77994_a" /*ItemStack.stackSize*/);
-    
-    @Override public boolean enableDebug() { return true; } // TODO: Remove after testing
 
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {

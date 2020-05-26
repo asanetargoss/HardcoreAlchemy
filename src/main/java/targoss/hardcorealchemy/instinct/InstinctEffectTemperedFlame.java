@@ -74,7 +74,7 @@ public class InstinctEffectTemperedFlame extends InstinctEffect {
     /* Per tick AFTER we pass the threshold */
     public static final float COLD_PER_TICK_PER_AMP = COLD_PER_DAY_PER_AMP / 12000F;
 
-    protected static class Data implements IInstinctEffectData {
+    public static class Data implements IInstinctEffectData {
         public Random random = new Random();
         /** Larger means cold effects will be worse (measured in ticks) */
         public int coolingTime;

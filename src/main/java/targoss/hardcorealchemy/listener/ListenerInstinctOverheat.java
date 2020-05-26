@@ -19,51 +19,66 @@
 package targoss.hardcorealchemy.listener;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import targoss.hardcorealchemy.capability.instinct.ICapabilityInstinct;
 import targoss.hardcorealchemy.config.Configs;
+import targoss.hardcorealchemy.event.EventExtinguishFire;
 
 public class ListenerInstinctOverheat extends ConfiguredListener {
     public ListenerInstinctOverheat(Configs configs) {
         super(configs);
     }
     
+    @CapabilityInject(ICapabilityInstinct.class)
+    public static final Capability<ICapabilityInstinct> INSTINCT_CAPABILITY = null;
+    
     public static boolean isOverheating(EntityPlayer player) {
-        // TODO: Implement
-        /*
-        instinct = getInstinct();
+        targoss.hardcorealchemy.HardcoreAlchemy.LOGGER.error("Overheating!");return true;//TODO: Revert after testing
+        /*ICapabilityInstinct instinct = player.getCapability(INSTINCT_CAPABILITY, null);
         if (instinct == null) {
             return false;
         }
-        dataOverheat = instinct.getEffectData(Instincts.OVERHEAT);
-        if (dataOverheat.isOverheating()) {
+        IInstinctEffectData data = instinct.getInstinctEffectData(Instincts.EFFECT_OVERHEAT);
+        if (!(data instanceof InstinctEffectOverheat.Data)) {
             return false;
         }
-         */
-        return false;
+        InstinctEffectOverheat.Data overheatData = (InstinctEffectOverheat.Data)data;
+        return overheatData.isOverheating();*/
     }
-    
-    // TODO: Uncomment when we find the event
-    //@SubscribeEvent
-    void onPunchBlock() {
-        // TODO
-        /*
+
+    @SubscribeEvent
+    void onPunchBlockAflame(LeftClickBlock event) {
+        EntityPlayer player = event.getEntityPlayer();
+        if (player.world.isRemote) {
+            return;
+        }
         if (!isOverheating(player)) {
             return;
         }
-        BlockPos pos = getBlockEffectivelyPlacingOn();
-        world.setAflame(pos);
-         */
+        
+        BlockPos aflamePos = event.getPos().offset(event.getFace(), 1);
+        if (!player.world.isAirBlock(aflamePos)) {
+            return;
+        }
+        player.world.setBlockState(aflamePos, Blocks.FIRE.getDefaultState());
     }
-    
-    // TODO: Uncomment if we find a hook, otherwise delete this function
-    //@CoremodHook
-    void onPutOutFire() {
-        // TODO
-        /*
-        if (!isOverheating(player)) {
+
+    /** Under overheat effect, punching fire does not put it out! */
+    @SubscribeEvent
+    void onPutOutFire(EventExtinguishFire event) {
+        // TODO: It turns out event.player is always null. ;_; so we have to remove the ALOAD from the coremod hook and use LeftClickBlock to figure out the actual player
+        if (event.player == null) {
+            return;
+        }
+        if (!isOverheating(event.player)) {
             return;
         }
         event.setCanceled(true);
-         */
     }
 
 }
