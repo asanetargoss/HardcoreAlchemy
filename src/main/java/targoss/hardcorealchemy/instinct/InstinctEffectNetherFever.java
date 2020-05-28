@@ -111,6 +111,7 @@ public class InstinctEffectNetherFever extends InstinctEffect {
 
         data.overheatEffectID = instinct.addForcedEffect(Instincts.EFFECT_OVERHEAT, toOverheatAmplifier(amplifier));
         data.coolingEffectID = instinct.addForcedEffect(Instincts.EFFECT_TEMPERED_FLAME, toCoolingAmplifier(amplifier));
+        // The instinct system will sync the effects to the client automatically, so we don't really need to do anything else
     }
 
     @Override
@@ -126,8 +127,6 @@ public class InstinctEffectNetherFever extends InstinctEffect {
         instinct.removeForcedEffect(data.coolingEffectID);
         data.coolingEffectID = -1;
     }
-    
-    // TODO: Decide if we need to do syncing
 
     @Override
     public void tick(EntityPlayer player, float amplifier) {

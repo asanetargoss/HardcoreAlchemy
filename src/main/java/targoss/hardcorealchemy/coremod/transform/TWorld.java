@@ -70,11 +70,10 @@ public class TWorld extends MethodPatcher {
         }
         if (method.name.equals(EXTINGUISH_FIRE.get())) {
             InsnList patch = new InsnList();
-            patch.add(new VarInsnNode(Opcodes.ALOAD, 1)); // player
             patch.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
                     "targoss/hardcorealchemy/event/EventExtinguishFire",
                     "onExtinguishFire",
-                    "(Lnet/minecraft/entity/player/EntityPlayer;)Z",
+                    "()Z",
                     false));
             LabelNode businessAsUsual = new LabelNode();
             patch.add(new JumpInsnNode(Opcodes.IFNE, businessAsUsual));

@@ -18,7 +18,8 @@
 
 package targoss.hardcorealchemy.instinct;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 
@@ -29,7 +30,6 @@ import net.minecraft.util.text.ITextComponent;
 import targoss.hardcorealchemy.instinct.api.IInstinctNeed;
 import targoss.hardcorealchemy.instinct.api.IInstinctState.NeedStatus;
 import targoss.hardcorealchemy.instinct.api.InstinctNeedFactory;
-import targoss.hardcorealchemy.util.EntityUtil;
 import targoss.hardcorealchemy.util.MobLists;
 
 /**
@@ -37,29 +37,28 @@ import targoss.hardcorealchemy.util.MobLists;
  */
 public interface IInstinctNeedEnvironment extends IInstinctNeed {
     public static class Factory extends InstinctNeedFactory {
-        private List<Class<? extends EntityLivingBase>> grassMobs = null;
+        private boolean mobCacheInitialized = false;
+        private Set<String> grassMobs = new HashSet<>();
+        private Set<String> netherMobs = new HashSet<>();
         
-        @SuppressWarnings("unchecked")
         protected void initMobCache() {
-            if (grassMobs != null) {
+            if (mobCacheInitialized) {
                 return;
             }
-            for (String grassMobName : MobLists.getGrassMobs()) {
-                if (!EntityUtil.isValidEntityName(grassMobName)) {
-                    continue;
-                }
-                grassMobs.add((Class<? extends EntityLivingBase>)EntityList.getClassFromID(EntityList.getIDFromString(grassMobName)));
-            }
-            // TODO: Nether mobs once those are included
+            mobCacheInitialized = true;
+            grassMobs = MobLists.getGrassMobs();
+            netherMobs = MobLists.getNetherMobs();
         }
         
         @Override
         public IInstinctNeed createNeed(EntityLivingBase morphEntity) {
             initMobCache();
-            for (Class<? extends EntityLivingBase> grassMobType : grassMobs) {
-                if (grassMobType.isInstance(morphEntity)) {
-                    return new InstinctNeedForestPlains(morphEntity);
-                }
+            String entityName = EntityList.getEntityString(morphEntity);
+            if (grassMobs.contains(entityName)) {
+                return new InstinctNeedForestPlains(morphEntity);
+            }
+            if (netherMobs.contains(entityName)) {
+                return new InstinctNeedNether(morphEntity);
             }
             return new InstinctNeedSpawnEnvironment(morphEntity);
         }

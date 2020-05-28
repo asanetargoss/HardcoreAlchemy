@@ -18,18 +18,18 @@
 
 package targoss.hardcorealchemy.event;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import targoss.hardcorealchemy.coremod.CoremodHook;
 
 public class EventExtinguishFire extends Event {
+    public static EntityPlayer currentServerPlayer = null;
     public final EntityPlayer player;
 
-    public EventExtinguishFire(@Nullable EntityPlayer player) {
-        this.player = player;
+    public EventExtinguishFire() {
+        // This works because (hopefully) there is only one Minecraft server thread
+        this.player = currentServerPlayer;
     }
 
     @Override
@@ -38,8 +38,8 @@ public class EventExtinguishFire extends Event {
     }
 
     @CoremodHook
-    public static boolean onExtinguishFire(EntityPlayer player) {
-        EventExtinguishFire event = new EventExtinguishFire(player);
+    public static boolean onExtinguishFire() {
+        EventExtinguishFire event = new EventExtinguishFire();
         return !MinecraftForge.EVENT_BUS.post(event);
     }
 }

@@ -59,6 +59,7 @@ public class Instincts {
 
     public static final Instinct PREDATOR = instinct("predator", new InstinctPredator());
     public static final Instinct HOMESICK_NATURE = instinct("homesick_nature", new InstinctHomesickNature());
+    public static final Instinct HOMESICK_NETHER = instinct("homesick_nether", new InstinctHomesickNether());
     
     public static final InstinctNeedFactory NEED_ATTACK_PREY = instinctNeed("attack_prey", new InstinctNeedAttackPrey());
     public static final InstinctNeedFactory NEED_SPAWN_ENVIRONMENT = instinctNeed("environment", new IInstinctNeedEnvironment.Factory());
@@ -68,8 +69,6 @@ public class Instincts {
     public static final InstinctEffect EFFECT_NETHER_FEVER = instinctEffect("nether_fever", new InstinctEffectNetherFever());
     public static final InstinctEffect EFFECT_TEMPERED_FLAME = instinctEffect("tempered_flame", new InstinctEffectTemperedFlame());
     public static final InstinctEffect EFFECT_OVERHEAT = instinctEffect("overheat", new InstinctEffectOverheat());
-
-    // TODO: Nether instinct/effect (need will be the same)
     
     private static Instinct instinct(String name, Instinct instinct) {
         instinct.setRegistryName(new ResourceLocation(HardcoreAlchemy.MOD_ID, name));

@@ -28,6 +28,9 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import targoss.hardcorealchemy.capability.instinct.ICapabilityInstinct;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.event.EventExtinguishFire;
+import targoss.hardcorealchemy.instinct.InstinctEffectOverheat;
+import targoss.hardcorealchemy.instinct.Instincts;
+import targoss.hardcorealchemy.instinct.api.IInstinctEffectData;
 
 public class ListenerInstinctOverheat extends ConfiguredListener {
     public ListenerInstinctOverheat(Configs configs) {
@@ -38,8 +41,7 @@ public class ListenerInstinctOverheat extends ConfiguredListener {
     public static final Capability<ICapabilityInstinct> INSTINCT_CAPABILITY = null;
     
     public static boolean isOverheating(EntityPlayer player) {
-        targoss.hardcorealchemy.HardcoreAlchemy.LOGGER.error("Overheating!");return true;//TODO: Revert after testing
-        /*ICapabilityInstinct instinct = player.getCapability(INSTINCT_CAPABILITY, null);
+        ICapabilityInstinct instinct = player.getCapability(INSTINCT_CAPABILITY, null);
         if (instinct == null) {
             return false;
         }
@@ -48,7 +50,7 @@ public class ListenerInstinctOverheat extends ConfiguredListener {
             return false;
         }
         InstinctEffectOverheat.Data overheatData = (InstinctEffectOverheat.Data)data;
-        return overheatData.isOverheating();*/
+        return overheatData.isOverheating();
     }
 
     @SubscribeEvent
@@ -57,6 +59,7 @@ public class ListenerInstinctOverheat extends ConfiguredListener {
         if (player.world.isRemote) {
             return;
         }
+        EventExtinguishFire.currentServerPlayer = player;
         if (!isOverheating(player)) {
             return;
         }
@@ -71,10 +74,6 @@ public class ListenerInstinctOverheat extends ConfiguredListener {
     /** Under overheat effect, punching fire does not put it out! */
     @SubscribeEvent
     void onPutOutFire(EventExtinguishFire event) {
-        // TODO: It turns out event.player is always null. ;_; so we have to remove the ALOAD from the coremod hook and use LeftClickBlock to figure out the actual player
-        if (event.player == null) {
-            return;
-        }
         if (!isOverheating(event.player)) {
             return;
         }

@@ -69,6 +69,9 @@ hardcorealchemy.instinct.home.generic.fulfilled=You feel at home here.
 hardcorealchemy.instinct.home.nature.need=You yearn for your natural habitat.
 hardcorealchemy.instinct.home.nature.need_nearby=You restlessly yearn to return to nature.
 hardcorealchemy.instinct.home.nature.fulfilled=This natural environment makes you feel at ease.
+hardcorealchemy.instinct.home.nether.need=You yearn for eternal, otherwordly heat.
+hardcorealchemy.instinct.home.nether.need_nearby=The heat of the Nether calls you.
+hardcorealchemy.instinct.home.nether.fulfilled=Your inner flame stabilizes.
 
 hardcorealchemy.instinct.effect.hunted.warn.variant1=What was that sound?
 hardcorealchemy.instinct.effect.hunted.cannot_attack=You are too afraid to attack the %s.
