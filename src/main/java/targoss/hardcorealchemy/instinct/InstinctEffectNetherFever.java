@@ -126,6 +126,8 @@ public class InstinctEffectNetherFever extends InstinctEffect {
         instinct.removeForcedEffect(data.coolingEffectID);
         data.coolingEffectID = -1;
     }
+    
+    // TODO: Decide if we need to do syncing
 
     @Override
     public void tick(EntityPlayer player, float amplifier) {
