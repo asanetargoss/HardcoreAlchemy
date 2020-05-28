@@ -21,6 +21,7 @@ package targoss.hardcorealchemy.util;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -186,10 +187,12 @@ public class EntityUtil {
             return ((WorldServer)world).getChunkProvider().getPossibleCreatures(creatureType, pos);
         }
         else {
-            if (!clientSpawnCache.containsKey(world)) {
+            // TODO: This crashed the game when the player visited the Nether with homesickness instinct. ;_;
+            /*if (!clientSpawnCache.containsKey(world)) {
                 clientSpawnCache.put(world, world.provider.createChunkGenerator());
             }
-            return clientSpawnCache.get(world).getPossibleCreatures(creatureType, pos);
+            return clientSpawnCache.get(world).getPossibleCreatures(creatureType, pos);*/
+            return new ArrayList<>();
         }
     }
     
