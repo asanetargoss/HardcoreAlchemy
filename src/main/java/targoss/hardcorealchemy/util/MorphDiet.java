@@ -274,8 +274,8 @@ public class MorphDiet {
     }
     
     public static boolean hasHunger(EntityPlayer player) {
-        if (ModState.isDissolutionLoaded && !MorphState.isIncorporeal(player)) {
-            return true;
+        if (ModState.isDissolutionLoaded && MorphState.isIncorporeal(player)) {
+            return false;
         }
         ICapabilityHumanity humanity = player.getCapability(HUMANITY_CAPABILITY, null);
         if (humanity == null || humanity.isHuman()) {
