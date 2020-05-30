@@ -27,7 +27,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.WeakHashMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -55,7 +54,6 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.LoaderState;
 import targoss.hardcorealchemy.HardcoreAlchemy;
@@ -180,28 +178,24 @@ public class EntityUtil {
         }
     }
     
-    private static Map<World, IChunkGenerator> clientSpawnCache = new WeakHashMap<>();
-    
     /**
      * Gets the list of entities permitted to spawn at the given location, along with additional spawn information.
      * May be the original or a copy depending on the situation.
+     * 
+     * SERVER-SIDE ONLY
      */
     public static List<Biome.SpawnListEntry> getSpawnList(World world, EnumCreatureType creatureType, BlockPos pos) {
-        if (!world.isRemote) {
-            return ((WorldServer)world).getChunkProvider().getPossibleCreatures(creatureType, pos);
-        }
-        else {
-            // TODO: This crashed the game when the player visited the Nether with homesickness instinct. ;_;
-            /*if (!clientSpawnCache.containsKey(world)) {
-                clientSpawnCache.put(world, world.provider.createChunkGenerator());
-            }
-            return clientSpawnCache.get(world).getPossibleCreatures(creatureType, pos);*/
+        assert(!world.isRemote);
+        if (world.isRemote) {
             return new ArrayList<>();
         }
+        return ((WorldServer)world).getChunkProvider().getPossibleCreatures(creatureType, pos);
     }
     
     /**
      * Returns true if the entity class has a chance to spawn here, filtering by the given EnumCreatureType.
+     * 
+     * SERVER-SIDE ONLY
      */
     public static boolean canEntityClassSpawnHere(Class <? extends EntityLiving> entityClass, World world, BlockPos pos, EnumCreatureType creatureType) {
         if (!creatureType.getCreatureClass().isAssignableFrom(entityClass)) {
@@ -220,6 +214,8 @@ public class EntityUtil {
     
     /**
      * Returns true if the entity class has a chance to spawn here.
+     * 
+     * SERVER-SIDE ONLY
      */
     public static boolean canEntityClassSpawnHere(Class<? extends EntityLiving> entityClass, World world, BlockPos pos) {
         for (EnumCreatureType creatureType : EnumCreatureType.values()) {
@@ -232,6 +228,8 @@ public class EntityUtil {
     
     /**
      * Returns true if the entity has a chance to spawn here.
+     * 
+     * SERVER-SIDE ONLY
      */
     public static boolean canEntitySpawnHere(EntityLiving entity, World world, BlockPos pos) {
         return canEntityClassSpawnHere(entity.getClass(), world, pos);
