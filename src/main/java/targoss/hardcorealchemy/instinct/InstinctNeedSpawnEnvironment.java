@@ -231,7 +231,7 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
             return true;
         }
         
-        return isGoodHomeLocation(player.world, player.getPosition(), morphEntity);
+        return isGoodHomeLocation(player.world, player.getPosition(), spawnCheckEntity);
     }
     
     protected void updatePlayerFeelsAtHome(EntityPlayer player, @Nullable EntityLivingBase morphEntity) {
@@ -264,7 +264,7 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
             int dz = playerPos.getZ() - atHomeTestPos.getZ();
             int distanceSquared = (dx*dx) + (dy*dy) + (dz*dz);
             if (distanceSquared > MAX_HOME_DESIRE_DISTANCE*MAX_HOME_DESIRE_DISTANCE ||
-                    !isGoodHomeLocation(player.world, atHomeTestPos, morphEntity) ||
+                    !isGoodHomeLocation(player.world, atHomeTestPos, spawnCheckEntity) ||
                     !canPlayerFitAtPos(player, atHomeTestPos)) {
                 atHomeTestPos = null;
             } else {
