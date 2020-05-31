@@ -158,6 +158,7 @@ public class InstinctEffectTemperedFlame extends InstinctEffect {
             c.put(new ResourceLocation("alchemicash:Skystone2"), cool);
             c.put(new ResourceLocation("mysticalagriculture:water_essence"), cool);
             c.put(new ResourceLocation("villagebox:water_shard"), cool);
+            c.put(new ResourceLocation("adinferos:golden_bucket_water"), cool);
         }
     }
 
@@ -216,7 +217,8 @@ public class InstinctEffectTemperedFlame extends InstinctEffect {
 
         // Check if the player is standing on a cold block
         if (amplifier >= 0.5F) {
-            BlockPos steppingPos = new BlockPos((int)player.posX, (int)Math.floor(player.posY - 0.2), (int)player.posZ);
+            // x position is off by -1; some sort of rounding issue
+            BlockPos steppingPos = new BlockPos((int)(player.posX - 1), (int)Math.floor(player.posY - 0.2), (int)player.posZ);
             IBlockState steppingState = player.world.getBlockState(steppingPos);
             if (steppingState != null) {
                 Block steppingBlock = steppingState.getBlock();
@@ -229,7 +231,7 @@ public class InstinctEffectTemperedFlame extends InstinctEffect {
                         if (snowLayerBlock != null) {
                             @SuppressWarnings("deprecation")
                             boolean isOnSnowLayer = snowLayerBlock.getMaterial(snowLayerState) == Material.SNOW;
-                            standingOnColdBlock &= isOnSnowLayer;
+                            standingOnColdBlock |= isOnSnowLayer;
                         }
                     }
                 }
@@ -267,7 +269,7 @@ public class InstinctEffectTemperedFlame extends InstinctEffect {
             baseColdAmplifier = Math.max(baseColdAmplifier, maxItemAmplifier);
         }
 
-        float coldAmplifier = Math.max(baseColdAmplifier, maxAllowedColdAmplifier);
+        float coldAmplifier = Math.min(baseColdAmplifier, maxAllowedColdAmplifier);
         return coldAmplifier;
     }
     
@@ -330,10 +332,12 @@ public class InstinctEffectTemperedFlame extends InstinctEffect {
         return data.coolingTime >= (UNTIL_COLD_TIME_PER_AMP * amplifier);
     }
     
-    protected static void exposeToHeat(EntityPlayer player, Data data) {
+    protected static void exposeToHeat(EntityPlayer player, Data data, float amplifier) {
         assert(!player.world.isRemote);
         if (!player.world.isRemote) {
-            Chat.message(Chat.Type.NOTIFY, (EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.effect.tempered_flame.fulfilled"));
+            if (needsHeat(data, amplifier)) {
+                Chat.message(Chat.Type.NOTIFY, (EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.effect.tempered_flame.fulfilled"));
+            }
         }
         data.coolingTime = 0;
     }
@@ -382,8 +386,9 @@ public class InstinctEffectTemperedFlame extends InstinctEffect {
             if (needsHeat(data, amplifier)) {
                 consumeLesserHeat(player, data);
             }
-            exposeToHeat(player, data);
-        } else if (!ListenerInstinctOverheat.isOverheating(player)) {
+            exposeToHeat(player, data, amplifier);
+        }
+        else if (!ListenerInstinctOverheat.isOverheating(player)) {
             float coldAmplifier = getColdAmplifier(player, data, amplifier);
             applyColdEffects(player, coldAmplifier);
         }

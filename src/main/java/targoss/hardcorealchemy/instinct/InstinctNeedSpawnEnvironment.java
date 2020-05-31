@@ -367,6 +367,8 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
             return;
         }
         
+        // TODO: Figure out why instantaneous feedback messages are not showing up
+        
         EntityLivingBase morphEntity = null;
         IMorphing morphing = player.getCapability(MORPHING_CAPABILITY, null);
         if (morphing != null) {

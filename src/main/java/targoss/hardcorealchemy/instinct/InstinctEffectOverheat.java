@@ -119,7 +119,9 @@ public class InstinctEffectOverheat extends InstinctEffect {
     public void exposeToHeat(EntityPlayer player, Data data) {
         assert(!player.world.isRemote);
         if (!player.world.isRemote) {
-            Chat.message(Chat.Type.NOTIFY, (EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.effect.overheat.exposed"));
+            if (data.overheatTimer == 0) {
+                Chat.message(Chat.Type.NOTIFY, (EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.effect.overheat.exposed"));
+            }
         }
         data.overheatTimer = data.maxOverheatTimer;
     }
@@ -160,7 +162,7 @@ public class InstinctEffectOverheat extends InstinctEffect {
 
     protected static Set<ResourceLocation> iceMeltables = new HashSet<>();
     static {
-        iceMeltables.add(new ResourceLocation("snowballs"));
+        iceMeltables.add(new ResourceLocation("snowball"));
         iceMeltables.add(new ResourceLocation("ice"));
         iceMeltables.add(new ResourceLocation("packed_ice"));
         iceMeltables.add(new ResourceLocation("frosted_ice"));
@@ -183,6 +185,8 @@ public class InstinctEffectOverheat extends InstinctEffect {
     protected static Set<String> flammableCraftMaterials = new HashSet<>();
     static {
         flammableCraftMaterials.add("WOOD");
+        flammableCraftMaterials.add("LEATHER");
+        flammableCraftMaterials.add("WOOL");
     }
     protected static Set<Material> flammableBlockMaterials = new HashSet<>();
     static {
@@ -202,6 +206,7 @@ public class InstinctEffectOverheat extends InstinctEffect {
 
         String craftMaterial = InventoryUtil.getMaterialName(itemStack);
         if (flammableCraftMaterials.contains(craftMaterial)) {
+            // TODO: Apparently a wooden hoe isn't made of wood... :/
             return new ItemStack(Items.ASH, itemStack.stackSize);
         }
         Item item = itemStack.getItem();
@@ -246,7 +251,9 @@ public class InstinctEffectOverheat extends InstinctEffect {
             if (!InventoryUtil.isEmptyItemStack(meltStack)) {
                 Item meltItem = meltStack.getItem();
                 String registryString = meltItem.getRegistryName().toString();
-                boolean isMeltable = registryString.contains("ingot") && !registryString.contains("obsidian");
+                boolean isMeltable = registryString.contains("ingot") &&
+                        !registryString.contains("obsidian") &&
+                        !registryString.contains("netherite");
                 if (isMeltable) {
                     // A single ingot is fine
                     return meltStack;
@@ -284,7 +291,7 @@ public class InstinctEffectOverheat extends InstinctEffect {
             Vec3d playerRayStart = new Vec3d(player.posX, player.posY + player.getEyeHeight(), player.posZ);
             Vec3d playerRayEnd = playerRayStart.add(randomRay);
             RayTraceResult result = player.world.rayTraceBlocks(playerRayStart, playerRayEnd, true, true, false);
-            if (result.typeOfHit == RayTraceResult.Type.BLOCK) {
+            if (result != null && result.typeOfHit == RayTraceResult.Type.BLOCK) {
                 player.world.setBlockState(result.getBlockPos(), Blocks.FIRE.getDefaultState());
             }
         }
@@ -350,6 +357,7 @@ public class InstinctEffectOverheat extends InstinctEffect {
         data.nextOverheatEventTime = 0;
     }
 
+    /** See also ListenerInstinctOverheat */
     @Override
     public void tick(EntityPlayer player, float amplifier) {
         if (player.world.isRemote) {
@@ -371,7 +379,6 @@ public class InstinctEffectOverheat extends InstinctEffect {
                 doOverheatEvent(player, data, amplifier);
                 data.nextOverheatEventTime = 0;
             }
-            // See also ListenerInstinctOverheat
         }
         data.updateTimers();
     }

@@ -44,7 +44,7 @@ public class InstinctEffectNetherFever extends InstinctEffect {
             }
 
             boolean collidesWithLava = WorldUtil.doesCollide(player,
-                    WorldUtil.CollisionPredicate.FIRE,
+                    WorldUtil.CollisionPredicate.LAVA,
                     WorldUtil.CollisionMethod.LAVA);
             if (collidesWithLava) {
                 return true;
