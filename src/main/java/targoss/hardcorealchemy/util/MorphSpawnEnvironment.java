@@ -32,6 +32,7 @@ public class MorphSpawnEnvironment {
     private static Map<String, String> proxies = new HashMap<>();
     
     static {
+        proxies.put("Blaze", "LavaSlime");
         String tc = ModState.THAUMCRAFT_ID + ".";
         proxies.put(tc + "ThaumSlime", tc + "Taintacle");
         proxies.put(tc + "TaintCrawler", tc + "Taintacle");
