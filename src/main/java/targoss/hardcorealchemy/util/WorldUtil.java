@@ -63,11 +63,11 @@ public class WorldUtil {
         protected BlockPos pos;
         protected IBlockState state;
         public BlockInfo(BlockPos pos, IBlockState state) {
-            this.pos = pos.toImmutable();
+            this.pos = pos == null ? null : pos.toImmutable();
             this.state = state;
         }
         public BlockInfo(MutableBlockInfo other) {
-            this.pos = other.pos.toImmutable();
+            this.pos = other.pos == null ? null : other.pos.toImmutable();
             this.state = other.state;
         }
         public BlockPos getPos() {
