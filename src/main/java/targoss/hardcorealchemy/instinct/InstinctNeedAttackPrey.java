@@ -34,7 +34,6 @@ import mchorse.metamorph.api.morphs.AbstractMorph;
 import mchorse.metamorph.api.morphs.EntityMorph;
 import mchorse.metamorph.capabilities.morphing.IMorphing;
 import mchorse.metamorph.capabilities.morphing.Morphing;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
@@ -265,21 +264,19 @@ public class InstinctNeedAttackPrey implements IInstinctNeed {
             Class<? extends EntityLivingBase> targetClass = null;
             if (task instanceof EntityAIFindEntityNearestPlayer) {
                 targetClass = EntityPlayer.class;
+                entityTargetTypes.add(new EntityTargetInfo(targetClass, ((EntityAIFindEntityNearestPlayer)task).predicate));
             }
             else if (task instanceof EntityAINearestAttackableTarget) {
                 targetClass = ((EntityAINearestAttackableTarget)task).targetClass;
-            }
-            
-            if (targetClass != null) {
                 entityTargetTypes.add(new EntityTargetInfo(targetClass, ((EntityAINearestAttackableTarget)task).targetEntitySelector));
-                
-                if (targetClass == EntityPlayer.class) {
-                    /* Also add non-player humans from MobLists.getHumans()
-                     * This allows more options for things to kill
-                     */
-                    for (Class<? extends EntityLivingBase> humanClass : getHumanClasses()) {
-                        entityTargetTypes.add(new EntityTargetInfo(humanClass, null));
-                    }
+            }
+                        
+            if (targetClass == EntityPlayer.class) {
+                /* Also add non-player humans from MobLists.getHumans()
+                 * This allows more options for things to kill
+                 */
+                for (Class<? extends EntityLivingBase> humanClass : getHumanClasses()) {
+                    entityTargetTypes.add(new EntityTargetInfo(humanClass, null));
                 }
             }
         }
