@@ -28,8 +28,12 @@ public class ConfigBase {
     
     public static final String CATEGORY_MODULES = "modules";
     public static final String MODULES_ENABLE_INSTINCTS = "instincts";
+
+    public static final String CATEGORY_INSTINCTS = "instincts";
+    public static final String INSTINCTS_FAST_DECAY = "fast_decay";
     
     public boolean enableInstincts;
+    public boolean fastInstinctDecay;
     
     public ConfigBase(int version) {
         this.version = version;
@@ -42,6 +46,7 @@ public class ConfigBase {
     public void load() {
         Configs.getVersionForForgeConfig(configuration, version);
         enableInstincts = configuration.getBoolean(MODULES_ENABLE_INSTINCTS, CATEGORY_MODULES, true, "When enabled, players stuck in permanent morphs will be subject to instincts. Instincts tell the player to do things the mob would normally do, or risk negative debuffs.");
+        fastInstinctDecay = configuration.getBoolean(INSTINCTS_FAST_DECAY, CATEGORY_INSTINCTS, false, "Makes instincts always use the fast decay time when needs are not fulfilled. Useful when testing instincts.");
     }
     
     public void save() {

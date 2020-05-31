@@ -22,15 +22,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.capability.instinct.ICapabilityInstinct;
+import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.instinct.api.IInstinctState;
 import targoss.hardcorealchemy.instinct.api.InstinctEffect;
-import targoss.hardcorealchemy.instinct.api.IInstinctState.NeedStatus;
 import targoss.hardcorealchemy.instinct.network.api.INeedMessenger;
-import targoss.hardcorealchemy.network.MessageInstinctNeedChanged;
-import targoss.hardcorealchemy.network.PacketHandler;
 
 public class InstinctState implements IInstinctState {
     public InstinctState() {}
@@ -59,7 +55,10 @@ public class InstinctState implements IInstinctState {
     private static final float DAYS_PER_TICK = 1.0F / (24000.0F);
     private static final float MINUTES_PER_TICK = 1.0F / (60.0F * 20.0F);
     
-    public static float getInstinctChangePerTick(NeedStatus needStatus) {
+    public static float getInstinctChangePerTick(Configs configs, NeedStatus needStatus) {
+        if (configs.base.fastInstinctDecay && needStatus == NeedStatus.EVENTUALLY) {
+            needStatus = NeedStatus.URGENT;
+        }
         switch (needStatus) {
         case URGENT:
             return -1.0F * MAX_INSTINCT * MINUTES_PER_TICK / 3.0F;
@@ -73,8 +72,8 @@ public class InstinctState implements IInstinctState {
         }
     }
     
-    public float getInstinctChangePerTick() {
-        return InstinctState.getInstinctChangePerTick(this.needStatus);
+    public float getInstinctChangePerTick(Configs configs) {
+        return InstinctState.getInstinctChangePerTick(configs, this.needStatus);
     }
 
     @Override

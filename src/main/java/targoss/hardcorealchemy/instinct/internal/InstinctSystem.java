@@ -69,7 +69,7 @@ public class InstinctSystem {
         this.configs = configs;
     }
     
-    public static void updateInstinct(EntityPlayer player, ICapabilityInstinct instinctCapability) {
+    public static void updateInstinct(Configs configs, EntityPlayer player, ICapabilityInstinct instinctCapability) {
         float maxInstinct;
         IAttributeInstance maxInstinctAttribute = player.getEntityAttribute(ICapabilityInstinct.MAX_INSTINCT);
         if (maxInstinctAttribute != null) {
@@ -86,7 +86,7 @@ public class InstinctSystem {
             for (InstinctNeedWrapper needWrapper : entry.getNeeds(player)) {
                 InstinctState instinctState = needWrapper.getState(player);
                 float instinct = instinctState.instinct;
-                instinct += instinctState.getInstinctChangePerTick();
+                instinct += instinctState.getInstinctChangePerTick(configs);
                 instinct = MathHelper.clamp(instinct, 0.0F, maxInstinct);
                 
                 instinctState.instinct = instinct;
@@ -359,7 +359,7 @@ public class InstinctSystem {
         instinct.setActiveEffects(newEffects);
     }
     
-    public void tickPlayer(ICapabilityInstinct instinct, PlayerTickEvent event) {
+    public void tickPlayer(Configs configs, ICapabilityInstinct instinct, PlayerTickEvent event) {
         EntityPlayer player = event.player;
         
         // Rather than bail out at the beginning, check if some instinct effects are enabled, as they may alter state.
@@ -424,6 +424,6 @@ public class InstinctSystem {
         }
         
         // Finally, given all of the above, change the instinct value of the player
-        updateInstinct(player, instinct);
+        updateInstinct(configs, player, instinct);
     }
 }

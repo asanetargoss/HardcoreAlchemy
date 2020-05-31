@@ -160,7 +160,7 @@ public class ListenerPlayerInstinct extends ConfiguredListener {
             }
         }
         
-        instinctSystem.tickPlayer(instinct, event);
+        instinctSystem.tickPlayer(configs, instinct, event);
         
         for (InstinctEffectWrapper effect : instinct.getActiveEffects().values()) {
             effect.effect.tick(player, effect.amplifier);
