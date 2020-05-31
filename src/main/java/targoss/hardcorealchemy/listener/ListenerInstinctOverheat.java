@@ -74,6 +74,9 @@ public class ListenerInstinctOverheat extends ConfiguredListener {
     /** Under overheat effect, punching fire does not put it out! */
     @SubscribeEvent
     void onPutOutFire(EventExtinguishFire event) {
+        if (event.player == null) {
+            return;
+        }
         if (!isOverheating(event.player)) {
             return;
         }
