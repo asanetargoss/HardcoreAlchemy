@@ -101,6 +101,19 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
     protected EntityLivingBase spawnCheckEntity = null;
     protected boolean usingProxyEntity = false;
     
+    /**
+     * For really volatile and random spawn checking, keep a long
+     * history.
+     */
+    protected static final int VERY_SHORT_HOME_STREAK = 20;
+    /**
+     * With long streaks of successful spawn checks, a long history
+     * prevents the player from receiving timely feedback. A higher
+     * number here will cause the history to shrink faster when the streak
+     * is no longer considered short.
+     */
+    protected static final int LONG_HOME_STREAK_HISTORY_LOSS = 40;
+    
     public boolean feelsAtHome = false;
     public int atHomeStreak = 0;
     public int maxAtHomeStreak = 0;
@@ -367,8 +380,6 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
             return;
         }
         
-        // TODO: Figure out why instantaneous feedback messages are not showing up
-        
         EntityLivingBase morphEntity = null;
         IMorphing morphing = player.getCapability(MORPHING_CAPABILITY, null);
         if (morphing != null) {
@@ -395,8 +406,9 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
             atHomeStreak = 0;
         }
         maxAtHomeStreak = Math.max(maxAtHomeStreak, atHomeStreak);
-        
-        historyCapacity = Math.max(MIN_HISTORY_CAPACITY, MAX_HISTORY_CAPACITY - maxAtHomeStreak);
+
+        int historyCapacityLoss = maxAtHomeStreak < VERY_SHORT_HOME_STREAK ? maxAtHomeStreak : (LONG_HOME_STREAK_HISTORY_LOSS * maxAtHomeStreak);
+        historyCapacity = Math.max(MIN_HISTORY_CAPACITY, MAX_HISTORY_CAPACITY - historyCapacityLoss);
         float atHomeGain = 1.0F / (float)(historyCapacity);
         float atHomeDecay = (float)(historyCapacity - 1) * atHomeGain;
         averageAtHomeFraction = (averageAtHomeFraction * atHomeDecay) + (feelsAtHome ? atHomeGain : 0.0F);
@@ -445,6 +457,8 @@ public class InstinctNeedSpawnEnvironment implements IInstinctNeedEnvironment {
                 seesHomeMessageEnabled = false;
             }
             atHomeMessageEnabled = true;
+            // Experimental. Still trying to figure out when to display the message without it feeling "spammy".
+            atHomeMessageQueue = Math.max(1, atHomeMessageQueue);
         }
     }
 }
