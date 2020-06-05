@@ -199,16 +199,33 @@ public class InstinctEffectOverheat extends InstinctEffect {
         flammableBlockMaterials.add(Material.GOURD);
         flammableBlockMaterials.add(Material.WEB);
     }
+    protected static Set<ResourceLocation> flammableItems = new HashSet<>();
+    static {
+        // Apparently a wooden hoe isn't made of wood... :/
+        flammableItems.add(new ResourceLocation("wooden_hoe"));
+        flammableItems.add(new ResourceLocation("fishing_rod"));
+        flammableItems.add(new ResourceLocation("bow"));
+        flammableItems.add(new ResourceLocation("stick"));
+        flammableItems.add(new ResourceLocation("bowl"));
+    }
     protected static ItemStack burnItemInItemStack(ItemStack itemStack) {
         if (InventoryUtil.isEmptyItemStack(itemStack)) {
             return itemStack;
         }
+        
+        ResourceLocation itemResource = itemStack.getItem().getRegistryName();
+        if (itemResource.getResourceDomain().equals(ModState.ADINFEROS_ID)) {
+            return itemStack;
+        }
+        if (flammableItems.contains(itemResource)) {
+            return new ItemStack(Items.ASH, itemStack.stackSize);
+        }
 
         String craftMaterial = InventoryUtil.getMaterialName(itemStack);
         if (flammableCraftMaterials.contains(craftMaterial)) {
-            // TODO: Apparently a wooden hoe isn't made of wood... :/
             return new ItemStack(Items.ASH, itemStack.stackSize);
         }
+
         Item item = itemStack.getItem();
         if (item instanceof ItemBlock) {
             Block block = ((ItemBlock)item).getBlock();
@@ -218,9 +235,11 @@ public class InstinctEffectOverheat extends InstinctEffect {
                 return new ItemStack(Items.ASH, itemStack.stackSize);
             }
         }
+
         if (item instanceof ItemFood) {
             return new ItemStack(Items.ASH, itemStack.stackSize);
         }
+
         for (int ore : OreDictionary.getOreIDs(itemStack)) {
             String oreName = OreDictionary.getOreName(ore);
             if (oreName.toLowerCase().contains("wood")) {
