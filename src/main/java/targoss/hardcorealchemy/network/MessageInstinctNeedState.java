@@ -36,7 +36,7 @@ import targoss.hardcorealchemy.util.MiscVanilla;
 /**
  * Tells the client that instinct value/need states have been changed
  */
-public class MessageInstinctNeedState extends MessageToClient implements Runnable {
+public class MessageInstinctNeedState extends MessageToClient {
 
     public MessageInstinctNeedState() { }
     
@@ -90,7 +90,7 @@ public class MessageInstinctNeedState extends MessageToClient implements Runnabl
         }
     }
     
-    private boolean doSizesMatch(EntityPlayer player, List<ICapabilityInstinct.InstinctEntry> instincts, List<List<NeedStateData>> needStatesPerInstinct) {
+    protected static boolean doSizesMatch(EntityPlayer player, List<ICapabilityInstinct.InstinctEntry> instincts, List<List<NeedStateData>> needStatesPerInstinct) {
         if (instincts.size() != needStatesPerInstinct.size()) {
             return false;
         }
@@ -103,31 +103,38 @@ public class MessageInstinctNeedState extends MessageToClient implements Runnabl
         return true;
     }
     
-    // TODO: Move to static class because this ends up getting called on the wrong thread
-    @Override
-    public void run() {
-        EntityPlayer player = MiscVanilla.getTheMinecraftPlayer();
-        ICapabilityInstinct instinct = player.getCapability(ProviderInstinct.INSTINCT_CAPABILITY, null);
-        if (instinct == null) {
-            return;
-        }
+    public static class ReceiveAction implements Runnable {
+        private List<List<NeedStateData>> needStatesPerInstinct = new ArrayList<>();
         
-        // Sync which needs are/are not being met
-        List<ICapabilityInstinct.InstinctEntry> instincts = instinct.getInstincts();
-        if (!doSizesMatch(player, instincts, needStatesPerInstinct)) {
-            HardcoreAlchemy.LOGGER.error("Could not sync instinct need statuses because the instincts are out of sync");
+        public ReceiveAction(List<List<NeedStateData>> needStatesPerInstinct) {
+            this.needStatesPerInstinct = needStatesPerInstinct;
         }
-        else {
-            int n = instincts.size();
-            for (int i = 0; i < n; i++) {
-                List<InstinctNeedWrapper> needs = instincts.get(i).getNeeds(player);
-                List<NeedStateData> newStates = needStatesPerInstinct.get(i);
-                int m = needs.size();
-                for (int j = 0; j < m; j++) {
-                    InstinctNeedWrapper need = needs.get(j);
-                    NeedStateData newState = newStates.get(j);
-                    need.state.instinct = newState.level;
-                    need.state.needStatus = IInstinctState.NeedStatus.values()[newState.state];
+
+        @Override
+        public void run() {
+            EntityPlayer player = MiscVanilla.getTheMinecraftPlayer();
+            ICapabilityInstinct instinct = player.getCapability(ProviderInstinct.INSTINCT_CAPABILITY, null);
+            if (instinct == null) {
+                return;
+            }
+            
+            // Sync which needs are/are not being met
+            List<ICapabilityInstinct.InstinctEntry> instincts = instinct.getInstincts();
+            if (!doSizesMatch(player, instincts, needStatesPerInstinct)) {
+                HardcoreAlchemy.LOGGER.error("Could not sync instinct need statuses because the instincts are out of sync");
+            }
+            else {
+                int n = instincts.size();
+                for (int i = 0; i < n; i++) {
+                    List<InstinctNeedWrapper> needs = instincts.get(i).getNeeds(player);
+                    List<NeedStateData> newStates = needStatesPerInstinct.get(i);
+                    int m = needs.size();
+                    for (int j = 0; j < m; j++) {
+                        InstinctNeedWrapper need = needs.get(j);
+                        NeedStateData newState = newStates.get(j);
+                        need.state.instinct = newState.level;
+                        need.state.needStatus = IInstinctState.NeedStatus.values()[newState.state];
+                    }
                 }
             }
         }
@@ -136,7 +143,7 @@ public class MessageInstinctNeedState extends MessageToClient implements Runnabl
     public static class Handler implements IMessageHandler<MessageInstinctNeedState, IMessage> {
         @Override
         public IMessage onMessage(MessageInstinctNeedState message, MessageContext ctx) {
-            message.getThreadListener().addScheduledTask(message);
+            message.getThreadListener().addScheduledTask(new ReceiveAction(message.needStatesPerInstinct));
             return null;
         }
     }
