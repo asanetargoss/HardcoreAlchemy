@@ -162,8 +162,34 @@ public class CapabilityInstinct implements ICapabilityInstinct {
     }
 
     @Override
-    public void removeForcedEffect(int effectForceKey) {
-        forcedEffects.remove(effectForceKey);
+    public void removeForcedEffect(int effectForceKey, InstinctEffect expectedEffect) {
+        try {
+            ForcedEffectEntry entry = forcedEffects.get(effectForceKey);
+            if (expectedEffect.equals(entry.effect)) {
+                HardcoreAlchemy.LOGGER.warn("A forced instinct effect of type " +
+                        expectedEffect.getRegistryName() + " could not be removed at index" +
+                        effectForceKey + ".");
+            }
+            else {
+                forcedEffects.remove(effectForceKey);
+            }
+        }
+        catch (Exception e) {
+            // This really shouldn't happen, but if it does...
+            assert(false);
+            HardcoreAlchemy.LOGGER.error(
+                    "An error occurred removing an instinct effect at index  " + effectForceKey + ". " +
+                    "This may be a sign of a severe problem with handling instinct state.",
+                    e);
+            int n = forcedEffects.getInternalList().size();
+            for (int i = 0; i < n; ++i) {
+                ForcedEffectEntry entry = forcedEffects.get(i);
+                if (expectedEffect.equals(entry.effect)) {
+                    forcedEffects.remove(i);
+                    break;
+                }
+            }
+        }
     }
 
     @Override

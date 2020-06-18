@@ -122,9 +122,9 @@ public class InstinctEffectNetherFever extends InstinctEffect {
         }
         Data data = (Data)instinct.getInstinctEffectData(this);
 
-        instinct.removeForcedEffect(data.overheatEffectID);
+        instinct.removeForcedEffect(data.overheatEffectID, Instincts.EFFECT_OVERHEAT);
         data.overheatEffectID = -1;
-        instinct.removeForcedEffect(data.coolingEffectID);
+        instinct.removeForcedEffect(data.coolingEffectID, Instincts.EFFECT_TEMPERED_FLAME);
         data.coolingEffectID = -1;
     }
 

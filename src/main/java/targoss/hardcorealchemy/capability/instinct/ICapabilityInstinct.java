@@ -122,7 +122,11 @@ public interface ICapabilityInstinct {
      */
     int addForcedEffect(InstinctEffect effect, float amplitude);
     
-    void removeForcedEffect(int effectForceKey);
+    /**
+     * Clear the effect by yielding your stored forced effect ID.
+     * expectedEffect is for sanity/error checking.
+     */
+    void removeForcedEffect(int effectForceKey, InstinctEffect expectedEffect);
     
     /**
      * NOTE: This map is re-created each tick in InstinctSystem
