@@ -165,9 +165,9 @@ public class CapabilityInstinct implements ICapabilityInstinct {
     public void removeForcedEffect(int effectForceKey, InstinctEffect expectedEffect) {
         try {
             ForcedEffectEntry entry = forcedEffects.get(effectForceKey);
-            if (expectedEffect.equals(entry.effect)) {
+            if (!expectedEffect.equals(entry.effect)) {
                 HardcoreAlchemy.LOGGER.warn("A forced instinct effect of type " +
-                        expectedEffect.getRegistryName() + " could not be removed at index" +
+                        expectedEffect.getRegistryName() + " could not be removed at index " +
                         effectForceKey + ".");
             }
             else {
@@ -184,6 +184,9 @@ public class CapabilityInstinct implements ICapabilityInstinct {
             int n = forcedEffects.getInternalList().size();
             for (int i = 0; i < n; ++i) {
                 ForcedEffectEntry entry = forcedEffects.get(i);
+                if (entry == null) {
+                    continue;
+                }
                 if (expectedEffect.equals(entry.effect)) {
                     forcedEffects.remove(i);
                     break;

@@ -327,35 +327,46 @@ public class InstinctSystem {
             ICapabilityInstinct instinct,
             Map<InstinctEffect, InstinctEffectWrapper> effectChanges) {
         Map<InstinctEffect, InstinctEffectWrapper> pastEffects = instinct.getActiveEffects();
+        
+        // First, create the new active effects list
         Map<InstinctEffect, InstinctEffectWrapper> newEffects = new HashMap<>();
         newEffects.putAll(pastEffects);
-        
         for (Map.Entry<InstinctEffect, InstinctEffectWrapper> changes : effectChanges.entrySet()) {
             InstinctEffect effect = changes.getKey();
             InstinctEffectWrapper wrapper = changes.getValue();
-            InstinctEffectWrapper pastWrapper = pastEffects.get(effect);
             if (wrapper == null) {
+                newEffects.remove(effect);
+            }
+            else {
+                newEffects.put(effect, wrapper);
+            }
+        }
+
+        // Then, compare the old effects with the new effects to decide
+        // what needs to be activated/deactivated.
+        for (Map.Entry<InstinctEffect, InstinctEffectWrapper> changes : effectChanges.entrySet()) {
+            InstinctEffect effect = changes.getKey();
+            InstinctEffectWrapper pastWrapper = pastEffects.get(effect);
+            InstinctEffectWrapper newWrapper = newEffects.get(effect);
+            if (newWrapper == null) {
                 if (pastWrapper != null) {
-                    pastWrapper.effect.onDeactivate(player, pastWrapper.amplifier);
-                    newEffects.remove(effect);
+                    effect.onDeactivate(player, pastWrapper.amplifier);
                 }
             }
             else {
                 if (pastWrapper == null) {
-                    effect.onActivate(player, wrapper.amplifier);
-                    newEffects.put(effect, wrapper);
-                }
-                else {
-                    if (pastWrapper.amplifier != wrapper.amplifier) {
+                    effect.onActivate(player, newWrapper.amplifier);
+                } else {
+                    if (pastWrapper.amplifier != newWrapper.amplifier) {
                         effect.onDeactivate(player, pastWrapper.amplifier);
-                        effect.onActivate(player, wrapper.amplifier);
-                        newEffects.put(effect, wrapper);
+                        effect.onActivate(player, newWrapper.amplifier);
                     }
                 }
             }
+            
         }
         
-        // Finally, update active effects
+        // Finally, update the active effects list.
         instinct.setActiveEffects(newEffects);
     }
     

@@ -64,22 +64,12 @@ public class IDList<E> {
     }
 
     public E get(int id) {
-        if (id >= internalList.size()) {
-            throw new IndexOutOfBoundsException("ID out of array bounds");
-        }
-        if (internalList.get(id) == null) {
-            throw new IndexOutOfBoundsException("Tried to get ID of reserved null slot");
-        }
-        
         return internalList.get(id);
     }
 
     public void remove(int id) {
-        if (id >= internalList.size()) {
-            throw new IndexOutOfBoundsException("ID out of array bounds");
-        }
         if (internalList.get(id) == null) {
-            throw new IndexOutOfBoundsException("Tried to get ID of reserved null slot");
+            throw new IndexOutOfBoundsException("Tried to remove from reserved null slot (" + id + ")");
         }
         
         internalList.set(id, null);
