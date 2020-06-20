@@ -308,13 +308,14 @@ public class ListenerPlayerHinderedMind extends ConfiguredListener {
             
             EntityPlayer player = MiscVanilla.getTheMinecraftPlayer();
             if (getPlayerHindrance(player) >= 1.0F) {
-                if (player.width < 1.0) {
-                    //WORKAROUND: Auto-jump doesn't work well with Iron golems,
-                    // so only enable this for thinner players.
-                    //TODO: Improve auto-jump. ;)
+                //WORKAROUND: Auto-jump doesn't work well with Iron golems,
+                // so only enable this for thinner players.
+                //TODO: Improve auto-jump. ;)
+                boolean canAutoJump = player.width < 1.0;
+                if (canAutoJump) {
                     ((EntityPlayerSP)player).autoJumpEnabled = true;
                 }
-                if (!player.capabilities.allowFlying) {
+                if (!player.capabilities.allowFlying && canAutoJump) {
                     jump = false;
                 }
                 if (sneak) {
