@@ -73,29 +73,24 @@ public class InstinctEffectTemperedFlame extends InstinctEffect {
     public static final float COLD_PER_DAY_PER_AMP = 0.25F;
     /* Per tick AFTER we pass the threshold */
     public static final float COLD_PER_TICK_PER_AMP = COLD_PER_DAY_PER_AMP / 12000F;
-    
-    public static final float NO_FIREBALL_AMPLIFIER = 2.0F;
 
     public static class Data implements IInstinctEffectData {
         public Random random = new Random();
         /** Larger means cold effects will be worse (measured in ticks) */
         public int coolingTime;
-        public int maxCoolingTime;
         
         protected void updateTimers() {
-            if (coolingTime < maxCoolingTime) {
+            if (coolingTime < Integer.MAX_VALUE) {
                 ++coolingTime;
             }
         }
         
         protected static final String NBT_COOLING_TIME = "cooling_time";
-        protected static final String NBT_MAX_COOLING_TIME = "max_cooling_time";
 
         @Override
         public NBTTagCompound serializeNBT() {
             NBTTagCompound nbt = new NBTTagCompound();
             nbt.setInteger(NBT_COOLING_TIME, coolingTime);
-            nbt.setInteger(NBT_MAX_COOLING_TIME, maxCoolingTime);
             return nbt;
         }
 
@@ -103,7 +98,6 @@ public class InstinctEffectTemperedFlame extends InstinctEffect {
         public void deserializeNBT(NBTTagCompound nbt) {
             if (nbt.hasKey(NBT_COOLING_TIME)) {
                 coolingTime = nbt.getInteger(NBT_COOLING_TIME);
-                maxCoolingTime = nbt.getInteger(NBT_MAX_COOLING_TIME);
             }
         }
     }
@@ -280,8 +274,7 @@ public class InstinctEffectTemperedFlame extends InstinctEffect {
         if (amplifier >= 0.5F) {
             if (amplifier >= 2.0F) {
                 // Slowness II
-                // And, theoretically, higher.
-                player.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, effectTime, (int)(amplifier - 1.0F)));
+                player.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, effectTime, 1));
             }
             else {
                 player.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, effectTime));
@@ -345,23 +338,7 @@ public class InstinctEffectTemperedFlame extends InstinctEffect {
     }
 
     @Override
-    public void onActivate(EntityPlayer player, float amplifier) {
-        if (player.world.isRemote) {
-            return;
-        }
-
-        ICapabilityInstinct instinct = player.getCapability(INSTINCT_CAPABILITY, null);
-        if (instinct == null) {
-            return;
-        }
-        Data data = (Data)instinct.getInstinctEffectData(this);
-        
-        // Do we really need this? Probably not. Although it's a good sanity check.
-        data.maxCoolingTime = (int)(
-                (UNTIL_COLD_TIME_PER_AMP * amplifier) +
-                (1.0F / (COLD_PER_DAY_PER_AMP * amplifier))
-                );
-    }
+    public void onActivate(EntityPlayer player, float amplifier) {}
 
     @Override
     public void onDeactivate(EntityPlayer player, float amplifier) {
