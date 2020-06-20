@@ -66,8 +66,10 @@ import targoss.hardcorealchemy.capability.instinct.CapabilityInstinct;
 import targoss.hardcorealchemy.capability.instinct.ICapabilityInstinct;
 import targoss.hardcorealchemy.capability.instinct.ProviderInstinct;
 import targoss.hardcorealchemy.config.Configs;
+import targoss.hardcorealchemy.instinct.InstinctEffectOverheat;
 import targoss.hardcorealchemy.instinct.InstinctEffectTemperedFlame;
 import targoss.hardcorealchemy.instinct.Instincts;
+import targoss.hardcorealchemy.instinct.api.IInstinctEffectData;
 import targoss.hardcorealchemy.instinct.internal.InstinctEffectWrapper;
 import targoss.hardcorealchemy.instinct.internal.InstinctNeedWrapper;
 import targoss.hardcorealchemy.instinct.internal.InstinctState;
@@ -109,8 +111,24 @@ public class ListenerPlayerInstinct extends ConfiguredListener {
             if (instinct == null) {
                 return false;
             }
+            IInstinctEffectData data = instinct.getInstinctEffectData(Instincts.EFFECT_OVERHEAT);
+            if (!(data instanceof InstinctEffectOverheat.Data)) {
+                return false;
+            }
+            InstinctEffectOverheat.Data overheatData = (InstinctEffectOverheat.Data)data;
+            if (overheatData.isOverheating()) {
+                return false;
+            }
             InstinctEffectWrapper wrapper = instinct.getActiveEffects().get(Instincts.EFFECT_TEMPERED_FLAME);
-            return wrapper != null && wrapper.amplifier >= InstinctEffectTemperedFlame.NO_FIREBALL_AMPLIFIER;
+            if (wrapper == null) {
+                return false;
+            }
+            IInstinctEffectData data2 = instinct.getInstinctEffectData(Instincts.EFFECT_TEMPERED_FLAME);
+            if (!(data2 instanceof InstinctEffectTemperedFlame.Data)) {
+                return false;
+            }
+            InstinctEffectTemperedFlame.Data temperedFlameData = (InstinctEffectTemperedFlame.Data)data2;
+            return InstinctEffectTemperedFlame.getMaxAllowedColdAmplifier(temperedFlameData, wrapper.amplifier) >= 1.0F;
         }
 
         @Override

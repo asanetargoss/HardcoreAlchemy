@@ -196,6 +196,12 @@ public class InstinctEffectTemperedFlame extends InstinctEffect {
         return 0.0F;
     }
     
+    public static float getMaxAllowedColdAmplifier(Data data, float amplifier) {
+        return Math.max(0.0F, 
+                (data.coolingTime - (UNTIL_COLD_TIME_PER_AMP * amplifier)) * COLD_PER_TICK_PER_AMP * amplifier
+                );
+    }
+    
     public float getColdAmplifier(EntityPlayer player, Data data, float amplifier) {
         // Check for cold sources.
         // Sensitivity depends on how long it has been since the player has been exposed to heat,
@@ -203,9 +209,7 @@ public class InstinctEffectTemperedFlame extends InstinctEffect {
         //   and the coldness of various nearby things.
         // The higher the amplifier, the more things can make the player cold,
         //   and the more cold those things feel.
-        float maxAllowedColdAmplifier = Math.max(0.0F, 
-                (data.coolingTime - (UNTIL_COLD_TIME_PER_AMP * amplifier)) * COLD_PER_TICK_PER_AMP * amplifier
-                );
+        float maxAllowedColdAmplifier = getMaxAllowedColdAmplifier(data, amplifier);
         if (maxAllowedColdAmplifier <= 0.0F) {
             return 0.0F;
         }
