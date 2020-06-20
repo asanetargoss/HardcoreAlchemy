@@ -73,6 +73,8 @@ public class InstinctEffectTemperedFlame extends InstinctEffect {
     public static final float COLD_PER_DAY_PER_AMP = 0.25F;
     /* Per tick AFTER we pass the threshold */
     public static final float COLD_PER_TICK_PER_AMP = COLD_PER_DAY_PER_AMP / 12000F;
+    
+    public static final float NO_FIREBALL_AMPLIFIER = 2.0F;
 
     public static class Data implements IInstinctEffectData {
         public Random random = new Random();

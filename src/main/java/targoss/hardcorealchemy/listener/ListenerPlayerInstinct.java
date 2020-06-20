@@ -18,25 +18,23 @@
 
 package targoss.hardcorealchemy.listener;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
 import mchorse.metamorph.Metamorph;
-import mchorse.metamorph.capabilities.morphing.IMorphing;
+import mchorse.metamorph.api.MorphManager;
+import mchorse.metamorph.api.abilities.IAction;
+import mchorse.metamorph.api.morphs.AbstractMorph;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
-import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -44,10 +42,9 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.util.FakePlayer;
@@ -59,6 +56,7 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.Clone;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent.HarvestDropsEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
@@ -68,19 +66,13 @@ import targoss.hardcorealchemy.capability.instinct.CapabilityInstinct;
 import targoss.hardcorealchemy.capability.instinct.ICapabilityInstinct;
 import targoss.hardcorealchemy.capability.instinct.ProviderInstinct;
 import targoss.hardcorealchemy.config.Configs;
-import targoss.hardcorealchemy.instinct.api.IInstinctState;
-import targoss.hardcorealchemy.instinct.api.InstinctEffect;
+import targoss.hardcorealchemy.instinct.InstinctEffectTemperedFlame;
+import targoss.hardcorealchemy.instinct.Instincts;
 import targoss.hardcorealchemy.instinct.internal.InstinctEffectWrapper;
 import targoss.hardcorealchemy.instinct.internal.InstinctNeedWrapper;
 import targoss.hardcorealchemy.instinct.internal.InstinctState;
 import targoss.hardcorealchemy.instinct.internal.InstinctSystem;
-import targoss.hardcorealchemy.network.MessageInstinctEffects;
-import targoss.hardcorealchemy.network.MessageInstinctNeedChanged;
-import targoss.hardcorealchemy.network.MessageInstinctNeedState;
-import targoss.hardcorealchemy.network.PacketHandler;
-import targoss.hardcorealchemy.util.Chat;
 import targoss.hardcorealchemy.util.InventoryUtil;
-import targoss.hardcorealchemy.util.MorphState;
 
 /**
  * Capability handling, ticking, and event hooks for instincts.
@@ -96,7 +88,54 @@ public class ListenerPlayerInstinct extends ConfiguredListener {
     @CapabilityInject(ICapabilityInstinct.class)
     public static final Capability<ICapabilityInstinct> INSTINCT_CAPABILITY = null;
     
-    private Random random = new Random();
+    public static class ColdLimitedAction implements IAction {
+        protected IAction delegate;
+        
+        protected ThreadLocal<Random> random = new ThreadLocal<>();
+
+        public ColdLimitedAction(IAction delegate) {
+            this.delegate = delegate;
+        }
+        
+        public static void wrapAction(Map<String, IAction> actions, String actionName) {
+            IAction action = actions.get(actionName);
+            if (action != null) {
+                actions.put(actionName, new ColdLimitedAction(action));
+            }
+        }
+        
+        protected static boolean isHeatHindered(EntityLivingBase entity) {
+            ICapabilityInstinct instinct = entity.getCapability(INSTINCT_CAPABILITY, null);
+            if (instinct == null) {
+                return false;
+            }
+            InstinctEffectWrapper wrapper = instinct.getActiveEffects().get(Instincts.EFFECT_TEMPERED_FLAME);
+            return wrapper != null && wrapper.amplifier >= InstinctEffectTemperedFlame.NO_FIREBALL_AMPLIFIER;
+        }
+
+        @Override
+        public void execute(EntityLivingBase entity, AbstractMorph morph) {
+            if (!isHeatHindered(entity)) {
+                delegate.execute(entity, morph);
+            } else {
+                Random localRandom = random.get();
+                if (localRandom == null) {
+                    localRandom = new Random();
+                    random.set(localRandom);
+                }
+                entity.world.playSound(null, entity.getPosition(), SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS,
+                        0.5F, 2.6F + (localRandom.nextFloat() - localRandom.nextFloat()) * 0.8F);
+            }
+        }
+    }
+    
+    @Override
+    public void postInit(FMLPostInitializationEvent event) {
+        Map<String, IAction> actions = MorphManager.INSTANCE.actions;
+        ColdLimitedAction.wrapAction(actions, "fireball");
+        ColdLimitedAction.wrapAction(actions, "small_fireball");
+        ColdLimitedAction.wrapAction(actions, "fire_breath");
+    }
 
     @SubscribeEvent
     public void onAttachCapability(AttachCapabilitiesEvent<Entity> event) {
