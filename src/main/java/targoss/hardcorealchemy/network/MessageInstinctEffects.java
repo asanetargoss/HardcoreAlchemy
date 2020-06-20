@@ -33,6 +33,7 @@ import targoss.hardcorealchemy.capability.instinct.ProviderInstinct;
 import targoss.hardcorealchemy.instinct.Instincts;
 import targoss.hardcorealchemy.instinct.api.InstinctEffect;
 import targoss.hardcorealchemy.instinct.internal.InstinctEffectWrapper;
+import targoss.hardcorealchemy.instinct.internal.InstinctSystem;
 import targoss.hardcorealchemy.util.MiscVanilla;
 
 /**
@@ -101,16 +102,7 @@ public class MessageInstinctEffects extends MessageToClient {
             if (instinct == null) {
                 return;
             }
-            Map<InstinctEffect, InstinctEffectWrapper> activeEffects = instinct.getActiveEffects();
-            
-            for (Map.Entry<InstinctEffect, InstinctEffectWrapper> entry : effectChanges.entrySet()) {
-                if (entry.getValue() == null) {
-                    activeEffects.remove(entry.getKey());
-                }
-                else {
-                    activeEffects.put(entry.getKey(), entry.getValue());
-                }
-            }
+            InstinctSystem.transitionEffects(player, instinct, effectChanges);
         }
     }
     
