@@ -70,6 +70,7 @@ public class HCAModpackGuide {
         book.addCategory(CategoryBuilder.withCategory(base + "unexpected_journey", "adinferos:pocket_wormhole")
                 .addEntry("intro", "wooden_axe", numStrings(1, 5))
                 .addEntry("settling_in", "armor_stand", numStrings(1, 6))
+                .addEntry("humans", "emerald", numStrings(1, 3))
                 .addEntry("the_nether", "quartz_ore", numStrings(1, 5))
                 .getCategory());
         
@@ -89,9 +90,10 @@ public class HCAModpackGuide {
                 .addEntry("intro", "golden_apple", numStrings(1, 3))
                 .addEntry("abilities", "ender_pearl", "1")
                 .addEntry("lost_humanity", "rotten_flesh", numStrings(1, 3))
-                .addEntry("instinct_attack_prey", "magma_cream", "1")
+                .addEntry("instinct_attack_prey", "bone", "1")
                 .addEntry("ability_primitive_sustenance", "grass", "1")
                 .addEntry("instinct_homesick_nature", "sapling", "1")
+                .addEntry("instinct_homesick_nether", "magma_cream", "1")
                 .getCategory());
         
         guide = book;
