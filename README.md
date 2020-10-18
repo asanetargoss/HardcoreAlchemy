@@ -37,11 +37,11 @@ There is a lot more in terms of mod selection, configuration, and tweaking, in o
 
 ### Dependencies
 
-This branch targets the 0.3.12+ version of the modpack. Download the 0.3.12 zip file from the link below and add its contents to libs/ (create the folder if it does not exist):
+This branch targets the 0.4.1+ version of the modpack. Download the 0.4.1 zip file from the link below and add its contents to libs/ (create the folder if it does not exist):
 
 http://www.mediafire.com/folder/grwn2vsjr2lce/Hardcore_Alchemy_Libs
 
-The SHA-256 checksum of the 0.3.12 zip is: a7dcf987ecf4eed69e05be29efe6fed9ccb98e9f18593500ee1bdb228d7c7696
+The SHA-256 checksum of the 0.4.1 zip is: 6fb01f5764e9943085d0271e38c790795f9741b201e378802bdc575ea39cd7c4
 
 Please note: the following mods included in the HcA_libs zip file above are custom forks:
 * Nutrition: https://github.com/asanetargoss/Nutrition
