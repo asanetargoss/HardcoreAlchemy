@@ -170,7 +170,7 @@ public class ListenerPlayerInstinct extends ConfiguredListener {
     
     @SubscribeEvent
     public void onPlayerClone(Clone event) {
-        if (!event.isWasDeath() || Metamorph.proxy.config.keep_morphs) {
+        if (!event.isWasDeath() || Metamorph.keepMorphs.get()) {
             EntityPlayer player = event.getEntityPlayer();
             EntityPlayer playerOld = event.getOriginal();
             CapUtil.copyOldToNew(INSTINCT_CAPABILITY, playerOld, player);
