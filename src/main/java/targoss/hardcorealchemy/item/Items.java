@@ -22,116 +22,49 @@ import static net.minecraft.init.Items.FERMENTED_SPIDER_EYE;
 import static net.minecraft.init.Items.REDSTONE;
 import static targoss.hardcorealchemy.item.HcAPotion.GOOD_EFFECT;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.lwjgl.util.Color;
 
 import com.google.common.collect.Lists;
 
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.Potion;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.potion.PotionType;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.IForgeRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.util.Registrar;
+import targoss.hardcorealchemy.util.RegistrarItem;
+import targoss.hardcorealchemy.util.RegistrarPotion;
+import targoss.hardcorealchemy.util.RegistrarPotionType;
 
 public class Items {
     private static boolean recipesRegistered = false;
-    private static List<Item> ITEM_CACHE = new ArrayList<>();
-    private static List<Potion> POTION_CACHE = new ArrayList<>();
-    private static List<PotionType> POTION_TYPE_CACHE = new ArrayList<>();
     
-    public static final Item ESSENCE_MAGE = item("essence_mage");
-    public static final Item DROWNED_ENDER_PEARL = item("drowned_ender_pearl");
-    public static final Item ASH = item("ash");
+    public static final Registrar<Item> ITEMS = new RegistrarItem("items", HardcoreAlchemy.MOD_ID, HardcoreAlchemy.PRE_INIT_LOGGER);
+    public static final Registrar<Potion> POTIONS = new RegistrarPotion("potions", HardcoreAlchemy.MOD_ID, HardcoreAlchemy.PRE_INIT_LOGGER);
+    public static final Registrar<PotionType> POTION_TYPES = new RegistrarPotionType("potion types", HardcoreAlchemy.MOD_ID, HardcoreAlchemy.PRE_INIT_LOGGER);
     
-    public static final Potion POTION_ALLOW_MAGIC = potion("allow_magic", GOOD_EFFECT, new Color(113, 80, 182), 0, true);
-    public static final PotionType POTION_TYPE_ALLOW_MAGIC = potionType(POTION_ALLOW_MAGIC, 5*60*20);
-    public static final Potion POTION_AIR_BREATHING = potion("air_breathing", new PotionAirBreathing(GOOD_EFFECT, new Color(205, 205, 205), 1, false));
-    public static final PotionType POTION_TYPE_AIR_BREATHING = potionType(POTION_AIR_BREATHING, 3*60*20);
-    public static final PotionType POTION_TYPE_AIR_BREATHING_EXTENDED = potionType(POTION_AIR_BREATHING, "_extended", 8*60*20);
-    public static final Potion POTION_WATER_RESISTANCE = potion("water_resistance", GOOD_EFFECT, new Color(47, 107, 58), 2, false);
-    public static final PotionType POTION_TYPE_WATER_RESISTANCE = potionType(POTION_WATER_RESISTANCE, 3*60*20);
-    public static final PotionType POTION_TYPE_WATER_RESISTANCE_EXTENDED = potionType(POTION_WATER_RESISTANCE, "_extended", 8*60*20);
+    public static final Item ESSENCE_MAGE = ITEMS.add("essence_mage", new Item());
+    public static final Item DROWNED_ENDER_PEARL = ITEMS.add("drowned_ender_pearl", new Item());
+    public static final Item ASH = ITEMS.add("ash", new Item());
     
-    private static Item item(String itemName, Item item) {
-        item.setRegistryName(HardcoreAlchemy.MOD_ID, itemName);
-        // Only used by Item.toString(), but may be useful for debugging
-        item.setUnlocalizedName(item.getRegistryName().toString());
-        ITEM_CACHE.add(item);
-        return item;
-    }
-    
-    private static Item item(String itemName) {
-        Item item = new Item();
-        return item(itemName, item);
-    }
-    
-    private static Potion potion(String potionName, Potion potion) {
-        potion.setPotionName("potion." + HardcoreAlchemy.MOD_ID + ":" + potionName);
-        potion.setRegistryName(HardcoreAlchemy.MOD_ID, potionName);
-        POTION_CACHE.add(potion);
-        return potion;
-    }
-    
-    private static Potion potion(String potionName, boolean isBadEffect, Color color, int locationId, boolean halfPixelOffsetRight) {
-        HcAPotion potion = new HcAPotion(isBadEffect, color, locationId, halfPixelOffsetRight);
-        return potion(potionName, potion);
-    }
-    
-    private static PotionType potionType(Potion potion, String registrySuffix, int duration) {
-        PotionType type = new PotionType(
-                potion.getRegistryName().toString(),
-                new PotionEffect(potion, duration));
-        type.setRegistryName(potion.getRegistryName().toString() + registrySuffix);
-        POTION_TYPE_CACHE.add(type);
-        return type;
-    }
-    
-    private static PotionType potionType(Potion potion, int duration) {
-        return potionType(potion, "", duration);
-    }
-    
-    public static void registerItems() {
-        boolean isClient = FMLCommonHandler.instance().getSide() == Side.CLIENT;
-        for (Item item : ITEM_CACHE) {
-            GameRegistry.register(item);
-            if (isClient) {
-                registerModel(item);
-            }
-        }
-        ITEM_CACHE.clear();
-    }
-    
-    @SideOnly(Side.CLIENT)
-    public static void registerModel(Item item) {
-        ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(item.getRegistryName(), null));
-    }
-    
-    public static void registerPotions() {
-        for (Potion potion : POTION_CACHE) {
-            GameRegistry.register(potion);
-        }
-        POTION_CACHE.clear();
-        
-        for (PotionType potionType : POTION_TYPE_CACHE) {
-            GameRegistry.register(potionType);
-        }
-        POTION_TYPE_CACHE.clear();
-    }
+    public static final Potion POTION_ALLOW_MAGIC = POTIONS.add("allow_magic", new HcAPotion(GOOD_EFFECT, new Color(113, 80, 182), 0, true));
+    public static final Potion POTION_AIR_BREATHING = POTIONS.add("air_breathing", new PotionAirBreathing(GOOD_EFFECT, new Color(205, 205, 205), 1, false));
+    public static final Potion POTION_WATER_RESISTANCE = POTIONS.add("water_resistance", new HcAPotion(GOOD_EFFECT, new Color(47, 107, 58), 2, false));
+
+    public static final PotionType POTION_TYPE_ALLOW_MAGIC = POTION_TYPES.add("allow_magic", RegistrarPotionType.potionTypeFromPotion(POTION_ALLOW_MAGIC, 5*60*20));
+    public static final PotionType POTION_TYPE_AIR_BREATHING = POTION_TYPES.add("air_breathing", RegistrarPotionType.potionTypeFromPotion(POTION_AIR_BREATHING, 3*60*20));
+    public static final PotionType POTION_TYPE_AIR_BREATHING_EXTENDED = POTION_TYPES.add("air_breathing_extended", RegistrarPotionType.potionTypeFromPotion(POTION_AIR_BREATHING, 8*60*20));
+    public static final PotionType POTION_TYPE_WATER_RESISTANCE = POTION_TYPES.add("water_resistance", RegistrarPotionType.potionTypeFromPotion(POTION_WATER_RESISTANCE, 3*60*20));
+    public static final PotionType POTION_TYPE_WATER_RESISTANCE_EXTENDED = POTION_TYPES.add("water_resistance_extended", RegistrarPotionType.potionTypeFromPotion(POTION_WATER_RESISTANCE, 8*60*20));
     
     private static Item potionItem;
     private static ItemStack getPotionItemStack(PotionType potionType) {

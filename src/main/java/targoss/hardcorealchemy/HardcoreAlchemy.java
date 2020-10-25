@@ -24,7 +24,6 @@ import java.util.Map;
 import org.apache.logging.log4j.Logger;
 
 import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -37,16 +36,15 @@ import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
-import net.minecraftforge.fml.relauncher.Side;
 import targoss.hardcorealchemy.command.CommandTest;
 import targoss.hardcorealchemy.coremod.HardcoreAlchemyCoremod;
+import targoss.hardcorealchemy.coremod.PreInitLogger;
 import targoss.hardcorealchemy.entity.Entities;
 import targoss.hardcorealchemy.instinct.Instincts;
 import targoss.hardcorealchemy.item.Items;
 import targoss.hardcorealchemy.metamorph.HcAMetamorphPack;
 import targoss.hardcorealchemy.modpack.guide.AlchemicAshGuide;
 import targoss.hardcorealchemy.modpack.guide.HCAModpackGuide;
-import targoss.hardcorealchemy.test.HardcoreAlchemyTests;
 
 @Mod(modid = HardcoreAlchemy.MOD_ID, version = HardcoreAlchemy.VERSION,
     dependencies = HardcoreAlchemy.DEPENDENCIES, acceptedMinecraftVersions = HardcoreAlchemy.MC_VERSIONS)
@@ -87,6 +85,7 @@ public class HardcoreAlchemy
     @SidedProxy(modId=MOD_ID, clientSide=CLIENT_PROXY, serverSide=COMMON_PROXY)
     public static CommonProxy proxy;
     
+    public static PreInitLogger PRE_INIT_LOGGER = new PreInitLogger();
     public static Logger LOGGER = null;
     
     @EventHandler
@@ -118,16 +117,10 @@ public class HardcoreAlchemy
         
         proxy.preInit(event);
         
-        /*TODO: Refactor registry stuff into the proxies
-         * to get rid of side checking here and inside
-         * the registry classes?
-         */
-        Items.registerItems();
-        Items.registerPotions();
-        Entities.registerEntities();
-        if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
-            Entities.registerEntityRenderers();
-        }
+        Items.ITEMS.register();
+        Items.POTIONS.register();
+        Items.POTION_TYPES.register();
+        Entities.ENTITIES.register();
         
         if (ModState.isGuideapiLoaded) {
             HCAModpackGuide.registerBook();
@@ -151,9 +144,9 @@ public class HardcoreAlchemy
         
         Items.registerRecipes();
         HcAMetamorphPack.registerAbilities();
-        Instincts.registerInstincts();
-        Instincts.registerInstinctNeeds();
-        Instincts.registerEffects();
+        Instincts.INSTINCTS.register();
+        Instincts.INSTINCT_NEED_FACTORIES.register();
+        Instincts.INSTINCT_EFFECTS.register();
         
         if (ModState.isGuideapiLoaded) {
             HCAModpackGuide.registerRecipe();

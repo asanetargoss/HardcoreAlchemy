@@ -18,26 +18,21 @@
 
 package targoss.hardcorealchemy.instinct;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.IForgeRegistry;
 import net.minecraftforge.fml.common.registry.RegistryBuilder;
 import targoss.hardcorealchemy.HardcoreAlchemy;
-import targoss.hardcorealchemy.instinct.api.IInstinctNeed;
 import targoss.hardcorealchemy.instinct.api.Instinct;
 import targoss.hardcorealchemy.instinct.api.InstinctEffect;
 import targoss.hardcorealchemy.instinct.api.InstinctNeedFactory;
 import targoss.hardcorealchemy.instinct.api.InstinctNeedFactorySimple;
+import targoss.hardcorealchemy.util.Registrar;
+import targoss.hardcorealchemy.util.RegistrarForge;
 
 public class Instincts {
-    private static List<Instinct> INSTINCT_CACHE = new ArrayList<>();
-
-    private static List<InstinctNeedFactory> INSTINCT_NEED_FACTORY_CACHE = new ArrayList<>();
-
-    private static List<InstinctEffect> INSTINCT_EFFECT_CACHE = new ArrayList<>();
+    public static final Registrar<Instinct> INSTINCTS = new RegistrarForge<Instinct>("instincts", HardcoreAlchemy.MOD_ID, HardcoreAlchemy.PRE_INIT_LOGGER);
+    public static final Registrar<InstinctNeedFactory> INSTINCT_NEED_FACTORIES = new RegistrarForge<InstinctNeedFactory>("instinct need factories", HardcoreAlchemy.MOD_ID, HardcoreAlchemy.PRE_INIT_LOGGER);
+    public static final Registrar<InstinctEffect> INSTINCT_EFFECTS = new RegistrarForge<InstinctEffect>("instinct needs", HardcoreAlchemy.MOD_ID, HardcoreAlchemy.PRE_INIT_LOGGER);
 
     public static final IForgeRegistry<Instinct> REGISTRY = new RegistryBuilder<Instinct>()
             .setName(new ResourceLocation(HardcoreAlchemy.MOD_ID, "instincts"))
@@ -57,62 +52,16 @@ public class Instincts {
             .setIDRange(0, 1024)
             .create();
 
-    public static final Instinct PREDATOR = instinct("predator", new InstinctPredator());
-    public static final Instinct HOMESICK_NATURE = instinct("homesick_nature", new InstinctHomesickNature());
-    public static final Instinct HOMESICK_NETHER = instinct("homesick_nether", new InstinctHomesickNether());
+    public static final Instinct PREDATOR = INSTINCTS.add("predator", new InstinctPredator());
+    public static final Instinct HOMESICK_NATURE = INSTINCTS.add("homesick_nature", new InstinctHomesickNature());
+    public static final Instinct HOMESICK_NETHER = INSTINCTS.add("homesick_nether", new InstinctHomesickNether());
     
-    public static final InstinctNeedFactory NEED_ATTACK_PREY = instinctNeed("attack_prey", new InstinctNeedAttackPrey());
-    public static final InstinctNeedFactory NEED_SPAWN_ENVIRONMENT = instinctNeed("environment", new IInstinctNeedEnvironment.Factory());
+    public static final InstinctNeedFactory NEED_ATTACK_PREY = INSTINCT_NEED_FACTORIES.add("attack_prey", new InstinctNeedFactorySimple(new InstinctNeedAttackPrey()));
+    public static final InstinctNeedFactory NEED_SPAWN_ENVIRONMENT = INSTINCT_NEED_FACTORIES.add("environment", new IInstinctNeedEnvironment.Factory());
     
-    public static final InstinctEffect EFFECT_HINDERED_MIND = instinctEffect("hindered_mind", new InstinctEffectHinderedMind());
-    public static final InstinctEffect EFFECT_HUNTED = instinctEffect("hunted", new InstinctEffectHunted());
-    public static final InstinctEffect EFFECT_NETHER_FEVER = instinctEffect("nether_fever", new InstinctEffectNetherFever());
-    public static final InstinctEffect EFFECT_TEMPERED_FLAME = instinctEffect("tempered_flame", new InstinctEffectTemperedFlame());
-    public static final InstinctEffect EFFECT_OVERHEAT = instinctEffect("overheat", new InstinctEffectOverheat());
-    
-    private static Instinct instinct(String name, Instinct instinct) {
-        instinct.setRegistryName(new ResourceLocation(HardcoreAlchemy.MOD_ID, name));
-        INSTINCT_CACHE.add(instinct);
-        return instinct;
-    }
-    
-    public static void registerInstincts() {
-        for (Instinct instinct : INSTINCT_CACHE) {
-            GameRegistry.register(instinct);
-        }
-        INSTINCT_CACHE.clear();
-    }
-    
-    private static InstinctNeedFactory instinctNeed(String name, InstinctNeedFactory factory) {
-        factory.setRegistryName(new ResourceLocation(HardcoreAlchemy.MOD_ID, name));
-        INSTINCT_NEED_FACTORY_CACHE.add(factory);
-        return factory;
-    }
-    
-    private static InstinctNeedFactory instinctNeed(String name, IInstinctNeed instinctNeed) {
-        InstinctNeedFactory factory = new InstinctNeedFactorySimple(instinctNeed);
-        factory.setRegistryName(new ResourceLocation(HardcoreAlchemy.MOD_ID, name));
-        INSTINCT_NEED_FACTORY_CACHE.add(factory);
-        return factory;
-    }
-    
-    public static void registerInstinctNeeds() {
-        for (InstinctNeedFactory instinctEntry : INSTINCT_NEED_FACTORY_CACHE) {
-            GameRegistry.register(instinctEntry);
-        }
-        INSTINCT_NEED_FACTORY_CACHE.clear();
-    }
-    
-    private static InstinctEffect instinctEffect(String name, InstinctEffect effect) {
-        effect.setRegistryName(new ResourceLocation(HardcoreAlchemy.MOD_ID, name));
-        INSTINCT_EFFECT_CACHE.add(effect);
-        return effect;
-    }
-    
-    public static void registerEffects() {
-        for (InstinctEffect effect : INSTINCT_EFFECT_CACHE) {
-            GameRegistry.register(effect);
-        }
-        INSTINCT_EFFECT_CACHE.clear();
-    }
+    public static final InstinctEffect EFFECT_HINDERED_MIND = INSTINCT_EFFECTS.add("hindered_mind", new InstinctEffectHinderedMind());
+    public static final InstinctEffect EFFECT_HUNTED = INSTINCT_EFFECTS.add("hunted", new InstinctEffectHunted());
+    public static final InstinctEffect EFFECT_NETHER_FEVER = INSTINCT_EFFECTS.add("nether_fever", new InstinctEffectNetherFever());
+    public static final InstinctEffect EFFECT_TEMPERED_FLAME = INSTINCT_EFFECTS.add("tempered_flame", new InstinctEffectTemperedFlame());
+    public static final InstinctEffect EFFECT_OVERHEAT = INSTINCT_EFFECTS.add("overheat", new InstinctEffectOverheat());
 }

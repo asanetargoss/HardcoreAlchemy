@@ -18,64 +18,16 @@
 
 package targoss.hardcorealchemy.entity;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.lwjgl.util.Color;
 
-import net.minecraft.entity.Entity;
-import net.minecraftforge.fml.client.registry.IRenderFactory;
-import net.minecraftforge.fml.client.registry.RenderingRegistry;
-import net.minecraftforge.fml.common.registry.EntityRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.render.RenderNothing;
+import targoss.hardcorealchemy.util.EntityInfo;
+import targoss.hardcorealchemy.util.Registrar;
+import targoss.hardcorealchemy.util.RegistrarEntity;
 
 public class Entities {
-    private static List<EntityInfo> ENTITY_CACHE = new ArrayList<>();
+    public static final Registrar<EntityInfo> ENTITIES = new RegistrarEntity("entities", HardcoreAlchemy.MOD_ID, HardcoreAlchemy.PRE_INIT_LOGGER);
     
-    public static final String FISH_SWARM = entity(0, EntityFishSwarm.class, "fish_swarm", new Color(0,0,0), new Color(0,0,0));
-    
-    private static class EntityInfo {
-        int id;
-        Class<? extends Entity> clazz;
-        String name;
-        Color primaryColor;
-        Color secondaryColor;
-        
-        EntityInfo(int id, Class<? extends Entity> clazz, String name, Color primaryColor, Color secondaryColor) {
-            this.id = id;
-            this.clazz = clazz;
-            this.name = name;
-            this.primaryColor = primaryColor;
-            this.secondaryColor = secondaryColor;
-        }
-    }
-    
-    private static String entity(int id, Class<? extends Entity> clazz, String name, Color primaryColor, Color secondaryColor) {
-        EntityInfo info = new EntityInfo(id, clazz, name, primaryColor, secondaryColor);
-        ENTITY_CACHE.add(info);
-        
-        return HardcoreAlchemy.MOD_ID + "." + name;
-    }
-    
-    public static void registerEntities() {
-        for (EntityInfo info : ENTITY_CACHE) {
-            EntityRegistry.registerModEntity(info.clazz, info.name, info.id, HardcoreAlchemy.INSTANCE, 64, 3, true);
-            EntityRegistry.registerEgg(info.clazz, colorValue(info.primaryColor), colorValue(info.secondaryColor));
-        }
-        ENTITY_CACHE.clear();
-    }
-    
-    @SideOnly(Side.CLIENT)
-    public static void registerEntityRenderers() {
-        RenderingRegistry.registerEntityRenderingHandler(EntityFishSwarm.class, new RenderNothing.Factory());
-    }
-    
-    private static int colorValue(Color color) {
-        return color.getRed()*256*256 +
-               color.getGreen()*256   +
-               color.getBlue();
-    }
+    public static final String FISH_SWARM = ENTITIES.add("fish_swarm", new EntityInfo(0, EntityFishSwarm.class, new RenderNothing.Factory(), new Color(0,0,0), new Color(0,0,0))).entityName;
 }
