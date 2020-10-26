@@ -32,4 +32,6 @@ public interface ICapabilityMisc {
     /** Get the player's UUID for their current life. */
     UUID getLifetimeUUID();
     void setLifetimeUUID(UUID uuid);
+    int getLastIncantationTick();
+    void setLastIncantationTick(int lastIncantationTick);
 }

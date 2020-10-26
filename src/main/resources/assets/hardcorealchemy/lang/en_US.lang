@@ -76,6 +76,12 @@ hardcorealchemy.instinct.home.nether.fulfilled=Your inner flame stabilizes.
 hardcorealchemy.instinct.effect.hunted.warn.variant1=What was that sound?
 hardcorealchemy.instinct.effect.hunted.cannot_attack=You are too afraid to attack the %s.
 
+hardcorealchemy.incantation.too_fast=You are too out of breath to cast the spell
+
+hardcorealchemy.incantation.change.name=Change
+hardcorealchemy.incantation.change.command=CHANGE
+hardcorealchemy.incantation.change.no_nearby_entities=The spell dissipates quickly, unable to find a compatible template.
+
 hardcorealchemy.magic.disabled.item=Your inhuman form prevents you from comprehending this magical item.
 hardcorealchemy.magic.disabled.block=Your inhuman form prevents you from comprehending this magical object.
 hardcorealchemy.magic.disabled.crafttooltip=Your form prevents crafting this

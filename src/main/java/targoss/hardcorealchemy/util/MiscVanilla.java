@@ -22,6 +22,8 @@ import java.util.Calendar;
 import java.util.Random;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.Language;
+import net.minecraft.client.resources.LanguageManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.DimensionType;
@@ -84,6 +86,15 @@ public class MiscVanilla {
             return null;
         }
         return player.world;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static String getCurrentLocale() {
+        Minecraft minecraft = Minecraft.getMinecraft();
+        LanguageManager languageManager = minecraft.getLanguageManager();
+        Language currentLanguage = languageManager.getCurrentLanguage();
+        String languageCode = currentLanguage.getLanguageCode();
+        return languageCode;
     }
     
     public static enum MoonPhase {

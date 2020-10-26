@@ -29,6 +29,7 @@ public class CapabilityMisc implements ICapabilityMisc {
     private boolean hasSeenThirstWarning = false;
     private boolean hasSeenMagicInhibitionWarning = false;
     private UUID lifetimeUUID = null;
+    private int lastIncantationTick = 0;
     
     @Override
     public boolean getHasSeenThirstWarning() {
@@ -58,5 +59,15 @@ public class CapabilityMisc implements ICapabilityMisc {
     @Override
     public void setLifetimeUUID(UUID uuid) {
         this.lifetimeUUID = uuid;
+    }
+
+    @Override
+    public int getLastIncantationTick() {
+        return this.lastIncantationTick;
+    }
+
+    @Override
+    public void setLastIncantationTick(int lastIncantationTick) {
+        this.lastIncantationTick = lastIncantationTick;
     }
 }

@@ -22,8 +22,11 @@ import java.util.ListIterator;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.FrameNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.InsnNode;
+import org.objectweb.asm.tree.JumpInsnNode;
+import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
@@ -35,6 +38,7 @@ public class TEntityPlayerSP extends MethodPatcher {
     private static final String ENTITY_PLAYER_SP = "net.minecraft.client.entity.EntityPlayerSP";
     private final ObfuscatedName UPDATE_AUTO_JUMP = new ObfuscatedName("func_189810_i" /*updateAutoJump*/);
     private final ObfuscatedName IS_SNEAKING = new ObfuscatedName("func_70093_af" /*isSneaking*/);
+    private final ObfuscatedName SEND_CHAT_MESSAGE = new ObfuscatedName("func_71165_d" /*sendChatMessage*/);
 
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
@@ -65,8 +69,26 @@ public class TEntityPlayerSP extends MethodPatcher {
                     instructions.insert(insn, patch);
                     break;
                 }
-                
             }
+        } else if (method.name.contentEquals(SEND_CHAT_MESSAGE.get())) {
+            InsnList patch = new InsnList();
+            patch.add(new VarInsnNode(Opcodes.ALOAD, 0)); // EntityPlayerSP
+            patch.add(new VarInsnNode(Opcodes.ALOAD, 1)); // String message
+            patch.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
+                    "targoss/hardcorealchemy/event/EventSendChatMessage",
+                    "onSendChatMessage",
+                    "(Lnet/minecraft/client/entity/EntityPlayerSP;Ljava/lang/String;)Ljava/lang/String;",
+                    false));
+            patch.add(new VarInsnNode(Opcodes.ASTORE, 1));
+            patch.add(new VarInsnNode(Opcodes.ALOAD, 1));
+            // If the message is null, then return
+            LabelNode continueSendingVanillaChat = new LabelNode();
+            patch.add(new JumpInsnNode(Opcodes.IFNONNULL, continueSendingVanillaChat));
+            patch.add(new InsnNode(Opcodes.RETURN));
+            patch.add(new FrameNode(Opcodes.F_SAME, 0, null, 0, null));
+            patch.add(continueSendingVanillaChat);
+            
+            method.instructions.insert(patch);
         }
     }
 

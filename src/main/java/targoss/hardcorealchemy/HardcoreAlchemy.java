@@ -40,6 +40,7 @@ import targoss.hardcorealchemy.command.CommandTest;
 import targoss.hardcorealchemy.coremod.HardcoreAlchemyCoremod;
 import targoss.hardcorealchemy.coremod.PreInitLogger;
 import targoss.hardcorealchemy.entity.Entities;
+import targoss.hardcorealchemy.incantation.Incantations;
 import targoss.hardcorealchemy.instinct.Instincts;
 import targoss.hardcorealchemy.item.Items;
 import targoss.hardcorealchemy.metamorph.HcAMetamorphPack;
@@ -129,6 +130,8 @@ public class HardcoreAlchemy
         if (ModState.isGuideapiLoaded && ModState.isAlchemicAshLoaded) {
             AlchemicAshGuide.registerBook();
         }
+        
+        proxy.registerNetworking();
     }
     
     @EventHandler
@@ -138,7 +141,6 @@ public class HardcoreAlchemy
         
         proxy.registerListeners(proxy.listeners.values());
         proxy.registerCapabilities();
-        proxy.registerNetworking();
         
         proxy.init(event);
         
@@ -147,6 +149,7 @@ public class HardcoreAlchemy
         Instincts.INSTINCTS.register();
         Instincts.INSTINCT_NEED_FACTORIES.register();
         Instincts.INSTINCT_EFFECTS.register();
+        Incantations.INCANTATIONS.register();
         
         if (ModState.isGuideapiLoaded) {
             HCAModpackGuide.registerRecipe();

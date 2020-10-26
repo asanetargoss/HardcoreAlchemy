@@ -22,6 +22,7 @@ package targoss.hardcorealchemy.util;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -33,6 +34,7 @@ import javax.annotation.Nullable;
 
 import com.google.common.base.Predicate;
 
+import mchorse.metamorph.api.MorphManager;
 import mchorse.metamorph.api.morphs.AbstractMorph;
 import mchorse.metamorph.api.morphs.EntityMorph;
 import mchorse.metamorph.capabilities.morphing.IMorphing;
@@ -266,6 +268,49 @@ public class EntityUtil {
         entityLiving.renderYawOffset = entityLiving.rotationYaw;
         entityLiving.onInitialSpawn(entityLiving.world.getDifficultyForLocation(new BlockPos(entityLiving)), null);
         entityLiving.world.spawnEntity(entityLiving);
+    }
+    
+    public static boolean canMorphInto(EntityLivingBase entity) {
+        String entityName = EntityList.getEntityString(entity);
+        if (entityName == null) {
+            return false;
+        }
+        return !MorphManager.isBlacklisted(entityName);
+    }
+    
+    public static class MorphablePredicate implements java.util.function.Predicate<EntityLivingBase>, Predicate<EntityLivingBase> {
+        @Override
+        public boolean test(EntityLivingBase entity) {
+            return canMorphInto(entity);
+        }
+
+        @Override
+        public boolean apply(EntityLivingBase entity) {
+            return test(entity);
+        }
+    }
+    
+    public static class DistanceComparator implements Comparator<Entity> {
+        protected double posX;
+        protected double posY;
+        protected double posZ;
+        public DistanceComparator(double posX, double posY, double posZ) {
+            this.posX = posX;
+            this.posY = posY;
+            this.posZ = posZ;
+        }
+        @Override
+        public int compare(Entity entity1, Entity entity2) {
+            double distanceSquared1 = entity1.getDistanceSq(posX, posY, posZ);
+            double distanceSquared2 = entity2.getDistanceSq(posX, posY, posZ);
+            if (distanceSquared1 == distanceSquared2) {
+                return 0;
+            } else if (distanceSquared1 < distanceSquared2) {
+                return -1;
+            } else {
+                return 1;
+            }
+        }
     }
     
     /**

@@ -31,7 +31,6 @@ public class PacketHandler {
     }
     
     public static void register() {
-        PacketHandler packetHandler = new PacketHandler();
         (new MessageHumanity()).register();
         (new MessageKillCount()).register();
         (new MessageMorphState()).register();
@@ -42,6 +41,7 @@ public class PacketHandler {
         (new MessageInstinctNeedChanged()).register();
         (new MessageConfigs()).register();
         (new MessageForceForm()).register();
+        (new RequestIncantation()).register();
     }
     
 }

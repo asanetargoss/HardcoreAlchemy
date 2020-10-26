@@ -23,22 +23,29 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.mojang.authlib.GameProfile;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.network.play.server.SPacketChat;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class Chat {
     public static enum Type {
+        DEFAULT(new Style()),
         NOTIFY(new Style().setItalic(true).setColor(TextFormatting.GRAY)),
         WARN(new Style().setItalic(true).setColor(TextFormatting.DARK_RED)),
-        THAUMIC(new Style().setColor(TextFormatting.DARK_PURPLE));
+        THAUMIC(new Style().setColor(TextFormatting.DARK_PURPLE)),
+        INCANTATION(new Style().setBold(true).setColor(TextFormatting.YELLOW));
         
         public final Style style;
         Type(Style style) {
@@ -79,6 +86,26 @@ public class Chat {
                 return;
             }
             Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(message.setStyle(type.style));
+        }
+    }
+    
+    /**
+     * Sends a chat message as if sent by the player
+     */
+    public static void playerChatMessage(Type type, EntityPlayerMP player, ITextComponent message) {
+        if (player.getChatVisibility() == EntityPlayer.EnumChatVisibility.HIDDEN) {
+            TextComponentTranslation cannotSend = new TextComponentTranslation("chat.cannotSend");
+            cannotSend.getStyle().setColor(TextFormatting.RED);
+            player.connection.sendPacket(new SPacketChat(cannotSend));
+        }
+        else {
+            String messageString = message.getFormattedText();
+            messageString = StringUtils.normalizeSpace(messageString);
+            ITextComponent formattedMessage = new TextComponentTranslation("chat.type.text", player.getDisplayName(), ForgeHooks.newChatWithLinks(messageString));
+            formattedMessage = net.minecraftforge.common.ForgeHooks.onServerChatEvent(player.connection, messageString, formattedMessage);
+            if (formattedMessage != null) {
+                player.world.getMinecraftServer().getPlayerList().sendChatMsgImpl(formattedMessage, false);
+            }
         }
     }
     
