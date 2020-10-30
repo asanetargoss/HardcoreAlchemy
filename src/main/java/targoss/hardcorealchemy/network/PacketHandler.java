@@ -41,6 +41,7 @@ public class PacketHandler {
         (new MessageInstinctEffects()).register();
         (new MessageInstinctNeedChanged()).register();
         (new MessageConfigs()).register();
+        (new MessageForceForm()).register();
     }
     
 }

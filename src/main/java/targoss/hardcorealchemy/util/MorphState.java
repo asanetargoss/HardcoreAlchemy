@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 
 import ladysnake.dissolution.common.capabilities.CapabilityIncorporealHandler;
 import ladysnake.dissolution.common.capabilities.IIncorporealHandler;
+import mchorse.metamorph.api.EntityUtils;
 import mchorse.metamorph.api.MorphAPI;
 import mchorse.metamorph.api.MorphManager;
 import mchorse.metamorph.api.abilities.IAbility;
@@ -30,9 +31,11 @@ import mchorse.metamorph.api.morphs.AbstractMorph;
 import mchorse.metamorph.api.morphs.EntityMorph;
 import mchorse.metamorph.capabilities.morphing.IMorphing;
 import mchorse.metamorph.capabilities.morphing.Morphing;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
@@ -47,6 +50,8 @@ import targoss.hardcorealchemy.instinct.api.Instinct;
 import targoss.hardcorealchemy.item.Items;
 import targoss.hardcorealchemy.listener.ListenerPlayerDiet;
 import targoss.hardcorealchemy.listener.ListenerPlayerHumanity;
+import targoss.hardcorealchemy.network.MessageForceForm;
+import targoss.hardcorealchemy.network.PacketHandler;
 
 public class MorphState {
     @CapabilityInject(ICapabilityHumanity.class)
@@ -59,6 +64,16 @@ public class MorphState {
     
     public static AbstractMorph createMorph(String morphName) {
         return createMorph(morphName, new NBTTagCompound());
+    }
+    
+    public static AbstractMorph createMorph(Entity entity) {
+        NBTTagCompound nbt = new NBTTagCompound();
+        String entityString = MorphManager.INSTANCE.morphNameFromEntity(entity);
+        if (entityString == null) {
+            return null;
+        }
+        nbt.setTag("EntityData", EntityUtils.stripEntityNBT(entity.serializeNBT()));
+        return createMorph(entityString, nbt);
     }
     
     public static AbstractMorph createMorph(String morphName, @Nonnull NBTTagCompound morphProperties) {
@@ -78,20 +93,23 @@ public class MorphState {
             String morphName) {
         return forceForm(configs, player, reason, createMorph(morphName));
     }
+    
+    public static boolean forceForm(Configs configs, EntityPlayer player, LostMorphReason reason,
+            Entity entity) {
+        return forceForm(configs, player, reason, createMorph(entity));
+    }
 
     public static boolean forceForm(Configs configs, EntityPlayer player, LostMorphReason reason,
             String morphName, NBTTagCompound morphProperties) {
         return forceForm(configs, player, reason, createMorph(morphName, morphProperties));
     }
     
-    /*TODO: Consider making forceForm server-side authoritative, and
-     * send special packets to the client, to avoid desyncs at a critical
-     * state transition.
-     */
     /**
      * Forces the player into the given AbstractMorph.
      * with the given reason, and updates the player's needs and instincts.
      * Returns true if successful
+     * Note that like MorphAPI.morph, this function should generally only be called
+     * on the server side, or you will get desyncs.
      */
     public static boolean forceForm(Configs configs, EntityPlayer player, LostMorphReason reason,
             @Nullable AbstractMorph morph) {
@@ -104,15 +122,7 @@ public class MorphState {
             return false;
         }
         
-        boolean success = true;
-        
-        AbstractMorph currentMorph = morphing.getCurrentMorph();
-        if ((currentMorph == null && morph != null) ||
-            (currentMorph != null && morph == null) ||
-                (currentMorph != null && morph != null &&
-                 !currentMorph.equals(morph))) {
-            success = MorphAPI.morph(player, morph, true);
-        }
+        boolean success = player.world.isRemote || MorphAPI.morph(player, morph, true);
         
         if (success) {
             capabilityHumanity.loseMorphAbilityFor(reason);
@@ -145,6 +155,10 @@ public class MorphState {
                 if (configs.base.enableInstincts && morph instanceof EntityMorph) {
                     MorphState.buildInstincts(player, instincts, ((EntityMorph)morph).getEntity(player.world));
                 }
+            }
+            
+            if (!player.world.isRemote) {
+                PacketHandler.INSTANCE.sendTo(new MessageForceForm(reason, morph), (EntityPlayerMP)player);
             }
         }
         
