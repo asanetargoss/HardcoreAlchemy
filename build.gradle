@@ -14,6 +14,7 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 version = "0.4.0"
 group= "targoss.hardcorealchemy" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "hardcorealchemy"
+String coremodPath="targoss.hardcorealchemy.coremod.HardcoreAlchemyCoremod"
 
 sourceCompatibility = targetCompatibility = "1.8" // Need this here so eclipse task generates correctly.
 compileJava {
@@ -34,6 +35,9 @@ minecraft {
     
     replace "@HARDCORE_ALCHEMY_VERSION@", project.version
     replaceIn "HardcoreAlchemy.java"
+
+    clientJvmArgs = ["-Dfml.coreMods.load=" + coremodPath]
+    serverJvmArgs = ["-Dfml.coreMods.load=" + coremodPath]
 }
 
 repositories {
@@ -92,7 +96,7 @@ processResources
 jar {
     manifest {
         attributes (
-            'FMLCorePlugin': 'targoss.hardcorealchemy.coremod.HardcoreAlchemyCoremod',
+            'FMLCorePlugin': coremodPath,
             'FMLCorePluginContainsFMLMod': 'true',
             "FMLAT": 'hardcorealchemy_at.cfg'
         )
