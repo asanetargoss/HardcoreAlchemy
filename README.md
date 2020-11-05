@@ -35,9 +35,16 @@ There is a lot more in terms of mod selection, configuration, and tweaking, in o
 
 ## Developing/building
 
+### Workspace setup
+* Create a folder and clone this repository in a subfolder
+* Run `./gradlew setupDecompWorkspace eclipse`
+    * `setupDecompWorkspace` sets up dependencies for Minecraft, Forge, etc and updates access transformers
+    * `eclipse` makes everything available for the Eclipse IDE and should be removed/replaced if using IntelliJ Idea
+* If using Eclipse and you want to make changes to the code, you can use the top folder as a workspace and import the subfolder as a project
+
 ### Dependencies
 
-This branch targets the 0.4.1+ version of the modpack. Download the 0.4.1 zip file from the link below and add its contents to libs/ (create the folder if it does not exist):
+This branch targets the 0.4.1+ version of the modpack. Download the 0.4.1 zip file from the link below and add its contents to `libs/` in the Hardcore Alchemy repository folder (create the folder if it does not exist):
 
 http://www.mediafire.com/folder/grwn2vsjr2lce/Hardcore_Alchemy_Libs
 
@@ -53,22 +60,19 @@ Please note: the following mods included in the HcA_libs zip file above are cust
 
 In addition, you may also want to take the latest available config zip from the same folder and place its contents in run/config/. This will make some aspects of development easier, such as not losing your spawnpoint when testing deaths.
 
-### Setup
-* Run "./gradlew setupDecompWorkspace" to set up Minecraft Forge and access transformers.
-* Then run "./gradlew eclipse" (or the equivalent for IntelliJ Idea as given in the [Forge Gradle docs](https://forgegradle.readthedocs.io/en/latest/))
-* Add this VM argument to your run configuration to load the coremod: "-Dfml.coreMods.load=targoss.hardcorealchemy.coremod.HardcoreAlchemyCoremod"
-
 ### Compiling
-* To compile, run "./gradlew assemble". Output will be in build/libs/. The jar name will be hardcorealchemy-[version].jar where [version] is defined in build.gradle.
+* To compile, run `./gradlew build`. Output will be in `build/libs/`. The jar name will be `hardcorealchemy-[version].jar` where `[version]` is defined in `build.gradle`.
 
-### Development Tips
-* Successfully used gradle commands before but they aren't working anymore because your internet is down? No problem! Just add the "-offline" flag to your gradle command and it should work normally again.
-* If you add new mods to libs/, or otherwise update dependencies, you will need to re-run "./gradlew eclipse" or equivalent
-* If you change the access transformers (found at "src/main/resources/META-INF/hardcorealchemy_at.cfg") you will need to re-run "./gradlew setupDecompWorkspace", and re-run "./gradlew eclipse" (or IntelliJ Idea equivalent)
-* If you encounter an unexplained NoClassDefFoundError or NoSuchMethodError after doing development with a different mod, and your dependencies (mods in libs folder) are up-to-date, it may be an issue with CodeChickenCore. Simply re-run "./gradlew setupDecompWorkspace", and re-run "./gradlew eclipse" (or IntelliJ Idea equivalent).
+### Development tips
+* Successfully used gradle commands before but they aren't working anymore because your internet is down? No problem! Just add the `-offline` flag to your gradle command and it should work normally again.
+* `./gradlew setupDecompWorkspace eclipse` may need to be re-run under the following circumstances:
+    * Adding/changing mods in `libs/`
+    * Updating dependencies in other places like `build.gradle`
+    * Updating access transformers (found at "src/main/resources/META-INF/hardcorealchemy_at.cfg") 
+    * On rare occasions, when encountering unexplained crashes involving missing classes or methods. This is a bug with CodeChickenCore when used in a development environment.
 
 ### Other resources
 * Decompiler plugin: http://jd.benow.ca/ (Why: Required to view source code for all the mods in /libs, since most do not have dev builds)
-* MCP Mapping Viewer: https://github.com/bspkrs/MCPMappingViewer/ (Why: To figure out the meaning of func_12345 and their ilk, and translate to them when needed in a release environment)
+* MCP Mapping Viewer: https://github.com/bspkrs/MCPMappingViewer/ (Why: To figure out the meaning of `func_12345` and their ilk, and translate to them when needed in a release environment)
 * Bytecode outline for Eclipse: http://andrei.gmxhome.de/bytecode/index.html (Why: Only if you need to coremod. It will help you understand the Java bytecode better. Do not trust the stack feature.)
 
