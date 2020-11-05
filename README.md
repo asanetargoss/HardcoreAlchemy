@@ -35,16 +35,9 @@ There is a lot more in terms of mod selection, configuration, and tweaking, in o
 
 ## Developing/building
 
-### Workspace setup
-* Create a folder and clone this repository in a subfolder
-* Run `./gradlew setupDecompWorkspace eclipse`
-    * `setupDecompWorkspace` sets up dependencies for Minecraft, Forge, etc and updates access transformers
-    * `eclipse` makes everything available for the Eclipse IDE and should be removed/replaced if using IntelliJ Idea
-* If using Eclipse and you want to make changes to the code, you can use the top folder as a workspace and import the subfolder as a project
-
 ### Dependencies
 
-This branch targets the 0.4.1+ version of the modpack. Download the 0.4.1 zip file from the link below and add its contents to `libs/` in the Hardcore Alchemy repository folder (create the folder if it does not exist):
+This branch targets the 0.4.1+ version of the modpack. Download the 0.4.1 zip file from the link below and be ready to add its contents to `libs/` in the Hardcore Alchemy repository folder when asked:
 
 http://www.mediafire.com/folder/grwn2vsjr2lce/Hardcore_Alchemy_Libs
 
@@ -58,7 +51,17 @@ Please note: the following mods included in the HcA_libs zip file above are cust
 * Guide-API (Custom build for development use only. Do not distribute.)
 * AppleCore: https://github.com/asanetargoss/AppleCore
 
-In addition, you may also want to take the latest available config zip from the same folder and place its contents in run/config/. This will make some aspects of development easier, such as not losing your spawnpoint when testing deaths.
+In addition, you may also want to take the latest available config zip from the same folder, which will be added to `run/config/`. This will make some aspects of development easier, such as not losing your spawnpoint when testing deaths.
+
+### Workspace setup
+* Create a folder and clone this repository in a subfolder
+* Navigate into the subfolder of the cloned repository. Create the `libs/` folder and optionally the `run/config/` folder if they do not exist
+    * In the `libs/` folder, copy the mod dependencies you have downloaded from the Dependencies step
+    * Optionally, into the `run/config` folder, also copy the configs you have downloaded
+* Run `./gradlew setupDecompWorkspace eclipse`
+    * `setupDecompWorkspace` sets up dependencies for Minecraft, Forge, etc and updates access transformers
+    * `eclipse` makes everything available for the Eclipse IDE and should be removed/replaced if using IntelliJ Idea
+* If using Eclipse and you want to make changes to the code, you can use the top folder as a workspace and import the subfolder as a project
 
 ### Compiling
 * To compile, run `./gradlew build`. Output will be in `build/libs/`. The jar name will be `hardcorealchemy-[version].jar` where `[version]` is defined in `build.gradle`.
