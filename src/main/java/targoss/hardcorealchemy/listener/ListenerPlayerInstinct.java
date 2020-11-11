@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import mchorse.metamorph.Metamorph;
 import mchorse.metamorph.api.MorphManager;
 import mchorse.metamorph.api.abilities.IAction;
 import mchorse.metamorph.api.morphs.AbstractMorph;
@@ -31,7 +30,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
@@ -47,13 +45,10 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
-import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent.Clone;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent.HarvestDropsEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -61,10 +56,7 @@ import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
-import targoss.hardcorealchemy.capability.CapUtil;
-import targoss.hardcorealchemy.capability.instinct.CapabilityInstinct;
 import targoss.hardcorealchemy.capability.instinct.ICapabilityInstinct;
-import targoss.hardcorealchemy.capability.instinct.ProviderInstinct;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.instinct.InstinctEffectOverheat;
 import targoss.hardcorealchemy.instinct.InstinctEffectTemperedFlame;
@@ -153,28 +145,6 @@ public class ListenerPlayerInstinct extends ConfiguredListener {
         ColdLimitedAction.wrapAction(actions, "fireball");
         ColdLimitedAction.wrapAction(actions, "small_fireball");
         ColdLimitedAction.wrapAction(actions, "fire_breath");
-    }
-
-    @SubscribeEvent
-    public void onAttachCapability(AttachCapabilitiesEvent<Entity> event) {
-        if (!(event.getObject() instanceof EntityPlayer) || (event.getObject() instanceof FakePlayer)) {
-            return;
-        }
-        
-        event.addCapability(CapabilityInstinct.RESOURCE_LOCATION, new ProviderInstinct());
-        AbstractAttributeMap attributeMap = ((EntityPlayer)event.getObject()).getAttributeMap();
-        if (attributeMap.getAttributeInstance(ICapabilityInstinct.MAX_INSTINCT) == null) {
-            attributeMap.registerAttribute(ICapabilityInstinct.MAX_INSTINCT);
-        }
-    }
-    
-    @SubscribeEvent
-    public void onPlayerClone(Clone event) {
-        if (!event.isWasDeath() || Metamorph.keepMorphs.get()) {
-            EntityPlayer player = event.getEntityPlayer();
-            EntityPlayer playerOld = event.getOriginal();
-            CapUtil.copyOldToNew(INSTINCT_CAPABILITY, playerOld, player);
-        }
     }
     
     /**

@@ -27,7 +27,6 @@ import mchorse.metamorph.api.events.SpawnGhostEvent;
 import mchorse.metamorph.api.morphs.AbstractMorph;
 import mchorse.metamorph.capabilities.morphing.IMorphing;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayer;
@@ -40,7 +39,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.Optional;
@@ -54,7 +52,6 @@ import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.humanity.CapabilityHumanity;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.capability.humanity.LostMorphReason;
-import targoss.hardcorealchemy.capability.humanity.ProviderHumanity;
 import targoss.hardcorealchemy.capability.misc.ICapabilityMisc;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.network.MessageHumanity;
@@ -117,18 +114,6 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
         GOLDEN_APPLE = Item.getByNameOrId("minecraft:golden_apple");
         WITHER_APPLE = Item.getByNameOrId("adinferos:wither_apple");
         // Any more than this, and I might as well make it a hash map. >.>
-    }
-    
-    @SubscribeEvent
-    public void onAttachCapability(AttachCapabilitiesEvent<Entity> event) {
-        Entity entity = event.getObject();
-        if (entity instanceof EntityPlayer) {
-            event.addCapability(HUMANITY_RESOURCE_LOCATION, new ProviderHumanity());
-            AbstractAttributeMap attributeMap = ((EntityPlayer)entity).getAttributeMap();
-            if (attributeMap.getAttributeInstance(MAX_HUMANITY) == null) {
-                attributeMap.registerAttribute(MAX_HUMANITY);
-            }
-        }
     }
     
     @SubscribeEvent

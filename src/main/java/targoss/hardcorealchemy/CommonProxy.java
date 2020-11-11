@@ -77,7 +77,7 @@ import targoss.hardcorealchemy.listener.ListenerInstinctOverheat;
 import targoss.hardcorealchemy.listener.ListenerInventoryFoodRot;
 import targoss.hardcorealchemy.listener.ListenerMobAI;
 import targoss.hardcorealchemy.listener.ListenerMobLevel;
-import targoss.hardcorealchemy.listener.ListenerPacketUpdatePlayer;
+import targoss.hardcorealchemy.listener.ListenerEntityCapabilities;
 import targoss.hardcorealchemy.listener.ListenerPlayerDiet;
 import targoss.hardcorealchemy.listener.ListenerPlayerHinderedMind;
 import targoss.hardcorealchemy.listener.ListenerPlayerHumanity;
@@ -96,7 +96,7 @@ public class CommonProxy {
     
     @SuppressWarnings("unchecked")
     public static final ImmutableList<Class<? extends ConfiguredListener>> LISTENER_TYPES = ImmutableList.of(
-                ListenerPacketUpdatePlayer.class,
+                ListenerEntityCapabilities.class,
                 ListenerPlayerMorphs.class,
                 ListenerPlayerHumanity.class,
                 ListenerPlayerMagic.class,

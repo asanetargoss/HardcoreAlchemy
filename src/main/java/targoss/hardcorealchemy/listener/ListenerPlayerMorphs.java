@@ -27,7 +27,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import mchorse.metamorph.Metamorph;
 import mchorse.metamorph.api.events.AcquireMorphEvent;
 import mchorse.metamorph.api.events.MorphEvent;
 import mchorse.metamorph.api.events.RegisterBlacklistEvent;
@@ -47,11 +46,9 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent.Clone;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerChangedDimensionEvent;
 import targoss.hardcorealchemy.HardcoreAlchemy;
-import targoss.hardcorealchemy.capability.CapUtil;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.capability.killcount.CapabilityKillCount;
 import targoss.hardcorealchemy.capability.killcount.ICapabilityKillCount;
@@ -175,17 +172,6 @@ public class ListenerPlayerMorphs extends ConfiguredListener {
     @SubscribeEvent
     public void onPlayerAcquireMorph(AcquireMorphEvent.Post event) {
         updateMaxHumanity(event.player);
-    }
-
-    @SubscribeEvent
-    public void onPlayerClone(Clone event) {
-        if (!event.isWasDeath() || Metamorph.keepMorphs.get()) {
-            // Keep kill count if morphs are kept
-            EntityPlayer player = event.getEntityPlayer();
-            EntityPlayer playerOld = event.getOriginal();
-            CapUtil.copyOldToNew(KILL_COUNT_CAPABILITY, playerOld, player);
-            updateMaxHumanity(player);
-        }
     }
     
     @SubscribeEvent

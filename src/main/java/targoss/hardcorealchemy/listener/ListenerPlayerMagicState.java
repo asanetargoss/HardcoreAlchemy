@@ -39,16 +39,12 @@ import hellfirepvp.astralsorcery.common.constellation.ConstellationRegistry;
 import hellfirepvp.astralsorcery.common.constellation.IConstellation;
 import hellfirepvp.astralsorcery.common.data.research.PlayerProgress;
 import hellfirepvp.astralsorcery.common.data.research.ResearchManager;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent.Clone;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
@@ -57,10 +53,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.ModState;
-import targoss.hardcorealchemy.capability.CapUtil;
 import targoss.hardcorealchemy.capability.inactive.IInactiveCapabilities;
-import targoss.hardcorealchemy.capability.inactive.InactiveCapabilities;
-import targoss.hardcorealchemy.capability.inactive.ProviderInactiveCapabilities;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.coremod.CoremodHook;
 import targoss.hardcorealchemy.event.EventCraftPredict;
@@ -88,7 +81,6 @@ public class ListenerPlayerMagicState extends ConfiguredListener {
     
     @CapabilityInject(IInactiveCapabilities.class)
     private static final Capability<IInactiveCapabilities> INACTIVE_CAPABILITIES = null;
-    private static final ResourceLocation INACTIVE_CAPABILITIES_RESOURCE = InactiveCapabilities.RESOURCE_LOCATION;
     
     @CapabilityInject(IAffinityData.class)
     private static final Capability<IAffinityData> AFFINITY_CAPABILITY = null;
@@ -98,23 +90,6 @@ public class ListenerPlayerMagicState extends ConfiguredListener {
     
     @CapabilityInject(IPlayerWarp.class)
     private static final Capability<IPlayerWarp> WARP_CAPABILITY = null;
-    
-    @SubscribeEvent
-    public void onAttachCapability(AttachCapabilitiesEvent<Entity> event) {
-        Entity entity = event.getObject();
-        if (entity instanceof EntityPlayer) {
-            event.addCapability(INACTIVE_CAPABILITIES_RESOURCE, new ProviderInactiveCapabilities());
-        }
-    }
-    
-    @SubscribeEvent
-    public void onPlayerClone(Clone event) {
-        // Clone the capability container itself
-        EntityPlayer player = event.getEntityPlayer();
-        EntityPlayer playerOld = event.getOriginal();
-        CapUtil.copyOldToNew(INACTIVE_CAPABILITIES, playerOld, player);
-        // Note: Pruning of individual inactive capabilities only occurs on respawn
-    }
     
     @SubscribeEvent
     public void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
