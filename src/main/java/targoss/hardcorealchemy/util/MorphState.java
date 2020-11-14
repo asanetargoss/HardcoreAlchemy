@@ -186,8 +186,8 @@ public class MorphState {
     }
 
     @Optional.Method(modid = ModState.DISSOLUTION_ID)
-    public static boolean isIncorporeal(EntityPlayer player) {
-        IIncorporealHandler incorporeal = player.getCapability(CapabilityIncorporealHandler.CAPABILITY_INCORPOREAL,
+    public static boolean isIncorporeal(EntityLivingBase entity) {
+        IIncorporealHandler incorporeal = entity.getCapability(CapabilityIncorporealHandler.CAPABILITY_INCORPOREAL,
                 null);
         if (incorporeal != null && incorporeal.isIncorporeal()) {
             return true;

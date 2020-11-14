@@ -34,4 +34,6 @@ public interface ICapabilityMisc {
     void setLifetimeUUID(UUID uuid);
     int getLastIncantationTick();
     void setLastIncantationTick(int lastIncantationTick);
+    boolean getHasChangedDimensionWhileAlive();
+    void setHasChangedDimensionWhileAlive(boolean hasChangedDimensionWhileAlive);
 }

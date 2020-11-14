@@ -29,10 +29,11 @@ import targoss.hardcorealchemy.HardcoreAlchemy;
 public class CapabilityEntityState implements ICapabilityEntityState {
     public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(HardcoreAlchemy.MOD_ID, "entity_state");
     
-    private UUID targetPlayerID = null;
-    private EntityLivingBase lastAttackTarget = null;
-    int age = 0;
-    int lifetime = -1;
+    protected UUID targetPlayerID = null;
+    protected EntityLivingBase lastAttackTarget = null;
+    protected int age = 0;
+    protected int lifetime = -1;
+    protected boolean traveledDimensionally = false;
 
     @Override
     public UUID getTargetPlayerID() {
@@ -62,5 +63,15 @@ public class CapabilityEntityState implements ICapabilityEntityState {
     @Override
     public void setLifetime(int lifetime) {
         this.lifetime = lifetime;
+    }
+
+    @Override
+    public boolean getTraveledDimensionally() {
+        return traveledDimensionally;
+    }
+
+    @Override
+    public void setTraveledDimensionally(boolean traveledDimensionally) {
+        this.traveledDimensionally = traveledDimensionally;
     }
 }

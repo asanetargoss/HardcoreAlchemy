@@ -26,10 +26,11 @@ import targoss.hardcorealchemy.HardcoreAlchemy;
 public class CapabilityMisc implements ICapabilityMisc {
     public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(HardcoreAlchemy.MOD_ID, "misc");
     
-    private boolean hasSeenThirstWarning = false;
-    private boolean hasSeenMagicInhibitionWarning = false;
-    private UUID lifetimeUUID = null;
-    private int lastIncantationTick = 0;
+    protected boolean hasSeenThirstWarning = false;
+    protected boolean hasSeenMagicInhibitionWarning = false;
+    protected UUID lifetimeUUID = null;
+    protected int lastIncantationTick = 0;
+    protected boolean hasChangedDimensionWhileAlive = false;
     
     @Override
     public boolean getHasSeenThirstWarning() {
@@ -69,5 +70,15 @@ public class CapabilityMisc implements ICapabilityMisc {
     @Override
     public void setLastIncantationTick(int lastIncantationTick) {
         this.lastIncantationTick = lastIncantationTick;
+    }
+
+    @Override
+    public boolean getHasChangedDimensionWhileAlive() {
+        return this.hasChangedDimensionWhileAlive;
+    }
+
+    @Override
+    public void setHasChangedDimensionWhileAlive(boolean hasChangedDimensionWhileAlive) {
+        this.hasChangedDimensionWhileAlive = hasChangedDimensionWhileAlive;
     }
 }

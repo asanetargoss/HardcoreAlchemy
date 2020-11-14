@@ -21,8 +21,6 @@ package targoss.hardcorealchemy.listener;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import mchorse.metamorph.capabilities.morphing.IMorphing;
-import mchorse.metamorph.capabilities.morphing.Morphing;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.ScaledResolution;
@@ -30,6 +28,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.GuiIngameForge;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -48,6 +47,7 @@ import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.capability.instinct.ICapabilityInstinct;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.coremod.CoremodHook;
+import targoss.hardcorealchemy.item.Items;
 import targoss.hardcorealchemy.util.MorphDiet;
 import targoss.hardcorealchemy.util.MorphState;
 import targoss.hardcorealchemy.util.RandomWithPublicSeed;
@@ -402,5 +402,27 @@ public class ListenerGuiHud extends ConfiguredListener {
             GuiIngameForge.right_height += 10;
             mc.getTextureManager().bindTexture(GuiIngameForge.ICONS);
         }
+    }
+    
+    @SubscribeEvent
+    public void onRenderDimensionalFluxPortalEffect(RenderGameOverlayEvent.Pre event) {
+        if (event.getType() != ElementType.PORTAL) {
+            return;
+        }
+        
+        EntityPlayerSP player = mc.player;
+        PotionEffect effect = player.getActivePotionEffect(Items.POTION_DIMENSIONAL_FLUX);
+        if (effect == null) {
+            return;
+        }
+
+        float effectiveTimeInPortal = 0.75F;
+        float playerTimeInPortal = player.timeInPortal + ((player.prevTimeInPortal - player.timeInPortal) * event.getPartialTicks());
+        if (playerTimeInPortal > effectiveTimeInPortal) {
+            // If the portal produces the greater visual effect, let the portal do the rendering
+            return;
+        }
+        event.setCanceled(true);
+        mc.ingameGUI.renderPortal(effectiveTimeInPortal, event.getResolution());
     }
 }

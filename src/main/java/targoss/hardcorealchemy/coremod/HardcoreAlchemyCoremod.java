@@ -44,6 +44,7 @@ import targoss.hardcorealchemy.coremod.transform.TGuiContainer;
 import targoss.hardcorealchemy.coremod.transform.THibernatingCrops;
 import targoss.hardcorealchemy.coremod.transform.TItemRenderer;
 import targoss.hardcorealchemy.coremod.transform.TObjectProximityModifier;
+import targoss.hardcorealchemy.coremod.transform.TPlayerControllerMP;
 import targoss.hardcorealchemy.coremod.transform.TProjectEKeyHandler;
 import targoss.hardcorealchemy.coremod.transform.TRenderEntityItem;
 import targoss.hardcorealchemy.coremod.transform.TRenderItem;
@@ -93,7 +94,8 @@ public class HardcoreAlchemyCoremod implements IFMLLoadingPlugin {
 				TEntity.class.getName(),
 				TEntityPlayerSP.class.getName(),
 				TMinecraftServer.class.getName(),
-				TWorld.class.getName()
+				TWorld.class.getName(),
+				TPlayerControllerMP.class.getName()
 		};
 	}
 

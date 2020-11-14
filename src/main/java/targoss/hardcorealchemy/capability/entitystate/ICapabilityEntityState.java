@@ -48,4 +48,7 @@ public interface ICapabilityEntityState {
      */
     int getLifetime();
     void setLifetime(int lifetime);
+    
+    boolean getTraveledDimensionally();
+    void setTraveledDimensionally(boolean traveledDimensionally);
 }

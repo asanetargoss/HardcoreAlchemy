@@ -39,6 +39,7 @@ import targoss.hardcorealchemy.coremod.CoremodHook;
  */
 public class MiscVanilla {
     @SideOnly(Side.CLIENT)
+    @CoremodHook
     public static EntityPlayer getTheMinecraftPlayer() {
         return Minecraft.getMinecraft().player;
     }

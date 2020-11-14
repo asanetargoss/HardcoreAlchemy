@@ -134,3 +134,5 @@ splash_potion.effect.hardcorealchemy:water_resistance=Splash Potion of Water Res
 lingering_potion.effect.hardcorealchemy:water_resistance=Lingering Potion of Water Resistance
 tipped_arrow.effect.hardcorealchemy:water_resistance=Arrow of Water Resistance
 
+potion.hardcorealchemy:dimensional_flux=Dimensional Flux
+
