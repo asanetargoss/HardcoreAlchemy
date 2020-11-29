@@ -128,6 +128,7 @@ public class ListenerEntityCapabilities extends ConfiguredListener {
         }
         if (!event.isWasDeath() || Metamorph.keepMorphs.get()) {
             CapUtil.copyOldToNew(KILL_COUNT_CAPABILITY, oldPlayer, newPlayer);
+            CapUtil.copyOldToNew(HUMANITY_CAPABILITY, oldPlayer, newPlayer);
             ListenerPlayerMorphs.updateMaxHumanity(newPlayer);
         }
         // Note: Pruning of individual inactive capabilities only occurs on respawn
