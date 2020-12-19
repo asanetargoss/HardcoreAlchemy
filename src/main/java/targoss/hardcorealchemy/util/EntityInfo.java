@@ -24,19 +24,27 @@ import net.minecraftforge.fml.client.registry.IRenderFactory;
 public class EntityInfo {
     public final int id;
     public final Class<? extends Entity> clazz;
-    @SuppressWarnings("rawtypes")
-    public final IRenderFactory renderFactory;
     public final Color primaryColor;
     public final Color secondaryColor;
 
     public String name;
     public String entityName;
     
-    public EntityInfo(int id, Class<? extends Entity> clazz, @SuppressWarnings("rawtypes") IRenderFactory renderFactory, Color primaryColor, Color secondaryColor) {
+    public EntityInfo(int id, Class<? extends Entity> clazz, Color primaryColor, Color secondaryColor) {
         this.id = id;
         this.clazz = clazz;
-        this.renderFactory = renderFactory;
         this.primaryColor = primaryColor;
         this.secondaryColor = secondaryColor;
+    }
+    
+    public static class ClientSide {
+        public final EntityInfo info;
+        @SuppressWarnings("rawtypes")
+        public final IRenderFactory renderFactory;
+        
+        public ClientSide(EntityInfo info, @SuppressWarnings("rawtypes") IRenderFactory renderFactory) {
+            this.info = info;
+            this.renderFactory = renderFactory;
+        }
     }
 }

@@ -19,9 +19,7 @@
 package targoss.hardcorealchemy.util;
 
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
-import net.minecraftforge.fml.relauncher.Side;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.coremod.PreInitLogger;
 
@@ -39,23 +37,37 @@ public class RegistrarEntity extends Registrar<EntityInfo> {
         return result;
     }
     
-    @SuppressWarnings("unchecked")
     public boolean register() {
         if (!super.register()) {
             return false;
         }
 
-        Side side = FMLCommonHandler.instance().getSide();
         for (EntityInfo info : entries) {
             EntityRegistry.registerModEntity(info.clazz, info.name, info.id, HardcoreAlchemy.INSTANCE, 64, 3, true);
             EntityRegistry.registerEgg(info.clazz, info.primaryColor.toPackedRGB(), info.secondaryColor.toPackedRGB());
-            if (side == Side.CLIENT) {
-                if (info.renderFactory != null) {
-                    RenderingRegistry.registerEntityRenderingHandler(info.clazz, info.renderFactory);
-                }
-            }
         }
         
         return true;
+    }
+    
+    public static class ClientSide extends Registrar<EntityInfo.ClientSide> {
+        public ClientSide(String name, String namespace, PreInitLogger logger) {
+            super(name, namespace, logger);
+        }
+        
+        @SuppressWarnings("unchecked")
+        public boolean register() {
+            if (!super.register()) {
+                return false;
+            }
+
+            for (EntityInfo.ClientSide infoClient : entries) {
+                if (infoClient.renderFactory != null) {
+                    RenderingRegistry.registerEntityRenderingHandler(infoClient.info.clazz, infoClient.renderFactory);
+                }
+            }
+            
+            return true;
+        }
     }
 }

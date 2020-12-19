@@ -28,5 +28,12 @@ import targoss.hardcorealchemy.util.RegistrarEntity;
 public class Entities {
     public static final Registrar<EntityInfo> ENTITIES = new RegistrarEntity("entities", HardcoreAlchemy.MOD_ID, HardcoreAlchemy.PRE_INIT_LOGGER);
     
-    public static final String FISH_SWARM = ENTITIES.add("fish_swarm", new EntityInfo(0, EntityFishSwarm.class, new RenderNothing.Factory(), new Color(0,0,0), new Color(0,0,0))).entityName;
+    public static final EntityInfo FISH_SWARM_ENTRY = ENTITIES.add("fish_swarm", new EntityInfo(0, EntityFishSwarm.class, new Color(0,0,0), new Color(0,0,0)));
+    public static final String FISH_SWARM = FISH_SWARM_ENTRY.entityName;
+    
+    public static class ClientSide {
+        public static final Registrar<EntityInfo.ClientSide> ENTITIES = new RegistrarEntity.ClientSide("entities_client", HardcoreAlchemy.MOD_ID, HardcoreAlchemy.PRE_INIT_LOGGER);
+        
+        public static final EntityInfo.ClientSide FISH_SWARM_ENTRY = ENTITIES.add(Entities.FISH_SWARM_ENTRY.name, new EntityInfo.ClientSide(Entities.FISH_SWARM_ENTRY, new RenderNothing.Factory()));
+    }
 }
