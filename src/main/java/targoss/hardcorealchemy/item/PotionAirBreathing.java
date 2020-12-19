@@ -18,15 +18,11 @@
 
 package targoss.hardcorealchemy.item;
 
-import org.lwjgl.util.Color;
-
 import mchorse.metamorph.capabilities.morphing.IMorphing;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.passive.EntityWaterMob;
-import net.minecraft.pathfinding.PathNavigateSwimmer;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
+import targoss.hardcorealchemy.util.Color;
 
 /**
  * This effect sets the player's morph's squid air to max every tick,

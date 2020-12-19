@@ -18,10 +18,9 @@
 
 package targoss.hardcorealchemy.entity;
 
-import org.lwjgl.util.Color;
-
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.render.RenderNothing;
+import targoss.hardcorealchemy.util.Color;
 import targoss.hardcorealchemy.util.EntityInfo;
 import targoss.hardcorealchemy.util.Registrar;
 import targoss.hardcorealchemy.util.RegistrarEntity;

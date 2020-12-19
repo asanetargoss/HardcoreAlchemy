@@ -20,9 +20,6 @@ package targoss.hardcorealchemy.item;
 
 import javax.annotation.Nullable;
 
-import org.lwjgl.util.Color;
-
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -34,7 +31,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import targoss.hardcorealchemy.HardcoreAlchemy;
-import targoss.hardcorealchemy.listener.ListenerGuiHud;
+import targoss.hardcorealchemy.util.Color;
 
 /**
  * A base for custom potion effects.
@@ -54,15 +51,9 @@ public class HcAPotion extends Potion {
     protected final double offsetRight;
     
     public HcAPotion(boolean isBadEffect, Color color, int iconId, boolean halfPixelOffsetRight) {
-        super(isBadEffect, colorValue(color));
+        super(isBadEffect, color.toPackedRGB());
         this.iconId = iconId;
         this.offsetRight = halfPixelOffsetRight ? 0.5D : 0.0D;
-    }
-    
-    private static int colorValue(Color color) {
-        return color.getRed()*256*256 +
-               color.getGreen()*256   +
-               color.getBlue();
     }
     
     @Override

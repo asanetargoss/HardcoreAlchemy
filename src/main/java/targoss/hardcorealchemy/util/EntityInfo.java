@@ -18,8 +18,6 @@
 
 package targoss.hardcorealchemy.util;
 
-import org.lwjgl.util.Color;
-
 import net.minecraft.entity.Entity;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
 

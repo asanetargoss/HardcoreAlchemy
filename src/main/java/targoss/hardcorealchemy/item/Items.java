@@ -25,8 +25,6 @@ import static targoss.hardcorealchemy.item.HcAPotion.GOOD_EFFECT;
 
 import java.util.List;
 
-import org.lwjgl.util.Color;
-
 import com.google.common.collect.Lists;
 
 import net.minecraft.item.EnumDyeColor;
@@ -41,6 +39,7 @@ import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.IForgeRegistry;
 import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.util.Color;
 import targoss.hardcorealchemy.util.Registrar;
 import targoss.hardcorealchemy.util.RegistrarItem;
 import targoss.hardcorealchemy.util.RegistrarPotion;

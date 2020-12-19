@@ -18,8 +18,6 @@
 
 package targoss.hardcorealchemy.util;
 
-import org.lwjgl.util.Color;
-
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
@@ -31,12 +29,6 @@ public class RegistrarEntity extends Registrar<EntityInfo> {
 
     public RegistrarEntity(String name, String namespace, PreInitLogger logger) {
         super(name, namespace, logger);
-    }
-    
-    private static int colorValue(Color color) {
-        return color.getRed()*256*256 +
-               color.getGreen()*256   +
-               color.getBlue();
     }
 
     @Override
@@ -56,7 +48,7 @@ public class RegistrarEntity extends Registrar<EntityInfo> {
         Side side = FMLCommonHandler.instance().getSide();
         for (EntityInfo info : entries) {
             EntityRegistry.registerModEntity(info.clazz, info.name, info.id, HardcoreAlchemy.INSTANCE, 64, 3, true);
-            EntityRegistry.registerEgg(info.clazz, colorValue(info.primaryColor), colorValue(info.secondaryColor));
+            EntityRegistry.registerEgg(info.clazz, info.primaryColor.toPackedRGB(), info.secondaryColor.toPackedRGB());
             if (side == Side.CLIENT) {
                 if (info.renderFactory != null) {
                     RenderingRegistry.registerEntityRenderingHandler(info.clazz, info.renderFactory);
