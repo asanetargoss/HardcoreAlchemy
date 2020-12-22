@@ -91,7 +91,9 @@ public class ListenerPlayerHinderedMind extends ConfiguredListener {
     
     @Override
     public void serverAboutToStart(FMLServerAboutToStartEvent event) {
-        heldItemTooltips = MiscVanilla.getHeldItemTooltips();
+        if (!event.getServer().isDedicatedServer()) {
+            heldItemTooltips = MiscVanilla.getHeldItemTooltips();
+        }
 
         Item coal = Items.COAL;
         itemObfuscation.put(coal, coal);
