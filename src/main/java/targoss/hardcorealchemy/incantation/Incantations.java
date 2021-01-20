@@ -22,12 +22,13 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.IForgeRegistry;
 import net.minecraftforge.fml.common.registry.RegistryBuilder;
 import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.coremod.HardcoreAlchemyPreInit;
 import targoss.hardcorealchemy.incantation.api.Incantation;
 import targoss.hardcorealchemy.util.Registrar;
 import targoss.hardcorealchemy.util.RegistrarForge;
 
 public class Incantations {
-    public static final Registrar<Incantation> INCANTATIONS = new RegistrarForge<Incantation>("incantations", HardcoreAlchemy.MOD_ID, HardcoreAlchemy.PRE_INIT_LOGGER);
+    public static final Registrar<Incantation> INCANTATIONS = new RegistrarForge<Incantation>("incantations", HardcoreAlchemy.MOD_ID, HardcoreAlchemyPreInit.LOGGER);
     
     public static final IForgeRegistry<Incantation> INCANTATION_REGISTRY = new RegistryBuilder<Incantation>()
             .setName(new ResourceLocation(HardcoreAlchemy.MOD_ID, "incantations"))

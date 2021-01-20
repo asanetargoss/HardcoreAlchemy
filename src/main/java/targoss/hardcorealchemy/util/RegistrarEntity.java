@@ -18,14 +18,15 @@
 
 package targoss.hardcorealchemy.util;
 
+import org.apache.logging.log4j.Logger;
+
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import targoss.hardcorealchemy.HardcoreAlchemy;
-import targoss.hardcorealchemy.coremod.PreInitLogger;
 
 public class RegistrarEntity extends Registrar<EntityInfo> {
 
-    public RegistrarEntity(String name, String namespace, PreInitLogger logger) {
+    public RegistrarEntity(String name, String namespace, Logger logger) {
         super(name, namespace, logger);
     }
 
@@ -51,7 +52,7 @@ public class RegistrarEntity extends Registrar<EntityInfo> {
     }
     
     public static class ClientSide extends Registrar<EntityInfo.ClientSide> {
-        public ClientSide(String name, String namespace, PreInitLogger logger) {
+        public ClientSide(String name, String namespace, Logger logger) {
             super(name, namespace, logger);
         }
         

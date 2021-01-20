@@ -38,7 +38,6 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import targoss.hardcorealchemy.command.CommandTest;
 import targoss.hardcorealchemy.coremod.HardcoreAlchemyCoremod;
-import targoss.hardcorealchemy.coremod.PreInitLogger;
 import targoss.hardcorealchemy.entity.Entities;
 import targoss.hardcorealchemy.incantation.Incantations;
 import targoss.hardcorealchemy.instinct.Instincts;
@@ -86,7 +85,6 @@ public class HardcoreAlchemy
     @SidedProxy(modId=MOD_ID, clientSide=CLIENT_PROXY, serverSide=COMMON_PROXY)
     public static CommonProxy proxy;
     
-    public static PreInitLogger PRE_INIT_LOGGER = new PreInitLogger();
     public static Logger LOGGER = null;
     
     @EventHandler

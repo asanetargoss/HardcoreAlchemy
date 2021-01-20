@@ -39,6 +39,7 @@ import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.IForgeRegistry;
 import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.coremod.HardcoreAlchemyPreInit;
 import targoss.hardcorealchemy.util.Color;
 import targoss.hardcorealchemy.util.Registrar;
 import targoss.hardcorealchemy.util.RegistrarItem;
@@ -48,9 +49,9 @@ import targoss.hardcorealchemy.util.RegistrarPotionType;
 public class Items {
     private static boolean recipesRegistered = false;
     
-    public static final Registrar<Item> ITEMS = new RegistrarItem("items", HardcoreAlchemy.MOD_ID, HardcoreAlchemy.PRE_INIT_LOGGER);
-    public static final Registrar<Potion> POTIONS = new RegistrarPotion("potions", HardcoreAlchemy.MOD_ID, HardcoreAlchemy.PRE_INIT_LOGGER);
-    public static final Registrar<PotionType> POTION_TYPES = new RegistrarPotionType("potion types", HardcoreAlchemy.MOD_ID, HardcoreAlchemy.PRE_INIT_LOGGER);
+    public static final Registrar<Item> ITEMS = new RegistrarItem("items", HardcoreAlchemy.MOD_ID, HardcoreAlchemyPreInit.LOGGER);
+    public static final Registrar<Potion> POTIONS = new RegistrarPotion("potions", HardcoreAlchemy.MOD_ID, HardcoreAlchemyPreInit.LOGGER);
+    public static final Registrar<PotionType> POTION_TYPES = new RegistrarPotionType("potion types", HardcoreAlchemy.MOD_ID, HardcoreAlchemyPreInit.LOGGER);
     
     public static final Item ESSENCE_MAGE = ITEMS.add("essence_mage", new Item());
     public static final Item DROWNED_ENDER_PEARL = ITEMS.add("drowned_ender_pearl", new Item());

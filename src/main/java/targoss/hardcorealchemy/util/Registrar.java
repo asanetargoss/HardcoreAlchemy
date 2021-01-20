@@ -21,17 +21,17 @@ package targoss.hardcorealchemy.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import targoss.hardcorealchemy.coremod.PreInitLogger;
+import org.apache.logging.log4j.Logger;
 
 public abstract class Registrar<T> {
     /** Human-readable name */
     protected final String name;
     protected final String namespace;
-    protected final PreInitLogger logger;
+    protected final Logger logger;
     protected boolean registered;
     protected List<T> entries = new ArrayList<T>();
     
-    public Registrar(String name, String namespace, PreInitLogger logger) {
+    public Registrar(String name, String namespace, Logger logger) {
         this.name = name;
         this.namespace = namespace;
         this.logger = logger;

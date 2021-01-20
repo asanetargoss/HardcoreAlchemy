@@ -18,13 +18,14 @@
 
 package targoss.hardcorealchemy.util;
 
+import org.apache.logging.log4j.Logger;
+
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.potion.PotionType;
-import targoss.hardcorealchemy.coremod.PreInitLogger;
 
 public class RegistrarPotionType extends RegistrarForge<PotionType> {
-    public RegistrarPotionType(String name, String namespace, PreInitLogger logger) {
+    public RegistrarPotionType(String name, String namespace, Logger logger) {
         super(name, namespace, logger);
     }
     

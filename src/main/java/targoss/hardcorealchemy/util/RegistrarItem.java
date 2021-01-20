@@ -18,17 +18,18 @@
 
 package targoss.hardcorealchemy.util;
 
+import org.apache.logging.log4j.Logger;
+
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import targoss.hardcorealchemy.coremod.PreInitLogger;
 
 public class RegistrarItem extends RegistrarForge<Item> {
 
-    public RegistrarItem(String name, String namespace, PreInitLogger logger) {
+    public RegistrarItem(String name, String namespace, Logger logger) {
         super(name, namespace, logger);
     }
 

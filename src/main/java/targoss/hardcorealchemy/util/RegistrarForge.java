@@ -18,13 +18,14 @@
 
 package targoss.hardcorealchemy.util;
 
+import org.apache.logging.log4j.Logger;
+
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.IForgeRegistryEntry;
-import targoss.hardcorealchemy.coremod.PreInitLogger;
 
 public class RegistrarForge<T extends IForgeRegistryEntry.Impl<T>> extends Registrar<T> {
-    public RegistrarForge(String name, String namespace, PreInitLogger logger) {
+    public RegistrarForge(String name, String namespace, Logger logger) {
         super(name, namespace, logger);
     }
     
