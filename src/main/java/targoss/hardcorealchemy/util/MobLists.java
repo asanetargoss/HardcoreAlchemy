@@ -151,6 +151,29 @@ public class MobLists {
         
         return humans;
     }
+    
+    public static Set<String> getHumanoids() {
+        Set<String> humanoids = getHumans();
+        
+        // Vanilla
+        humanoids.add("Zombie");
+        humanoids.add("Skeleton");
+        humanoids.add("PigZombie");
+        humanoids.add("Enderman");
+        // Ender Zoo
+        humanoids.add("EnderZoo.Enderminy");
+        humanoids.add("EnderZoo.FallenKnight");
+        // Thaumcraft
+        humanoids.add("thaumcraft.EldritchGuardian");
+        humanoids.add("thaumcraft.BrainyZombie");
+        humanoids.add("thaumcraft.GiantBrainyZombie");
+        humanoids.add("thaumcraft.InhabitedZombie");
+        humanoids.add("thaumcraft.CultistKnight");
+        humanoids.add("thaumcraft.CultistCleric");
+        humanoids.add("thaumcraft.CultistLeader");
+        
+        return humanoids;
+    }
 
     public static Set<String> getPassiveMobs() {
         Set<String> passiveMobs = new HashSet<>();
