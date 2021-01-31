@@ -242,6 +242,22 @@ public class InventoryUtil {
         
         return inventories;
     }
+    
+    public static int getArmorInventorySize(EntityPlayer player) {
+        return player.inventory.armorInventory.length;
+    }
+    
+    public static ItemStack getArmorStackInSlot(EntityPlayer player, int armorSlot) {
+        int armorInventoryOffset = player.inventory.mainInventory.length;
+        int slot = armorInventoryOffset + armorSlot;
+        return player.inventory.getStackInSlot(slot);
+    }
+    
+    public static void setArmorStackInSlot(EntityPlayer player, int armorSlot, ItemStack itemStack) {
+        int armorInventoryOffset = player.inventory.mainInventory.length;
+        int slot = armorInventoryOffset + armorSlot;
+        player.inventory.setInventorySlotContents(slot, itemStack);
+    }
 
     @Optional.Method(modid = ModState.IRON_BACKPACKS_ID)
     public static void saveIronBackpackNbt(IItemHandler inventory, ItemStack itemStack) {
