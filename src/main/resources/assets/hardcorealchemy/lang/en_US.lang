@@ -73,8 +73,12 @@ hardcorealchemy.instinct.home.nether.need=You yearn for eternal, otherwordly hea
 hardcorealchemy.instinct.home.nether.need_nearby=The heat of the Nether calls you.
 hardcorealchemy.instinct.home.nether.fulfilled=Your inner flame stabilizes.
 
+hardcorealchemy.instinct.unencumbered.need=You despise having your movements constrained.
+hardcorealchemy.instinct.unencumbered.action=You tear off the armor.
+
 hardcorealchemy.instinct.effect.hunted.warn.variant1=What was that sound?
 hardcorealchemy.instinct.effect.hunted.cannot_attack=You are too afraid to attack the %s.
+
 
 hardcorealchemy.incantation.too_fast=You are too out of breath to cast the spell
 
