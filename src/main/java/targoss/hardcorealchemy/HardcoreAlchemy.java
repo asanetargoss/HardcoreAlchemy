@@ -52,7 +52,7 @@ public class HardcoreAlchemy
 {
     public static final String MOD_ID = "hardcorealchemy";
     public static final String VERSION = "@HARDCORE_ALCHEMY_VERSION@";
-    public static final String DEPENDENCIES = "required-after:metamorph;" +
+    public static final String DEPENDENCIES = "required-after:metamorph@[1.2.3,);" +
          /* If/when TaN for 1.10 updates to version 4.x.x, 
           * remove crop decay code, NPE fix, and thirst overlay fix.
           * Then, the version specifier should be updated to require 4.x.x
