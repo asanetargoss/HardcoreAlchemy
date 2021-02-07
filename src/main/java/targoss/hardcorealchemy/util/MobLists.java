@@ -148,6 +148,9 @@ public class MobLists {
         humans.add("miab.MoonMan");
         humans.add("miab.RottenRobbie");
         humans.add("miab.Nigelthornberry");
+        humans.add("miab.PPAPGuy");
+        humans.add("miab.GrandDad");
+        humans.add("miab.ForeverAlone");
         
         return humans;
     }
@@ -171,6 +174,27 @@ public class MobLists {
         humanoids.add("thaumcraft.CultistKnight");
         humanoids.add("thaumcraft.CultistCleric");
         humanoids.add("thaumcraft.CultistLeader");
+        // Deadly Monsters
+        humanoids.add("dmonsters.baby");
+        humanoids.add("dmonsters.climber");
+        humanoids.add("dmonsters.mutantSteve");
+        humanoids.add("dmonsters.wideman");
+        humanoids.add("dmonsters.woman");
+        // Ad Inferos
+        humanoids.add("adinferos.Ghost");
+        humanoids.add("adinferos.GlowstoneSkeleton");
+        humanoids.add("adinferos.Herobrine");
+        humanoids.add("adinferos.HerobrineClone");
+        humanoids.add("adinferos.ObsidianSheepman");
+        humanoids.add("adinferos.Phantom");
+        humanoids.add("adinferos.Reaper");
+        humanoids.add("adinferos.Summoner");
+        // Meme in a Bottle
+        humanoids.add("miab.Shrek");
+        humanoids.add("miab.DatBoi");
+        humanoids.add("miab.Sanic");
+        humanoids.add("miab.Pepe");
+        humanoids.add("miab.DankeyKang");
         
         return humanoids;
     }
