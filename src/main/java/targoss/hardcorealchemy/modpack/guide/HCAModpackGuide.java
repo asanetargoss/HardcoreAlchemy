@@ -69,7 +69,7 @@ public class HCAModpackGuide {
         
         book.addCategory(CategoryBuilder.withCategory(base + "unexpected_journey", "adinferos:pocket_wormhole")
                 .addEntry("intro", "wooden_axe", numStrings(1, 5))
-                .addEntry("settling_in", "armor_stand", numStrings(1, 6))
+                .addEntry("settling_in", "armor_stand", numStrings(1, 7))
                 .addEntry("humans", "emerald", numStrings(1, 3))
                 .addEntry("the_nether", "quartz_ore", numStrings(1, 5))
                 .getCategory());
