@@ -28,6 +28,7 @@ import com.google.common.collect.Lists;
 
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
+import targoss.hardcorealchemy.coremod.HardcoreAlchemyCoremod;
 import targoss.hardcorealchemy.instinct.api.Instinct;
 import targoss.hardcorealchemy.instinct.api.InstinctEffectDefinition;
 import targoss.hardcorealchemy.instinct.api.InstinctNeedFactory;
@@ -39,7 +40,8 @@ public class InstinctUnencumbered extends Instinct {
     @Override
     public boolean doesMorphEntityHaveInstinct(EntityLivingBase morphEntity) {
         String entityName = EntityList.CLASS_TO_NAME.get(morphEntity.getClass());
-        return !humanoids.contains(entityName);
+        // TODO: Re-enable this outside of dev when more work is put into it
+        return !humanoids.contains(entityName) && !HardcoreAlchemyCoremod.obfuscated;
     }
 
     @Override
