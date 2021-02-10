@@ -159,18 +159,20 @@ public class ListenerSmallTweaks extends ConfiguredListener {
         if (nutrition == null) {
             return;
         }
-        boolean changed = false;
+        boolean shouldSync = false;
         for (Map.Entry<Nutrient, Boolean> enabled : nutrition.getEnabled().entrySet()) {
             if (enabled.getValue()) {
                 float currentNutrition = nutrition.get(enabled.getKey());
                 float newNutrition = Math.max(minValue, currentNutrition - amount);
                 if (newNutrition != currentNutrition) {
                     nutrition.set(enabled.getKey(), newNutrition, false);
-                    changed = true;
+                }
+                if (Math.round(newNutrition * 4) != Math.round(currentNutrition * 4)) {
+                    shouldSync = true;
                 }
             }
         }
-        if (changed && player.ticksExisted % 60 == 16) {
+        if (shouldSync) {
             nutrition.resync();
         }
     }
