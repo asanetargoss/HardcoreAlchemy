@@ -129,13 +129,17 @@ public class ListenerPlayerDiet extends ConfiguredListener {
     @SubscribeEvent
     public void onCheckFoodCrafting(EventCraftPredict event) {
         IInventory craftInventory = event.craftGrid;
-        ItemStack itemStack = event.craftResult;
-        if (InventoryUtil.isEmptyItemStack(itemStack)) {
+        ItemStack outputStack = event.craftResult;
+        if (InventoryUtil.isEmptyItemStack(outputStack)) {
             return;
         }
         
-        if (FoodLists.getRestriction(itemStack) != null) {
+        if (FoodLists.getRestriction(outputStack) != null) {
             // The dietary restriction is already defined for this item, and can be evaluated dynamically
+            return;
+        }
+        
+        if (!FoodLists.isFoodOrIngredient(outputStack)) {
             return;
         }
         
@@ -166,7 +170,7 @@ public class ListenerPlayerDiet extends ConfiguredListener {
         if (restriction != null) {
             ICapabilityFood capabilityFood = FOOD_CAPABILITY.getDefaultInstance();
             capabilityFood.setRestriction(restriction);
-            CapUtil.setVirtualCapability(itemStack, FOOD_CAPABILITY, capabilityFood);
+            CapUtil.setVirtualCapability(outputStack, FOOD_CAPABILITY, capabilityFood);
         }
     }
 

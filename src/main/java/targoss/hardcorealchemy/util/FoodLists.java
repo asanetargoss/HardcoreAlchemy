@@ -19,14 +19,18 @@
 package targoss.hardcorealchemy.util;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
-import targoss.hardcorealchemy.HardcoreAlchemy;
 
 public class FoodLists {
+    // For each of these, if meta is not 0 then the item name is domain:itemname:meta, otherwise the item name is domain:itemname
+    
     public static Map<String, MorphDiet.Restriction> itemRestrictions = new HashMap<String, MorphDiet.Restriction>();
     public static Map<String, MorphDiet.Restriction> oreDictRestrictions = new HashMap<String, MorphDiet.Restriction>();
     
@@ -35,12 +39,20 @@ public class FoodLists {
     // True lookup means the oredict member's dietary restriction is ignored when used in a crafting recipe
     public static Map<String, Boolean> oreDictCraftIgnore = new HashMap<String, Boolean>();
     
+    public static Set<String> itemFoodIngredients = new HashSet<String>();
+    public static Set<String> oreFoodIngredients = new HashSet<String>();
+    
     static {
         MorphDiet.Restriction vegan = MorphDiet.Restriction.VEGAN;
         MorphDiet.Restriction carnivore = MorphDiet.Restriction.CARNIVORE;
         MorphDiet.Restriction omnivore = MorphDiet.Restriction.OMNIVORE;
         Map<String, MorphDiet.Restriction> items = itemRestrictions;
         Map<String, MorphDiet.Restriction> ores = oreDictRestrictions;
+        @SuppressWarnings("unused")
+        Set<String> ingredients = itemFoodIngredients;
+        Set<String> oreIngredients = oreFoodIngredients;
+        
+        // Pam's Harvestcraft oredictionaries
         
         ores.put("listAllfruit", vegan);
         ores.put("listAllveggie", vegan);
@@ -61,12 +73,20 @@ public class FoodLists {
         oreDictCraftIgnore.put("listAllherb", true);
         ores.put("listAllpepper", vegan);
         oreDictCraftIgnore.put("listAllpepper", true);
+
+        oreIngredients.add("foodFlour");
+        oreIngredients.add("foodDough");
+        oreIngredients.add("foodPasta");
+        oreIngredients.add("foodOliveoil");
+        oreIngredients.add("foodSesameoil");
+        oreIngredients.add("listAllsugar");
         
         // Vanilla Minecraft
         
         items.put("minecraft:apple", vegan);
         items.put("minecraft:red_mushroom", vegan);
         items.put("minecraft:brown_mushroom", vegan);
+        items.put("minecraft:reeds", vegan);
         items.put("minecraft:porkchop", carnivore);
         items.put("minecraft:cooked_porkchop", carnivore);
         items.put("minecraft:milk_bucket", carnivore);
@@ -79,7 +99,9 @@ public class FoodLists {
         items.put("minecraft:chicken", carnivore);
         items.put("minecraft:cooked_chicken", carnivore);
         items.put("minecraft:rotten_flesh", carnivore);
+        items.put("minecraft:bone", carnivore);
         items.put("minecraft:beef", carnivore);
+        items.put("minecraft:leather", carnivore);
         items.put("minecraft:spider_eye", carnivore);
         items.put("minecraft:carrot", vegan);
         items.put("minecraft:potato", vegan);
@@ -95,6 +117,7 @@ public class FoodLists {
         items.put("minecraft:melon_block", vegan);
         items.put("minecraft:wheat", vegan);
         items.put("minecraft:bread", vegan);
+        items.put("minecraft:dye:12", vegan); // Cocoa beans
         
         // Pam's Harvestcraft
         
@@ -174,6 +197,10 @@ public class FoodLists {
         items.put("villagebox:roasted_lamb", vegan);
         items.put("villagebox:nigiri", carnivore);
         items.put("villagebox:udon", vegan);
+        
+        // Ars Magica
+        
+        items.put("arsmagica2:item_ore:8", carnivore); // Pig fat
     }
     
     /**
@@ -227,14 +254,49 @@ public class FoodLists {
         }
         
         String itemName = item.getRegistryName().toString();
+        int meta = itemStack.getMetadata();
+        if (meta != 0) {
+            itemName += ":" + meta;
+        }
         if (itemCraftIgnore.get(itemName) == (Boolean)true) {
             return true;
         }
         for (int oreId : OreDictionary.getOreIDs(itemStack)) {
-            if (oreDictCraftIgnore.get(oreId) == (Boolean)true) {
+            String oreName = OreDictionary.getOreName(oreId);
+            if (oreDictCraftIgnore.get(oreName) == (Boolean)true) {
                 return true;
             }
         }
         return false;
+    }
+    
+    public static boolean isFoodOrIngredient(ItemStack itemStack) {
+        if (InventoryUtil.isEmptyItemStack(itemStack)) {
+            return false;
+        }
+        Item item = itemStack.getItem();
+        
+        String itemName = item.getRegistryName().toString();
+        int meta = itemStack.getMetadata();
+        if (meta != 0) {
+            itemName += ":" + meta;
+        }
+        if (itemRestrictions.containsKey(itemName)) {
+            return true;
+        }
+        if (itemFoodIngredients.contains(itemName)) {
+            return true;
+        }
+        for (int oreId : OreDictionary.getOreIDs(itemStack)) {
+            String oreName = OreDictionary.getOreName(oreId);
+            if (oreDictRestrictions.containsKey(oreName)) {
+                return true;
+            }
+            if (oreFoodIngredients.contains(oreName)) {
+                return true;
+            }
+        }
+        
+        return (item instanceof ItemFood);
     }
 }
