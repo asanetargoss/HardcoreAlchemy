@@ -40,11 +40,11 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.IForgeRegistry;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.coremod.HardcoreAlchemyPreInit;
+import targoss.hardcorealchemy.registrar.Registrar;
+import targoss.hardcorealchemy.registrar.RegistrarItem;
+import targoss.hardcorealchemy.registrar.RegistrarPotion;
+import targoss.hardcorealchemy.registrar.RegistrarPotionType;
 import targoss.hardcorealchemy.util.Color;
-import targoss.hardcorealchemy.util.Registrar;
-import targoss.hardcorealchemy.util.RegistrarItem;
-import targoss.hardcorealchemy.util.RegistrarPotion;
-import targoss.hardcorealchemy.util.RegistrarPotionType;
 
 public class Items {
     private static boolean recipesRegistered = false;

@@ -16,7 +16,7 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.util;
+package targoss.hardcorealchemy.registrar;
 
 import org.apache.logging.log4j.Logger;
 

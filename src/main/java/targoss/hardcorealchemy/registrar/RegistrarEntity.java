@@ -16,13 +16,15 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.util;
+package targoss.hardcorealchemy.registrar;
 
 import org.apache.logging.log4j.Logger;
 
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.util.EntityInfo;
+import targoss.hardcorealchemy.util.EntityInfo.ClientSide;
 
 public class RegistrarEntity extends Registrar<EntityInfo> {
 

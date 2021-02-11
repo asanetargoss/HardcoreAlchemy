@@ -20,11 +20,11 @@ package targoss.hardcorealchemy.entity;
 
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.coremod.HardcoreAlchemyPreInit;
+import targoss.hardcorealchemy.registrar.Registrar;
+import targoss.hardcorealchemy.registrar.RegistrarEntity;
 import targoss.hardcorealchemy.render.RenderNothing;
 import targoss.hardcorealchemy.util.Color;
 import targoss.hardcorealchemy.util.EntityInfo;
-import targoss.hardcorealchemy.util.Registrar;
-import targoss.hardcorealchemy.util.RegistrarEntity;
 
 public class Entities {
     public static final Registrar<EntityInfo> ENTITIES = new RegistrarEntity("entities", HardcoreAlchemy.MOD_ID, HardcoreAlchemyPreInit.LOGGER);

@@ -16,39 +16,34 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.util;
-
-import java.util.ArrayList;
-import java.util.List;
+package targoss.hardcorealchemy.registrar;
 
 import org.apache.logging.log4j.Logger;
 
-public abstract class Registrar<T> {
-    /** Human-readable name */
-    protected final String name;
-    protected final String namespace;
-    protected final Logger logger;
-    protected boolean registered;
-    protected List<T> entries = new ArrayList<T>();
-    
-    public Registrar(String name, String namespace, Logger logger) {
-        this.name = name;
-        this.namespace = namespace;
-        this.logger = logger;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.registry.IForgeRegistryEntry;
+
+public class RegistrarForge<T extends IForgeRegistryEntry.Impl<T>> extends Registrar<T> {
+    public RegistrarForge(String name, String namespace, Logger logger) {
+        super(name, namespace, logger);
     }
     
+    @Override
     public <V extends T> V add(String entryName, V entry) {
-        logger.debug("Adding registry entry '" + entryName + "' to registrar '" + name + "'");
-        entries.add(entry);
-        return entry;
+        V result = super.add(entryName, entry);
+        result.setRegistryName(new ResourceLocation(namespace, entryName));
+        return result;
     }
     
     public boolean register() {
-        if (registered) {
-            logger.warn("Registrar '" + name + "' already registered.");
+        if (!super.register()) {
             return false;
         }
-        registered = true;
+        
+        for (T entry : entries) {
+            GameRegistry.register(entry);
+        }
         
         return true;
     }

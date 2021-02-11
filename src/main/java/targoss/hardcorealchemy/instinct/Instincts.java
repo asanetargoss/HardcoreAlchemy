@@ -27,8 +27,8 @@ import targoss.hardcorealchemy.instinct.api.Instinct;
 import targoss.hardcorealchemy.instinct.api.InstinctEffect;
 import targoss.hardcorealchemy.instinct.api.InstinctNeedFactory;
 import targoss.hardcorealchemy.instinct.api.InstinctNeedFactorySimple;
-import targoss.hardcorealchemy.util.Registrar;
-import targoss.hardcorealchemy.util.RegistrarForge;
+import targoss.hardcorealchemy.registrar.Registrar;
+import targoss.hardcorealchemy.registrar.RegistrarForge;
 
 public class Instincts {
     public static final Registrar<Instinct> INSTINCTS = new RegistrarForge<Instinct>("instincts", HardcoreAlchemy.MOD_ID, HardcoreAlchemyPreInit.LOGGER);

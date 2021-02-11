@@ -24,8 +24,8 @@ import net.minecraftforge.fml.common.registry.RegistryBuilder;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.coremod.HardcoreAlchemyPreInit;
 import targoss.hardcorealchemy.incantation.api.Incantation;
-import targoss.hardcorealchemy.util.Registrar;
-import targoss.hardcorealchemy.util.RegistrarForge;
+import targoss.hardcorealchemy.registrar.Registrar;
+import targoss.hardcorealchemy.registrar.RegistrarForge;
 
 public class Incantations {
     public static final Registrar<Incantation> INCANTATIONS = new RegistrarForge<Incantation>("incantations", HardcoreAlchemy.MOD_ID, HardcoreAlchemyPreInit.LOGGER);

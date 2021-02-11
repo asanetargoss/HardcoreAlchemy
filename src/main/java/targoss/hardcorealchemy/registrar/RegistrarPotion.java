@@ -16,35 +16,22 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.util;
+package targoss.hardcorealchemy.registrar;
 
 import org.apache.logging.log4j.Logger;
 
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.common.registry.IForgeRegistryEntry;
+import net.minecraft.potion.Potion;
 
-public class RegistrarForge<T extends IForgeRegistryEntry.Impl<T>> extends Registrar<T> {
-    public RegistrarForge(String name, String namespace, Logger logger) {
+public class RegistrarPotion extends RegistrarForge<Potion> {
+    public RegistrarPotion(String name, String namespace, Logger logger) {
         super(name, namespace, logger);
     }
     
     @Override
-    public <V extends T> V add(String entryName, V entry) {
-        V result = super.add(entryName, entry);
-        result.setRegistryName(new ResourceLocation(namespace, entryName));
+    public <V extends Potion> V add(String potionName, V potion) {
+        V result = super.add(potionName, potion);
+        result.setPotionName("potion." + namespace + ":" + potionName);
         return result;
     }
-    
-    public boolean register() {
-        if (!super.register()) {
-            return false;
-        }
-        
-        for (T entry : entries) {
-            GameRegistry.register(entry);
-        }
-        
-        return true;
-    }
+
 }
