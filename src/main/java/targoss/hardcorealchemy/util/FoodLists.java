@@ -115,9 +115,14 @@ public class FoodLists {
         items.put("minecraft:beetroot", vegan);
         items.put("minecraft:pumpkin", vegan);
         items.put("minecraft:melon_block", vegan);
+        items.put("minecraft:cactus", vegan);
         items.put("minecraft:wheat", vegan);
         items.put("minecraft:bread", vegan);
-        items.put("minecraft:dye:12", vegan); // Cocoa beans
+        items.put("minecraft:dye:1", vegan); // Rose red
+        items.put("minecraft:dye:11", vegan); // Dandelion yellow
+        items.put("minecraft:dye:3", vegan); // Cocoa beans
+        items.put("minecraft:dye:0", carnivore); // Ink sac
+        oreIngredients.add("dye");
         
         // Pam's Harvestcraft
         
