@@ -22,18 +22,17 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import hellfirepvp.astralsorcery.common.util.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import targoss.hardcorealchemy.capability.inactive.IInactiveCapabilities;
 import targoss.hardcorealchemy.capability.inactive.IInactiveCapabilities.Cap;
-import targoss.hardcorealchemy.util.MiscVanilla;
 import targoss.hardcorealchemy.capability.inactive.ProviderInactiveCapabilities;
+import targoss.hardcorealchemy.util.MiscVanilla;
 
 public class MessageInactiveCapabilities extends MessageToClient {
     
@@ -63,12 +62,12 @@ public class MessageInactiveCapabilities extends MessageToClient {
 
     @Override
     public void toBytes(ByteBuf buf) {
-        ByteBufUtils.writeNBTTag(buf, nbtCapMap);
+        ByteBufUtils.writeTag(buf, nbtCapMap);
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        nbtCapMap = ByteBufUtils.readNBTTag(buf);
+        nbtCapMap = ByteBufUtils.readTag(buf);
     }
     
     public static class ReceiveAction implements Runnable {
