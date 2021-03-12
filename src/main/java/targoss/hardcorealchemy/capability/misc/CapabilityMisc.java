@@ -18,10 +18,14 @@
 
 package targoss.hardcorealchemy.capability.misc;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.modpack.guide.HCAUpgradeGuides;
 
 public class CapabilityMisc implements ICapabilityMisc {
     public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(HardcoreAlchemy.MOD_ID, "misc");
@@ -31,6 +35,8 @@ public class CapabilityMisc implements ICapabilityMisc {
     protected UUID lifetimeUUID = null;
     protected int lastIncantationTick = 0;
     protected boolean hasChangedDimensionWhileAlive = false;
+    protected String lastLoginVersion = HCAUpgradeGuides.UPGRADE_GUIDES.getDefaultExpectedPlayerVersion();
+    protected List<ItemStack> pendingInventoryGifts = new ArrayList<>();
     
     @Override
     public boolean getHasSeenThirstWarning() {
@@ -80,5 +86,25 @@ public class CapabilityMisc implements ICapabilityMisc {
     @Override
     public void setHasChangedDimensionWhileAlive(boolean hasChangedDimensionWhileAlive) {
         this.hasChangedDimensionWhileAlive = hasChangedDimensionWhileAlive;
+    }
+
+    @Override
+    public String getLastLoginVersion() {
+        return lastLoginVersion;
+    }
+
+    @Override
+    public void setLastLoginVersion(String lastLoginVersion) {
+        this.lastLoginVersion = lastLoginVersion;
+    }
+
+    @Override
+    public List<ItemStack> getPendingInventoryGifts() {
+        return pendingInventoryGifts;
+    }
+
+    @Override
+    public void setPendingInventoryGifts(List<ItemStack> pendingInventoryGifts) {
+        this.pendingInventoryGifts = pendingInventoryGifts;
     }
 }

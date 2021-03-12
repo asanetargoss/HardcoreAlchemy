@@ -18,7 +18,10 @@
 
 package targoss.hardcorealchemy.capability.misc;
 
+import java.util.List;
 import java.util.UUID;
+
+import net.minecraft.item.ItemStack;
 
 /**
  * For information too small to warrant a separate capability
@@ -36,4 +39,8 @@ public interface ICapabilityMisc {
     void setLastIncantationTick(int lastIncantationTick);
     boolean getHasChangedDimensionWhileAlive();
     void setHasChangedDimensionWhileAlive(boolean hasChangedDimensionWhileAlive);
+    String getLastLoginVersion();
+    void setLastLoginVersion(String lastLoginVersion);
+    List<ItemStack> getPendingInventoryGifts();
+    void setPendingInventoryGifts(List<ItemStack> pendingInventoryGifts);
 }

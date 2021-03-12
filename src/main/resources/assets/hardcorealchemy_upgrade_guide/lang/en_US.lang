@@ -1,0 +1,43 @@
+#
+# Copyright 2021 asanetargoss
+# 
+# This file is part of the Hardcore Alchemy capstone mod.
+# 
+# The Hardcore Alchemy capstone mod is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation version 3 of the License.
+# 
+# The Hardcore Alchemy capstone mod is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+# 
+# You should have received a copy of the GNU Lesser General Public License
+# along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+language.name=English
+language.region=United States
+language.code=en_US
+
+# 0.5.0 Upgrade Guide
+
+hardcorealchemy.upgradeguide.0.5.0.author=Hardcore Alchemy
+hardcorealchemy.upgradeguide.0.5.0.display=0.5.0 Upgrade Guide
+hardcorealchemy.upgradeguide.0.5.0.title=0.5.0 Upgrade Guide
+hardcorealchemy.upgradeguide.0.5.0.welcome=Hardcore Alchemy
+
+# 0.5.0 Upgrade Guide: Gameplay tips
+
+hardcorealchemy.upgradeguide.0.5.0.gameplay_tips.title=Gameplay tips
+
+hardcorealchemy.upgradeguide.0.5.0.gameplay_tips.earlygame.title=Early game
+hardcorealchemy.upgradeguide.0.5.0.gameplay_tips.earlygame.1=This final release in the 0.5 milestone includes bugfixes and a few quality-of-life tweaks. The Traveling Alchemist has also been edited to put greater emphasis on ways to restore thirst and nutrition in early game. We'll briefly mention the best new tips that were added to The Traveling Alchemist here.
+hardcorealchemy.upgradeguide.0.5.0.gameplay_tips.earlygame.2=Have you been struggling to get enough clean water and don't have enough metal for a presser yet? Don't fret! Just use some bonemeal to grow your sugar cane taller. Don't have sugar cane yet? It is possible to get sugar cane seeds from sifting if necessary.
+hardcorealchemy.upgradeguide.0.5.0.gameplay_tips.earlygame.3=Bonemeal can also be used to grow many other things, such as crops, tree fruits, cacti, and baby cows.
+hardcorealchemy.upgradeguide.0.5.0.gameplay_tips.earlygame.4=Just as you can get regular milk from a cow by using an iron bucket, it is possible to get soy milk by processing soybeans, which can be grown from gardens.
+
+# 0.5.0 Upgrade Guide: Final thoughts
+
+hardcorealchemy.upgradeguide.0.5.0.gameplay_tips.final_thoughts.title=Final thoughts
+hardcorealchemy.upgradeguide.0.5.0.gameplay_tips.final_thoughts.1=And... that's about it! There have been a lot of changes to The Traveling Alchemist since 0.3.0, but this book only covers the most recent update from 0.4.1 to 0.5.0. The next time Hardcore Alchemy updates with a significant gameplay feature, you will likely see another book like this.

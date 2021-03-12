@@ -45,6 +45,8 @@ import targoss.hardcorealchemy.item.Items;
 import targoss.hardcorealchemy.metamorph.HcAMetamorphPack;
 import targoss.hardcorealchemy.modpack.guide.AlchemicAshGuide;
 import targoss.hardcorealchemy.modpack.guide.HCAModpackGuide;
+import targoss.hardcorealchemy.modpack.guide.HCAUpgradeGuides;
+import targoss.hardcorealchemy.registrar.RegistrarUpgradeGuide;
 
 @Mod(modid = HardcoreAlchemy.MOD_ID, version = HardcoreAlchemy.VERSION,
     dependencies = HardcoreAlchemy.DEPENDENCIES, acceptedMinecraftVersions = HardcoreAlchemy.MC_VERSIONS)
@@ -123,6 +125,7 @@ public class HardcoreAlchemy
         
         if (ModState.isGuideapiLoaded) {
             HCAModpackGuide.preInit();
+            HCAUpgradeGuides.UPGRADE_GUIDES.register(RegistrarUpgradeGuide.BOOK_AND_MODEL);
         }
         
         if (ModState.isGuideapiLoaded && ModState.isAlchemicAshLoaded) {
@@ -151,6 +154,9 @@ public class HardcoreAlchemy
         
         if (ModState.isGuideapiLoaded) {
             HCAModpackGuide.init();
+            HCAUpgradeGuides.UPGRADE_GUIDES.register(RegistrarUpgradeGuide.RECIPES);
+            HCAUpgradeGuides.UPGRADE_GUIDES.register(RegistrarUpgradeGuide.CATEGORIES);
+            HCAUpgradeGuides.UPGRADE_GUIDES.register(RegistrarUpgradeGuide.CLEANUP);
         }
         
         if (ModState.isGuideapiLoaded && ModState.isAlchemicAshLoaded) {

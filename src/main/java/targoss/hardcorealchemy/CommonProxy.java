@@ -84,6 +84,7 @@ import targoss.hardcorealchemy.listener.ListenerPlayerHinderedMind;
 import targoss.hardcorealchemy.listener.ListenerPlayerHumanity;
 import targoss.hardcorealchemy.listener.ListenerPlayerIncantation;
 import targoss.hardcorealchemy.listener.ListenerPlayerInstinct;
+import targoss.hardcorealchemy.listener.ListenerPlayerInventory;
 import targoss.hardcorealchemy.listener.ListenerPlayerMagic;
 import targoss.hardcorealchemy.listener.ListenerPlayerMagicState;
 import targoss.hardcorealchemy.listener.ListenerPlayerMorphState;
@@ -112,6 +113,7 @@ public class CommonProxy {
                 ListenerPlayerInstinct.class,
                 ListenerPlayerHinderedMind.class,
                 ListenerPlayerIncantation.class,
+                ListenerPlayerInventory.class,
                 ListenerConfigs.class,
                 ListenerInstinctOverheat.class,
                 ListenerEntityDimensionalFlux.class,
