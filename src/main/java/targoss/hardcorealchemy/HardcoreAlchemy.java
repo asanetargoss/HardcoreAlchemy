@@ -122,11 +122,11 @@ public class HardcoreAlchemy
         Entities.ENTITIES.register();
         
         if (ModState.isGuideapiLoaded) {
-            HCAModpackGuide.registerBook();
+            HCAModpackGuide.preInit();
         }
         
         if (ModState.isGuideapiLoaded && ModState.isAlchemicAshLoaded) {
-            AlchemicAshGuide.registerBook();
+            AlchemicAshGuide.preInit();
         }
         
         proxy.registerNetworking();
@@ -150,11 +150,11 @@ public class HardcoreAlchemy
         Incantations.INCANTATIONS.register();
         
         if (ModState.isGuideapiLoaded) {
-            HCAModpackGuide.registerRecipe();
+            HCAModpackGuide.init();
         }
         
         if (ModState.isGuideapiLoaded && ModState.isAlchemicAshLoaded) {
-            AlchemicAshGuide.registerRecipe();
+            AlchemicAshGuide.init();
         }
     }
     
