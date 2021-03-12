@@ -28,7 +28,7 @@ public abstract class Registrar<T> {
     protected final String name;
     protected final String namespace;
     protected final Logger logger;
-    protected boolean registered;
+    protected int lastPhase = -1;
     protected List<T> entries = new ArrayList<T>();
     
     public Registrar(String name, String namespace, Logger logger) {
@@ -43,13 +43,25 @@ public abstract class Registrar<T> {
         return entry;
     }
     
-    public boolean register() {
-        if (registered) {
-            logger.warn("Registrar '" + name + "' already registered.");
+    public boolean register(int phase) {
+        if (phase < 0) {
+            logger.warn("Registrar '" + name + "' cannot execute invalid phase " + phase);
             return false;
         }
-        registered = true;
+        if (phase <= lastPhase) {
+            logger.warn("Registrar '" + name + "' already finished phase " + phase);
+            return false;
+        }
+        if (phase > lastPhase + 1) {
+            logger.warn("Registrar '" + name + "' not ready for registration phase " + phase);
+            return false;
+        }
+        lastPhase = phase;
         
         return true;
+    }
+    
+    public boolean register() {
+        return register(0);
     }
 }
