@@ -36,6 +36,7 @@ hardcorealchemy.upgradeguide.0.5.0.gameplay_tips.earlygame.1=This final release 
 hardcorealchemy.upgradeguide.0.5.0.gameplay_tips.earlygame.2=Have you been struggling to get enough clean water and don't have enough metal for a presser yet? Don't fret! Just use some bonemeal to grow your sugar cane taller. Don't have sugar cane yet? It is possible to get sugar cane seeds from sifting if necessary.
 hardcorealchemy.upgradeguide.0.5.0.gameplay_tips.earlygame.3=Bonemeal can also be used to grow many other things, such as crops, tree fruits, cacti, and baby cows.
 hardcorealchemy.upgradeguide.0.5.0.gameplay_tips.earlygame.4=Just as you can get regular milk from a cow by using an iron bucket, it is possible to get soy milk by processing soybeans, which can be grown from gardens.
+hardcorealchemy.upgradeguide.0.5.0.gameplay_tips.earlygame.5=A bug has been fixed with animal or aquatic morphs not being able to use the primitive sustenance and underwater fishing abilities. This means players should again be able to use the morph ability keybind to eat grass/drink water as certain animals, and fish underwater as a squid or guardian.
 
 # 0.5.0 Upgrade Guide: Final thoughts
 
