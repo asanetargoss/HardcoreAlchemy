@@ -44,12 +44,14 @@ import am2.extensions.SkillData;
 import moze_intel.projecte.api.ProjectEAPI;
 import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
 import net.minecraft.block.Block;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
@@ -69,12 +71,15 @@ import targoss.hardcorealchemy.capability.tilehistory.ICapabilityTileHistory;
 import targoss.hardcorealchemy.capability.tilehistory.ProviderTileHistory;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.coremod.CoremodHook;
+import targoss.hardcorealchemy.event.EventRegenMana;
 import targoss.hardcorealchemy.event.EventTakeStack;
 import targoss.hardcorealchemy.util.Chat;
 import targoss.hardcorealchemy.util.Interaction;
 import targoss.hardcorealchemy.util.InventoryUtil;
 import targoss.hardcorealchemy.util.MiscVanilla;
 import targoss.hardcorealchemy.util.MorphState;
+import targoss.hardcorealchemy.will.WillState;
+import targoss.hardcorealchemy.will.Wills;
 
 public class ListenerPlayerMagic extends ConfiguredListener {
     public ListenerPlayerMagic(Configs configs) {
@@ -170,6 +175,18 @@ public class ListenerPlayerMagic extends ConfiguredListener {
         if (tileEntity instanceof TileMasterRitualStone) {
             event.addCapability(CapabilityTileHistory.RESOURCE_LOCATION, new ProviderTileHistory());
         }
+    }
+    
+    protected float getManaRegenMultiplierAtEntity(EntityLivingBase entity) {
+        BlockPos entityPos = new BlockPos(entity.posX, entity.posY, entity.posZ);
+        float willAir = WillState.getWillAmount(Wills.AURA_AIR, entity.world, entityPos);
+        return willAir;
+    }
+    
+    @SubscribeEvent
+    public void onRegenMana(EventRegenMana event) {
+        float regenMultiplier = getManaRegenMultiplierAtEntity(event.entity);
+        event.finalManaChange *= regenMultiplier;
     }
     
     @SubscribeEvent
