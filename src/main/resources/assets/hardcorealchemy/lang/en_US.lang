@@ -26,7 +26,6 @@ hardcorealchemy.humanity.warn1.variant1=You begin to tire of remembering your hu
 hardcorealchemy.humanity.warn2.variant1=You fantasize a life without thought or inhibition.
 hardcorealchemy.humanity.warn3.variant1=You panic as you realize you don't remember who you are.
 hardcorealchemy.humanity.lost=You feel your humanity fade away.
-hardcorealchemy.humanity.magic_inhibition_warning=You fear powerful magic will interfere with your ability to morph.
 
 hardcorealchemy.morph.suffocation_risk=There is not enough space to morph here.
 
@@ -79,7 +78,6 @@ hardcorealchemy.instinct.unencumbered.action=You tear off the armor.
 hardcorealchemy.instinct.effect.hunted.warn.variant1=What was that sound?
 hardcorealchemy.instinct.effect.hunted.cannot_attack=You are too afraid to attack the %s.
 
-
 hardcorealchemy.incantation.too_fast=You are too out of breath to cast the spell
 
 hardcorealchemy.incantation.change.name=Change
@@ -94,7 +92,6 @@ hardcorealchemy.magic.disabled.not_full_moon=This object's magic seems to only r
 
 hardcorealchemy.magic.recall_thaumcraft=Memories from a past life come flooding back to you.
 
-hardcorealchemy.diet.dirty_water_warning=You fear tainted water will be harmful for your nutritional health
 hardcorealchemy.diet.display.omnivore.upper=Omnivore
 hardcorealchemy.diet.display.carnivore.upper=Carnivore
 hardcorealchemy.diet.display.vegan.upper=Vegan
@@ -102,6 +99,9 @@ hardcorealchemy.diet.display.unfeeding.upper=Unfeeding
 hardcorealchemy.diet.refuse.carnivore=The idea of eating pacifist weakling food is disgusting to you.
 hardcorealchemy.diet.refuse.vegan=You cannot stand the thought of exploiting another living being for food.
 hardcorealchemy.diet.refuse.unfeeding=You perceive no practical use in this chunk of matter.
+
+hardcorealchemy.research.knowledge_fact.dirty_water_warning.acquire=You fear tainted water will be harmful for your nutritional health.
+hardcorealchemy.research.knowledge_fact.magic_inhibition_warning.acquire=You fear powerful magic will interfere with your ability to morph.
 
 # %1$s is the level, displayed as an integer
 hardcorealchemy.level.display=Level: %1$s

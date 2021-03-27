@@ -47,6 +47,7 @@ import targoss.hardcorealchemy.modpack.guide.AlchemicAshGuide;
 import targoss.hardcorealchemy.modpack.guide.HCAModpackGuide;
 import targoss.hardcorealchemy.modpack.guide.HCAUpgradeGuides;
 import targoss.hardcorealchemy.registrar.RegistrarUpgradeGuide;
+import targoss.hardcorealchemy.research.Studies;
 
 @Mod(modid = HardcoreAlchemy.MOD_ID, version = HardcoreAlchemy.VERSION,
     dependencies = HardcoreAlchemy.DEPENDENCIES, acceptedMinecraftVersions = HardcoreAlchemy.MC_VERSIONS)
@@ -122,6 +123,7 @@ public class HardcoreAlchemy
         Items.POTIONS.register();
         Items.POTION_TYPES.register();
         Entities.ENTITIES.register();
+        Studies.KNOWLEDGE_FACTS.register();
         
         if (ModState.isGuideapiLoaded) {
             HCAModpackGuide.preInit();
@@ -147,6 +149,7 @@ public class HardcoreAlchemy
         
         Items.registerRecipes();
         HcAMetamorphPack.registerAbilities();
+        // Why are these in init and not pre-init?
         Instincts.INSTINCTS.register();
         Instincts.INSTINCT_NEED_FACTORIES.register();
         Instincts.INSTINCT_EFFECTS.register();

@@ -63,6 +63,9 @@ import targoss.hardcorealchemy.capability.misc.StorageMisc;
 import targoss.hardcorealchemy.capability.morphstate.CapabilityMorphState;
 import targoss.hardcorealchemy.capability.morphstate.ICapabilityMorphState;
 import targoss.hardcorealchemy.capability.morphstate.StorageMorphState;
+import targoss.hardcorealchemy.capability.research.CapabilityResearch;
+import targoss.hardcorealchemy.capability.research.ICapabilityResearch;
+import targoss.hardcorealchemy.capability.research.StorageResearch;
 import targoss.hardcorealchemy.capability.serverdata.CapabilityServerData;
 import targoss.hardcorealchemy.capability.serverdata.ICapabilityServerData;
 import targoss.hardcorealchemy.capability.serverdata.StorageServerData;
@@ -89,6 +92,7 @@ import targoss.hardcorealchemy.listener.ListenerPlayerMagic;
 import targoss.hardcorealchemy.listener.ListenerPlayerMagicState;
 import targoss.hardcorealchemy.listener.ListenerPlayerMorphState;
 import targoss.hardcorealchemy.listener.ListenerPlayerMorphs;
+import targoss.hardcorealchemy.listener.ListenerPlayerResearch;
 import targoss.hardcorealchemy.listener.ListenerSmallTweaks;
 import targoss.hardcorealchemy.listener.ListenerWorldDifficulty;
 import targoss.hardcorealchemy.network.PacketHandler;
@@ -114,6 +118,7 @@ public class CommonProxy {
                 ListenerPlayerHinderedMind.class,
                 ListenerPlayerIncantation.class,
                 ListenerPlayerInventory.class,
+                ListenerPlayerResearch.class,
                 ListenerConfigs.class,
                 ListenerInstinctOverheat.class,
                 ListenerEntityDimensionalFlux.class,
@@ -161,6 +166,7 @@ public class CommonProxy {
         CapabilityManager.INSTANCE.register(ICapabilityMisc.class, new StorageMisc(), CapabilityMisc.class);
         CapabilityManager.INSTANCE.register(ICapabilityEntityState.class, new StorageEntityState(), CapabilityEntityState.class);
         CapabilityManager.INSTANCE.register(ICapabilityTileHistory.class, new StorageTileHistory(), CapabilityTileHistory.class);
+        CapabilityManager.INSTANCE.register(ICapabilityResearch.class, new StorageResearch(), CapabilityResearch.class);
     }
     
     public static final void registerNetworking() {

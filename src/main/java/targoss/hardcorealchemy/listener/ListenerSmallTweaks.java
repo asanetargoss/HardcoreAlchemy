@@ -31,13 +31,11 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Enchantments;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.pathfinding.PathNavigateSwimmer;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
@@ -53,7 +51,7 @@ import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.misc.ICapabilityMisc;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.item.Items;
-import targoss.hardcorealchemy.util.Chat;
+import targoss.hardcorealchemy.research.Studies;
 import targoss.hardcorealchemy.util.InventoryUtil;
 import targoss.hardcorealchemy.util.MiscVanilla;
 import toughasnails.api.TANCapabilities;
@@ -144,13 +142,7 @@ public class ListenerSmallTweaks extends ConfiguredListener {
             if (effect.getPotion() == TANPotions.thirst) {
                 decreaseNutrition(player, NUTRITION_DECREASE_PER_THIRST_TICK, MIN_NUTRIENT_VALUE);
                 
-                if (!player.world.isRemote) {
-                    ICapabilityMisc miscCap =  player.getCapability(MISC_CAPABILITY, null);
-                    if (miscCap != null && !miscCap.getHasSeenThirstWarning()) {
-                        miscCap.setHasSeenThirstWarning(true);
-                        Chat.message(Chat.Type.NOTIFY, (EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.diet.dirty_water_warning"));
-                    }
-                }
+                ListenerPlayerResearch.acquireFactAndSendChatMessage(player, Studies.FACT_DIRTY_WATER_WARNING);
                 
                 break;
             }

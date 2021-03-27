@@ -56,6 +56,7 @@ import targoss.hardcorealchemy.capability.misc.ICapabilityMisc;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.network.MessageHumanity;
 import targoss.hardcorealchemy.network.PacketHandler;
+import targoss.hardcorealchemy.research.Studies;
 import targoss.hardcorealchemy.util.Chat;
 import targoss.hardcorealchemy.util.InventoryUtil;
 import targoss.hardcorealchemy.util.MorphState;
@@ -378,16 +379,10 @@ public class ListenerPlayerHumanity extends ConfiguredListener {
         }
         
         // Warn the player that using spells (or other select magic items) may interfere with their ability to morph
-        ICapabilityMisc misc = player.getCapability(MISC_CAPABILITY, null);
-        if (misc != null) {
-            IMorphing morphing = player.getCapability(MORPHING_CAPABILITY, null);
-            boolean hasAMorph = morphing != null && !morphing.getAcquiredMorphs().isEmpty() && capabilityHumanity.canMorph();
-            if (hasAMorph && !misc.getHasSeenMagicInhibitionWarning()) {
-                misc.setHasSeenMagicInhibitionWarning(true);
-                if (!player.world.isRemote) {
-                    Chat.message(Chat.Type.NOTIFY, (EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.humanity.magic_inhibition_warning"));
-                }
-            }
+        IMorphing morphing = player.getCapability(MORPHING_CAPABILITY, null);
+        boolean hasAMorph = morphing != null && !morphing.getAcquiredMorphs().isEmpty() && capabilityHumanity.canMorph();
+        if (hasAMorph) {
+            ListenerPlayerResearch.acquireFactAndSendChatMessage(player, Studies.FACT_MAGIC_INHIBITION_WARNING);
         }
     }
 

@@ -30,33 +30,11 @@ import targoss.hardcorealchemy.modpack.guide.HCAUpgradeGuides;
 public class CapabilityMisc implements ICapabilityMisc {
     public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(HardcoreAlchemy.MOD_ID, "misc");
     
-    protected boolean hasSeenThirstWarning = false;
-    protected boolean hasSeenMagicInhibitionWarning = false;
     protected UUID lifetimeUUID = null;
     protected int lastIncantationTick = 0;
     protected boolean hasChangedDimensionWhileAlive = false;
     protected String lastLoginVersion = HCAUpgradeGuides.UPGRADE_GUIDES.getDefaultExpectedPlayerVersion();
     protected List<ItemStack> pendingInventoryGifts = new ArrayList<>();
-    
-    @Override
-    public boolean getHasSeenThirstWarning() {
-        return hasSeenThirstWarning;
-    }
-
-    @Override
-    public boolean getHasSeenMagicInhibitionWarning() {
-        return hasSeenMagicInhibitionWarning;
-    }
-
-    @Override
-    public void setHasSeenMagicInhibitionWarning(boolean hasSeenMagicInhibitionWarning) {
-        this.hasSeenMagicInhibitionWarning = hasSeenMagicInhibitionWarning;
-    }
-
-    @Override
-    public void setHasSeenThirstWarning(boolean hasSeenThirstWarning) {
-        this.hasSeenThirstWarning = hasSeenThirstWarning;
-    }
 
     @Override
     public UUID getLifetimeUUID() {

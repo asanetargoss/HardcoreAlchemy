@@ -28,10 +28,6 @@ import net.minecraft.item.ItemStack;
  * Currently does not sync over the network or persist on death, since that's not needed at the moment.
  */
 public interface ICapabilityMisc {
-    boolean getHasSeenThirstWarning();
-    void setHasSeenThirstWarning(boolean hasSeenThirstWarning);
-    boolean getHasSeenMagicInhibitionWarning();
-    void setHasSeenMagicInhibitionWarning(boolean hasSeenMagicInhibitionWarning);
     /** Get the player's UUID for their current life. */
     UUID getLifetimeUUID();
     void setLifetimeUUID(UUID uuid);

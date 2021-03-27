@@ -50,6 +50,9 @@ import targoss.hardcorealchemy.capability.misc.CapabilityMisc;
 import targoss.hardcorealchemy.capability.misc.ICapabilityMisc;
 import targoss.hardcorealchemy.capability.misc.ProviderMisc;
 import targoss.hardcorealchemy.capability.morphstate.ICapabilityMorphState;
+import targoss.hardcorealchemy.capability.research.CapabilityResearch;
+import targoss.hardcorealchemy.capability.research.ICapabilityResearch;
+import targoss.hardcorealchemy.capability.research.ProviderResearch;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.network.MessageHumanity;
 import targoss.hardcorealchemy.network.MessageInactiveCapabilities;
@@ -87,6 +90,8 @@ public class ListenerEntityCapabilities extends ConfiguredListener {
     public static final Capability<ICapabilityInstinct> INSTINCT_CAPABILITY = null;
     @CapabilityInject(ICapabilityMisc.class)
     public static final Capability<ICapabilityMisc> MISC_CAPABILITY = null;
+    @CapabilityInject(ICapabilityResearch.class)
+    public static final Capability<ICapabilityResearch> RESEARCH_CAPABILITY = null;
 
     @SubscribeEvent
     public void onAttachPlayerCapabilities(AttachCapabilitiesEvent<Entity> event) {
@@ -101,6 +106,9 @@ public class ListenerEntityCapabilities extends ConfiguredListener {
         }
         {
             event.addCapability(InactiveCapabilities.RESOURCE_LOCATION, new ProviderInactiveCapabilities());
+        }
+        {
+            event.addCapability(CapabilityResearch.RESOURCE_LOCATION, new ProviderResearch());
         }
         {
             event.addCapability(CapabilityHumanity.RESOURCE_LOCATION, new ProviderHumanity());
@@ -125,6 +133,8 @@ public class ListenerEntityCapabilities extends ConfiguredListener {
         if (!event.isWasDeath()) {
             CapUtil.copyOldToNew(MISC_CAPABILITY, oldPlayer, newPlayer);
             CapUtil.copyOldToNew(INSTINCT_CAPABILITY, oldPlayer, newPlayer);
+            CapUtil.copyOldToNew(RESEARCH_CAPABILITY, oldPlayer, newPlayer);
+            ListenerPlayerResearch.pruneResearchAfterDeath(newPlayer);
         }
         if (!event.isWasDeath() || Metamorph.keepMorphs.get()) {
             CapUtil.copyOldToNew(KILL_COUNT_CAPABILITY, oldPlayer, newPlayer);

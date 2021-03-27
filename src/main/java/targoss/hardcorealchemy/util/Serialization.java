@@ -40,6 +40,7 @@ public class Serialization {
     }
     
     public static final int NBT_STRING_ID = checkForNBTType("STRING");
+    public static final int NBT_LIST_ID = checkForNBTType("LIST");
     public static final int NBT_COMPOUND_ID = checkForNBTType("COMPOUND");
     
     public static void setBlockPosNBT(NBTTagCompound parent, String key, @Nullable BlockPos pos) {
