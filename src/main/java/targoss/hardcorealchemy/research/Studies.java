@@ -39,4 +39,5 @@ public class Studies {
 
     public static final KnowledgeFact FACT_DIRTY_WATER_WARNING = KNOWLEDGE_FACTS.add("dirty_water_warning", new KnowledgeFact(false));
     public static final KnowledgeFact FACT_MAGIC_INHIBITION_WARNING = KNOWLEDGE_FACTS.add("magic_inhibition_warning", new KnowledgeFact(false));
+    public static final KnowledgeFact FACT_AURA_CASTING_WARNING = KNOWLEDGE_FACTS.add("aura_casting_warning", new KnowledgeFact(false));
 }

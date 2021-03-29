@@ -102,6 +102,7 @@ hardcorealchemy.diet.refuse.unfeeding=You perceive no practical use in this chun
 
 hardcorealchemy.research.knowledge_fact.dirty_water_warning.acquire=You fear tainted water will be harmful for your nutritional health.
 hardcorealchemy.research.knowledge_fact.magic_inhibition_warning.acquire=You fear powerful magic will interfere with your ability to morph.
+hardcorealchemy.research.knowledge_fact.aura_casting_warning.acquire=You sense that magic is different in this world. It does not bend to your Will as easily...
 
 # %1$s is the level, displayed as an integer
 hardcorealchemy.level.display=Level: %1$s

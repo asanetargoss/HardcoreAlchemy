@@ -32,6 +32,11 @@ public class WillState {
         return thaumcraftAura / 250.0F;
     }
     
+    public static boolean isTypicalMagicCastingEnvironment(World world, BlockPos pos) {
+        boolean isOverworld = world.provider.getDimensionType() == DimensionType.OVERWORLD;
+        return isOverworld;
+    }
+    
     /**
      * Returns the amount of Will of a given type present at a location.
      * Values typically range between 0 and 1, but can often be greater than 1

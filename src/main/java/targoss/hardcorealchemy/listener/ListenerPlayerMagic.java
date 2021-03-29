@@ -59,6 +59,7 @@ import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -73,6 +74,7 @@ import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.coremod.CoremodHook;
 import targoss.hardcorealchemy.event.EventRegenMana;
 import targoss.hardcorealchemy.event.EventTakeStack;
+import targoss.hardcorealchemy.research.Studies;
 import targoss.hardcorealchemy.util.Chat;
 import targoss.hardcorealchemy.util.Interaction;
 import targoss.hardcorealchemy.util.InventoryUtil;
@@ -161,6 +163,17 @@ public class ListenerPlayerMagic extends ConfiguredListener {
         MAGIC_BLOCK_ALLOW_USE.add("projecte:alchemical_chest");
         MAGIC_BLOCK_ALLOW_USE.add("arsmagica2:magicians_workbench");
     }
+
+    /** Spell items that work differently outside the overworld */
+    public static final Set<String> OVERWORLD_SPELL_ITEMS = new HashSet<>();
+    
+    static {
+        OVERWORLD_SPELL_ITEMS.add("arsmagica2:spell_component");
+        OVERWORLD_SPELL_ITEMS.add("arsmagica2:spell_staff_magitech");
+        OVERWORLD_SPELL_ITEMS.add("arsmagica2:arcane_spellbook");
+        OVERWORLD_SPELL_ITEMS.add("arsmagica2:spell");
+        OVERWORLD_SPELL_ITEMS.add("arsmagica2:spell_book");
+    }
     
     /*TODO: Prevent using block transmutation feature of Philosopher Stone
      */
@@ -187,6 +200,21 @@ public class ListenerPlayerMagic extends ConfiguredListener {
     public void onRegenMana(EventRegenMana event) {
         float regenMultiplier = getManaRegenMultiplierAtEntity(event.entity);
         event.finalManaChange *= regenMultiplier;
+    }
+    
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public void onPlayerCastSpell(PlayerInteractEvent.RightClickItem event) {
+        EntityPlayer player = event.getEntityPlayer();
+        ItemStack itemStack = event.getItemStack();
+        if (InventoryUtil.isEmptyItemStack(itemStack)) {
+            return;
+        }
+        if (!OVERWORLD_SPELL_ITEMS.contains(itemStack.getItem().getRegistryName().toString())) {
+            return;
+        }
+        if (!WillState.isTypicalMagicCastingEnvironment(player.world, new BlockPos(player.posX, player.posY, player.posZ))) {
+            ListenerPlayerResearch.acquireFactAndSendChatMessage(player, Studies.FACT_AURA_CASTING_WARNING);
+        }
     }
     
     @SubscribeEvent
