@@ -76,7 +76,7 @@ import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.listener.ConfiguredListener;
 import targoss.hardcorealchemy.listener.ListenerConfigs;
 import targoss.hardcorealchemy.listener.ListenerCrops;
-import targoss.hardcorealchemy.listener.ListenerEntityDimensionalFlux;
+import targoss.hardcorealchemy.listener.ListenerEntityVoidfade;
 import targoss.hardcorealchemy.listener.ListenerInstinctOverheat;
 import targoss.hardcorealchemy.listener.ListenerInventoryFoodRot;
 import targoss.hardcorealchemy.listener.ListenerMobAI;
@@ -121,7 +121,7 @@ public class CommonProxy {
                 ListenerPlayerResearch.class,
                 ListenerConfigs.class,
                 ListenerInstinctOverheat.class,
-                ListenerEntityDimensionalFlux.class,
+                ListenerEntityVoidfade.class,
                 ListenerCrops.class // 1.10-specific
             );
     

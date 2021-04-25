@@ -60,7 +60,7 @@ public class Items {
     public static final Potion POTION_ALLOW_MAGIC = POTIONS.add("allow_magic", new HcAPotion(GOOD_EFFECT, new Color(113, 80, 182), 0, true));
     public static final Potion POTION_AIR_BREATHING = POTIONS.add("air_breathing", new PotionAirBreathing(GOOD_EFFECT, new Color(205, 205, 205), 1, false));
     public static final Potion POTION_WATER_RESISTANCE = POTIONS.add("water_resistance", new HcAPotion(GOOD_EFFECT, new Color(47, 107, 58), 2, false));
-    public static final Potion POTION_DIMENSIONAL_FLUX = POTIONS.add("dimensional_flux", new HcAPotion(BAD_EFFECT, new Color(94, 10, 199), 3, false));
+    public static final Potion POTION_VOIDFADE = POTIONS.add("voidfade", new HcAPotion(BAD_EFFECT, new Color(94, 10, 199), 3, false));
 
     public static final PotionType POTION_TYPE_ALLOW_MAGIC = POTION_TYPES.add("allow_magic", RegistrarPotionType.potionTypeFromPotion(POTION_ALLOW_MAGIC, 5*60*20));
     public static final PotionType POTION_TYPE_AIR_BREATHING = POTION_TYPES.add("air_breathing", RegistrarPotionType.potionTypeFromPotion(POTION_AIR_BREATHING, 3*60*20));

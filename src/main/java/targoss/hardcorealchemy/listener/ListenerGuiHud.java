@@ -405,13 +405,13 @@ public class ListenerGuiHud extends ConfiguredListener {
     }
     
     @SubscribeEvent
-    public void onRenderDimensionalFluxPortalEffect(RenderGameOverlayEvent.Pre event) {
+    public void onRenderVoidfadePortalEffect(RenderGameOverlayEvent.Pre event) {
         if (event.getType() != ElementType.PORTAL) {
             return;
         }
         
         EntityPlayerSP player = mc.player;
-        PotionEffect effect = player.getActivePotionEffect(Items.POTION_DIMENSIONAL_FLUX);
+        PotionEffect effect = player.getActivePotionEffect(Items.POTION_VOIDFADE);
         if (effect == null) {
             return;
         }

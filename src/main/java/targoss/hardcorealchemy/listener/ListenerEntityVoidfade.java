@@ -57,16 +57,16 @@ import targoss.hardcorealchemy.item.Items;
 import targoss.hardcorealchemy.util.InventoryUtil;
 import targoss.hardcorealchemy.util.MorphState;
 
-public class ListenerEntityDimensionalFlux extends ConfiguredListener {
-    public ListenerEntityDimensionalFlux(Configs configs) {
+public class ListenerEntityVoidfade extends ConfiguredListener {
+    public ListenerEntityVoidfade(Configs configs) {
         super(configs);
     }
 
-    protected static void applyDimensionalFlux(EntityLivingBase entity, int durationSeconds) {
+    protected static void applyVoidfade(EntityLivingBase entity, int durationSeconds) {
         if (ModState.isDissolutionLoaded && MorphState.isIncorporeal(entity)) {
             return;
         }
-        entity.addPotionEffect(new PotionEffect(Items.POTION_DIMENSIONAL_FLUX, durationSeconds * 20, 0, false, true));
+        entity.addPotionEffect(new PotionEffect(Items.POTION_VOIDFADE, durationSeconds * 20, 0, false, true));
     }
     
     protected void handleEntityLeavingDimension(Entity entity) {
@@ -94,7 +94,7 @@ public class ListenerEntityDimensionalFlux extends ConfiguredListener {
             misc.setHasChangedDimensionWhileAlive(true);
             return;
         }
-        applyDimensionalFlux(entityLiving, 20);
+        applyVoidfade(entityLiving, 20);
         if (state != null) {
             state.setTraveledDimensionally(false);
         }
@@ -129,24 +129,24 @@ public class ListenerEntityDimensionalFlux extends ConfiguredListener {
     public void onEntityTouchPortal(LivingUpdateEvent event) {
         EntityLivingBase entityLiving = event.getEntityLiving();
         if (entityLiving.inPortal) {
-            applyDimensionalFlux(entityLiving, 5);
+            applyVoidfade(entityLiving, 5);
         }
     }
 
-    // Prevent entities with dimensional flux from receiving damage
+    // Prevent entities with voidfade from receiving damage
     @SubscribeEvent(priority=EventPriority.HIGH)
     public void onEntityHurt(LivingHurtEvent event) {
         EntityLivingBase entityLiving = event.getEntityLiving();
-        if (entityLiving.isPotionActive(Items.POTION_DIMENSIONAL_FLUX)) {
+        if (entityLiving.isPotionActive(Items.POTION_VOIDFADE)) {
             event.setCanceled(true);
         }
     }
     
-    // Prevent players with dimensional flux from attacking
+    // Prevent players with voidfade from attacking
     @SubscribeEvent(priority=EventPriority.HIGH)
     public void onPlayerAttack(AttackEntityEvent event) {
         EntityPlayer player = event.getEntityPlayer();
-        if (event.getEntityPlayer().isPotionActive(Items.POTION_DIMENSIONAL_FLUX)) {
+        if (event.getEntityPlayer().isPotionActive(Items.POTION_VOIDFADE)) {
             event.setCanceled(true);
             if (player.world.isRemote) {
                 player.playSound(SoundEvents.ENTITY_ENDERMEN_TELEPORT, 0.25F, 1.0F);
@@ -154,7 +154,7 @@ public class ListenerEntityDimensionalFlux extends ConfiguredListener {
         }
     }
 
-    // Prevent entities with dimensional flux from attacking
+    // Prevent entities with voidfade from attacking
     @SubscribeEvent(priority=EventPriority.HIGH)
     public void onEntityAttack(LivingAttackEvent event) {
         EntityLivingBase entityLiving = event.getEntityLiving();
@@ -171,7 +171,7 @@ public class ListenerEntityDimensionalFlux extends ConfiguredListener {
             return;
         }
         
-        if (((EntityLivingBase)agressor).isPotionActive(Items.POTION_DIMENSIONAL_FLUX)) {
+        if (((EntityLivingBase)agressor).isPotionActive(Items.POTION_VOIDFADE)) {
             event.setCanceled(true);
             if (!agressor.world.isRemote) {
                 agressor.playSound(SoundEvents.ENTITY_ENDERMEN_TELEPORT, 0.7F, 1.0F);
@@ -179,26 +179,26 @@ public class ListenerEntityDimensionalFlux extends ConfiguredListener {
         }
     }
 
-    // Prevent players with dimensional flux from mining
+    // Prevent players with voidfade from mining
     @SubscribeEvent(priority=EventPriority.HIGH)
     public void onPlayerDig(PlayerEvent.BreakSpeed event) {
         EntityPlayer player = event.getEntityPlayer();
         if (player == null) {
             return;
         }
-        if (player.isPotionActive(Items.POTION_DIMENSIONAL_FLUX)) {
+        if (player.isPotionActive(Items.POTION_VOIDFADE)) {
             event.setCanceled(true);
         }
     }
 
-    // Prevent players with dimensional flux from right clicking blocks or placing blocks (using items is fine)
+    // Prevent players with voidfade from right clicking blocks or placing blocks (using items is fine)
     @SubscribeEvent(priority=EventPriority.HIGH)
     public void onBlockInteract(PlayerInteractEvent.RightClickBlock event) {
         EntityPlayer player = event.getEntityPlayer();
         if (player == null) {
             return;
         }
-        if (!player.isPotionActive(Items.POTION_DIMENSIONAL_FLUX)) {
+        if (!player.isPotionActive(Items.POTION_VOIDFADE)) {
             return;
         }
         boolean stoppedUse = false;
@@ -229,7 +229,7 @@ public class ListenerEntityDimensionalFlux extends ConfiguredListener {
     
     @SubscribeEvent
     public void onPlayerDamageBlockSound(EventPlayerDamageBlockSound event) {
-        if (event.player.isPotionActive(Items.POTION_DIMENSIONAL_FLUX)) {
+        if (event.player.isPotionActive(Items.POTION_VOIDFADE)) {
             event.soundType = new SoundEventMasqueradingAsBlock(0.7F, 2.0F, SoundEvents.ENTITY_ENDERMEN_TELEPORT);
         }
     }
