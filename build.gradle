@@ -1,22 +1,27 @@
+// Begin Minecraft Forge plugin setup
 buildscript {
     repositories {
-        jcenter()
-        maven { url = "http://files.minecraftforge.net/maven" }
+        mavenCentral()
+        maven {
+            url "http://maven.minecraftforge.net"
+        }
     }
     dependencies {
+        // TODO: Replace Forge Gradle plugin due to it using a now outdated hardcoded Maven endpoint URL
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
     }
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
-//Only edit below this line, the above code adds and enables the nessasary things for Forge to be setup.
+// End Minecraft Forge plugin setup
 
 
+// Project settings
 version = "0.5.0"
-group= "targoss.hardcorealchemy" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+group= "targoss.hardcorealchemy"
 archivesBaseName = "hardcorealchemy"
 String coremodPath="targoss.hardcorealchemy.coremod.HardcoreAlchemyCoremod"
 
-sourceCompatibility = targetCompatibility = "1.8" // Need this here so eclipse task generates correctly.
+sourceCompatibility = targetCompatibility = "1.8" // Need this here so Eclipse task generates correctly.
 compileJava {
     sourceCompatibility = targetCompatibility = "1.8"
 }
@@ -25,69 +30,35 @@ minecraft {
     version = "1.10.2-12.18.3.2511"
     runDir = "run"
     
-    // the mappings can be changed at any time, and must be in the following format.
-    // snapshot_YYYYMMDD   snapshot are built nightly.
-    // stable_#            stables are built at the discretion of the MCP team.
-    // Use non-default mappings at your own risk. they may not allways work.
-    // simply re-run your setup task after changing the mappings to update your workspace.
     mappings = "stable_29"
-    // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
     
     replace "@HARDCORE_ALCHEMY_VERSION@", project.version
     replaceIn "HardcoreAlchemy.java"
 
+    // These arguments let us load the coremod properly when testing in a dev environment
     clientJvmArgs = ["-Dfml.coreMods.load=" + coremodPath]
     serverJvmArgs = ["-Dfml.coreMods.load=" + coremodPath]
 }
 
-repositories {
-    maven {
-        url "http://tehnut.info/maven"
-    }
-}
-
 dependencies {
-    // you may put jars on which you depend on in ./libs
-    // or you may define them like so..
-    //compile "some.group:artifact:version:classifier"
-    //compile "some.group:artifact:version"
-      
-    // real examples
-    //compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'  // adds buildcraft to the dev env
-    //compile 'com.googlecode.efficient-java-matrix-library:ejml:0.24' // adds ejml to the dev env
-    
-    // the 'provided' configuration is for optional dependencies that exist at compile-time but might not at runtime.
-    //provided 'com.mod-buildcraft:buildcraft:6.0.8:dev'
-
-    // the deobf configurations:  'deobfCompile' and 'deobfProvided' are the same as the normal compile and provided,
-    // except that these dependencies get remapped to your current MCP mappings
-    //deobfCompile 'com.mod-buildcraft:buildcraft:6.0.8:dev'
-    //deobfProvided 'com.mod-buildcraft:buildcraft:6.0.8:dev'
-    
-    deobfCompile 'mcp.mobius.waila:Hwyla:1.8.12-B26_1.10.2'
-    //deobfCompile 'info.amerifrance.guideapi:Guide-API:1.10.2-2.0.3-46'
-
-    // for more info...
-    // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
-    // http://www.gradle.org/docs/current/userguide/dependency_management.html
-
+    // Right now, all mod dependencies are handled by adding the required mods to `libs/`. See the README for more info.
 }
 
 processResources
 {
-    // this will ensure that this task is redone when the versions change.
+    // This will ensure that this task is redone when the versions change.
     inputs.property "version", project.version
     inputs.property "mcversion", project.minecraft.version
 
-    // replace stuff in mcmod.info, nothing else
+    // Replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
                 
-        // replace version and mcversion
+        // Replace version and mcversion with the settings we've defined for our project
         expand 'version':project.version, 'mcversion':project.minecraft.version
     }
         
-    // copy everything else, thats not the mcmod.info
+    // Copy everything else that's not the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
     }
@@ -96,8 +67,10 @@ processResources
 jar {
     manifest {
         attributes (
+            // Add coremod info to mod jar manifest
             'FMLCorePlugin': coremodPath,
             'FMLCorePluginContainsFMLMod': 'true',
+            // Add access transformer info to mod jar manifest
             "FMLAT": 'hardcorealchemy_at.cfg'
         )
     }
