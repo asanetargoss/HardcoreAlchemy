@@ -97,8 +97,8 @@ hardcorealchemy.guide.exploring_the_arcane.blood_magic.1=In terms of practicalit
 
 ## Exploring the Arcane: Dwarven
 hardcorealchemy.guide.exploring_the_arcane.embers.title=Dwarven Tools
-hardcorealchemy.guide.exploring_the_arcane.embers.1=While not strictly magical, you will find Dwarven technology [Embers] to be very useful for automating many magical devices. Item suction, for example, can be achieved by activating a lever on an item pump connected to an item pipe network. A similar process is also possible for fluids. Item transfer can then be used to feed a bedrock-touching ember bore with coal and later output the harvested ember shards. With time, you can process these shards into refined ember, which can be routed with a Tinker Hammer to various dwarven machines.
-hardcorealchemy.guide.exploring_the_arcane.embers.2=You can learn the details of how to use dwarven technology using the eye of a golem, known by dwarves as the "Eye of the Ancients," aimed at a Research Table containing the technology you wish to learn about. Traditionally, this eye is obtained by killing a golem with a pickaxe, however some alchemists have had success crafting a lifelike substitute.
+hardcorealchemy.guide.exploring_the_arcane.embers.1=While not strictly magical, you will find Dwarven technology [Embers] to be very useful for automating many magical devices. Item suction, for example, can be achieved by activating a lever on an item pump connected to an item pipe network. A similar process is also possible for fluids. Item transfer can then be used to feed a bedrock-touching ember bore with coal and later output the harvested ember shards. With time, you can process these shards into refined ember, which can be routed with a tinker hammer to various dwarven machines.
+hardcorealchemy.guide.exploring_the_arcane.embers.2=Ancient golems preserve the knowledge of the dwarves. By destroying an ancient golem, its parts can be repurposed into a knowledge receptacle, called a codex, which you can use to learn more about Dwarven technology.
 
 ## Exploring the Arcane: Elemental Mastery
 hardcorealchemy.guide.exploring_the_arcane.ars_magica.title=Elemental Mastery

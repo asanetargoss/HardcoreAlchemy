@@ -20,7 +20,9 @@ language.name=English
 language.region=United States
 language.code=en_US
 
+############
 # 0.5.0 Upgrade Guide
+############
 
 hardcorealchemy.upgradeguide.0.5.0.author=Hardcore Alchemy
 hardcorealchemy.upgradeguide.0.5.0.display=0.5.0 Upgrade Guide
@@ -42,3 +44,30 @@ hardcorealchemy.upgradeguide.0.5.0.gameplay_tips.earlygame.5=A bug has been fixe
 
 hardcorealchemy.upgradeguide.0.5.0.gameplay_tips.final_thoughts.title=Final thoughts
 hardcorealchemy.upgradeguide.0.5.0.gameplay_tips.final_thoughts.1=And... that's about it! There have been a lot of changes to The Traveling Alchemist since 0.3.0, but this book only covers the most recent update from 0.4.1 to 0.5.0. The next time Hardcore Alchemy updates with a significant gameplay feature, you will likely see another book like this.
+
+############
+# 0.6.0 Upgrade Guide
+############
+
+hardcorealchemy.upgradeguide.0.6.0.author=Hardcore Alchemy
+hardcorealchemy.upgradeguide.0.6.0.display=0.6.0 Upgrade Guide
+hardcorealchemy.upgradeguide.0.6.0.title=0.6.0 Upgrade Guide
+hardcorealchemy.upgradeguide.0.6.0.welcome=Hardcore Alchemy
+
+# 0.6.0 Upgrade Guide: Back up your world!
+
+hardcorealchemy.upgradeguide.0.6.0.backup.title=Back up your world!
+hardcorealchemy.upgradeguide.0.6.0.backup.backup.title=Back up your world!
+hardcorealchemy.upgradeguide.0.6.0.backup.backup.1=This release has updated your world. Blocks and items from the Embers mod will no longer load properly in older versions of Hardcore Alchemy. In addition, there have been significant changes to the Embers mod which may result in an increase of crashes if you are using Embers blocks and items.
+hardcorealchemy.upgradeguide.0.6.0.backup.backup.2=For these reasons, you should consider opening the backups/ folder in your mod instance and copy the most recent zipped up world backup from your last play session, and/or the most recent backup.
+hardcorealchemy.upgradeguide.0.6.0.backup.backup.3=If you encounter a crash, please report it to the Hardcore Alchemy issue tracker. If your world has become corrupted as a result of a crash, you should strongly consider loading your world from a backup, as the corruption may be more extensive than it first appears.
+
+# 0.6.0 Upgrade Guide: Gameplay tips
+
+hardcorealchemy.upgradeguide.0.6.0.gameplay_tips.title=Gameplay tips
+
+hardcorealchemy.upgradeguide.0.6.0.gameplay_tips.midgame.title=Mid game
+hardcorealchemy.upgradeguide.0.6.0.gameplay_tips.midgame.1=This release makes a change to Ars Magica spellcasting and significant changes to Embers.
+hardcorealchemy.upgradeguide.0.6.0.gameplay_tips.midgame.2=Ars Magica spells will no longer work in the Nether. Consider using other schools of magic to improve your arsenal.
+hardcorealchemy.upgradeguide.0.6.0.gameplay_tips.midgame.3=Thaumaturge alchemists may have noticed a new research entry added to their Thaumonomicon. This is simply a hint to consider using Embers to improve their metal processing yield. You do not have to complete the research as no recipes are locked behind it. Now that Embers and Thaumcraft metal systems are integrated, some recipes are more expensive earlier on, but you can now get even more metal out of your ores, and more plates out of your metals, with the right setup.
+hardcorealchemy.upgradeguide.0.6.0.gameplay_tips.midgame.4=The Embers guidebook has changed. It is now called the "codex" and has a new recipe. To get the ingredients, you should kill an ancient golem. If you have already crafted the eye of the ancients in a previous version, it should now be converted into a codex. The base mechanics of Embers haven't changed much aside from this, but there are new gadgets to experiment with.

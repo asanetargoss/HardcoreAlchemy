@@ -33,6 +33,14 @@ public class HCAUpgradeGuides {
                         .addEntry("final_thoughts", "sign", "1")
                         .build())
                 ));
+        UPGRADE_GUIDES.add("0.6.0", new UpgradeGuide(new BookBuilder()
+                .addCategory(new BookBuilder.Category().setId("backup").setItemId("sign")
+                        .addEntry("backup", "sign", "1", "2", "3")
+                        .build())
+                .addCategory(new BookBuilder.Category().setId("gameplay_tips").setItemId("sign")
+                        .addEntry("midgame", "embers:codex", "1", "2", "3", "4")
+                        .build())
+                ));
     }
     
 }
