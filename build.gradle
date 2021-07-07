@@ -7,7 +7,6 @@ buildscript {
         }
     }
     dependencies {
-        // TODO: Replace Forge Gradle plugin due to it using a now outdated hardcoded Maven endpoint URL
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
     }
 }
