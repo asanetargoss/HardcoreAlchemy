@@ -18,8 +18,12 @@
 
 package targoss.hardcorealchemy.listener;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Map;
+
+import com.pam.harvestcraft.item.PresserRecipes;
 
 import ca.wescook.nutrition.capabilities.CapInterface;
 import ca.wescook.nutrition.capabilities.CapProvider;
@@ -43,10 +47,12 @@ import net.minecraftforge.event.entity.living.ZombieEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.Optional;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
+import net.minecraftforge.oredict.OreDictionary;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.misc.ICapabilityMisc;
 import targoss.hardcorealchemy.config.Configs;
@@ -70,6 +76,42 @@ public class ListenerSmallTweaks extends ConfiguredListener {
     
     @CapabilityInject(ICapabilityMisc.class)
     private static final Capability<ICapabilityMisc> MISC_CAPABILITY = null;
+    
+    @Optional.Method(modid=ModState.ARS_MAGICA_ID)
+    public static void addArsMagicaLogToOredict() {
+        OreDictionary.registerOre("logWood", am2.defs.BlockDefs.witchwoodLog);
+    }
+    
+    @Optional.Method(modid=ModState.HARVESTCRAFT_ID)
+    public static void fixHarvestcraftWoodPaperRecipes() {
+        Method registerItemRecipeMethod = null;
+        try {
+            registerItemRecipeMethod = PresserRecipes.class.getDeclaredMethod("registerItemRecipe", Item.class, Item.class, Item.class);
+            registerItemRecipeMethod.setAccessible(true);
+        } catch (NoSuchMethodException | SecurityException e) {
+            e.printStackTrace();
+        }
+        if (registerItemRecipeMethod != null) {
+            Item paper = net.minecraft.init.Items.PAPER;
+            try {
+                for (ItemStack logStack : OreDictionary.getOres("logWood")) {
+                    registerItemRecipeMethod.invoke(null, logStack.getItem(), paper, paper);
+                }
+            } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    
+    @Override
+    public void postInit(FMLPostInitializationEvent event) {
+        if (ModState.isArsMagicaLoaded) {
+            addArsMagicaLogToOredict();
+        }
+        if (ModState.isHarvestCraftLoaded) {
+            fixHarvestcraftWoodPaperRecipes();
+        }
+    }
 
     @SubscribeEvent
     public void onHarvestBed(BlockEvent.HarvestDropsEvent event) {
