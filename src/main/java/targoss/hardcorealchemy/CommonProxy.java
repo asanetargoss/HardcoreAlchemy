@@ -73,15 +73,19 @@ import targoss.hardcorealchemy.capability.tilehistory.CapabilityTileHistory;
 import targoss.hardcorealchemy.capability.tilehistory.ICapabilityTileHistory;
 import targoss.hardcorealchemy.capability.tilehistory.StorageTileHistory;
 import targoss.hardcorealchemy.config.Configs;
+import targoss.hardcorealchemy.entity.Entities;
+import targoss.hardcorealchemy.incantation.Incantations;
+import targoss.hardcorealchemy.instinct.Instincts;
+import targoss.hardcorealchemy.item.Items;
 import targoss.hardcorealchemy.listener.ConfiguredListener;
 import targoss.hardcorealchemy.listener.ListenerConfigs;
 import targoss.hardcorealchemy.listener.ListenerCrops;
+import targoss.hardcorealchemy.listener.ListenerEntityCapabilities;
 import targoss.hardcorealchemy.listener.ListenerEntityVoidfade;
 import targoss.hardcorealchemy.listener.ListenerInstinctOverheat;
 import targoss.hardcorealchemy.listener.ListenerInventoryFoodRot;
 import targoss.hardcorealchemy.listener.ListenerMobAI;
 import targoss.hardcorealchemy.listener.ListenerMobLevel;
-import targoss.hardcorealchemy.listener.ListenerEntityCapabilities;
 import targoss.hardcorealchemy.listener.ListenerPlayerDiet;
 import targoss.hardcorealchemy.listener.ListenerPlayerHinderedMind;
 import targoss.hardcorealchemy.listener.ListenerPlayerHumanity;
@@ -95,7 +99,13 @@ import targoss.hardcorealchemy.listener.ListenerPlayerMorphs;
 import targoss.hardcorealchemy.listener.ListenerPlayerResearch;
 import targoss.hardcorealchemy.listener.ListenerSmallTweaks;
 import targoss.hardcorealchemy.listener.ListenerWorldDifficulty;
+import targoss.hardcorealchemy.metamorph.HcAMetamorphPack;
+import targoss.hardcorealchemy.modpack.guide.AlchemicAshGuide;
+import targoss.hardcorealchemy.modpack.guide.HCAModpackGuide;
+import targoss.hardcorealchemy.modpack.guide.HCAUpgradeGuides;
 import targoss.hardcorealchemy.network.PacketHandler;
+import targoss.hardcorealchemy.registrar.RegistrarUpgradeGuide;
+import targoss.hardcorealchemy.research.Studies;
 
 public class CommonProxy {
     public Configs configs = new Configs();
@@ -147,13 +157,13 @@ public class CommonProxy {
         listeners = ImmutableMap.copyOf(listenerBuilder);
     }
     
-    public static final void registerListeners(Collection<ConfiguredListener> listeners) {
+    public void registerListeners(Collection<ConfiguredListener> listeners) {
         for (ConfiguredListener listener : listeners) {
             MinecraftForge.EVENT_BUS.register(listener);
         }
     }
     
-    public static final void registerCapabilities() {
+    public void registerCapabilities() {
         CapabilityManager.INSTANCE.register(ICapabilityKillCount.class, new StorageKillCount(), CapabilityKillCount.class);
         CapabilityManager.INSTANCE.register(ICapabilityHumanity.class, new StorageHumanity(), CapabilityHumanity.class);
         CapabilityManager.INSTANCE.register(ICapabilityCombatLevel.class, new StorageCombatLevel(), CapabilityCombatLevel.class);
@@ -169,7 +179,7 @@ public class CommonProxy {
         CapabilityManager.INSTANCE.register(ICapabilityResearch.class, new StorageResearch(), CapabilityResearch.class);
     }
     
-    public static final void registerNetworking() {
+    public void registerNetworking() {
         PacketHandler.register();
     }
     
@@ -177,11 +187,50 @@ public class CommonProxy {
         for (ConfiguredListener listener : listeners.values()) {
             listener.preInit(event);
         }
+        
+        Items.ITEMS.register();
+        Items.POTIONS.register();
+        Items.POTION_TYPES.register();
+        Entities.ENTITIES.register();
+        Studies.KNOWLEDGE_FACTS.register();
+        
+        if (ModState.isGuideapiLoaded) {
+            HCAModpackGuide.preInit();
+            HCAUpgradeGuides.UPGRADE_GUIDES.register(RegistrarUpgradeGuide.BOOK_AND_MODEL);
+        }
+        
+        if (ModState.isGuideapiLoaded && ModState.isAlchemicAshLoaded) {
+            AlchemicAshGuide.preInit();
+        }
+        
+        registerNetworking();
     }
     
     public void init(FMLInitializationEvent event) {
+        registerListeners(listeners.values());
+        registerCapabilities();
+        
         for (ConfiguredListener listener : listeners.values()) {
             listener.init(event);
+        }
+        
+        Items.registerRecipes();
+        HcAMetamorphPack.registerAbilities();
+        // Why are these in init and not pre-init?
+        Instincts.INSTINCTS.register();
+        Instincts.INSTINCT_NEED_FACTORIES.register();
+        Instincts.INSTINCT_EFFECTS.register();
+        Incantations.INCANTATIONS.register();
+        
+        if (ModState.isGuideapiLoaded) {
+            HCAModpackGuide.init();
+            HCAUpgradeGuides.UPGRADE_GUIDES.register(RegistrarUpgradeGuide.RECIPES);
+            HCAUpgradeGuides.UPGRADE_GUIDES.register(RegistrarUpgradeGuide.CATEGORIES);
+            HCAUpgradeGuides.UPGRADE_GUIDES.register(RegistrarUpgradeGuide.CLEANUP);
+        }
+        
+        if (ModState.isGuideapiLoaded && ModState.isAlchemicAshLoaded) {
+            AlchemicAshGuide.init();
         }
     }
     

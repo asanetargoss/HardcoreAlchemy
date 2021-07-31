@@ -19,12 +19,10 @@
 package targoss.hardcorealchemy;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
-import net.minecraftforge.common.MinecraftForge;
 import targoss.hardcorealchemy.listener.ConfiguredListener;
 import targoss.hardcorealchemy.listener.ListenerGuiHud;
 import targoss.hardcorealchemy.listener.ListenerGuiInventory;

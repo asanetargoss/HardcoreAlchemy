@@ -38,16 +38,6 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import targoss.hardcorealchemy.command.CommandTest;
 import targoss.hardcorealchemy.coremod.HardcoreAlchemyCoremod;
-import targoss.hardcorealchemy.entity.Entities;
-import targoss.hardcorealchemy.incantation.Incantations;
-import targoss.hardcorealchemy.instinct.Instincts;
-import targoss.hardcorealchemy.item.Items;
-import targoss.hardcorealchemy.metamorph.HcAMetamorphPack;
-import targoss.hardcorealchemy.modpack.guide.AlchemicAshGuide;
-import targoss.hardcorealchemy.modpack.guide.HCAModpackGuide;
-import targoss.hardcorealchemy.modpack.guide.HCAUpgradeGuides;
-import targoss.hardcorealchemy.registrar.RegistrarUpgradeGuide;
-import targoss.hardcorealchemy.research.Studies;
 
 @Mod(modid = HardcoreAlchemy.MOD_ID, version = HardcoreAlchemy.VERSION,
     dependencies = HardcoreAlchemy.DEPENDENCIES, acceptedMinecraftVersions = HardcoreAlchemy.MC_VERSIONS)
@@ -118,23 +108,6 @@ public class HardcoreAlchemy
         ModState.isAstralSorceryLoaded = modMap.containsKey(ModState.ASTRAL_SORCERY_ID);
         
         proxy.preInit(event);
-        
-        Items.ITEMS.register();
-        Items.POTIONS.register();
-        Items.POTION_TYPES.register();
-        Entities.ENTITIES.register();
-        Studies.KNOWLEDGE_FACTS.register();
-        
-        if (ModState.isGuideapiLoaded) {
-            HCAModpackGuide.preInit();
-            HCAUpgradeGuides.UPGRADE_GUIDES.register(RegistrarUpgradeGuide.BOOK_AND_MODEL);
-        }
-        
-        if (ModState.isGuideapiLoaded && ModState.isAlchemicAshLoaded) {
-            AlchemicAshGuide.preInit();
-        }
-        
-        proxy.registerNetworking();
     }
     
     @EventHandler
@@ -142,29 +115,7 @@ public class HardcoreAlchemy
     {
         LOGGER.info("It's time to get magical.");
         
-        proxy.registerListeners(proxy.listeners.values());
-        proxy.registerCapabilities();
-        
         proxy.init(event);
-        
-        Items.registerRecipes();
-        HcAMetamorphPack.registerAbilities();
-        // Why are these in init and not pre-init?
-        Instincts.INSTINCTS.register();
-        Instincts.INSTINCT_NEED_FACTORIES.register();
-        Instincts.INSTINCT_EFFECTS.register();
-        Incantations.INCANTATIONS.register();
-        
-        if (ModState.isGuideapiLoaded) {
-            HCAModpackGuide.init();
-            HCAUpgradeGuides.UPGRADE_GUIDES.register(RegistrarUpgradeGuide.RECIPES);
-            HCAUpgradeGuides.UPGRADE_GUIDES.register(RegistrarUpgradeGuide.CATEGORIES);
-            HCAUpgradeGuides.UPGRADE_GUIDES.register(RegistrarUpgradeGuide.CLEANUP);
-        }
-        
-        if (ModState.isGuideapiLoaded && ModState.isAlchemicAshLoaded) {
-            AlchemicAshGuide.init();
-        }
     }
     
     @EventHandler
@@ -185,7 +136,7 @@ public class HardcoreAlchemy
         
         proxy.serverStarting(event);
         
-        SERVER_REFERENCE = new WeakReference(event.getServer());
+        SERVER_REFERENCE = new WeakReference<>(event.getServer());
     }
     
     @EventHandler
