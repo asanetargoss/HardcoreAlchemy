@@ -34,6 +34,7 @@ import net.minecraft.entity.ai.EntityAIFindEntityNearestPlayer;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAITargetNonTamed;
 import net.minecraft.entity.ai.EntityAITasks;
+import net.minecraft.entity.monster.EntityPolarBear;
 import net.minecraft.entity.monster.EntitySpider;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
@@ -52,6 +53,7 @@ import targoss.hardcorealchemy.capability.entitystate.ICapabilityEntityState;
 import targoss.hardcorealchemy.capability.entitystate.ProviderEntityState;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.entity.ai.AIAttackTargetMobOrMorph;
+import targoss.hardcorealchemy.entity.ai.AIPolarBearTargetMobOrMorph;
 import targoss.hardcorealchemy.entity.ai.AISpiderTargetMobOrMorph;
 import targoss.hardcorealchemy.entity.ai.AITargetChosenPlayer;
 import targoss.hardcorealchemy.entity.ai.AITargetUnmorphedPlayer;
@@ -108,6 +110,7 @@ public class ListenerMobAI extends ConfiguredListener {
                 wrapReplaceAttackAI(entityLiving, EntityAINearestAttackableTarget.class, AIAttackTargetMobOrMorph.class);
                 wrapReplaceAttackAI(entityLiving, EntityAITargetNonTamed.class, AIUntamedAttackMobOrMorph.class);
                 wrapReplaceAttackAI(entityLiving, EntitySpider.AISpiderTarget.class, AISpiderTargetMobOrMorph.class);
+                wrapReplaceAttackAI(entityLiving, EntityPolarBear.AIAttackPlayer.class, AIPolarBearTargetMobOrMorph.class);
                 wrapReplaceAttackAI(entityLiving, EntityAIFindEntityNearestPlayer.class, AITargetUnmorphedPlayer.class);
                 
                 if (DEADLY_MONSTERS_CLIMBER_AI != null) {
