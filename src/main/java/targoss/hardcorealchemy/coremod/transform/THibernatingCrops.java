@@ -34,11 +34,16 @@ import targoss.hardcorealchemy.coremod.ObfuscatedName;
 public class THibernatingCrops extends MethodPatcher {
     private static final String PAM_FRUIT = "com.pam.harvestcraft.blocks.growables.BlockPamFruit";
     private static final String PAM_FRUIT_LOG = "com.pam.harvestcraft.blocks.growables.BlockPamFruitLog";
+    private static final String BLOCK_REED = "net.minecraft.block.BlockReed";
+    private static final String BLOCK_CACTUS = "net.minecraft.block.BlockCactus";
     private static final ObfuscatedName UPDATE_TICK = new ObfuscatedName("func_180650_b" /*updateTick*/);
 
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
-        if (transformedName.equals(PAM_FRUIT) || transformedName.equals(PAM_FRUIT_LOG)) {
+        if (transformedName.equals(PAM_FRUIT) ||
+                transformedName.equals(PAM_FRUIT_LOG) ||
+                transformedName.equals(BLOCK_REED) ||
+                transformedName.equals(BLOCK_CACTUS)) {
             return transformClass(transformedName, basicClass, ClassWriter.COMPUTE_MAXS + ClassWriter.COMPUTE_FRAMES);
         }
         return basicClass;
