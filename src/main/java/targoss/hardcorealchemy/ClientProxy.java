@@ -23,6 +23,8 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import targoss.hardcorealchemy.entity.Entities;
 import targoss.hardcorealchemy.listener.ConfiguredListener;
 import targoss.hardcorealchemy.listener.ListenerGuiHud;
 import targoss.hardcorealchemy.listener.ListenerGuiInventory;
@@ -42,5 +44,11 @@ public class ClientProxy extends CommonProxy {
         listenerTypes.addAll(LISTENER_TYPES);
         
         return ImmutableList.copyOf(listenerTypes);
+    }
+    
+    @Override
+    public void preInit(FMLPreInitializationEvent event) {
+        super.preInit(event);
+        Entities.ClientSide.ENTITIES.register();
     }
 }
