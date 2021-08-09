@@ -33,6 +33,8 @@ import net.minecraftforge.fml.common.LoadController;
 import net.minecraftforge.fml.common.ModMetadata;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
+import targoss.hardcorealchemy.coremod.transform.TBlock;
+import targoss.hardcorealchemy.coremod.transform.TBlockReed;
 import targoss.hardcorealchemy.coremod.transform.TClassInheritanceMultiMap;
 import targoss.hardcorealchemy.coremod.transform.TCraftingManager;
 import targoss.hardcorealchemy.coremod.transform.TDataVillage;
@@ -97,7 +99,9 @@ public class HardcoreAlchemyCoremod implements IFMLLoadingPlugin {
 				TMinecraftServer.class.getName(),
 				TWorld.class.getName(),
 				TPlayerControllerMP.class.getName(),
-                TEntityExtension.class.getName()
+                TEntityExtension.class.getName(),
+                TBlock.class.getName(),
+                TBlockReed.class.getName()
 		};
 	}
 
