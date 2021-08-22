@@ -39,6 +39,10 @@ import targoss.hardcorealchemy.capability.CapUtil;
 import targoss.hardcorealchemy.capability.combatlevel.CapabilityCombatLevel;
 import targoss.hardcorealchemy.capability.combatlevel.ICapabilityCombatLevel;
 import targoss.hardcorealchemy.capability.combatlevel.StorageCombatLevel;
+import targoss.hardcorealchemy.capability.dimensionhistory.CapabilityDimensionHistory;
+import targoss.hardcorealchemy.capability.dimensionhistory.ICapabilityDimensionHistory;
+import targoss.hardcorealchemy.capability.dimensionhistory.ProviderDimensionHistory;
+import targoss.hardcorealchemy.capability.dimensionhistory.StorageDimensionHistory;
 import targoss.hardcorealchemy.capability.entitystate.CapabilityEntityState;
 import targoss.hardcorealchemy.capability.entitystate.ICapabilityEntityState;
 import targoss.hardcorealchemy.capability.entitystate.StorageEntityState;
@@ -177,6 +181,8 @@ public class CommonProxy {
         CapabilityManager.INSTANCE.register(ICapabilityEntityState.class, new StorageEntityState(), CapabilityEntityState.class);
         CapabilityManager.INSTANCE.register(ICapabilityTileHistory.class, new StorageTileHistory(), CapabilityTileHistory.class);
         CapabilityManager.INSTANCE.register(ICapabilityResearch.class, new StorageResearch(), CapabilityResearch.class);
+        CapabilityManager.INSTANCE.register(ICapabilityDimensionHistory.class, new StorageDimensionHistory(), CapabilityDimensionHistory.class);
+        CapUtil.registerVirtualCapability(CapabilityDimensionHistory.RESOURCE_LOCATION, ProviderDimensionHistory.DIMENSION_HISTORY_CAPABILITY);
     }
     
     public void registerNetworking() {

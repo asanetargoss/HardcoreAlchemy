@@ -1,0 +1,11 @@
+{
+	"parent":"item/generated",
+  	"textures": {
+		"layer0":"hardcorealchemy:items/dimensional_flux_crystal_nether"
+  	},
+  	"overrides": [
+    	{ "predicate": { "hardcorealchemy:native_dimension": -1 }, "model": "hardcorealchemy:item/dimensional_flux_crystal_nether" },
+    	{ "predicate": { "hardcorealchemy:native_dimension":  0 }, "model": "hardcorealchemy:item/dimensional_flux_crystal_overworld" },
+    	{ "predicate": { "hardcorealchemy:native_dimension":  1 }, "model": "hardcorealchemy:item/dimensional_flux_crystal_end" }
+  	]
+}

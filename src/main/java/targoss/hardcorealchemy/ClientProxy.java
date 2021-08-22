@@ -25,6 +25,7 @@ import com.google.common.collect.ImmutableList;
 
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import targoss.hardcorealchemy.entity.Entities;
+import targoss.hardcorealchemy.item.Items;
 import targoss.hardcorealchemy.listener.ConfiguredListener;
 import targoss.hardcorealchemy.listener.ListenerGuiHud;
 import targoss.hardcorealchemy.listener.ListenerGuiInventory;
@@ -50,5 +51,6 @@ public class ClientProxy extends CommonProxy {
     public void preInit(FMLPreInitializationEvent event) {
         super.preInit(event);
         Entities.ClientSide.ENTITIES.register();
+        Items.ClientSide.registerSpecialModels();
     }
 }

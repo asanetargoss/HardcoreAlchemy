@@ -45,6 +45,7 @@ import targoss.hardcorealchemy.coremod.transform.TEntityLivingBase;
 import targoss.hardcorealchemy.coremod.transform.TEntityPlayerSP;
 import targoss.hardcorealchemy.coremod.transform.TGuiContainer;
 import targoss.hardcorealchemy.coremod.transform.THibernatingCrops;
+import targoss.hardcorealchemy.coremod.transform.TInventoryPlayer;
 import targoss.hardcorealchemy.coremod.transform.TItemRenderer;
 import targoss.hardcorealchemy.coremod.transform.TObjectProximityModifier;
 import targoss.hardcorealchemy.coremod.transform.TPlayerControllerMP;
@@ -101,7 +102,8 @@ public class HardcoreAlchemyCoremod implements IFMLLoadingPlugin {
 				TPlayerControllerMP.class.getName(),
                 TEntityExtension.class.getName(),
                 TBlock.class.getName(),
-                TBlockReed.class.getName()
+                TBlockReed.class.getName(),
+                TInventoryPlayer.class.getName()
 		};
 	}
 

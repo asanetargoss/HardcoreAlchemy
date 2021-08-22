@@ -23,7 +23,9 @@ import net.minecraftforge.common.brewing.BrewingRecipe;
 import targoss.hardcorealchemy.util.InventoryUtil;
 
 public class HcABrewingRecipe extends BrewingRecipe {
-    public HcABrewingRecipe(ItemStack input, ItemStack ingredient, ItemStack output) {
+    protected boolean strict;
+    
+    public HcABrewingRecipe(ItemStack input, ItemStack ingredient, ItemStack output, boolean strict) {
         super(input, ingredient, output);
     }
     
@@ -39,13 +41,19 @@ public class HcABrewingRecipe extends BrewingRecipe {
             return false;
         }
         
-        // Check compound tags
-        if (!stack.hasTagCompound() && !input.hasTagCompound()) {
-            return true;
+        if (strict) {
+            // Check compound tags
+            if (!stack.hasTagCompound() && !input.hasTagCompound()) {
+                return true;
+            }
+            if (!stack.hasTagCompound() || !input.hasTagCompound()) {
+                return false;
+            }
+            if (!stack.getTagCompound().equals(input.getTagCompound())) {
+                return false;
+            }
         }
-        if (!stack.hasTagCompound() || !input.hasTagCompound()) {
-            return false;
-        }
-        return stack.getTagCompound().equals(input.getTagCompound());
+        
+        return true;
     }
 }

@@ -34,6 +34,7 @@ public class CapabilityEntityState implements ICapabilityEntityState {
     protected int age = 0;
     protected int lifetime = -1;
     protected boolean traveledDimensionally = false;
+    protected int previousDimension = 0;
 
     @Override
     public UUID getTargetPlayerID() {
@@ -73,5 +74,15 @@ public class CapabilityEntityState implements ICapabilityEntityState {
     @Override
     public void setTraveledDimensionally(boolean traveledDimensionally) {
         this.traveledDimensionally = traveledDimensionally;
+    }
+
+    @Override
+    public int getPreviousDimension() {
+        return previousDimension;
+    }
+
+    @Override
+    public void setPreviousDimension(int previousDimension) {
+        this.previousDimension = previousDimension;
     }
 }

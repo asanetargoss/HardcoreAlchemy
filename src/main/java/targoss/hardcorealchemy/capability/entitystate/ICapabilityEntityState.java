@@ -51,4 +51,7 @@ public interface ICapabilityEntityState {
     
     boolean getTraveledDimensionally();
     void setTraveledDimensionally(boolean traveledDimensionally);
+    /** Only valid if getTraveledDimensionally() returns true */
+    int getPreviousDimension();
+    void setPreviousDimension(int previousDimension);
 }

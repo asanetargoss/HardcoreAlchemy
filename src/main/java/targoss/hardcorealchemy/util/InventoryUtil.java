@@ -19,6 +19,7 @@
 package targoss.hardcorealchemy.util;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -35,6 +36,7 @@ import moze_intel.projecte.api.capabilities.IAlchBagProvider;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
@@ -211,6 +213,35 @@ public class InventoryUtil {
     }
 
     @Nonnull
+    public static List<IItemHandler> getLocalInventories(@Nonnull EntityPlayer player) {
+        List<IItemHandler> inventories = new ArrayList<>();
+        
+        // Player main inventory
+        if (player.inventory != null) {
+            inventories.add(new InvWrapper(player.inventory));
+        }
+        // Equipped backpack inventory
+        if (ModState.isIronBackpacksLoaded) {
+            PlayerWearingBackpackCapabilities backpackCapability = IronBackpacksCapabilities.getWearingBackpackCapability(player);
+            if (backpackCapability != null) {
+                ItemStack backpackStack = backpackCapability.getEquippedBackpack();
+                if (backpackStack != null) {
+                    inventories.add(new InvWrapper(new InventoryBackpack(backpackStack, true)));
+                }
+            }
+        }
+        
+        return inventories;
+    }
+    
+    public static List<IItemHandler> getLocalInventories(Entity entity) {
+        if (entity instanceof EntityPlayer) {
+            return getLocalInventories((EntityPlayer)entity);
+        }
+        return new ArrayList<>();
+    }
+
+    @Nonnull
     public static List<IItemHandler> getInventories(@Nonnull EntityPlayer player) {
         List<IItemHandler> inventories = new ArrayList<>();
         
@@ -241,6 +272,13 @@ public class InventoryUtil {
         }
         
         return inventories;
+    }
+    
+    public static List<IItemHandler> getInventories(Entity entity) {
+        if (entity instanceof EntityPlayer) {
+            return getInventories((EntityPlayer)entity);
+        }
+        return new ArrayList<>();
     }
     
     public static int getArmorInventorySize(EntityPlayer player) {
@@ -315,6 +353,17 @@ public class InventoryUtil {
      */
     public static boolean forEachItemRecursive(IItemHandler inventory, ItemFunc itemFunc) {
         return forEachItemRecursive(inventory, itemFunc, DEFAULT_INVENTORY_RECURSION_DEPTH);
+    }
+    
+    /**
+     * Return true if the inventory changed
+     */
+    public static boolean forEachItemRecursive(Collection<IItemHandler> inventories, ItemFunc itemFunc) {
+        boolean changed = false;
+        for (IItemHandler inventoryToRecurse : inventories) {
+            changed |= forEachItemRecursive(inventoryToRecurse, itemFunc, DEFAULT_INVENTORY_RECURSION_DEPTH);
+        }
+        return changed;
     }
 
     @Optional.Method(modid = ModState.IRON_BACKPACKS_ID)

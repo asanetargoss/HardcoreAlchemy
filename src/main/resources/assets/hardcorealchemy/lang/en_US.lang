@@ -107,6 +107,12 @@ hardcorealchemy.research.knowledge_fact.aura_casting_warning.acquire=You sense t
 # %1$s is the level, displayed as an integer
 hardcorealchemy.level.display=Level: %1$s
 
+# Dimension Names
+hardcorealchemy.dimension.missingno=Unknown
+hardcorealchemy.dimension.overworld=Overworld
+hardcorealchemy.dimension.nether=Nether
+hardcorealchemy.dimension.the_end=The End
+
 # Entities, Mobs
 
 entity.Creature.name=Creature
@@ -120,6 +126,13 @@ entity.hardcorealchemy.fish_swarm.name=Fish Swarm
 item.hardcorealchemy:essence_mage.name=Mage Essence
 item.hardcorealchemy:drowned_ender_pearl.name=Drowned Ender Pearl
 item.hardcorealchemy:ash.name=Ash
+
+item.hardcorealchemy:dimensional_flux_crystal.name=Dimensional Flux Crystal
+hardcorealchemy.dimensional_flux_crystal.description.origin=From: %s
+hardcorealchemy.dimensional_flux_crystal.description.fluxed_at=Transported to: %s
+hardcorealchemy.dimensional_flux_crystal.description.fluxed_unknown_one=Transported across dimensions
+hardcorealchemy.dimensional_flux_crystal.description.fluxed_unknown_multiple=Transported to multiple dimensions
+hardcorealchemy.dimensional_flux_crystal.description.fluxed_unknown_many=Warped by dimensional travel
 
 potion.hardcorealchemy:allow_magic=Unhindered Magic
 potion.effect.hardcorealchemy:allow_magic=Potion of Unhindered Magic
@@ -140,4 +153,8 @@ lingering_potion.effect.hardcorealchemy:water_resistance=Lingering Potion of Wat
 tipped_arrow.effect.hardcorealchemy:water_resistance=Arrow of Water Resistance
 
 potion.hardcorealchemy:voidfade=Voidfade
+potion.effect.hardcorealchemy:voidfade=Potion of Voidfade
+splash_potion.effect.hardcorealchemy:voidfade=Splash Potion of Voidfade
+lingering_potion.effect.hardcorealchemy:voidfade=Lingering Potion of Voidfade
+tipped_arrow.effect.hardcorealchemy:voidfade=Arrow of Voidfade
 
