@@ -258,6 +258,64 @@ public class InventoryUtil {
         int slot = armorInventoryOffset + armorSlot;
         player.inventory.setInventorySlotContents(slot, itemStack);
     }
+    
+    public static interface ItemFunc {
+        /**
+         * Return true if the inventory changed
+         */
+        boolean apply(IItemHandler inventory, int slot, ItemStack itemStack);
+    }
+    
+    public static final int DEFAULT_INVENTORY_RECURSION_DEPTH = 6;
+
+    /**
+     * Return true if the inventory changed
+     */
+    public static boolean forEachItemRecursive(IItemHandler inventory, ItemFunc itemFunc, int recursionDepth) {
+        if (recursionDepth < 0) {
+            return false;
+        }
+
+        boolean changed = false;
+        int n = inventory.getSlots();
+        for (int i = 0; i < n; i++) {
+            ItemStack itemStack = inventory.getStackInSlot(i);
+            
+            if (InventoryUtil.isEmptyItemStack(itemStack)) {
+                continue;
+            }
+            
+            changed |= itemFunc.apply(inventory, i, itemStack);
+
+            for (IItemHandler inventoryStack : InventoryUtil.getInventories(itemStack)) {
+                if (inventory == null) {
+                    continue;
+                }
+                changed |= forEachItemRecursive(inventoryStack, itemFunc, recursionDepth - 1);
+            }
+            
+        }
+        
+        if (changed) {
+            // Check if this inventory is a backpack item from IronBackpacks, and if so update the item NBT
+            if (inventory.getClass() == InvWrapper.class) {
+                IInventory iInventory = ((InvWrapper)inventory).getInv();
+                if (ModState.isIronBackpacksLoaded && iInventory instanceof InventoryBackpack) {
+                    ItemStack backpackStack = ((InventoryBackpack)iInventory).getBackpackStack();
+                    InventoryUtil.saveIronBackpackNbt(inventory, backpackStack);
+                }
+            }
+        }
+        
+        return changed;
+    }
+    
+    /**
+     * Return true if the inventory changed
+     */
+    public static boolean forEachItemRecursive(IItemHandler inventory, ItemFunc itemFunc) {
+        return forEachItemRecursive(inventory, itemFunc, DEFAULT_INVENTORY_RECURSION_DEPTH);
+    }
 
     @Optional.Method(modid = ModState.IRON_BACKPACKS_ID)
     public static void saveIronBackpackNbt(IItemHandler inventory, ItemStack itemStack) {
