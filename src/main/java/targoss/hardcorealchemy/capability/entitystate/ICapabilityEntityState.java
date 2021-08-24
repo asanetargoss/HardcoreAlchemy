@@ -25,7 +25,7 @@ import javax.annotation.Nullable;
 /**
  * ICapabilityMisc but for entities.
  * Currently doesn't sync.
- * Used for AI only, so in a specialized listener for now. 
+ * Used for AI and other miscellaneous entity things.
  */
 public interface ICapabilityEntityState {
     /**

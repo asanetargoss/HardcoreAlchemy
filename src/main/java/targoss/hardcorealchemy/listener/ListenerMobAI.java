@@ -93,7 +93,7 @@ public class ListenerMobAI extends ConfiguredListener {
     
     @SubscribeEvent
     public void onAttachEntityCapability(AttachCapabilitiesEvent.Entity event) {
-        if (!(event.getObject() instanceof EntityLiving)) {
+        if (!(event.getObject() instanceof EntityLivingBase)) {
             return;
         }
         event.addCapability(CapabilityEntityState.RESOURCE_LOCATION, new ProviderEntityState());
