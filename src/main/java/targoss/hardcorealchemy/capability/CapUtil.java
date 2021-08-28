@@ -72,7 +72,10 @@ public class CapUtil {
         if (key == null) {
             return false;
         }
-        NBTTagCompound capNbt = itemStack.getSubCompound("VirtualCaps", true);
+        NBTTagCompound capNbt = itemStack.getSubCompound("VirtualCaps", false);
+        if (capNbt == null) {
+            return false;
+        }
         NBTTagCompound thisCapNBT = capNbt.getCompoundTag(key.toString());
         return thisCapNBT != null;
     }
