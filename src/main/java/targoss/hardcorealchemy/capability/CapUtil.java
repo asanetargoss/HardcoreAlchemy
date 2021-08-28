@@ -24,12 +24,10 @@ import java.util.Map;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 
 public class CapUtil {
     /**
@@ -52,6 +50,7 @@ public class CapUtil {
         return true;
     }
     
+    @SuppressWarnings("rawtypes")
     private static final Map<Capability, ResourceLocation> capabilityRegistry = new HashMap<Capability, ResourceLocation>();
     
     /**
@@ -61,7 +60,7 @@ public class CapUtil {
      * 
      * We don't really care about sidedness and just work with the capability instances directly.
      */
-    public static void registerVirtualCapability(ResourceLocation key, Capability capability) {
+    public static void registerVirtualCapability(ResourceLocation key, @SuppressWarnings("rawtypes") Capability capability) {
         if (!capabilityRegistry.containsKey(capability)) {
             capabilityRegistry.put(capability, key);
         }
