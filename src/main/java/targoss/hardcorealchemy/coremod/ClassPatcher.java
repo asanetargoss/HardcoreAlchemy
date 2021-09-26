@@ -18,9 +18,6 @@
 
 package targoss.hardcorealchemy.coremod;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.ClassNode;
@@ -68,21 +65,17 @@ public abstract class ClassPatcher implements IClassTransformer {
             return newClass;
         }
         catch (Exception e) {
-            StringWriter stringWriter = new StringWriter();
-            PrintWriter wrapper = new PrintWriter(stringWriter);
-            e.printStackTrace(wrapper);
-            
             HardcoreAlchemyCoremod.LOGGER.error(
                     "Error occurred when attempting to patch class '" +
                     name + "' using '" +
                     this.getClass().getName() + "'." +
-                    "The patch has been aborted.");
+                    "The patch has been aborted.",
+                    e);
             if (enableDebug()) {
                 HardcoreAlchemyCoremod.LOGGER.debug(
                         "Debug is enabled. The bytecode of the unpatched " +
                         "class will follow the stack trace.");
             };
-            HardcoreAlchemyCoremod.LOGGER.error(stringWriter.toString());
             
             if (enableDebug()) {
                 HardcoreAlchemyCoremod.LOGGER.debug(
