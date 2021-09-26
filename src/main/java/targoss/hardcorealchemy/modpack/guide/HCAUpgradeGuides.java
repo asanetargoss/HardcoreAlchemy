@@ -41,6 +41,11 @@ public class HCAUpgradeGuides {
                         .addEntry("midgame", "embers:codex", "1", "2", "3", "4")
                         .build())
                 ));
+        UPGRADE_GUIDES.add("0.6.1", new UpgradeGuide(new BookBuilder()
+                .addCategory(new BookBuilder.Category().setId("gameplay_tips").setItemId("sign")
+                        .addEntry("earlygame", "sign", "1")
+                        .build())
+                ));
     }
     
 }

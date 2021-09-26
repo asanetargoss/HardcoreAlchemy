@@ -71,3 +71,19 @@ hardcorealchemy.upgradeguide.0.6.0.gameplay_tips.midgame.1=This release makes a 
 hardcorealchemy.upgradeguide.0.6.0.gameplay_tips.midgame.2=Ars Magica spells will no longer work in the Nether. Consider using other schools of magic to improve your arsenal.
 hardcorealchemy.upgradeguide.0.6.0.gameplay_tips.midgame.3=Thaumaturge alchemists may have noticed a new research entry added to their Thaumonomicon. This is simply a hint to consider using Embers to improve their metal processing yield. You do not have to complete the research as no recipes are locked behind it. Now that Embers and Thaumcraft metal systems are integrated, some recipes are more expensive earlier on, but you can now get even more metal out of your ores, and more plates out of your metals, with the right setup.
 hardcorealchemy.upgradeguide.0.6.0.gameplay_tips.midgame.4=The Embers guidebook has changed. It is now called the "codex" and has a new recipe. To get the ingredients, you should kill an ancient golem. If you have already crafted the eye of the ancients in a previous version, it should now be converted into a codex. The base mechanics of Embers haven't changed much aside from this, but there are new gadgets to experiment with.
+
+############
+# 0.6.1 Upgrade Guide
+############
+
+hardcorealchemy.upgradeguide.0.6.1.author=Hardcore Alchemy
+hardcorealchemy.upgradeguide.0.6.1.display=0.6.1 Upgrade Guide
+hardcorealchemy.upgradeguide.0.6.1.title=0.6.1 Upgrade Guide
+hardcorealchemy.upgradeguide.0.6.1.welcome=Hardcore Alchemy
+
+# 0.6.1 Upgrade Guide: Gameplay tips
+
+hardcorealchemy.upgradeguide.0.6.1.gameplay_tips.title=Gameplay tips
+
+hardcorealchemy.upgradeguide.0.6.1.gameplay_tips.earlygame.title=Early game
+hardcorealchemy.upgradeguide.0.6.1.gameplay_tips.earlygame.1=Heads up! It should be a bit easier to find reeds in new chunks in winter, as the bottom blocks of reeds can now survive next to ice. However, as a tradeoff, reeds and cacti no longer grow in winter.
