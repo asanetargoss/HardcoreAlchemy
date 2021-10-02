@@ -73,21 +73,49 @@ public class ListenerMobAI extends ConfiguredListener {
     public static Capability<ICapabilityEntityState> ENTITY_STATE_CAPABILITY = null;
     public static final ResourceLocation ENTITY_STATE_RESOURCE_LOCATION = CapabilityEntityState.RESOURCE_LOCATION;
     
-    public static Set<String> mobAIIgnoreMorphList = new HashSet();
+    public static Set<String> mobAIIgnoreMorphList = new HashSet<>();
+    
+    public static class AIReplacer {
+        Class<? extends EntityAIBase> targetClazz;
+        Class<? extends EntityAIBase> replaceClazz;
+        Class<? extends EntityAIBase> delegateClazz;
+        public AIReplacer(Class<? extends EntityAIBase> targetClazz, Class<? extends EntityAIBase> replaceClazz, Class<? extends EntityAIBase> delegateClazz) {
+            this.targetClazz = targetClazz;
+            this.replaceClazz = replaceClazz;
+            this.delegateClazz = delegateClazz;
+        }
+        public AIReplacer(Class<? extends EntityAIBase> targetClazz, Class<? extends EntityAIBase> replaceClazz) {
+            this(targetClazz, replaceClazz, targetClazz);
+        }
+    }
+    
+    public static Set<AIReplacer> aiReplacers = new HashSet<>();
     
     static {
         mobAIIgnoreMorphList.addAll(MobLists.getBosses());
         mobAIIgnoreMorphList.addAll(MobLists.getNonMobs());
+        aiReplacers.add(new AIReplacer(EntityAINearestAttackableTarget.class, AIAttackTargetMobOrMorph.class));
+        aiReplacers.add(new AIReplacer(EntityAITargetNonTamed.class, AIUntamedAttackMobOrMorph.class));
+        aiReplacers.add(new AIReplacer(EntitySpider.AISpiderTarget.class, AISpiderTargetMobOrMorph.class));
+        aiReplacers.add(new AIReplacer(EntityPolarBear.AIAttackPlayer.class, AIPolarBearTargetMobOrMorph.class));
+        aiReplacers.add(new AIReplacer(EntityAIFindEntityNearestPlayer.class, AITargetUnmorphedPlayer.class));
     }
     
-    private static Class<? extends EntityAIBase> DEADLY_MONSTERS_CLIMBER_AI = null;
-    static {
-        if (Loader.instance().getIndexedModList().containsKey(ModState.DEADLY_MONSTERS_ID) ) {
+    public static class DeadlyMonsters {
+        public static void loadAITweaks() {
             try {
-                DEADLY_MONSTERS_CLIMBER_AI = (Class<? extends EntityAIBase>)Class.forName("com.dmonsters.entity.EntityClimber$AISpiderTarget");
+                @SuppressWarnings("unchecked")
+                Class<? extends EntityAIBase> DEADLY_MONSTERS_CLIMBER_AI = (Class<? extends EntityAIBase>)Class.forName("com.dmonsters.entity.EntityClimber$AISpiderTarget");
+                aiReplacers.add(new AIReplacer(DEADLY_MONSTERS_CLIMBER_AI, AIAttackTargetMobOrMorph.class, EntityAINearestAttackableTarget.class));
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
+        }
+    }
+    
+    static {
+        if (Loader.instance().getIndexedModList().containsKey(ModState.DEADLY_MONSTERS_ID) ) {
+            DeadlyMonsters.loadAITweaks();
         }
     }
     
@@ -107,14 +135,8 @@ public class ListenerMobAI extends ConfiguredListener {
             
             // Persuade entities that morphs aren't human, unless said entity knows better
             if (!mobAIIgnoreMorphList.contains(EntityList.getEntityString(entity))) {
-                wrapReplaceAttackAI(entityLiving, EntityAINearestAttackableTarget.class, AIAttackTargetMobOrMorph.class);
-                wrapReplaceAttackAI(entityLiving, EntityAITargetNonTamed.class, AIUntamedAttackMobOrMorph.class);
-                wrapReplaceAttackAI(entityLiving, EntitySpider.AISpiderTarget.class, AISpiderTargetMobOrMorph.class);
-                wrapReplaceAttackAI(entityLiving, EntityPolarBear.AIAttackPlayer.class, AIPolarBearTargetMobOrMorph.class);
-                wrapReplaceAttackAI(entityLiving, EntityAIFindEntityNearestPlayer.class, AITargetUnmorphedPlayer.class);
-                
-                if (DEADLY_MONSTERS_CLIMBER_AI != null) {
-                    wrapReplaceAttackAI(entityLiving, DEADLY_MONSTERS_CLIMBER_AI, AIAttackTargetMobOrMorph.class, EntityAINearestAttackableTarget.class);
+                for (AIReplacer aiReplacer : aiReplacers) {
+                    wrapReplaceAttackAI(entityLiving, aiReplacer);
                 }
             }
             
@@ -127,12 +149,6 @@ public class ListenerMobAI extends ConfiguredListener {
         }
     }
     
-    private static void wrapReplaceAttackAI(EntityLiving entityLiving,
-            Class<? extends EntityAIBase> targetClazz,
-            Class<? extends EntityAIBase> replaceClazz) {
-        wrapReplaceAttackAI(entityLiving, targetClazz, replaceClazz, targetClazz);
-    }
-    
     /**
      * Replace an instance of the AI EntityAIBase. Assume the
      * replacement AI's constructor takes the old AI instance
@@ -140,19 +156,16 @@ public class ListenerMobAI extends ConfiguredListener {
      * AI entity as a second parameter.
      * If it doesn't, you will get errors, because reflection.
      */
-    private static void wrapReplaceAttackAI(EntityLiving entityLiving,
-            Class<? extends EntityAIBase> targetClazz,
-            Class<? extends EntityAIBase> replaceClazz,
-            Class<? extends EntityAIBase> delegateClazz) {
+    private static void wrapReplaceAttackAI(EntityLiving entityLiving, AIReplacer aiReplacer) {
         try {
-            Constructor<? extends EntityAIBase> replaceConstructor = replaceClazz.getConstructor(delegateClazz, EntityLiving.class);
+            Constructor<? extends EntityAIBase> replaceConstructor = aiReplacer.replaceClazz.getConstructor(aiReplacer.delegateClazz, EntityLiving.class);
             
             // Find instances of the AI to replace
             EntityAITasks targetTaskList = entityLiving.targetTasks;
             List<EntityAIBase> aisToReplace = new ArrayList<EntityAIBase>();
             List<Integer> prioritiesToReplace = new ArrayList<Integer>();
             for (EntityAITasks.EntityAITaskEntry targetTask : targetTaskList.taskEntries) {
-                if (targetClazz.getName().equals(targetTask.action.getClass().getName())) {
+                if (aiReplacer.targetClazz.getName().equals(targetTask.action.getClass().getName())) {
                     aisToReplace.add(targetTask.action);
                     prioritiesToReplace.add(targetTask.priority);
                 }
