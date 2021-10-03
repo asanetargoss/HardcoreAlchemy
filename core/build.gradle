@@ -1,0 +1,77 @@
+// Begin Minecraft Forge plugin setup
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            url "http://maven.minecraftforge.net"
+        }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
+    }
+}
+apply plugin: 'net.minecraftforge.gradle.forge'
+// End Minecraft Forge plugin setup
+
+
+// Project settings
+version = "0.6.1"
+group= "targoss.hardcorealchemy"
+archivesBaseName = "hardcorealchemy"
+String coremodPath="targoss.hardcorealchemy.coremod.HardcoreAlchemyCoremod"
+
+sourceCompatibility = targetCompatibility = "1.8" // Need this here so Eclipse task generates correctly.
+compileJava {
+    sourceCompatibility = targetCompatibility = "1.8"
+}
+
+minecraft {
+    version = "1.10.2-12.18.3.2511"
+    runDir = "run"
+    
+    mappings = "stable_29"
+    
+    replace "@HARDCORE_ALCHEMY_VERSION@", project.version
+    replaceIn "HardcoreAlchemy.java"
+
+    // These arguments let us load the coremod properly when testing in a dev environment
+    clientJvmArgs = ["-Dfml.coreMods.load=" + coremodPath]
+    serverJvmArgs = ["-Dfml.coreMods.load=" + coremodPath]
+}
+
+dependencies {
+    // Right now, all mod dependencies are handled by adding the required mods to `libs/`. See the README for more info.
+    compileOnly fileTree(dir: "../libs", include: "**/*.jar")
+}
+
+processResources
+{
+    // This will ensure that this task is redone when the versions change.
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
+
+    // Replace stuff in mcmod.info, nothing else
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+                
+        // Replace version and mcversion with the settings we've defined for our project
+        expand 'version':project.version, 'mcversion':project.minecraft.version
+    }
+        
+    // Copy everything else that's not the mcmod.info
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }
+}
+
+jar {
+    manifest {
+        attributes (
+            // Add coremod info to mod jar manifest
+            'FMLCorePlugin': coremodPath,
+            'FMLCorePluginContainsFMLMod': 'true',
+            // Add access transformer info to mod jar manifest
+            "FMLAT": 'hardcorealchemy_at.cfg'
+        )
+    }
+}

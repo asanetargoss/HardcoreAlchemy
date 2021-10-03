@@ -35,6 +35,8 @@ There is a lot more in terms of mod selection, configuration, and tweaking, in o
 
 ## Developing/building
 
+**NOTICE:** A build system overhaul and a major refactor is in progress.
+
 ### Dependencies
 
 This branch targets the 0.4.1+ version of the modpack. Download the 0.4.1 zip file from the link below and be ready to add its contents to `libs/` in the Hardcore Alchemy repository folder when asked:
@@ -54,21 +56,22 @@ Please note: the following mods included in the HcA_libs zip file above are cust
 In addition, you may also want to take the latest available config zip from the same folder, which will be added to `run/config/`. This will make some aspects of development easier, such as not losing your spawnpoint when testing deaths.
 
 ### Workspace setup
+
 * Create a folder and clone this repository in a subfolder
 * Navigate into the subfolder of the cloned repository. Create the `libs/` folder and optionally the `run/config/` folder if they do not exist
     * In the `libs/` folder, copy the mod dependencies you have downloaded from the Dependencies step
     * Optionally, into the `run/config` folder, also copy the configs you have downloaded
-* Run `./gradlew setupDecompWorkspace eclipse`
-    * `setupDecompWorkspace` sets up dependencies for Minecraft, Forge, etc and updates access transformers
-    * `eclipse` makes everything available for the Eclipse IDE and should be removed/replaced if using IntelliJ Idea
-* If using Eclipse and you want to make changes to the code, you can use the top folder as a workspace and import the subfolder as a project
+* Run `./gradlew core:setupDecompWorkspace core:eclipse`
+    * `core:setupDecompWorkspace` sets up dependencies for Minecraft, Forge, etc and updates access transformers
+    * `core:eclipse` makes everything available for the Eclipse IDE and should be removed/replaced if using IntelliJ Idea
+* If using Eclipse and you want to make changes to the code, you can use the top folder (or even higher folder) as a workspace and import the subfolder as a project
 
 ### Compiling
-* To compile, run `./gradlew build`. Output will be in `build/libs/`. The jar name will be `hardcorealchemy-[version].jar` where `[version]` is defined in `build.gradle`.
+* To compile, run `./gradlew core:build`. Output will be in `core/build/libs/`. The jar name will be `hardcorealchemy-[version].jar` where `[version]` is defined in `build.gradle`.
 
 ### Development tips
 * Successfully used gradle commands before but they aren't working anymore because your internet is down? No problem! Just add the `-offline` flag to your gradle command and it should work normally again.
-* `./gradlew setupDecompWorkspace eclipse` may need to be re-run under the following circumstances:
+* `./gradlew core:setupDecompWorkspace core:eclipse` may need to be re-run under the following circumstances:
     * Adding/changing mods in `libs/`
     * Updating dependencies in other places like `build.gradle`
     * Updating access transformers (found at "src/main/resources/META-INF/hardcorealchemy_at.cfg") 
