@@ -26,17 +26,12 @@ import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import targoss.hardcorealchemy.capability.instinct.ICapabilityInstinct;
-import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.event.EventExtinguishFire;
 import targoss.hardcorealchemy.instinct.InstinctEffectOverheat;
 import targoss.hardcorealchemy.instinct.Instincts;
 import targoss.hardcorealchemy.instinct.api.IInstinctEffectData;
 
-public class ListenerInstinctOverheat extends ConfiguredListener {
-    public ListenerInstinctOverheat(Configs configs) {
-        super(configs);
-    }
-    
+public class ListenerInstinctOverheat extends HardcoreAlchemyListener {
     @CapabilityInject(ICapabilityInstinct.class)
     public static final Capability<ICapabilityInstinct> INSTINCT_CAPABILITY = null;
     

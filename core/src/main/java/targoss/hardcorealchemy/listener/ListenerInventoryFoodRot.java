@@ -38,14 +38,9 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import targoss.hardcorealchemy.ModState;
-import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.util.InventoryUtil;
 
-public class ListenerInventoryFoodRot extends ConfiguredListener {
-    public ListenerInventoryFoodRot(Configs configs) {
-        super(configs);
-    }
-    
+public class ListenerInventoryFoodRot extends HardcoreAlchemyListener {
     // Half life of food in ticks (20 days)
     public static final float FOOD_DECAY_HALF_LIFE = 24000.0F * 20.0F;
     // Average rate at which food should decay (quantity per tick)

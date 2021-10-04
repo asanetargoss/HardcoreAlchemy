@@ -28,7 +28,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import targoss.hardcorealchemy.capability.serverdata.CapabilityServerData;
 import targoss.hardcorealchemy.capability.serverdata.ICapabilityServerData;
 import targoss.hardcorealchemy.capability.serverdata.ProviderServerData;
-import targoss.hardcorealchemy.config.Configs;
 
 /**
  * Use a capability stored in the overworld to check if
@@ -36,12 +35,7 @@ import targoss.hardcorealchemy.config.Configs;
  * only set it once because we want it to be like the
  * "default" difficulty)
  */
-public class ListenerWorldDifficulty extends ConfiguredListener {
-
-    public ListenerWorldDifficulty(Configs configs) {
-        super(configs);
-    }
-    
+public class ListenerWorldDifficulty extends HardcoreAlchemyListener {
     @Override
     public void serverStarting(FMLServerStartingEvent event) {
         MinecraftServer server = event.getServer();

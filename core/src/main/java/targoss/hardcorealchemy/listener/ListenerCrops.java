@@ -45,7 +45,6 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.oredict.OreDictionary;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.ModState;
-import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.coremod.CoremodHook;
 import targoss.hardcorealchemy.util.InventoryUtil;
 import toughasnails.api.TANBlocks;
@@ -56,11 +55,7 @@ import toughasnails.api.season.SeasonHelper;
 import toughasnails.api.temperature.Temperature;
 import toughasnails.api.temperature.TemperatureHelper;
 
-public class ListenerCrops extends ConfiguredListener {
-    public ListenerCrops(Configs configs) {
-        super(configs);
-    }
-
+public class ListenerCrops extends HardcoreAlchemyListener {
     private static Set<String> hibernators;
     
     static {

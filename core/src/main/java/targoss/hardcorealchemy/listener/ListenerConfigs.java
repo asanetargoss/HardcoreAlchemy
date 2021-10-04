@@ -25,22 +25,17 @@ import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import targoss.hardcorealchemy.HardcoreAlchemy;
-import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.network.MessageConfigs;
 import targoss.hardcorealchemy.network.PacketHandler;
 
-public class ListenerConfigs extends ConfiguredListener {
-    public ListenerConfigs(Configs configs) {
-        super(configs);
-    }
-    
+public class ListenerConfigs extends HardcoreAlchemyListener {
     // TODO: Handle the player logging out from the server
     
     @Override
     public void preInit(FMLPreInitializationEvent event) {
-        configs.init(event.getModConfigurationDirectory().toPath().resolve(HardcoreAlchemy.MOD_ID).toFile());
-        configs.load();
-        configs.save();
+        coreConfigs.init(event.getModConfigurationDirectory().toPath().resolve(HardcoreAlchemy.MOD_ID).toFile());
+        coreConfigs.load();
+        coreConfigs.save();
     }
     
     /**
@@ -48,7 +43,7 @@ public class ListenerConfigs extends ConfiguredListener {
      */
     @Override
     public void serverAboutToStart(FMLServerAboutToStartEvent event) {
-        configs.load();
+        coreConfigs.load();
     }
     
     /**
@@ -60,6 +55,6 @@ public class ListenerConfigs extends ConfiguredListener {
         if (!(event.getEntity() instanceof EntityPlayerMP)) {
             return;
         }
-        PacketHandler.INSTANCE.sendTo(new MessageConfigs(configs), (EntityPlayerMP)event.getEntity());
+        PacketHandler.INSTANCE.sendTo(new MessageConfigs(coreConfigs), (EntityPlayerMP)event.getEntity());
     }
 }

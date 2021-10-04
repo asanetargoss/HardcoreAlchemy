@@ -114,7 +114,8 @@ public class TestFoodRot implements ITestSuite {
     }
     
     public static void tickInventories(float decayRate, List<IItemHandler> inventories) {
-        ListenerInventoryFoodRot listener = new ListenerInventoryFoodRot(DEFAULT_CONFIGS);
+        ListenerInventoryFoodRot listener = new ListenerInventoryFoodRot();
+        listener.setConfigs(DEFAULT_CONFIGS);
         for (IItemHandler itemHandler : inventories) {
             listener.tickInventory(itemHandler, decayRate);
         }
@@ -134,7 +135,6 @@ public class TestFoodRot implements ITestSuite {
     public static boolean decayChestAtRate(float decayRate) {
         TileEntityChest chest = new TileEntityChest();
         IItemHandler inventory = chest.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-        int slots = inventory.getSlots();
         
         int initialFood = fillSlotsWithFood(inventory);
         
@@ -163,7 +163,6 @@ public class TestFoodRot implements ITestSuite {
     }
     
     public boolean hasInventoryIronBackpack() {
-        FakePlayer player = UniqueFakePlayer.create();
         ItemStack backpackStack = createBackpackStack();
         
         return InventoryUtil.getInventories(backpackStack).size() == 1;

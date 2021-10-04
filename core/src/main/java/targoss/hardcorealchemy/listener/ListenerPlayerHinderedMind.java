@@ -62,7 +62,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.instinct.ICapabilityInstinct;
 import targoss.hardcorealchemy.capability.instinct.ProviderInstinct;
-import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.coremod.CoremodHook;
 import targoss.hardcorealchemy.event.EventDrawInventoryItem;
 import targoss.hardcorealchemy.event.EventDrawWorldItem;
@@ -72,11 +71,7 @@ import targoss.hardcorealchemy.instinct.internal.InstinctEffectWrapper;
 import targoss.hardcorealchemy.util.InventoryUtil;
 import targoss.hardcorealchemy.util.MiscVanilla;
 
-public class ListenerPlayerHinderedMind extends ConfiguredListener {
-    public ListenerPlayerHinderedMind(Configs configs) {
-        super(configs);
-    }
-    
+public class ListenerPlayerHinderedMind extends HardcoreAlchemyListener {
     private boolean heldItemTooltips = true;
     private boolean renderHotbar = true;
     private boolean renderHealth = true;

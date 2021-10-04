@@ -35,14 +35,9 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.capability.misc.ICapabilityMisc;
 import targoss.hardcorealchemy.capability.misc.ProviderMisc;
-import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.modpack.guide.HCAUpgradeGuides;
 
-public class ListenerPlayerInventory extends ConfiguredListener {
-    public ListenerPlayerInventory(Configs configs) {
-        super(configs);
-    }
-    
+public class ListenerPlayerInventory extends HardcoreAlchemyListener {
     protected Random random = new Random();
     
     @SubscribeEvent

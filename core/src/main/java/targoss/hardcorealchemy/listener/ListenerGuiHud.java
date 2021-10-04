@@ -45,7 +45,6 @@ import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.capability.instinct.ICapabilityInstinct;
-import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.coremod.CoremodHook;
 import targoss.hardcorealchemy.item.Items;
 import targoss.hardcorealchemy.util.MorphDiet;
@@ -53,11 +52,7 @@ import targoss.hardcorealchemy.util.MorphState;
 import targoss.hardcorealchemy.util.RandomWithPublicSeed;
 
 @SideOnly(Side.CLIENT)
-public class ListenerGuiHud extends ConfiguredListener {
-    public ListenerGuiHud(Configs configs) {
-        super(configs);
-    }
-    
+public class ListenerGuiHud extends HardcoreAlchemyListener {
     private static final Minecraft mc = Minecraft.getMinecraft();
     public static final ResourceLocation TILESET = new ResourceLocation(HardcoreAlchemy.MOD_ID, "textures/gui/icon_tileset.png");
     // Settable seed helps to freeze GUI elements in place when the game is paused

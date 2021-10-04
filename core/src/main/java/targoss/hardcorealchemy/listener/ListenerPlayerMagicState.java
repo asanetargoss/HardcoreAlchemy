@@ -54,7 +54,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.inactive.IInactiveCapabilities;
-import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.coremod.CoremodHook;
 import targoss.hardcorealchemy.event.EventCraftPredict;
 import targoss.hardcorealchemy.event.EventTakeStack;
@@ -74,11 +73,7 @@ import thaumcraft.common.lib.SoundsTC;
  * Handles capabilities from other magic mods, ex: make Ars Magica
  * affinities only active when the player is capable of using high magic.
  */
-public class ListenerPlayerMagicState extends ConfiguredListener {
-    public ListenerPlayerMagicState(Configs configs) {
-        super(configs);
-    }
-    
+public class ListenerPlayerMagicState extends HardcoreAlchemyListener {
     @CapabilityInject(IInactiveCapabilities.class)
     private static final Capability<IInactiveCapabilities> INACTIVE_CAPABILITIES = null;
     

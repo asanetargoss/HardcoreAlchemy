@@ -28,17 +28,12 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import targoss.hardcorealchemy.capability.research.ICapabilityResearch;
-import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.research.KnowledgeFact;
 import targoss.hardcorealchemy.util.Chat;
 
-public class ListenerPlayerResearch extends ConfiguredListener {
+public class ListenerPlayerResearch extends HardcoreAlchemyListener {
     @CapabilityInject(ICapabilityResearch.class)
     public static final Capability<ICapabilityResearch> RESEARCH_CAPABILITY = null;
-    
-    public ListenerPlayerResearch(Configs configs) {
-        super(configs);
-    }
     
     public static void pruneResearchAfterDeath(EntityPlayer player) {
         ICapabilityResearch research = player.getCapability(RESEARCH_CAPABILITY, null);

@@ -57,7 +57,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import targoss.hardcorealchemy.capability.instinct.ICapabilityInstinct;
-import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.instinct.InstinctEffectOverheat;
 import targoss.hardcorealchemy.instinct.InstinctEffectTemperedFlame;
 import targoss.hardcorealchemy.instinct.Instincts;
@@ -71,12 +70,12 @@ import targoss.hardcorealchemy.util.InventoryUtil;
 /**
  * Capability handling, ticking, and event hooks for instincts.
  */
-public class ListenerPlayerInstinct extends ConfiguredListener {
+public class ListenerPlayerInstinct extends HardcoreAlchemyListener {
     protected InstinctSystem instinctSystem;
     
-    public ListenerPlayerInstinct(Configs configs) {
-        super(configs);
-        instinctSystem = new InstinctSystem(configs);
+    public ListenerPlayerInstinct() {
+        super();
+        instinctSystem = new InstinctSystem(coreConfigs);
     }
     
     @CapabilityInject(ICapabilityInstinct.class)
@@ -187,7 +186,7 @@ public class ListenerPlayerInstinct extends ConfiguredListener {
             }
         }
         
-        instinctSystem.tickPlayer(configs, instinct, event);
+        instinctSystem.tickPlayer(coreConfigs, instinct, event);
         
         for (InstinctEffectWrapper effect : instinct.getActiveEffects().values()) {
             effect.effect.tick(player, effect.amplifier);

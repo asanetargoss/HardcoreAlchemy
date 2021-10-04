@@ -33,15 +33,9 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import targoss.hardcorealchemy.config.Configs;
-import targoss.hardcorealchemy.coremod.CoremodHook;
 
 @SideOnly(Side.CLIENT)
-public class ListenerRenderView extends ConfiguredListener {
-    public ListenerRenderView(Configs configs) {
-        super(configs);
-    }
-    
+public class ListenerRenderView extends HardcoreAlchemyListener {
     @CapabilityInject(IMorphing.class)
     public static final Capability<IMorphing> MORPHING_CAPABILITY = null;
     

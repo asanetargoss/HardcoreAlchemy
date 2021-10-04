@@ -35,18 +35,13 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import targoss.hardcorealchemy.capability.CapUtil;
 import targoss.hardcorealchemy.capability.food.ICapabilityFood;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
-import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.util.FoodLists;
 import targoss.hardcorealchemy.util.InventoryUtil;
 import targoss.hardcorealchemy.util.MorphDiet;
 import targoss.hardcorealchemy.util.MorphState;
 
 @SideOnly(Side.CLIENT)
-public class ListenerGuiInventory extends ConfiguredListener {
-    public ListenerGuiInventory(Configs configs) {
-        super(configs);
-    }
-
+public class ListenerGuiInventory extends HardcoreAlchemyListener {
     private final Minecraft mc = Minecraft.getMinecraft();
     
     @CapabilityInject(ICapabilityHumanity.class)

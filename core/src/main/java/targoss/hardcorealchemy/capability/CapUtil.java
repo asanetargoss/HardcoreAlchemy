@@ -60,9 +60,17 @@ public class CapUtil {
      * 
      * We don't really care about sidedness and just work with the capability instances directly.
      */
-    public static void registerVirtualCapability(ResourceLocation key, @SuppressWarnings("rawtypes") Capability capability) {
+    protected static void registerVirtualCapability(ResourceLocation key, @SuppressWarnings("rawtypes") Capability capability) {
         if (!capabilityRegistry.containsKey(capability)) {
             capabilityRegistry.put(capability, key);
+        }
+    }
+    
+    public static class Manager {
+        public static Manager INSTANCE = new Manager();
+        
+        public void registerVirtualCapability(ResourceLocation key, @SuppressWarnings("rawtypes") Capability capability) {
+            CapUtil.registerVirtualCapability(key, capability);
         }
     }
     

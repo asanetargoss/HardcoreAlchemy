@@ -20,32 +20,21 @@ package targoss.hardcorealchemy.test.suite;
 
 import static targoss.hardcorealchemy.test.HardcoreAlchemyTests.DEFAULT_CONFIGS;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import mchorse.metamorph.api.MorphAPI;
-import mchorse.metamorph.api.MorphManager;
 import mchorse.metamorph.api.morphs.AbstractMorph;
 import mchorse.metamorph.capabilities.morphing.IMorphing;
 import mchorse.metamorph.capabilities.morphing.Morphing;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.DimensionType;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
-import targoss.hardcorealchemy.capability.humanity.LostMorphReason;
 import targoss.hardcorealchemy.listener.ListenerPlayerHumanity;
-import targoss.hardcorealchemy.test.HardcoreAlchemyTests;
-import targoss.hardcorealchemy.test.api.UniqueFakePlayer;
-import targoss.hardcorealchemy.util.MorphState;
 import targoss.hardcorealchemy.test.api.ITestList;
 import targoss.hardcorealchemy.test.api.ITestSuite;
 import targoss.hardcorealchemy.test.api.TestList;
+import targoss.hardcorealchemy.test.api.UniqueFakePlayer;
+import targoss.hardcorealchemy.util.MorphState;
 
 public class TestHumanity implements ITestSuite {
 
@@ -90,7 +79,9 @@ public class TestHumanity implements ITestSuite {
     }
     
     public static void tickPlayerHumanity(EntityPlayer player) {
-        (new ListenerPlayerHumanity(DEFAULT_CONFIGS)).onPlayerTick(new PlayerTickEvent(Phase.START, player));
+        ListenerPlayerHumanity listener = new ListenerPlayerHumanity();
+        listener.setConfigs(DEFAULT_CONFIGS);
+        listener.onPlayerTick(new PlayerTickEvent(Phase.START, player));
     }
     
     public boolean humanityDecrease() {

@@ -66,18 +66,13 @@ import targoss.hardcorealchemy.capability.entitystate.ICapabilityEntityState;
 import targoss.hardcorealchemy.capability.entitystate.ProviderEntityState;
 import targoss.hardcorealchemy.capability.misc.ICapabilityMisc;
 import targoss.hardcorealchemy.capability.misc.ProviderMisc;
-import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.event.EventPlayerDamageBlockSound;
 import targoss.hardcorealchemy.event.EventPlayerInventorySlotSet;
 import targoss.hardcorealchemy.item.Items;
 import targoss.hardcorealchemy.util.InventoryUtil;
 import targoss.hardcorealchemy.util.MorphState;
 
-public class ListenerEntityVoidfade extends ConfiguredListener {
-    public ListenerEntityVoidfade(Configs configs) {
-        super(configs);
-    }
-
+public class ListenerEntityVoidfade extends HardcoreAlchemyListener {
     @CapabilityInject(ICapabilityDimensionHistory.class)
     public static final Capability<ICapabilityDimensionHistory> DIMENSION_HISTORY_CAPABILITY = null;
 

@@ -47,14 +47,9 @@ import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.capability.killcount.CapabilityKillCount;
 import targoss.hardcorealchemy.capability.killcount.ICapabilityKillCount;
 import targoss.hardcorealchemy.capability.killcount.ProviderKillCount;
-import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.util.MobLists;
 
-public class ListenerPlayerMorphs extends ConfiguredListener {
-    public ListenerPlayerMorphs(Configs configs) {
-        super(configs);
-    }
-
+public class ListenerPlayerMorphs extends HardcoreAlchemyListener {
     public static final Map<String, Integer> mapRequiredKills = Collections.synchronizedMap(new HashMap<String, Integer>());
     /* Required morph counts for each max humanity upgrade.
      * +2 humanity per goal reached, up to a maximum of

@@ -33,7 +33,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import targoss.hardcorealchemy.capability.misc.ICapabilityMisc;
 import targoss.hardcorealchemy.capability.misc.ProviderMisc;
-import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.event.EventSendChatMessage;
 import targoss.hardcorealchemy.incantation.IncantationLookup;
 import targoss.hardcorealchemy.incantation.IncantationParser;
@@ -46,11 +45,7 @@ import targoss.hardcorealchemy.network.RequestIncantation;
 import targoss.hardcorealchemy.util.Chat;
 import targoss.hardcorealchemy.util.Chat.Type;
 
-public class ListenerPlayerIncantation extends ConfiguredListener {
-    public ListenerPlayerIncantation(Configs configs) {
-        super(configs);
-    }
-    
+public class ListenerPlayerIncantation extends HardcoreAlchemyListener {
     protected static final Set<String> fillerCharacters = new HashSet<>();
     static {
         fillerCharacters.add(" ");

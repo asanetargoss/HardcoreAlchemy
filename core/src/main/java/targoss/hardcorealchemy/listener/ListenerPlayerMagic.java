@@ -70,7 +70,6 @@ import targoss.hardcorealchemy.capability.misc.ICapabilityMisc;
 import targoss.hardcorealchemy.capability.tilehistory.CapabilityTileHistory;
 import targoss.hardcorealchemy.capability.tilehistory.ICapabilityTileHistory;
 import targoss.hardcorealchemy.capability.tilehistory.ProviderTileHistory;
-import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.coremod.CoremodHook;
 import targoss.hardcorealchemy.event.EventRegenMana;
 import targoss.hardcorealchemy.event.EventTakeStack;
@@ -83,11 +82,7 @@ import targoss.hardcorealchemy.util.MorphState;
 import targoss.hardcorealchemy.will.WillState;
 import targoss.hardcorealchemy.will.Wills;
 
-public class ListenerPlayerMagic extends ConfiguredListener {
-    public ListenerPlayerMagic(Configs configs) {
-        super(configs);
-    }
-    
+public class ListenerPlayerMagic extends HardcoreAlchemyListener {
     /**
      *  Mods of a certain type of magic are forbidden for use by [most] permanent morphs.
      *  Generally these forms of magic are powerful, and human-like due to rigorous

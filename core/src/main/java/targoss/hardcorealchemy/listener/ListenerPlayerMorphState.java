@@ -45,7 +45,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import targoss.hardcorealchemy.capability.morphstate.CapabilityMorphState;
 import targoss.hardcorealchemy.capability.morphstate.ICapabilityMorphState;
 import targoss.hardcorealchemy.capability.morphstate.ProviderMorphState;
-import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.entity.EntityFishSwarm;
 import targoss.hardcorealchemy.metamorph.ability.PotionAwareWaterAllergy;
 import targoss.hardcorealchemy.util.Chat;
@@ -54,11 +53,7 @@ import targoss.hardcorealchemy.util.MiscVanilla;
 import targoss.hardcorealchemy.util.MorphState;
 import targoss.hardcorealchemy.util.RandomUtil;
 
-public class ListenerPlayerMorphState extends ConfiguredListener {
-    public ListenerPlayerMorphState(Configs configs) {
-        super(configs);
-    }
-    
+public class ListenerPlayerMorphState extends HardcoreAlchemyListener {
     @Override
     public void postInit(FMLPostInitializationEvent event) {
         Map<String, IAbility> abilities = MorphManager.INSTANCE.abilities;

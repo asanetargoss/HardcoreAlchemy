@@ -55,7 +55,6 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import net.minecraftforge.oredict.OreDictionary;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.misc.ICapabilityMisc;
-import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.item.Items;
 import targoss.hardcorealchemy.research.Studies;
 import targoss.hardcorealchemy.util.InventoryUtil;
@@ -69,11 +68,7 @@ import toughasnails.thirst.ThirstHandler;
  * An event listener for miscellaneous changes that
  * don't fit anywhere in particular
  */
-public class ListenerSmallTweaks extends ConfiguredListener {
-    public ListenerSmallTweaks(Configs configs) {
-        super(configs);
-    }
-    
+public class ListenerSmallTweaks extends HardcoreAlchemyListener {
     @CapabilityInject(ICapabilityMisc.class)
     private static final Capability<ICapabilityMisc> MISC_CAPABILITY = null;
     

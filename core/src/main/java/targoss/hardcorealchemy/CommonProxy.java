@@ -18,13 +18,8 @@
 
 package targoss.hardcorealchemy;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
+import java.util.ArrayList;
+import java.util.List;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -36,52 +31,12 @@ import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import targoss.hardcorealchemy.capability.CapUtil;
-import targoss.hardcorealchemy.capability.combatlevel.CapabilityCombatLevel;
-import targoss.hardcorealchemy.capability.combatlevel.ICapabilityCombatLevel;
-import targoss.hardcorealchemy.capability.combatlevel.StorageCombatLevel;
-import targoss.hardcorealchemy.capability.dimensionhistory.CapabilityDimensionHistory;
-import targoss.hardcorealchemy.capability.dimensionhistory.ICapabilityDimensionHistory;
-import targoss.hardcorealchemy.capability.dimensionhistory.ProviderDimensionHistory;
-import targoss.hardcorealchemy.capability.dimensionhistory.StorageDimensionHistory;
-import targoss.hardcorealchemy.capability.entitystate.CapabilityEntityState;
-import targoss.hardcorealchemy.capability.entitystate.ICapabilityEntityState;
-import targoss.hardcorealchemy.capability.entitystate.StorageEntityState;
-import targoss.hardcorealchemy.capability.food.CapabilityFood;
-import targoss.hardcorealchemy.capability.food.ICapabilityFood;
-import targoss.hardcorealchemy.capability.food.StorageFood;
-import targoss.hardcorealchemy.capability.humanity.CapabilityHumanity;
-import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
-import targoss.hardcorealchemy.capability.humanity.StorageHumanity;
-import targoss.hardcorealchemy.capability.inactive.IInactiveCapabilities;
-import targoss.hardcorealchemy.capability.inactive.InactiveCapabilities;
-import targoss.hardcorealchemy.capability.inactive.StorageInactiveCapabilities;
-import targoss.hardcorealchemy.capability.instinct.CapabilityInstinct;
-import targoss.hardcorealchemy.capability.instinct.ICapabilityInstinct;
-import targoss.hardcorealchemy.capability.instinct.StorageInstinct;
-import targoss.hardcorealchemy.capability.killcount.CapabilityKillCount;
-import targoss.hardcorealchemy.capability.killcount.ICapabilityKillCount;
-import targoss.hardcorealchemy.capability.killcount.StorageKillCount;
-import targoss.hardcorealchemy.capability.misc.CapabilityMisc;
-import targoss.hardcorealchemy.capability.misc.ICapabilityMisc;
-import targoss.hardcorealchemy.capability.misc.StorageMisc;
-import targoss.hardcorealchemy.capability.morphstate.CapabilityMorphState;
-import targoss.hardcorealchemy.capability.morphstate.ICapabilityMorphState;
-import targoss.hardcorealchemy.capability.morphstate.StorageMorphState;
-import targoss.hardcorealchemy.capability.research.CapabilityResearch;
-import targoss.hardcorealchemy.capability.research.ICapabilityResearch;
-import targoss.hardcorealchemy.capability.research.StorageResearch;
-import targoss.hardcorealchemy.capability.serverdata.CapabilityServerData;
-import targoss.hardcorealchemy.capability.serverdata.ICapabilityServerData;
-import targoss.hardcorealchemy.capability.serverdata.StorageServerData;
-import targoss.hardcorealchemy.capability.tilehistory.CapabilityTileHistory;
-import targoss.hardcorealchemy.capability.tilehistory.ICapabilityTileHistory;
-import targoss.hardcorealchemy.capability.tilehistory.StorageTileHistory;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.entity.Entities;
 import targoss.hardcorealchemy.incantation.Incantations;
 import targoss.hardcorealchemy.instinct.Instincts;
 import targoss.hardcorealchemy.item.Items;
-import targoss.hardcorealchemy.listener.ConfiguredListener;
+import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
 import targoss.hardcorealchemy.listener.ListenerConfigs;
 import targoss.hardcorealchemy.listener.ListenerCrops;
 import targoss.hardcorealchemy.listener.ListenerEntityCapabilities;
@@ -114,75 +69,36 @@ import targoss.hardcorealchemy.research.Studies;
 public class CommonProxy {
     public Configs configs = new Configs();
     
-    @SuppressWarnings("unchecked")
-    public static final ImmutableList<Class<? extends ConfiguredListener>> LISTENER_TYPES = ImmutableList.of(
-                ListenerEntityCapabilities.class,
-                ListenerPlayerMorphs.class,
-                ListenerPlayerHumanity.class,
-                ListenerPlayerMagic.class,
-                ListenerPlayerDiet.class,
-                ListenerMobLevel.class,
-                ListenerMobAI.class,
-                ListenerSmallTweaks.class,
-                ListenerInventoryFoodRot.class,
-                ListenerWorldDifficulty.class,
-                ListenerPlayerMagicState.class,
-                ListenerPlayerMorphState.class,
-                ListenerPlayerInstinct.class,
-                ListenerPlayerHinderedMind.class,
-                ListenerPlayerIncantation.class,
-                ListenerPlayerInventory.class,
-                ListenerPlayerResearch.class,
-                ListenerConfigs.class,
-                ListenerInstinctOverheat.class,
-                ListenerEntityVoidfade.class,
-                ListenerCrops.class // 1.10-specific
-            );
+    protected List<HardcoreAlchemyListener> listeners = new ArrayList<>();
     
-    public ImmutableList<Class<? extends ConfiguredListener>> getListenerTypes() {
-        return LISTENER_TYPES;
+    public void addListener(HardcoreAlchemyListener listener) {
+        listener.setConfigs(configs);
+        listeners.add(listener);
     }
-    
-    public final ImmutableMap<Class<? extends ConfiguredListener>, ConfiguredListener> listeners;
     
     public CommonProxy() {
-        // Initialize listeners with CommonProxy.configs as the parameter
-        Map<Class<? extends ConfiguredListener>, ConfiguredListener> listenerBuilder = new HashMap<>();
-        
-        for (Class<? extends ConfiguredListener> listenerClass : getListenerTypes()) {
-            try {
-                listenerBuilder.put(listenerClass, listenerClass.getConstructor(Configs.class).newInstance(configs));
-            } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-                    | InvocationTargetException | NoSuchMethodException | SecurityException e) {
-                e.printStackTrace();
-            }
-        }
-        
-        listeners = ImmutableMap.copyOf(listenerBuilder);
-    }
-    
-    public void registerListeners(Collection<ConfiguredListener> listeners) {
-        for (ConfiguredListener listener : listeners) {
-            MinecraftForge.EVENT_BUS.register(listener);
-        }
-    }
-    
-    public void registerCapabilities() {
-        CapabilityManager.INSTANCE.register(ICapabilityKillCount.class, new StorageKillCount(), CapabilityKillCount.class);
-        CapabilityManager.INSTANCE.register(ICapabilityHumanity.class, new StorageHumanity(), CapabilityHumanity.class);
-        CapabilityManager.INSTANCE.register(ICapabilityCombatLevel.class, new StorageCombatLevel(), CapabilityCombatLevel.class);
-        CapabilityManager.INSTANCE.register(ICapabilityFood.class, new StorageFood(), CapabilityFood.class);
-        CapUtil.registerVirtualCapability(CapabilityFood.RESOURCE_LOCATION, CapabilityFood.FOOD_CAPABILITY);
-        CapabilityManager.INSTANCE.register(ICapabilityServerData.class, new StorageServerData(), CapabilityServerData.class);
-        CapabilityManager.INSTANCE.register(IInactiveCapabilities.class, new StorageInactiveCapabilities(), InactiveCapabilities.class);
-        CapabilityManager.INSTANCE.register(ICapabilityMorphState.class, new StorageMorphState(), CapabilityMorphState.class);
-        CapabilityManager.INSTANCE.register(ICapabilityInstinct.class, new StorageInstinct(), CapabilityInstinct.class);
-        CapabilityManager.INSTANCE.register(ICapabilityMisc.class, new StorageMisc(), CapabilityMisc.class);
-        CapabilityManager.INSTANCE.register(ICapabilityEntityState.class, new StorageEntityState(), CapabilityEntityState.class);
-        CapabilityManager.INSTANCE.register(ICapabilityTileHistory.class, new StorageTileHistory(), CapabilityTileHistory.class);
-        CapabilityManager.INSTANCE.register(ICapabilityResearch.class, new StorageResearch(), CapabilityResearch.class);
-        CapabilityManager.INSTANCE.register(ICapabilityDimensionHistory.class, new StorageDimensionHistory(), CapabilityDimensionHistory.class);
-        CapUtil.registerVirtualCapability(CapabilityDimensionHistory.RESOURCE_LOCATION, ProviderDimensionHistory.DIMENSION_HISTORY_CAPABILITY);
+        addListener(new ListenerCapabilities());
+        addListener(new ListenerEntityCapabilities());
+        addListener(new ListenerPlayerMorphs());
+        addListener(new ListenerPlayerHumanity());
+        addListener(new ListenerPlayerMagic());
+        addListener(new ListenerPlayerDiet());
+        addListener(new ListenerMobLevel());
+        addListener(new ListenerMobAI());
+        addListener(new ListenerSmallTweaks());
+        addListener(new ListenerInventoryFoodRot());
+        addListener(new ListenerWorldDifficulty());
+        addListener(new ListenerPlayerMagicState());
+        addListener(new ListenerPlayerMorphState());
+        addListener(new ListenerPlayerInstinct());
+        addListener(new ListenerPlayerHinderedMind());
+        addListener(new ListenerPlayerIncantation());
+        addListener(new ListenerPlayerInventory());
+        addListener(new ListenerPlayerResearch());
+        addListener(new ListenerConfigs());
+        addListener(new ListenerInstinctOverheat());
+        addListener(new ListenerEntityVoidfade());
+        addListener(new ListenerCrops()); // 1.10-specific
     }
     
     public void registerNetworking() {
@@ -190,7 +106,7 @@ public class CommonProxy {
     }
     
     public void preInit(FMLPreInitializationEvent event) {
-        for (ConfiguredListener listener : listeners.values()) {
+        for (HardcoreAlchemyListener listener : listeners) {
             listener.preInit(event);
         }
         
@@ -199,6 +115,11 @@ public class CommonProxy {
         Items.POTION_TYPES.register();
         Entities.ENTITIES.register();
         Studies.KNOWLEDGE_FACTS.register();
+        // asanetargoss @ 2021-10-03: Moved instinct and incantation registration from init to preInit 
+        Instincts.INSTINCTS.register();
+        Instincts.INSTINCT_NEED_FACTORIES.register();
+        Instincts.INSTINCT_EFFECTS.register();
+        Incantations.INCANTATIONS.register();
         
         if (ModState.isGuideapiLoaded) {
             HCAModpackGuide.preInit();
@@ -213,20 +134,18 @@ public class CommonProxy {
     }
     
     public void init(FMLInitializationEvent event) {
-        registerListeners(listeners.values());
-        registerCapabilities();
-        
-        for (ConfiguredListener listener : listeners.values()) {
+        for (HardcoreAlchemyListener listener : listeners) {
+            MinecraftForge.EVENT_BUS.register(listener);
+        }
+        for (HardcoreAlchemyListener listener : listeners) {
+            listener.registerCapabilities(CapabilityManager.INSTANCE, CapUtil.Manager.INSTANCE);
+        }
+        for (HardcoreAlchemyListener listener : listeners) {
             listener.init(event);
         }
         
         Items.registerRecipes();
         HcAMetamorphPack.registerAbilities();
-        // Why are these in init and not pre-init?
-        Instincts.INSTINCTS.register();
-        Instincts.INSTINCT_NEED_FACTORIES.register();
-        Instincts.INSTINCT_EFFECTS.register();
-        Incantations.INCANTATIONS.register();
         
         if (ModState.isGuideapiLoaded) {
             HCAModpackGuide.init();
@@ -241,31 +160,31 @@ public class CommonProxy {
     }
     
     public void postInit(FMLPostInitializationEvent event) {
-        for (ConfiguredListener listener : listeners.values()) {
+        for (HardcoreAlchemyListener listener : listeners) {
             listener.postInit(event);
         }
     }
     
     public void serverAboutToStart(FMLServerAboutToStartEvent event) {
-        for (ConfiguredListener listener : listeners.values()) {
+        for (HardcoreAlchemyListener listener : listeners) {
             listener.serverAboutToStart(event);
         }
     }
     
     public void serverStarting(FMLServerStartingEvent event) {
-        for (ConfiguredListener listener : listeners.values()) {
+        for (HardcoreAlchemyListener listener : listeners) {
             listener.serverStarting(event);
         }
     }
     
     public void serverStarted(FMLServerStartedEvent event) {
-        for (ConfiguredListener listener : listeners.values()) {
+        for (HardcoreAlchemyListener listener : listeners) {
             listener.serverStarted(event);
         }
     }
     
     public void serverStopping(FMLServerStoppingEvent event) {
-        for (ConfiguredListener listener : listeners.values()) {
+        for (HardcoreAlchemyListener listener : listeners) {
             listener.serverStopping(event);
         }
     }

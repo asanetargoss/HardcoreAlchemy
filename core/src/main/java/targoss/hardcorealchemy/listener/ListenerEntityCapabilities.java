@@ -53,7 +53,6 @@ import targoss.hardcorealchemy.capability.morphstate.ICapabilityMorphState;
 import targoss.hardcorealchemy.capability.research.CapabilityResearch;
 import targoss.hardcorealchemy.capability.research.ICapabilityResearch;
 import targoss.hardcorealchemy.capability.research.ProviderResearch;
-import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.network.MessageHumanity;
 import targoss.hardcorealchemy.network.MessageInactiveCapabilities;
 import targoss.hardcorealchemy.network.MessageInstinct;
@@ -70,11 +69,7 @@ import targoss.hardcorealchemy.network.PacketHandler;
  * Some capabilities are serialized and stored elsewhere, then cleared, due to the player
  * temporarily losing magic ability.
  */
-public class ListenerEntityCapabilities extends ConfiguredListener {
-    public ListenerEntityCapabilities(Configs configs) {
-        super(configs);
-    }
-
+public class ListenerEntityCapabilities extends HardcoreAlchemyListener {
     @CapabilityInject(ICapabilityEntityState.class)
     public static final Capability<ICapabilityEntityState> ENTITY_STATE_CAPABILITY = null;
     

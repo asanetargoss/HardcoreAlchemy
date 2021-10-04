@@ -18,33 +18,19 @@
 
 package targoss.hardcorealchemy;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.google.common.collect.ImmutableList;
-
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import targoss.hardcorealchemy.entity.Entities;
 import targoss.hardcorealchemy.item.Items;
-import targoss.hardcorealchemy.listener.ConfiguredListener;
 import targoss.hardcorealchemy.listener.ListenerGuiHud;
 import targoss.hardcorealchemy.listener.ListenerGuiInventory;
 import targoss.hardcorealchemy.listener.ListenerRenderView;
 
 public class ClientProxy extends CommonProxy {
-    public static final ImmutableList<Class<? extends ConfiguredListener>> LISTENER_TYPES = ImmutableList.of(
-            ListenerGuiHud.class,
-            ListenerGuiInventory.class,
-            ListenerRenderView.class
-        );
-    
-    @Override
-    public ImmutableList<Class<? extends ConfiguredListener>> getListenerTypes() {
-        List<Class<? extends ConfiguredListener>> listenerTypes = new ArrayList<Class<? extends ConfiguredListener>>();
-        listenerTypes.addAll(super.getListenerTypes());
-        listenerTypes.addAll(LISTENER_TYPES);
-        
-        return ImmutableList.copyOf(listenerTypes);
+    public ClientProxy() {
+        super();
+        addListener(new ListenerGuiHud());
+        addListener(new ListenerGuiInventory());
+        addListener(new ListenerRenderView());
     }
     
     @Override

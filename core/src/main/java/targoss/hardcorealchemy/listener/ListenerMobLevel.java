@@ -36,16 +36,11 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import targoss.hardcorealchemy.capability.combatlevel.CapabilityCombatLevel;
 import targoss.hardcorealchemy.capability.combatlevel.ICapabilityCombatLevel;
 import targoss.hardcorealchemy.capability.combatlevel.ProviderCombatLevel;
-import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.event.EventLivingAttack;
 import targoss.hardcorealchemy.util.MobLevelRange;
 import targoss.hardcorealchemy.util.MobLists;
 
-public class ListenerMobLevel extends ConfiguredListener {
-    public ListenerMobLevel(Configs configs) {
-        super(configs);
-    }
-    
+public class ListenerMobLevel extends HardcoreAlchemyListener {
     @CapabilityInject(ICapabilityCombatLevel.class)
     public static Capability<ICapabilityCombatLevel> COMBAT_LEVEL_CAPABILITY = null;
     public static final ResourceLocation COMBAT_LEVEL_RESOURCE_LOCATION = CapabilityCombatLevel.RESOURCE_LOCATION;

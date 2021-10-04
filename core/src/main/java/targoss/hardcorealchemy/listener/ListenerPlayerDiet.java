@@ -47,7 +47,6 @@ import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.CapUtil;
 import targoss.hardcorealchemy.capability.food.ICapabilityFood;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
-import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.event.EventCraftPredict;
 import targoss.hardcorealchemy.util.Chat;
 import targoss.hardcorealchemy.util.FoodLists;
@@ -56,11 +55,7 @@ import targoss.hardcorealchemy.util.MorphDiet;
 import toughasnails.api.TANCapabilities;
 import toughasnails.thirst.ThirstHandler;
 
-public class ListenerPlayerDiet extends ConfiguredListener {
-    public ListenerPlayerDiet(Configs configs) {
-        super(configs);
-    }
-    
+public class ListenerPlayerDiet extends HardcoreAlchemyListener {
     @CapabilityInject(ICapabilityHumanity.class)
     public static final Capability<ICapabilityHumanity> HUMANITY_CAPABILITY = null;
     @CapabilityInject(ICapabilityFood.class)

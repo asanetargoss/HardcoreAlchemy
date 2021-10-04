@@ -23,14 +23,10 @@ import java.util.Map;
 
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.monster.EntityZombie;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.DimensionType;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.event.entity.living.ZombieEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
-import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.listener.ListenerSmallTweaks;
 import targoss.hardcorealchemy.test.HardcoreAlchemyTests;
@@ -133,7 +129,9 @@ public class TestMobLists implements ITestSuite {
         EntityZombie zombie = (EntityZombie)EntityUtil.createEntity(EntityList.NAME_TO_CLASS.get(zombieEntityName));
         
         ZombieEvent.SummonAidEvent event = new ZombieEvent.SummonAidEvent(zombie, zombie.world, 0, 0, 0, null, zombie.getEntityAttribute(EntityZombie.SPAWN_REINFORCEMENTS_CHANCE).getAttributeValue());
-        (new ListenerSmallTweaks(HardcoreAlchemyTests.DEFAULT_CONFIGS)).onReinforceObsidianSheepman(event);
+        ListenerSmallTweaks listener = new ListenerSmallTweaks();
+        listener.setConfigs(HardcoreAlchemyTests.DEFAULT_CONFIGS);
+        listener.onReinforceObsidianSheepman(event);
         
         return event.getResult() != Result.DENY;
     }
