@@ -16,18 +16,22 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.listener;
+package targoss.hardcorealchemy.tweaks.listener;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import targoss.hardcorealchemy.capability.CapUtil;
 import targoss.hardcorealchemy.capability.serverdata.CapabilityServerData;
 import targoss.hardcorealchemy.capability.serverdata.ICapabilityServerData;
 import targoss.hardcorealchemy.capability.serverdata.ProviderServerData;
+import targoss.hardcorealchemy.capability.serverdata.StorageServerData;
+import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
 
 /**
  * Use a capability stored in the overworld to check if
@@ -36,6 +40,11 @@ import targoss.hardcorealchemy.capability.serverdata.ProviderServerData;
  * "default" difficulty)
  */
 public class ListenerWorldDifficulty extends HardcoreAlchemyListener {
+    @Override
+    public void registerCapabilities(CapabilityManager manager, CapUtil.Manager virtualManager) {
+        manager.register(ICapabilityServerData.class, new StorageServerData(), CapabilityServerData.class);
+    }
+    
     @Override
     public void serverStarting(FMLServerStartingEvent event) {
         MinecraftServer server = event.getServer();

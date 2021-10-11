@@ -28,7 +28,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.GuiIngameForge;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -46,7 +45,6 @@ import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.capability.instinct.ICapabilityInstinct;
 import targoss.hardcorealchemy.coremod.CoremodHook;
-import targoss.hardcorealchemy.item.Items;
 import targoss.hardcorealchemy.util.MorphDiet;
 import targoss.hardcorealchemy.util.MorphState;
 import targoss.hardcorealchemy.util.RandomWithPublicSeed;
@@ -397,27 +395,5 @@ public class ListenerGuiHud extends HardcoreAlchemyListener {
             GuiIngameForge.right_height += 10;
             mc.getTextureManager().bindTexture(GuiIngameForge.ICONS);
         }
-    }
-    
-    @SubscribeEvent
-    public void onRenderVoidfadePortalEffect(RenderGameOverlayEvent.Pre event) {
-        if (event.getType() != ElementType.PORTAL) {
-            return;
-        }
-        
-        EntityPlayerSP player = mc.player;
-        PotionEffect effect = player.getActivePotionEffect(Items.POTION_VOIDFADE);
-        if (effect == null) {
-            return;
-        }
-
-        float effectiveTimeInPortal = 0.75F;
-        float playerTimeInPortal = player.timeInPortal + ((player.prevTimeInPortal - player.timeInPortal) * event.getPartialTicks());
-        if (playerTimeInPortal > effectiveTimeInPortal) {
-            // If the portal produces the greater visual effect, let the portal do the rendering
-            return;
-        }
-        event.setCanceled(true);
-        mc.ingameGUI.renderPortal(effectiveTimeInPortal, event.getResolution());
     }
 }

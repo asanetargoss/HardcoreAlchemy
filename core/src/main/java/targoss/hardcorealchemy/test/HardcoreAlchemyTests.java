@@ -25,7 +25,6 @@ import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.test.api.ITestSuite;
 import targoss.hardcorealchemy.test.api.TestSystem;
-import targoss.hardcorealchemy.test.suite.TestFoodRot;
 import targoss.hardcorealchemy.test.suite.TestHumanity;
 import targoss.hardcorealchemy.test.suite.TestMobLists;
 import targoss.hardcorealchemy.test.suite.TestTimeFuzz;
@@ -47,17 +46,18 @@ public class HardcoreAlchemyTests extends TestSystem {
         return "Hardcore Alchemy Tests";
     }
     
+    public static List<Class<? extends ITestSuite>> TEST_SUITES = new ArrayList<>();
+    
+    static {
+        TEST_SUITES.add(TestWorldReference.class);
+        TEST_SUITES.add(TestHumanity.class);
+        TEST_SUITES.add(TestMobLists.class);
+        TEST_SUITES.add(TestTimeFuzz.class);
+    }
+    
     @Override
     public List<Class<? extends ITestSuite>> getTestSuites() {
-        List<Class<? extends ITestSuite>> testSuites = new ArrayList<>();
-        
-        testSuites.add(TestWorldReference.class);
-        testSuites.add(TestFoodRot.class);
-        testSuites.add(TestHumanity.class);
-        testSuites.add(TestMobLists.class);
-        testSuites.add(TestTimeFuzz.class);
-        
-        return testSuites;
+        return TEST_SUITES;
     }
     
     public static final Configs DEFAULT_CONFIGS = new Configs();

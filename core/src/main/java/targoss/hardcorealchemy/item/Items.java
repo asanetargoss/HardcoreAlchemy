@@ -20,16 +20,13 @@ package targoss.hardcorealchemy.item;
 
 import static net.minecraft.init.Items.FERMENTED_SPIDER_EYE;
 import static net.minecraft.init.Items.REDSTONE;
-import static targoss.hardcorealchemy.item.HcAPotion.BAD_EFFECT;
 import static targoss.hardcorealchemy.item.HcAPotion.GOOD_EFFECT;
 
 import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
@@ -37,15 +34,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionType;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
 import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.IForgeRegistry;
 import targoss.hardcorealchemy.HardcoreAlchemy;
-import targoss.hardcorealchemy.capability.dimensionhistory.ICapabilityDimensionHistory;
 import targoss.hardcorealchemy.coremod.HardcoreAlchemyPreInit;
-import targoss.hardcorealchemy.listener.ListenerEntityVoidfade;
-import targoss.hardcorealchemy.listener.ListenerEntityVoidfade.DimensionHistoryChangedFlag;
 import targoss.hardcorealchemy.registrar.Registrar;
 import targoss.hardcorealchemy.registrar.RegistrarItem;
 import targoss.hardcorealchemy.registrar.RegistrarPotion;
@@ -63,20 +56,15 @@ public class Items {
     public static final Item DROWNED_ENDER_PEARL = ITEMS.add("drowned_ender_pearl", new Item());
     public static final Item ASH = ITEMS.add("ash", new Item());
     
-    public static final Item DIMENSIONAL_FLUX_CRYSTAL = ITEMS.add("dimensional_flux_crystal", new Item());
-    
     public static final Potion POTION_ALLOW_MAGIC = POTIONS.add("allow_magic", new HcAPotion(GOOD_EFFECT, new Color(113, 80, 182), 0, true));
     public static final Potion POTION_AIR_BREATHING = POTIONS.add("air_breathing", new PotionAirBreathing(GOOD_EFFECT, new Color(205, 205, 205), 1, false));
     public static final Potion POTION_WATER_RESISTANCE = POTIONS.add("water_resistance", new HcAPotion(GOOD_EFFECT, new Color(47, 107, 58), 2, false));
-    public static final Potion POTION_VOIDFADE = POTIONS.add("voidfade", new HcAPotion(BAD_EFFECT, new Color(94, 10, 199), 3, false));
 
     public static final PotionType POTION_TYPE_ALLOW_MAGIC = POTION_TYPES.add("allow_magic", RegistrarPotionType.potionTypeFromPotion(POTION_ALLOW_MAGIC, 5*60*20));
     public static final PotionType POTION_TYPE_AIR_BREATHING = POTION_TYPES.add("air_breathing", RegistrarPotionType.potionTypeFromPotion(POTION_AIR_BREATHING, 3*60*20));
     public static final PotionType POTION_TYPE_AIR_BREATHING_EXTENDED = POTION_TYPES.add("air_breathing_extended", RegistrarPotionType.potionTypeFromPotion(POTION_AIR_BREATHING, 8*60*20));
     public static final PotionType POTION_TYPE_WATER_RESISTANCE = POTION_TYPES.add("water_resistance", RegistrarPotionType.potionTypeFromPotion(POTION_WATER_RESISTANCE, 3*60*20));
     public static final PotionType POTION_TYPE_WATER_RESISTANCE_EXTENDED = POTION_TYPES.add("water_resistance_extended", RegistrarPotionType.potionTypeFromPotion(POTION_WATER_RESISTANCE, 8*60*20));
-    public static final PotionType POTION_TYPE_VOIDFADE = POTION_TYPES.add("voidfade", RegistrarPotionType.potionTypeFromPotion(POTION_VOIDFADE, 90*20));
-    public static final PotionType POTION_TYPE_VOIDFADE_EXTENDED = POTION_TYPES.add("voidfade_extended", RegistrarPotionType.potionTypeFromPotion(POTION_VOIDFADE, 6*60*20));
     
     private static Item potionItem;
     private static ItemStack getPotionItemStack(PotionType potionType) {
@@ -95,7 +83,7 @@ public class Items {
      * Because BrewingRecipeRegistry.addRecipe isn't NBT sensitive...
      * ;_;
      */
-    private static void addPotionRecipe(PotionType inputPotion, ItemStack inputCatalystStack, PotionType outputPotion, boolean strict) {
+    public static void addPotionRecipe(PotionType inputPotion, ItemStack inputCatalystStack, PotionType outputPotion, boolean strict) {
         ItemStack inputPotionStack = getPotionItemStack(inputPotion);
         ItemStack outputPotionStack = getPotionItemStack(outputPotion);
         BrewingRecipeRegistry.addRecipe(new HcABrewingRecipe(inputPotionStack, inputCatalystStack, outputPotionStack, strict));
@@ -175,40 +163,5 @@ public class Items {
                 POTION_TYPE_WATER_RESISTANCE_EXTENDED,
                 false
                 );
-        addPotionRecipe(
-                awkwardPotion,
-                new ItemStack(DIMENSIONAL_FLUX_CRYSTAL),
-                POTION_TYPE_VOIDFADE,
-                false
-                );
-        addPotionRecipe(
-                POTION_TYPE_VOIDFADE,
-                new ItemStack(REDSTONE),
-                POTION_TYPE_VOIDFADE_EXTENDED,
-                false
-                );
-    }
-    
-    public static class ClientSide {
-        public static final ResourceLocation PROPERTY_NATIVE_DIMENSION = new ResourceLocation(HardcoreAlchemy.MOD_ID, "native_dimension");
-        
-        public static void registerSpecialModels() {
-            DIMENSIONAL_FLUX_CRYSTAL.addPropertyOverride(PROPERTY_NATIVE_DIMENSION, new IItemPropertyGetter() {
-                @Override
-                public float apply(ItemStack itemStack, World world, EntityLivingBase entity) {
-                    int dimension;
-                    if (world == null || world.provider == null) {
-                        dimension = -1; // Nether
-                    } else {
-                        dimension = world.provider.getDimension();
-                    }
-                    ICapabilityDimensionHistory history = ListenerEntityVoidfade.getOrInitDimensionHistory(itemStack, dimension, DimensionHistoryChangedFlag.IGNORE_CHANGES);
-                    if (history == null) {
-                        return dimension;
-                    }
-                    return (float)history.getDimensionHistory().get(0);
-                }
-            });
-        }
     }
 }

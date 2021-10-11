@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.event;
+package targoss.hardcorealchemy.tweaks.event;
 
 import net.minecraft.block.SoundType;
 import net.minecraft.entity.player.EntityPlayer;

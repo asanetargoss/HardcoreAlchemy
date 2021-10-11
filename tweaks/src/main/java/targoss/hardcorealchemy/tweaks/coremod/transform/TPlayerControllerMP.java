@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.coremod.transform;
+package targoss.hardcorealchemy.tweaks.coremod.transform;
 
 import java.util.ListIterator;
 
@@ -67,7 +67,7 @@ public class TPlayerControllerMP extends MethodPatcher {
                         false));
                 patch.add(new VarInsnNode(Opcodes.ALOAD, 1)); // BlockPos
                 patch.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
-                        "targoss/hardcorealchemy/event/EventPlayerDamageBlockSound",
+                        "targoss/hardcorealchemy/tweaks/event/EventPlayerDamageBlockSound",
                         "onPlayerDamageBlockSound",
                         "(Lnet/minecraft/block/SoundType;" +
                                 "Lnet/minecraft/entity/player/EntityPlayer;" +

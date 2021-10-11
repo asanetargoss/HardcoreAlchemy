@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.coremod.transform;
+package targoss.hardcorealchemy.tweaks.coremod.transform;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.InsnList;
@@ -49,7 +49,7 @@ public class TInventoryPlayer extends MethodPatcher {
             patch.add(new VarInsnNode(Opcodes.ILOAD, 1)); // int slotIndex
             patch.add(new VarInsnNode(Opcodes.ALOAD, 2)); // @Nullable ItemStack itemStack
             patch.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
-                    "targoss/hardcorealchemy/event/EventPlayerInventorySlotSet",
+                    "targoss/hardcorealchemy/tweaks/event/EventPlayerInventorySlotSet",
                     "onPlayerInventorySlotSet",
                     "(Lnet/minecraft/entity/player/InventoryPlayer;ILnet/minecraft/item/ItemStack;)Lnet/minecraft/item/ItemStack;",
                     false));

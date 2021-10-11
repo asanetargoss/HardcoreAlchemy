@@ -18,12 +18,14 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.listener;
+package targoss.hardcorealchemy.tweaks.listener;
 
 import java.util.List;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -41,6 +43,8 @@ import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
@@ -66,9 +70,10 @@ import targoss.hardcorealchemy.capability.entitystate.ICapabilityEntityState;
 import targoss.hardcorealchemy.capability.entitystate.ProviderEntityState;
 import targoss.hardcorealchemy.capability.misc.ICapabilityMisc;
 import targoss.hardcorealchemy.capability.misc.ProviderMisc;
-import targoss.hardcorealchemy.event.EventPlayerDamageBlockSound;
-import targoss.hardcorealchemy.event.EventPlayerInventorySlotSet;
-import targoss.hardcorealchemy.item.Items;
+import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
+import targoss.hardcorealchemy.tweaks.event.EventPlayerDamageBlockSound;
+import targoss.hardcorealchemy.tweaks.event.EventPlayerInventorySlotSet;
+import targoss.hardcorealchemy.tweaks.item.Items;
 import targoss.hardcorealchemy.util.InventoryUtil;
 import targoss.hardcorealchemy.util.MorphState;
 
@@ -409,5 +414,31 @@ public class ListenerEntityVoidfade extends HardcoreAlchemyListener {
             return;
         }
         event.itemStack = itemStack;
+    }
+    
+    public static class ClientSide extends HardcoreAlchemyListener {
+        private static final Minecraft mc = Minecraft.getMinecraft();
+        
+        @SubscribeEvent
+        public void onRenderVoidfadePortalEffect(RenderGameOverlayEvent.Pre event) {
+            if (event.getType() != ElementType.PORTAL) {
+                return;
+            }
+            
+            EntityPlayerSP player = mc.player;
+            PotionEffect effect = player.getActivePotionEffect(Items.POTION_VOIDFADE);
+            if (effect == null) {
+                return;
+            }
+
+            float effectiveTimeInPortal = 0.75F;
+            float playerTimeInPortal = player.timeInPortal + ((player.prevTimeInPortal - player.timeInPortal) * event.getPartialTicks());
+            if (playerTimeInPortal > effectiveTimeInPortal) {
+                // If the portal produces the greater visual effect, let the portal do the rendering
+                return;
+            }
+            event.setCanceled(true);
+            mc.ingameGUI.renderPortal(effectiveTimeInPortal, event.getResolution());
+        }
     }
 }

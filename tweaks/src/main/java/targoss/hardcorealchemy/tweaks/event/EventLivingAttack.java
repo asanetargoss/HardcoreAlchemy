@@ -16,7 +16,7 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.event;
+package targoss.hardcorealchemy.tweaks.event;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.DamageSource;

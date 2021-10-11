@@ -16,7 +16,7 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.listener;
+package targoss.hardcorealchemy.tweaks.listener;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -36,8 +36,9 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import targoss.hardcorealchemy.capability.combatlevel.CapabilityCombatLevel;
 import targoss.hardcorealchemy.capability.combatlevel.ICapabilityCombatLevel;
 import targoss.hardcorealchemy.capability.combatlevel.ProviderCombatLevel;
-import targoss.hardcorealchemy.event.EventLivingAttack;
-import targoss.hardcorealchemy.util.MobLevelRange;
+import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
+import targoss.hardcorealchemy.tweaks.event.EventLivingAttack;
+import targoss.hardcorealchemy.tweaks.util.MobLevelRange;
 import targoss.hardcorealchemy.util.MobLists;
 
 public class ListenerMobLevel extends HardcoreAlchemyListener {

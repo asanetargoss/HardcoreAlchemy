@@ -16,12 +16,11 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.waila;
+package targoss.hardcorealchemy.tweaks.waila;
 
 import mcp.mobius.waila.api.IWailaPlugin;
 import mcp.mobius.waila.api.IWailaRegistrar;
 import mcp.mobius.waila.api.WailaPlugin;
-import net.minecraft.entity.EntityLiving;
 
 @WailaPlugin
 public class WailaPluginCombatLevel implements IWailaPlugin {

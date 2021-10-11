@@ -16,7 +16,7 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.waila;
+package targoss.hardcorealchemy.tweaks.waila;
 
 import java.util.List;
 
@@ -25,15 +25,10 @@ import mcp.mobius.waila.api.IWailaEntityAccessor;
 import mcp.mobius.waila.api.IWailaEntityProvider;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.capability.combatlevel.ICapabilityCombatLevel;
 

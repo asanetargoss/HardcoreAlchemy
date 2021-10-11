@@ -1,0 +1,16 @@
+[
+{
+  "modid": "hardcorealchemy-tweaks",
+  "name": "Hardcore Alchemy Tweaks",
+  "description": "Cinnamon-flavored magic and survival",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["asanetargoss"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": ["hardcorealchemy"]
+}
+]

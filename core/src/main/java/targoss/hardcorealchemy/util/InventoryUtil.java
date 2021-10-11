@@ -365,6 +365,19 @@ public class InventoryUtil {
         }
         return changed;
     }
+    
+    @Optional.Method(modid=ModState.IRON_BACKPACKS_ID)
+    protected static boolean checkIronBackpack(IItemHandler inventory) {
+        if (inventory.getClass() != InvWrapper.class) {
+            return false;
+        }
+        IInventory iInventory = ((InvWrapper)inventory).getInv();
+        return iInventory instanceof InventoryBackpack;
+    }
+    
+    public static boolean isIronBackpack(IItemHandler inventory) {
+        return ModState.isIronBackpacksLoaded && checkIronBackpack(inventory);
+    }
 
     @Optional.Method(modid = ModState.IRON_BACKPACKS_ID)
     public static void saveIronBackpackNbt(IItemHandler inventory, ItemStack itemStack) {
@@ -386,6 +399,18 @@ public class InventoryUtil {
                 itemNbt.setByte("Slot", (byte)i);
                 item.writeToNBT(itemNbt);
                 inventoryNbt.appendTag(itemNbt);
+            }
+        }
+    }
+
+    // TODO: Use this in the generalized for each inventory code
+    /** Check if this inventory is a backpack item from IronBackpacks, and if so update the item nbt */
+    public static void ifIronBackpackThenUpdateNBT(IItemHandler inventory) {
+        if (inventory.getClass() == InvWrapper.class) {
+            IInventory iInventory = ((InvWrapper)inventory).getInv();
+            if (ModState.isIronBackpacksLoaded && iInventory instanceof InventoryBackpack) {
+                ItemStack backpackStack = ((InventoryBackpack)iInventory).getBackpackStack();
+                InventoryUtil.saveIronBackpackNbt(inventory, backpackStack);
             }
         }
     }

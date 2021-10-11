@@ -28,14 +28,11 @@ import com.pam.harvestcraft.item.PresserRecipes;
 import ca.wescook.nutrition.capabilities.CapInterface;
 import ca.wescook.nutrition.capabilities.CapProvider;
 import ca.wescook.nutrition.nutrients.Nutrient;
-import net.minecraft.block.BlockBed;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Enchantments;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.pathfinding.PathNavigateSwimmer;
@@ -45,7 +42,6 @@ import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.ZombieEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
-import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
@@ -57,7 +53,6 @@ import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.misc.ICapabilityMisc;
 import targoss.hardcorealchemy.item.Items;
 import targoss.hardcorealchemy.research.Studies;
-import targoss.hardcorealchemy.util.InventoryUtil;
 import targoss.hardcorealchemy.util.MiscVanilla;
 import toughasnails.api.TANCapabilities;
 import toughasnails.api.TANPotions;
@@ -105,34 +100,6 @@ public class ListenerSmallTweaks extends HardcoreAlchemyListener {
         }
         if (ModState.isHarvestCraftLoaded) {
             fixHarvestcraftWoodPaperRecipes();
-        }
-    }
-
-    @SubscribeEvent
-    public void onHarvestBed(BlockEvent.HarvestDropsEvent event) {
-        if (!(event.getState().getBlock() instanceof BlockBed)) {
-            return;
-        }
-        
-        EntityPlayer player = event.getHarvester();
-        if (player == null) {
-            event.setDropChance(0.0F);
-            return;
-        }
-        
-        ItemStack heldStack = player.getHeldItemMainhand();
-        if (InventoryUtil.isEmptyItemStack(heldStack)) {
-            event.setDropChance(0.0F);
-            return;
-        }
-        if (EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, heldStack) <= 0) {
-            event.setDropChance(0.0F);
-            return;
-        }
-        Item heldItem = heldStack.getItem();
-        if (!heldItem.getToolClasses(heldStack).contains("axe")) {
-            event.setDropChance(0.0F);
-            return;
         }
     }
     

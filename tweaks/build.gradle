@@ -15,10 +15,10 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 
 
 // Project settings
-version = "0.6.1"
-group= "targoss.hardcorealchemy"
-archivesBaseName = "hardcorealchemy-core"
-String coremodPath="targoss.hardcorealchemy.coremod.HardcoreAlchemyCoremod"
+version = "0.1.0"
+group= "targoss.hardcorealchemy.tweaks"
+archivesBaseName = "hardcorealchemy-tweaks"
+String coremodPath="targoss.hardcorealchemy.tweaks.coremod.HardcoreAlchemyTweaksCoremod"
 
 sourceCompatibility = targetCompatibility = "1.8" // Need this here so Eclipse task generates correctly.
 compileJava {
@@ -31,17 +31,16 @@ minecraft {
     
     mappings = "stable_29"
     
-    replace "@HARDCORE_ALCHEMY_VERSION@", project.version
-    replaceIn "HardcoreAlchemy.java"
+    replace "@HARDCORE_ALCHEMY_TWEAKS_VERSION@", project.version
+    replaceIn "HardcoreAlchemyTweaks.java"
 
-    // These arguments let us load the coremod properly when testing in a dev environment
-    clientJvmArgs = ["-Dfml.coreMods.load=" + coremodPath]
-    serverJvmArgs = ["-Dfml.coreMods.load=" + coremodPath]
+    clientJvmArgs += ["-Dfml.coreMods.load=targoss.hardcorealchemy.coremod.HardcoreAlchemyCoremod,${coremodPath}"]
+    serverJvmArgs += ["-Dfml.coreMods.load=targoss.hardcorealchemy.coremod.HardcoreAlchemyCoremod,${coremodPath}"]
 }
 
 dependencies {
-    // Right now, all mod dependencies are handled by adding the required mods to `libs/`. See the README for more info.
-    compileOnly fileTree(dir: "libs", include: "**/*.jar")
+    compileOnly project(":core")
+    compileOnly fileTree(dir: "libs", include: "*.jar")
 }
 
 processResources
@@ -63,6 +62,14 @@ processResources
         exclude 'mcmod.info'
     }
 }
+
+// Hack to inherit access transformers from core, so the decompiled Minecraft jar that this subproject depends on is effectively the same as the one in core.
+task copyAccessTransformerFromCore(type: Copy) {
+    from "../core/src/main/resources/META-INF/hardcorealchemy_at.cfg"
+    into "src/main/resources/META-INF"
+}
+setupDecompWorkspace.dependsOn copyAccessTransformerFromCore
+processResources.dependsOn copyAccessTransformerFromCore
 
 jar {
     manifest {

@@ -16,7 +16,7 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.coremod.transform;
+package targoss.hardcorealchemy.tweaks.coremod.transform;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.InsnList;
@@ -49,7 +49,7 @@ public class TEntityLivingBase extends MethodPatcher {
             eventHook.add(new VarInsnNode(Opcodes.ALOAD, 1));
             eventHook.add(new VarInsnNode(Opcodes.FLOAD, 2));
             eventHook.add(new MethodInsnNode(
-                    Opcodes.INVOKESTATIC, "targoss/hardcorealchemy/event/EventLivingAttack",
+                    Opcodes.INVOKESTATIC, "targoss/hardcorealchemy/tweaks/event/EventLivingAttack",
                     "onLivingAttack", "(Lnet/minecraft/entity/EntityLivingBase;Lnet/minecraft/util/DamageSource;F)F", false
                     ));
             eventHook.add(new VarInsnNode(Opcodes.FSTORE, 2));

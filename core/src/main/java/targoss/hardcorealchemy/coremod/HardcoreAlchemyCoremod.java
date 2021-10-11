@@ -41,14 +41,12 @@ import targoss.hardcorealchemy.coremod.transform.TDataVillage;
 import targoss.hardcorealchemy.coremod.transform.TDecayingCrops;
 import targoss.hardcorealchemy.coremod.transform.TEntity;
 import targoss.hardcorealchemy.coremod.transform.TEntityExtension;
-import targoss.hardcorealchemy.coremod.transform.TEntityLivingBase;
 import targoss.hardcorealchemy.coremod.transform.TEntityPlayerSP;
 import targoss.hardcorealchemy.coremod.transform.TGuiContainer;
 import targoss.hardcorealchemy.coremod.transform.THibernatingCrops;
-import targoss.hardcorealchemy.coremod.transform.TInventoryPlayer;
 import targoss.hardcorealchemy.coremod.transform.TItemRenderer;
+import targoss.hardcorealchemy.coremod.transform.TMinecraftServer;
 import targoss.hardcorealchemy.coremod.transform.TObjectProximityModifier;
-import targoss.hardcorealchemy.coremod.transform.TPlayerControllerMP;
 import targoss.hardcorealchemy.coremod.transform.TProjectEKeyHandler;
 import targoss.hardcorealchemy.coremod.transform.TRenderEntityItem;
 import targoss.hardcorealchemy.coremod.transform.TRenderItem;
@@ -57,7 +55,6 @@ import targoss.hardcorealchemy.coremod.transform.TSlot;
 import targoss.hardcorealchemy.coremod.transform.TThaumcraftPlayerEvents;
 import targoss.hardcorealchemy.coremod.transform.TThirstOverlayHandler;
 import targoss.hardcorealchemy.coremod.transform.TWorld;
-import targoss.hardcorealchemy.coremod.transform.TMinecraftServer;
 
 @IFMLLoadingPlugin.Name(value = "Hardcore Alchemy Coremod")
 @IFMLLoadingPlugin.MCVersion(value = "1.10.2")
@@ -79,7 +76,6 @@ public class HardcoreAlchemyCoremod implements IFMLLoadingPlugin {
 	public String[] getASMTransformerClass() {
 	    coremodInitialized = true;
 		return new String[]{
-				TEntityLivingBase.class.getName(),
 				TSlot.class.getName(),
 				TProjectEKeyHandler.class.getName(),
 				TCraftingManager.class.getName(),
@@ -99,11 +95,9 @@ public class HardcoreAlchemyCoremod implements IFMLLoadingPlugin {
 				TEntityPlayerSP.class.getName(),
 				TMinecraftServer.class.getName(),
 				TWorld.class.getName(),
-				TPlayerControllerMP.class.getName(),
                 TEntityExtension.class.getName(),
                 TBlock.class.getName(),
-                TBlockReed.class.getName(),
-                TInventoryPlayer.class.getName()
+                TBlockReed.class.getName()
 		};
 	}
 

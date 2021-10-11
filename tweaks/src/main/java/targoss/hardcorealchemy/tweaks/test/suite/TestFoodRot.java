@@ -16,7 +16,7 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.test.suite;
+package targoss.hardcorealchemy.tweaks.test.suite;
 
 import static targoss.hardcorealchemy.test.HardcoreAlchemyTests.DEFAULT_CONFIGS;
 
@@ -36,11 +36,11 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import targoss.hardcorealchemy.ModState;
-import targoss.hardcorealchemy.listener.ListenerInventoryFoodRot;
 import targoss.hardcorealchemy.test.api.ITestList;
 import targoss.hardcorealchemy.test.api.ITestSuite;
 import targoss.hardcorealchemy.test.api.TestList;
 import targoss.hardcorealchemy.test.api.UniqueFakePlayer;
+import targoss.hardcorealchemy.tweaks.listener.ListenerInventoryFoodRot;
 import targoss.hardcorealchemy.util.InventoryUtil;
 
 public class TestFoodRot implements ITestSuite {

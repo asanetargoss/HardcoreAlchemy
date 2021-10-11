@@ -46,8 +46,6 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import targoss.hardcorealchemy.ModState;
-import targoss.hardcorealchemy.capability.combatlevel.CapabilityCombatLevel;
-import targoss.hardcorealchemy.capability.combatlevel.ICapabilityCombatLevel;
 import targoss.hardcorealchemy.capability.entitystate.CapabilityEntityState;
 import targoss.hardcorealchemy.capability.entitystate.ICapabilityEntityState;
 import targoss.hardcorealchemy.capability.entitystate.ProviderEntityState;
@@ -60,10 +58,6 @@ import targoss.hardcorealchemy.entity.ai.AIUntamedAttackMobOrMorph;
 import targoss.hardcorealchemy.util.MobLists;
 
 public class ListenerMobAI extends HardcoreAlchemyListener {
-    @CapabilityInject(ICapabilityCombatLevel.class)
-    public static Capability<ICapabilityCombatLevel> COMBAT_LEVEL_CAPABILITY = null;
-    public static final ResourceLocation COMBAT_LEVEL_RESOURCE_LOCATION = CapabilityCombatLevel.RESOURCE_LOCATION;
-
     @CapabilityInject(ICapabilityEntityState.class)
     public static Capability<ICapabilityEntityState> ENTITY_STATE_CAPABILITY = null;
     public static final ResourceLocation ENTITY_STATE_RESOURCE_LOCATION = CapabilityEntityState.RESOURCE_LOCATION;

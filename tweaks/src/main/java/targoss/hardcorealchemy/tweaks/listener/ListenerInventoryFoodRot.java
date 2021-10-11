@@ -16,14 +16,12 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.listener;
+package targoss.hardcorealchemy.tweaks.listener;
 
 import java.util.Iterator;
 import java.util.Random;
 
-import gr8pefish.ironbackpacks.container.backpack.InventoryBackpack;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -36,8 +34,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.wrapper.InvWrapper;
-import targoss.hardcorealchemy.ModState;
+import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
 import targoss.hardcorealchemy.util.InventoryUtil;
 
 public class ListenerInventoryFoodRot extends HardcoreAlchemyListener {
@@ -123,6 +120,7 @@ public class ListenerInventoryFoodRot extends HardcoreAlchemyListener {
         return tickInventory(inventory, decayRate, 0);
     }
     
+    // TODO: Use the generalized for each inventory code, now that we know it works
     /**
      * returns false if no inventory was checked with the given capabilityProvider
      */
@@ -167,14 +165,7 @@ public class ListenerInventoryFoodRot extends HardcoreAlchemyListener {
                 }
             }
         }
-        // Check if this inventory is a backpack item from IronBackpacks, and if so update the item nbt
-        if (inventory.getClass() == InvWrapper.class) {
-            IInventory iInventory = ((InvWrapper)inventory).getInv();
-            if (ModState.isIronBackpacksLoaded && iInventory instanceof InventoryBackpack) {
-                ItemStack backpackStack = ((InventoryBackpack)iInventory).getBackpackStack();
-                InventoryUtil.saveIronBackpackNbt(inventory, backpackStack);
-            }
-        }
+        InventoryUtil.ifIronBackpackThenUpdateNBT(inventory);
         
         return true;
     }

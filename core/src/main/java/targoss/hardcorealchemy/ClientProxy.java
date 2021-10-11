@@ -37,6 +37,5 @@ public class ClientProxy extends CommonProxy {
     public void preInit(FMLPreInitializationEvent event) {
         super.preInit(event);
         Entities.ClientSide.ENTITIES.register();
-        Items.ClientSide.registerSpecialModels();
     }
 }

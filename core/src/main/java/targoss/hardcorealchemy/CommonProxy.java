@@ -37,14 +37,12 @@ import targoss.hardcorealchemy.incantation.Incantations;
 import targoss.hardcorealchemy.instinct.Instincts;
 import targoss.hardcorealchemy.item.Items;
 import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
+import targoss.hardcorealchemy.listener.ListenerCapabilities;
 import targoss.hardcorealchemy.listener.ListenerConfigs;
 import targoss.hardcorealchemy.listener.ListenerCrops;
 import targoss.hardcorealchemy.listener.ListenerEntityCapabilities;
-import targoss.hardcorealchemy.listener.ListenerEntityVoidfade;
 import targoss.hardcorealchemy.listener.ListenerInstinctOverheat;
-import targoss.hardcorealchemy.listener.ListenerInventoryFoodRot;
 import targoss.hardcorealchemy.listener.ListenerMobAI;
-import targoss.hardcorealchemy.listener.ListenerMobLevel;
 import targoss.hardcorealchemy.listener.ListenerPlayerDiet;
 import targoss.hardcorealchemy.listener.ListenerPlayerHinderedMind;
 import targoss.hardcorealchemy.listener.ListenerPlayerHumanity;
@@ -57,7 +55,6 @@ import targoss.hardcorealchemy.listener.ListenerPlayerMorphState;
 import targoss.hardcorealchemy.listener.ListenerPlayerMorphs;
 import targoss.hardcorealchemy.listener.ListenerPlayerResearch;
 import targoss.hardcorealchemy.listener.ListenerSmallTweaks;
-import targoss.hardcorealchemy.listener.ListenerWorldDifficulty;
 import targoss.hardcorealchemy.metamorph.HcAMetamorphPack;
 import targoss.hardcorealchemy.modpack.guide.AlchemicAshGuide;
 import targoss.hardcorealchemy.modpack.guide.HCAModpackGuide;
@@ -83,11 +80,8 @@ public class CommonProxy {
         addListener(new ListenerPlayerHumanity());
         addListener(new ListenerPlayerMagic());
         addListener(new ListenerPlayerDiet());
-        addListener(new ListenerMobLevel());
         addListener(new ListenerMobAI());
         addListener(new ListenerSmallTweaks());
-        addListener(new ListenerInventoryFoodRot());
-        addListener(new ListenerWorldDifficulty());
         addListener(new ListenerPlayerMagicState());
         addListener(new ListenerPlayerMorphState());
         addListener(new ListenerPlayerInstinct());
@@ -97,7 +91,6 @@ public class CommonProxy {
         addListener(new ListenerPlayerResearch());
         addListener(new ListenerConfigs());
         addListener(new ListenerInstinctOverheat());
-        addListener(new ListenerEntityVoidfade());
         addListener(new ListenerCrops()); // 1.10-specific
     }
     

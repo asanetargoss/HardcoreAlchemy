@@ -16,9 +16,7 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.util;
-
-import static targoss.hardcorealchemy.HardcoreAlchemy.LOGGER;
+package targoss.hardcorealchemy.tweaks.util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
