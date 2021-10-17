@@ -43,9 +43,11 @@ This branch targets the 0.4.1+ version of the modpack. Download the 0.4.1 zip fi
 
 http://www.mediafire.com/folder/grwn2vsjr2lce/Hardcore_Alchemy_Libs
 
-The SHA-256 checksum of the 0.4.1 zip is: 6fb01f5764e9943085d0271e38c790795f9741b201e378802bdc575ea39cd7c4
+In addition, you may also want to take the latest available config zip from the same folder, which will be added to `run/config/`. This will make some aspects of development easier, such as not losing your spawnpoint when testing deaths.
 
-Please note: the following mods included in the HcA_libs zip file above are custom forks:
+The SHA-256 checksum of the 0.4.1 libs zip is: 6fb01f5764e9943085d0271e38c790795f9741b201e378802bdc575ea39cd7c4
+
+Please note: The following mods included in the HcA_libs zip file above are custom forks:
 * Nutrition: https://github.com/asanetargoss/Nutrition
 * Changeling: https://github.com/asanetargoss/Changeling
 * Dissolution ([permission](https://i.imgur.com/b7sN6lL.png))
@@ -53,28 +55,34 @@ Please note: the following mods included in the HcA_libs zip file above are cust
 * Guide-API (Custom build for development use only. Do not distribute.)
 * AppleCore: https://github.com/asanetargoss/AppleCore
 
-In addition, you may also want to take the latest available config zip from the same folder, which will be added to `run/config/`. This will make some aspects of development easier, such as not losing your spawnpoint when testing deaths.
+### Overview of Dependencies
+
+* All projects depend on Minecraft Forge
+* `core/libs` - Contains common third-party mod dependencies, such as Hwyla. Actually, it currently contains all the third-party mod dependencies, but this is subject to change.
+    * `core/` - This is a mod project which contains shared code used by the other projects. Currently, this must always be set up in order to test/compile the other mods. It also contains most of the features. Both of these are subject to change.
+        * `tweaks/` - This is a mod project containing magic and survival tweaks, aiming for a minimal number of dependencies.
 
 ### Workspace setup
 
-* Create a folder and clone this repository in a subfolder
-* Navigate into the subfolder of the cloned repository. Create the `libs/` folder and optionally the `run/config/` folder if they do not exist
-    * In the `libs/` folder, copy the mod dependencies you have downloaded from the Dependencies step
-    * Optionally, into the `run/config` folder, also copy the configs you have downloaded
-* Run `./gradlew core:setupDecompWorkspace core:eclipse`
-    * `core:setupDecompWorkspace` sets up dependencies for Minecraft, Forge, etc and updates access transformers
-    * `core:eclipse` makes everything available for the Eclipse IDE and should be removed/replaced if using IntelliJ Idea
-* If using Eclipse and you want to make changes to the code, you can use the top folder (or even higher folder) as a workspace and import the subfolder as a project
+* Clone this repository into a folder. If you are using Eclipse, it is recommended that you create this folder inside of another folder, so the higher-up folder can used as your multi-project workspace.
+* Navigate into the folder of the cloned repository. Create the folder `core/libs/`. In that folder, you should copy the mod dependencies you have downloaded from the Dependencies step
+* Decide the `[PROJECT_NAME]` you want to work with: `core` or `tweaks`
+* For the desired `[PROJECT_NAME]`
+    * `[PROJECT_NAME]/run/config/` - Here you should copy the configs you have downloaded from the Dependencies step (this is optional, but recommended)
+    * `tweaks/run/config/` - Do the same as for `core/run/config/`
+* For the desired `[PROJECT_NAME]`, run `./gradlew [PROJECT_NAME]:setupDecompWorkspace [PROJECT_NAME]:eclipse`
+    * `[PROJECT_NAME]:setupDecompWorkspace` sets up dependencies for Minecraft, Forge, etc and updates access transformers
+    * `[PROJECT_NAME]:eclipse` makes everything available for the Eclipse IDE and should be removed/replaced if using IntelliJ Idea
 
 ### Compiling
-* To compile, run `./gradlew core:build`. Output will be in `core/build/libs/`. The jar name will be `hardcorealchemy-[version].jar` where `[version]` is defined in `build.gradle`.
+* To compile `[PROJECT_NAME]`, run `./gradlew [PROJECT_NAME]:build`. Output will be in `[PROJECT_NAME]/build/libs/`. The jar name will be `hardcorealchemy-[PROJECT_NAME]-[version].jar` where `[version]` is defined in `[PROJECT_NAME]/build.gradle`.
 
 ### Development tips
 * Successfully used gradle commands before but they aren't working anymore because your internet is down? No problem! Just add the `-offline` flag to your gradle command and it should work normally again.
-* `./gradlew core:setupDecompWorkspace core:eclipse` may need to be re-run under the following circumstances:
-    * Adding/changing mods in `libs/`
+* `./gradlew [PROJECT_NAME]:setupDecompWorkspace [PROJECT_NAME]:eclipse` may need to be re-run under the following circumstances:
+    * Adding/changing mods in `/core/libs/`
     * Updating dependencies in other places like `build.gradle`
-    * Updating access transformers (found at "src/main/resources/META-INF/hardcorealchemy_at.cfg") 
+    * Updating the access transformers (found at "core/src/main/resources/META-INF/hardcorealchemy_at.cfg") 
     * On rare occasions, when encountering unexplained crashes involving missing classes or methods. This is a bug with CodeChickenCore when used in a development environment.
 
 ### Other resources
