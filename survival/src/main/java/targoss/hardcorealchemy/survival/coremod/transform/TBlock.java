@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.coremod.transform;
+package targoss.hardcorealchemy.survival.coremod.transform;
 
 import java.util.ListIterator;
 
@@ -84,7 +84,7 @@ public class TBlock extends MethodPatcher {
                         patch.add(new VarInsnNode(Opcodes.ALOAD, 2)); // IBlockAccess
                         patch.add(new VarInsnNode(Opcodes.ALOAD, 3)); // BlockPos
                         patch.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
-                                "targoss/hardcorealchemy/listener/ListenerCrops",
+                                "targoss/hardcorealchemy/survival/listener/ListenerCrops",
                                 "hasWaterAlternative",
                                 "(Lnet/minecraft/world/IBlockAccess;Lnet/minecraft/util/math/BlockPos;)Z",
                                 false));

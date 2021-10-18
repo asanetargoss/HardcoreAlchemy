@@ -34,9 +34,9 @@ import net.minecraft.item.ItemTool;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
-import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.instinct.api.InstinctEffect;
 import targoss.hardcorealchemy.util.InventoryUtil;
+import targoss.hardcorealchemy.util.NutritionExtension;
 
 /**
  * Most behavior is handled through ListenerPlayerHinderedMind
@@ -90,7 +90,7 @@ public class InstinctEffectHinderedMind extends InstinctEffect {
                     (item instanceof ItemPotion) ||
                     (item instanceof ItemSword) ||
                     (item instanceof ItemBow && isSkeleton(player)) ||
-                    (ModState.isTanLoaded && InventoryUtil.isTANDrink(item));
+                    NutritionExtension.INSTANCE.isItemDrinkable(item);
         }
         
         // No threshold met

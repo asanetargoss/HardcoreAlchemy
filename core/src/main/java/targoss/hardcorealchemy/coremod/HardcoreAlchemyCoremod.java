@@ -33,24 +33,18 @@ import net.minecraftforge.fml.common.LoadController;
 import net.minecraftforge.fml.common.ModMetadata;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
-import targoss.hardcorealchemy.coremod.transform.TBlock;
-import targoss.hardcorealchemy.coremod.transform.TBlockReed;
 import targoss.hardcorealchemy.coremod.transform.TClassInheritanceMultiMap;
 import targoss.hardcorealchemy.coremod.transform.TCraftingManager;
 import targoss.hardcorealchemy.coremod.transform.TDataVillage;
-import targoss.hardcorealchemy.coremod.transform.TDecayingCrops;
 import targoss.hardcorealchemy.coremod.transform.TEntity;
 import targoss.hardcorealchemy.coremod.transform.TEntityExtension;
 import targoss.hardcorealchemy.coremod.transform.TEntityPlayerSP;
 import targoss.hardcorealchemy.coremod.transform.TGuiContainer;
-import targoss.hardcorealchemy.coremod.transform.THibernatingCrops;
 import targoss.hardcorealchemy.coremod.transform.TItemRenderer;
 import targoss.hardcorealchemy.coremod.transform.TMinecraftServer;
-import targoss.hardcorealchemy.coremod.transform.TObjectProximityModifier;
 import targoss.hardcorealchemy.coremod.transform.TProjectEKeyHandler;
 import targoss.hardcorealchemy.coremod.transform.TRenderEntityItem;
 import targoss.hardcorealchemy.coremod.transform.TRenderItem;
-import targoss.hardcorealchemy.coremod.transform.TRightClickHarvesting;
 import targoss.hardcorealchemy.coremod.transform.TSlot;
 import targoss.hardcorealchemy.coremod.transform.TThaumcraftPlayerEvents;
 import targoss.hardcorealchemy.coremod.transform.TThirstOverlayHandler;
@@ -79,11 +73,7 @@ public class HardcoreAlchemyCoremod implements IFMLLoadingPlugin {
 				TSlot.class.getName(),
 				TProjectEKeyHandler.class.getName(),
 				TCraftingManager.class.getName(),
-				TDecayingCrops.class.getName(),
-				THibernatingCrops.class.getName(),
-				TObjectProximityModifier.class.getName(),
 				TThirstOverlayHandler.class.getName(),
-				TRightClickHarvesting.class.getName(),
 				TClassInheritanceMultiMap.class.getName(),
 				TThaumcraftPlayerEvents.class.getName(),
 				TDataVillage.class.getName(),
@@ -95,9 +85,7 @@ public class HardcoreAlchemyCoremod implements IFMLLoadingPlugin {
 				TEntityPlayerSP.class.getName(),
 				TMinecraftServer.class.getName(),
 				TWorld.class.getName(),
-                TEntityExtension.class.getName(),
-                TBlock.class.getName(),
-                TBlockReed.class.getName()
+                TEntityExtension.class.getName()
 		};
 	}
 

@@ -16,7 +16,7 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.coremod.transform;
+package targoss.hardcorealchemy.survival.coremod.transform;
 
 import java.util.ListIterator;
 
@@ -83,7 +83,7 @@ public class TRightClickHarvesting extends MethodPatcher {
                         InsnList patch = new InsnList();
                         patch.add(new VarInsnNode(Opcodes.ALOAD, 1)); // event (PlayerInteractEvent.RightClickBlock)
                         patch.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
-                                "targoss/hardcorealchemy/listener/ListenerCrops",
+                                "targoss/hardcorealchemy/survival/listener/ListenerCrops",
                                 "allowRightClickHarvest",
                                 "(Lnet/minecraftforge/event/entity/player/PlayerInteractEvent$RightClickBlock;)Z",
                                 false

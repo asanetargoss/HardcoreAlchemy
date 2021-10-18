@@ -37,6 +37,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.fml.common.Optional;
@@ -45,10 +46,10 @@ import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.capability.humanity.LostMorphReason;
 import targoss.hardcorealchemy.capability.instinct.ICapabilityInstinct;
 import targoss.hardcorealchemy.config.Configs;
+import targoss.hardcorealchemy.event.EventPlayerMorphStateChange;
 import targoss.hardcorealchemy.instinct.Instincts;
 import targoss.hardcorealchemy.instinct.api.Instinct;
 import targoss.hardcorealchemy.item.Items;
-import targoss.hardcorealchemy.listener.ListenerPlayerDiet;
 import targoss.hardcorealchemy.listener.ListenerPlayerHumanity;
 import targoss.hardcorealchemy.network.MessageForceForm;
 import targoss.hardcorealchemy.network.PacketHandler;
@@ -144,9 +145,7 @@ public class MorphState {
                 capabilityHumanity.setLastHumanity(humanity);
             }
             
-            if (ModState.isNutritionLoaded) {
-                ListenerPlayerDiet.updateMorphDiet(player);
-            }
+            MinecraftForge.EVENT_BUS.post(new EventPlayerMorphStateChange.Post(player));
             
             ICapabilityInstinct instincts = player.getCapability(INSTINCT_CAPABILITY, null);
             if (instincts != null) {

@@ -22,6 +22,7 @@ package targoss.hardcorealchemy;
  * Note: Not all ids have a corresponding boolean
  */
 public final class ModState {
+    public static final String METAMORPH_ID = "metamorph";
     public static final String DISSOLUTION_ID = "dissolution";
     public static final String NUTRITION_ID = "nutrition";
     public static final String BLOOD_MAGIC_ID = "BloodMagic";
@@ -39,6 +40,7 @@ public final class ModState {
     public static final String WAWLA_ID = "Waila";
     public static final String SPICE_OF_LIFE_ID = "SpiceOfLife";
     public static final String ASTRAL_SORCERY_ID = "astralsorcery";
+    public static boolean isMetamorphLoaded = false;
     public static boolean isDissolutionLoaded = false;
     public static boolean isNutritionLoaded = false;
     public static boolean isBloodMagicLoaded = false;

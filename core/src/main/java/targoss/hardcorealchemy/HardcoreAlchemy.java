@@ -92,6 +92,7 @@ public class HardcoreAlchemy
         LOGGER = event.getModLog();
         
         Map<String, ModContainer> modMap = Loader.instance().getIndexedModList();
+        ModState.isMetamorphLoaded = modMap.containsKey(ModState.METAMORPH_ID);
         ModState.isDissolutionLoaded = modMap.containsKey(ModState.DISSOLUTION_ID);
         ModState.isNutritionLoaded = modMap.containsKey(ModState.NUTRITION_ID);
         ModState.isBloodMagicLoaded = modMap.containsKey(ModState.BLOOD_MAGIC_ID);

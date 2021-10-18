@@ -16,7 +16,7 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.listener;
+package targoss.hardcorealchemy.survival.listener;
 
 import static ca.wescook.nutrition.capabilities.CapProvider.NUTRITION_CAPABILITY;
 
@@ -48,6 +48,8 @@ import targoss.hardcorealchemy.capability.CapUtil;
 import targoss.hardcorealchemy.capability.food.ICapabilityFood;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.event.EventCraftPredict;
+import targoss.hardcorealchemy.event.EventPlayerMorphStateChange;
+import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
 import targoss.hardcorealchemy.util.Chat;
 import targoss.hardcorealchemy.util.FoodLists;
 import targoss.hardcorealchemy.util.InventoryUtil;
@@ -60,9 +62,6 @@ public class ListenerPlayerDiet extends HardcoreAlchemyListener {
     public static final Capability<ICapabilityHumanity> HUMANITY_CAPABILITY = null;
     @CapabilityInject(ICapabilityFood.class)
     public static final Capability<ICapabilityFood> FOOD_CAPABILITY = null;
-    // The capability from Metamorph itself
-    @CapabilityInject(IMorphing.class)
-    public static final Capability<IMorphing> MORPHING_CAPABILITY = null;
 
     // When the player dies, they become human again, so this event reflects
     // that
@@ -76,13 +75,17 @@ public class ListenerPlayerDiet extends HardcoreAlchemyListener {
             updateMorphDiet((EntityPlayerMP)entity);
         }
     }
+    @Optional.Method(modid = ModState.NUTRITION_ID)
+    @SubscribeEvent
+    public void onPlayerMorphStateChange(EventPlayerMorphStateChange event) {
+        updateMorphDiet(event.player);
+    }
 
     // Utility function to update which player nutrients are enabled based on
     // the current morph
     // Also called by ListenerPlayerHumanity
     @Optional.Method(modid = ModState.NUTRITION_ID)
     public static void updateMorphDiet(EntityPlayer player) {
-        IMorphing morphing = player.getCapability(MORPHING_CAPABILITY, null);
         CapInterface nutritionCapability = player.getCapability(NUTRITION_CAPABILITY, null);
         if (nutritionCapability == null) {
             return;
@@ -95,10 +98,11 @@ public class ListenerPlayerDiet extends HardcoreAlchemyListener {
         if (humanityCapability.isHuman()) {
             needs = MorphDiet.PLAYER_NEEDS;
         }
-        else {
-            needs = MorphDiet.getNeeds(morphing.getCurrentMorph());
+        else if (ModState.isMetamorphLoaded) {
+            needs = MorphDiet.getNeeds(player);
+        } else {
+            needs = new MorphDiet.Needs();
         }
-        Map<Nutrient, Float> nutrition = nutritionCapability.get();
         Map<Nutrient, Boolean> enabled = nutritionCapability.getEnabled();
         for (Nutrient nutrient : NutrientList.get()) {
             // Manage enabled state

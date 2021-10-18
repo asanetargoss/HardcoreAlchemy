@@ -16,7 +16,7 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.coremod.transform;
+package targoss.hardcorealchemy.survival.coremod.transform;
 
 import java.util.ListIterator;
 
@@ -58,7 +58,7 @@ public class TDecayingCrops extends MethodPatcher {
                     hook.add(new VarInsnNode(Opcodes.ALOAD, 1)); //World
                     hook.add(new VarInsnNode(Opcodes.ALOAD, 2)); //BlockPos
                     hook.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
-                            "targoss/hardcorealchemy/listener/ListenerCrops",
+                            "targoss/hardcorealchemy/survival/listener/ListenerCrops",
                             "checkDecay",
                             "(Lnet/minecraft/block/state/IBlockState;" +
                             "Lnet/minecraft/world/World;" +

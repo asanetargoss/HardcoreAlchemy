@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.coremod.transform;
+package targoss.hardcorealchemy.survival.coremod.transform;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.InsnList;
@@ -53,7 +53,7 @@ public class TBlockReed extends MethodPatcher {
             patch.add(new VarInsnNode(Opcodes.ALOAD, 1)); // World
             patch.add(new VarInsnNode(Opcodes.ALOAD, 2)); // BlockPos
             patch.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
-                    "targoss/hardcorealchemy/listener/ListenerCrops",
+                    "targoss/hardcorealchemy/survival/listener/ListenerCrops",
                     "canReedStay",
                     "(Lnet/minecraft/block/Block;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Z",
                     false));

@@ -56,6 +56,8 @@ public class MorphDiet {
 
     @CapabilityInject(ICapabilityHumanity.class)
     public static final Capability<ICapabilityHumanity> HUMANITY_CAPABILITY = null;
+    @CapabilityInject(IMorphing.class)
+    public static final Capability<IMorphing> MORPHING_CAPABILITY = null;
     
     /**
      * Dietary needs indexed by the fully-qualified name of the entity class which the morph represents
@@ -139,6 +141,15 @@ public class MorphDiet {
             return PLAYER_NEEDS;
         }
         return needs;
+    }
+    
+    /**
+     * Get which nutritional needs and restrictions are enabled for this morph
+     */
+    public static Needs getNeeds(EntityPlayer player) {
+        IMorphing morphing = player.getCapability(MORPHING_CAPABILITY, null);
+        AbstractMorph morph = morphing.getCurrentMorph();
+        return getNeeds(morph);
     }
     
     /** Do not change the name of these enums as they are used in serialization

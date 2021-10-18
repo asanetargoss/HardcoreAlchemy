@@ -62,7 +62,6 @@ import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.event.EventDrawInventoryItem;
 import targoss.hardcorealchemy.event.EventTakeStack;
 import thaumcraft.common.container.slot.SlotCraftingArcaneWorkbench;
-import toughasnails.api.thirst.IDrink;
 
 public class InventoryUtil {
     public static final ItemStack ITEM_STACK_EMPTY = null;
@@ -428,12 +427,6 @@ public class InventoryUtil {
         }
         
         return inventories;
-    }
-    
-    @Optional.Method(modid = ModState.TAN_ID)
-    public static boolean isTANDrink(Item item) {
-        return item instanceof IDrink ||
-                item.getRegistryName().getResourcePath().equals("canteen");
     }
 
     /** Get the material for swords, tools, and armor */

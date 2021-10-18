@@ -16,7 +16,7 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.listener;
+package targoss.hardcorealchemy.survival.listener;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -46,6 +46,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.coremod.CoremodHook;
+import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
 import targoss.hardcorealchemy.util.InventoryUtil;
 import toughasnails.api.TANBlocks;
 import toughasnails.api.config.GameplayOption;

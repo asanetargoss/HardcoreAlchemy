@@ -39,11 +39,9 @@ import targoss.hardcorealchemy.item.Items;
 import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
 import targoss.hardcorealchemy.listener.ListenerCapabilities;
 import targoss.hardcorealchemy.listener.ListenerConfigs;
-import targoss.hardcorealchemy.listener.ListenerCrops;
 import targoss.hardcorealchemy.listener.ListenerEntityCapabilities;
 import targoss.hardcorealchemy.listener.ListenerInstinctOverheat;
 import targoss.hardcorealchemy.listener.ListenerMobAI;
-import targoss.hardcorealchemy.listener.ListenerPlayerDiet;
 import targoss.hardcorealchemy.listener.ListenerPlayerHinderedMind;
 import targoss.hardcorealchemy.listener.ListenerPlayerHumanity;
 import targoss.hardcorealchemy.listener.ListenerPlayerIncantation;
@@ -79,7 +77,6 @@ public class CommonProxy {
         addListener(new ListenerPlayerMorphs());
         addListener(new ListenerPlayerHumanity());
         addListener(new ListenerPlayerMagic());
-        addListener(new ListenerPlayerDiet());
         addListener(new ListenerMobAI());
         addListener(new ListenerSmallTweaks());
         addListener(new ListenerPlayerMagicState());
@@ -91,7 +88,6 @@ public class CommonProxy {
         addListener(new ListenerPlayerResearch());
         addListener(new ListenerConfigs());
         addListener(new ListenerInstinctOverheat());
-        addListener(new ListenerCrops()); // 1.10-specific
     }
     
     public void registerNetworking() {

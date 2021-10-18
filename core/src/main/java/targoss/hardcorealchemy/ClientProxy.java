@@ -20,7 +20,6 @@ package targoss.hardcorealchemy;
 
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import targoss.hardcorealchemy.entity.Entities;
-import targoss.hardcorealchemy.item.Items;
 import targoss.hardcorealchemy.listener.ListenerGuiHud;
 import targoss.hardcorealchemy.listener.ListenerGuiInventory;
 import targoss.hardcorealchemy.listener.ListenerRenderView;

@@ -1,0 +1,16 @@
+[
+{
+  "modid": "hardcorealchemy-survival",
+  "name": "Hardcore Alchemy Survival",
+  "description": "Survival cross-mod compat for Hardcore Alchemy",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["asanetargoss"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": ["hardcorealchemy"]
+}
+]
