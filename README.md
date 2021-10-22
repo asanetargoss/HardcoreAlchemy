@@ -59,9 +59,10 @@ Please note: The following mods included in the HcA_libs zip file above are cust
 
 * All projects depend on Minecraft Forge
 * `core/libs/` - Contains common third-party mod dependencies, such as Hwyla. Actually, it currently contains all the third-party mod dependencies, but this is subject to change.
-* `core/` - This is a mod project which contains shared code used by the other projects. Currently, this must always be set up in order to test/compile the other mods. It also contains most of the features. Both of these are subject to change.
+* `core/` - This is a mod project which contains shared code required by the other projects.
 * `tweaks/` - This is a mod project containing magic and survival tweaks, aiming for a minimal number of dependencies.
 * `survival/` - This is a mod project containing various features related to nutrition, thirst, and crop growth. It interacts with various survival and crop mods.
+* `magic/` - This is a mod project containing features which make magic mods work better in a hardcore respawn gameplay context. It also contains various tweaks and fixes for magic and utility mods.
 
 ### Notes on Windows and IntelliJ IDEA
 
