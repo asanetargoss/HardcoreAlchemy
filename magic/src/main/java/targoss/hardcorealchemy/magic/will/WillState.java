@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.will;
+package targoss.hardcorealchemy.magic.will;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.DimensionType;

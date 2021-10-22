@@ -74,6 +74,7 @@ import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
 import targoss.hardcorealchemy.tweaks.event.EventPlayerDamageBlockSound;
 import targoss.hardcorealchemy.tweaks.event.EventPlayerInventorySlotSet;
 import targoss.hardcorealchemy.tweaks.item.Items;
+import targoss.hardcorealchemy.util.InventoryExtension;
 import targoss.hardcorealchemy.util.InventoryUtil;
 import targoss.hardcorealchemy.util.MorphState;
 
@@ -225,8 +226,8 @@ public class ListenerEntityVoidfade extends HardcoreAlchemyListener {
     }
     
     protected static void fluxifyItems(EntityLivingBase entity, int previousDimension, int currentDimension) {
-        List<IItemHandler> inventories = InventoryUtil.getLocalInventories(entity);
-        InventoryUtil.forEachItemRecursive(inventories, new FluxifyItemFunc(previousDimension, currentDimension));
+        List<IItemHandler> inventories = InventoryExtension.INSTANCE.getLocalInventories(entity);
+        InventoryExtension.INSTANCE.forEachItemRecursive(inventories, new FluxifyItemFunc(previousDimension, currentDimension));
     }
     
     protected static void handleTraveledDimensionally(EntityLivingBase entityLiving, int previousDimension, int currentDimension) {

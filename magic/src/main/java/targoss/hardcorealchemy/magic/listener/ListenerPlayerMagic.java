@@ -16,7 +16,7 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.listener;
+package targoss.hardcorealchemy.magic.listener;
 
 import java.lang.reflect.Field;
 import java.util.HashSet;
@@ -66,21 +66,25 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.IForgeRegistryEntry;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
+import targoss.hardcorealchemy.capability.humanity.ProviderHumanity;
 import targoss.hardcorealchemy.capability.misc.ICapabilityMisc;
 import targoss.hardcorealchemy.capability.tilehistory.CapabilityTileHistory;
 import targoss.hardcorealchemy.capability.tilehistory.ICapabilityTileHistory;
 import targoss.hardcorealchemy.capability.tilehistory.ProviderTileHistory;
 import targoss.hardcorealchemy.coremod.CoremodHook;
-import targoss.hardcorealchemy.event.EventRegenMana;
 import targoss.hardcorealchemy.event.EventTakeStack;
+import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
+import targoss.hardcorealchemy.listener.ListenerPlayerResearch;
+import targoss.hardcorealchemy.magic.event.EventRegenMana;
+import targoss.hardcorealchemy.magic.will.WillState;
+import targoss.hardcorealchemy.magic.will.Wills;
 import targoss.hardcorealchemy.research.Studies;
 import targoss.hardcorealchemy.util.Chat;
 import targoss.hardcorealchemy.util.Interaction;
+import targoss.hardcorealchemy.util.InventoryExtension;
 import targoss.hardcorealchemy.util.InventoryUtil;
 import targoss.hardcorealchemy.util.MiscVanilla;
 import targoss.hardcorealchemy.util.MorphState;
-import targoss.hardcorealchemy.will.WillState;
-import targoss.hardcorealchemy.will.Wills;
 
 public class ListenerPlayerMagic extends HardcoreAlchemyListener {
     /**
@@ -174,6 +178,29 @@ public class ListenerPlayerMagic extends HardcoreAlchemyListener {
      */
     
     private static final String MAGIC_NOT_ALLOWED = "magic_not_allowed";
+
+    public static boolean isCraftingAllowed(EntityPlayer player, ItemStack craftResult) {
+        ICapabilityHumanity capabilityHumanity = player.getCapability(ProviderHumanity.HUMANITY_CAPABILITY, null);
+        if (capabilityHumanity != null &&
+                !MorphState.canUseHighMagic(player) &&
+                !isCraftingAllowedWhenMagicHindered(craftResult)) {
+            return false;
+        }
+        
+        return true;
+    }
+
+    public static boolean isCraftingAllowedWhenMagicHindered(ItemStack craftResult) {
+        Item item = craftResult.getItem();
+        
+        ResourceLocation itemResource = item.getRegistryName();
+        if (ListenerPlayerMagic.HIGH_MAGIC_MODS.contains(itemResource.getResourceDomain()) &&
+                !ListenerPlayerMagic.MAGIC_ITEM_ALLOW_CRAFT.contains(itemResource.toString())) {
+            return false;
+        }
+        
+        return true;
+    }
     
     @SubscribeEvent
     @Optional.Method(modid=ModState.BLOOD_MAGIC_ID)
@@ -258,7 +285,7 @@ public class ListenerPlayerMagic extends HardcoreAlchemyListener {
             return;
         }
         ItemStack craftResult = event.slot.getStack();
-        if (InventoryUtil.isEmptyItemStack(craftResult) || !InventoryUtil.isCraftingSlot(event.slot)) {
+        if (InventoryUtil.isEmptyItemStack(craftResult) || !InventoryExtension.INSTANCE.isCraftingSlot(event.slot)) {
             return;
         }
         
@@ -266,7 +293,7 @@ public class ListenerPlayerMagic extends HardcoreAlchemyListener {
         ICapabilityHumanity capabilityHumanity = player.getCapability(HUMANITY_CAPABILITY, null);
         if (capabilityHumanity != null &&
                 !MorphState.canUseHighMagic(player) &&
-                !ListenerPlayerMagic.isCraftingAllowed(craftResult)) {
+                !isCraftingAllowed(craftResult)) {
             event.setCanceled(true);
         }
     }

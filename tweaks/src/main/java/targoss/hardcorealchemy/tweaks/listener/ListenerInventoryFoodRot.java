@@ -35,6 +35,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.items.IItemHandler;
 import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
+import targoss.hardcorealchemy.util.InventoryExtension;
 import targoss.hardcorealchemy.util.InventoryUtil;
 
 public class ListenerInventoryFoodRot extends HardcoreAlchemyListener {
@@ -86,7 +87,7 @@ public class ListenerInventoryFoodRot extends HardcoreAlchemyListener {
         }
         EntityPlayer player = event.player;
         if (player.ticksExisted % PLAYER_TICK_INTERVAL == 0) {
-            for (IItemHandler inventory : InventoryUtil.getInventories(player)) {
+            for (IItemHandler inventory : InventoryExtension.INSTANCE.getInventories(player)) {
                 tickInventory(inventory, FOOD_DECAY_PLAYER_SLOT);
             }
         }
@@ -109,10 +110,38 @@ public class ListenerInventoryFoodRot extends HardcoreAlchemyListener {
             
             TileEntity tileEntity = chunk.getTileEntity(new BlockPos(chunkPosX+chunkX,chunkY,chunkPosZ+chunkZ), Chunk.EnumCreateEntityType.CHECK);
             if (tileEntity != null) {
-                for (IItemHandler inventory : InventoryUtil.getInventories(tileEntity)) {
+                for (IItemHandler inventory : InventoryExtension.INSTANCE.getInventories(tileEntity)) {
                     tickInventory(inventory, FOOD_DECAY_TILE_SLOT);
                 }
             }
+        }
+    }
+    
+    public static class FoodRotFunc implements InventoryUtil.ItemFunc {
+        private Random random = new Random();
+        protected float decayRate;
+        
+        public FoodRotFunc(float decayRate) {
+            this.decayRate = decayRate;
+        }
+        
+        @Override
+        public boolean apply(IItemHandler inventory, int slot, ItemStack itemStack) {
+            if (itemStack.getItem() instanceof ItemFood) {
+                int startingFood = itemStack.stackSize;
+                // For each item in the stack, there is an average decay rate chance of FOOD_TICK_RATE
+                float decayAmount = random.nextFloat() * (float)startingFood * decayRate;
+                int decayConstant = (int)Math.floor(decayAmount);
+                float decayFraction = decayAmount - decayConstant;
+                
+                int foodLost = decayConstant;
+                foodLost += (random.nextFloat() < decayFraction) ? 1 : 0;
+                if (foodLost > 0) {
+                    inventory.extractItem(slot, foodLost, false);
+                    return true;
+                }
+            }
+            return false;
         }
     }
     
@@ -120,7 +149,6 @@ public class ListenerInventoryFoodRot extends HardcoreAlchemyListener {
         return tickInventory(inventory, decayRate, 0);
     }
     
-    // TODO: Use the generalized for each inventory code, now that we know it works
     /**
      * returns false if no inventory was checked with the given capabilityProvider
      */
@@ -138,34 +166,7 @@ public class ListenerInventoryFoodRot extends HardcoreAlchemyListener {
             decayRate = ((float)Integer.MAX_VALUE / (float)MAX_STACK) - 1.0F;
         }
         
-        // Do decay logic for food, and check for inventories in other items
-        int inventorySize = inventory.getSlots();
-        for (int i = 0; i < inventorySize; i++) {
-            ItemStack itemStack = inventory.getStackInSlot(i);
-            
-            if (InventoryUtil.isEmptyItemStack(itemStack)) {
-                continue;
-            }
-            
-            if (itemStack.getItem() instanceof ItemFood) {
-                int startingFood = itemStack.stackSize;
-                // For each item in the stack, there is an average decay rate chance of FOOD_TICK_RATE
-                float decayAmount = random.nextFloat() * (float)startingFood * decayRate;
-                int decayConstant = (int)Math.floor(decayAmount);
-                float decayFraction = decayAmount - decayConstant;
-                
-                int foodLost = decayConstant;
-                foodLost += (random.nextFloat() < decayFraction) ? 1 : 0;
-                inventory.extractItem(i, foodLost, false);
-            }
-            else {
-                // Attempt to treat item as if it has an inventory
-                for (IItemHandler inventoryStack : InventoryUtil.getInventories(itemStack)) {
-                    tickInventory(inventoryStack, decayRate, recursionDepth+1);
-                }
-            }
-        }
-        InventoryUtil.ifIronBackpackThenUpdateNBT(inventory);
+        InventoryExtension.INSTANCE.forEachItemRecursive(inventory, new FoodRotFunc(decayRate));
         
         return true;
     }

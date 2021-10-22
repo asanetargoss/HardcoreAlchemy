@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.coremod.transform;
+package targoss.hardcorealchemy.magic.coremod.transform;
 
 import java.util.ListIterator;
 
@@ -93,7 +93,7 @@ public class TEntityExtension extends MethodPatcher {
                                 "entity",
                                 "Lnet/minecraft/entity/EntityLivingBase;"));
                         patch.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
-                                "targoss/hardcorealchemy/event/EventRegenMana",
+                                "targoss/hardcorealchemy/magic/event/EventRegenMana",
                                 "onRegenMana",
                                 "(FFLnet/minecraft/entity/EntityLivingBase;)F",
                                 false));

@@ -16,7 +16,7 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.listener;
+package targoss.hardcorealchemy.magic.listener;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -57,7 +57,9 @@ import targoss.hardcorealchemy.capability.inactive.IInactiveCapabilities;
 import targoss.hardcorealchemy.coremod.CoremodHook;
 import targoss.hardcorealchemy.event.EventCraftPredict;
 import targoss.hardcorealchemy.event.EventTakeStack;
+import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
 import targoss.hardcorealchemy.util.Chat;
+import targoss.hardcorealchemy.util.InventoryExtension;
 import targoss.hardcorealchemy.util.InventoryUtil;
 import targoss.hardcorealchemy.util.MiscVanilla;
 import targoss.hardcorealchemy.util.MorphState;
@@ -134,7 +136,7 @@ public class ListenerPlayerMagicState extends HardcoreAlchemyListener {
         ItemStack toCraft = event.slot.getStack();
         if (InventoryUtil.isEmptyItemStack(toCraft) ||
                 toCraft.getItem() != ItemsTC.salisMundus ||
-                !InventoryUtil.isCraftingSlot(event.slot)) {
+                !InventoryExtension.INSTANCE.isCraftingSlot(event.slot)) {
             return;
         }
         

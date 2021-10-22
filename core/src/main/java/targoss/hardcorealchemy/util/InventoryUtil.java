@@ -18,50 +18,25 @@
 
 package targoss.hardcorealchemy.util;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.List;
-
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import am2.container.slot.SlotMagiciansWorkbenchCrafting;
-import gr8pefish.ironbackpacks.capabilities.IronBackpacksCapabilities;
-import gr8pefish.ironbackpacks.capabilities.player.PlayerWearingBackpackCapabilities;
-import gr8pefish.ironbackpacks.container.backpack.InventoryBackpack;
-import gr8pefish.ironbackpacks.items.backpacks.ItemBackpack;
-import moze_intel.projecte.api.ProjectEAPI;
-import moze_intel.projecte.api.capabilities.IAlchBagProvider;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
-import net.minecraft.inventory.SlotCrafting;
-import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.item.ItemTool;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.wrapper.InvWrapper;
-import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.event.EventDrawInventoryItem;
 import targoss.hardcorealchemy.event.EventTakeStack;
-import thaumcraft.common.container.slot.SlotCraftingArcaneWorkbench;
 
 public class InventoryUtil {
     public static final ItemStack ITEM_STACK_EMPTY = null;
@@ -114,24 +89,6 @@ public class InventoryUtil {
     }
 
     /**
-     * Check if the slot is a crafting table output slot.
-     * This function also handles "technical" slots used by EventDrawInventoryItem.
-     */
-    public static boolean isCraftingSlot(Slot slot) {
-        if (slot instanceof SlotCrafting) {
-            return true;
-        }
-        if (ModState.isThaumcraftLoaded && isThaumcraftCraftingSlot(slot)) {
-            return true;
-        }
-        if (ModState.isArsMagicaLoaded && isArsMagicaCraftingSlot(slot)) {
-            return true;
-        }
-        
-        return false;
-    }
-
-    /**
      * Check if the slot is a slot containing an item the player can take and/or place,
      * as opposed to some documentation/display slot.
      * Player field is required and determines which player is about to interact with the slot.
@@ -166,119 +123,6 @@ public class InventoryUtil {
         }
         return null;
     }
-
-    @Optional.Method(modid=ModState.THAUMCRAFT_ID)
-    private static boolean isThaumcraftCraftingSlot(Slot slot) {
-        return slot instanceof SlotCraftingArcaneWorkbench;
-    }
-    
-    @Optional.Method(modid=ModState.ARS_MAGICA_ID)
-    private static boolean isArsMagicaCraftingSlot(Slot slot) {
-        return slot instanceof SlotMagiciansWorkbenchCrafting;
-    }
-
-    @Nonnull
-    public static List<IItemHandler> getInventories(@Nonnull ItemStack itemStack) {
-        List<IItemHandler> inventories = new ArrayList<>();
-        
-        // Check if the stack has the item handler capability
-        {
-            IItemHandler inventory = itemStack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-            if (inventory != null) {
-                inventories.add(inventory);
-            }
-        }
-        // Check if this is a backpack itemstack from the iron backpacks mod
-        if (ModState.isIronBackpacksLoaded && itemStack.getItem() instanceof ItemBackpack) {
-            inventories.add(new InvWrapper(new InventoryBackpack(itemStack, true)));
-        }
-        
-        return inventories;
-    }
-
-    @Nonnull
-    public static List<IItemHandler> getInventories(@Nonnull TileEntity tileEntity) {
-        List<IItemHandler> inventories = new ArrayList<>();
-        
-        IItemHandler inventory = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-        if (inventory != null) {
-            inventories.add(inventory);
-        }
-        else if (tileEntity instanceof IInventory) {
-            inventories.add(new InvWrapper((IInventory)tileEntity));
-        }
-        
-        return inventories;
-    }
-
-    @Nonnull
-    public static List<IItemHandler> getLocalInventories(@Nonnull EntityPlayer player) {
-        List<IItemHandler> inventories = new ArrayList<>();
-        
-        // Player main inventory
-        if (player.inventory != null) {
-            inventories.add(new InvWrapper(player.inventory));
-        }
-        // Equipped backpack inventory
-        if (ModState.isIronBackpacksLoaded) {
-            PlayerWearingBackpackCapabilities backpackCapability = IronBackpacksCapabilities.getWearingBackpackCapability(player);
-            if (backpackCapability != null) {
-                ItemStack backpackStack = backpackCapability.getEquippedBackpack();
-                if (backpackStack != null) {
-                    inventories.add(new InvWrapper(new InventoryBackpack(backpackStack, true)));
-                }
-            }
-        }
-        
-        return inventories;
-    }
-    
-    public static List<IItemHandler> getLocalInventories(Entity entity) {
-        if (entity instanceof EntityPlayer) {
-            return getLocalInventories((EntityPlayer)entity);
-        }
-        return new ArrayList<>();
-    }
-
-    @Nonnull
-    public static List<IItemHandler> getInventories(@Nonnull EntityPlayer player) {
-        List<IItemHandler> inventories = new ArrayList<>();
-        
-        // Player main inventory
-        if (player.inventory != null) {
-            inventories.add(new InvWrapper(player.inventory));
-        }
-        // Ender chest inventory
-        {
-            IInventory inventory = player.getInventoryEnderChest();
-            if (inventory != null) {
-                inventories.add(new InvWrapper(inventory));
-            }
-        }
-        // Alchemical bag inventories
-        if (ModState.isProjectELoaded) {
-            inventories.addAll(getAlchemicalBags(player));
-        }
-        // Equipped backpack inventory
-        if (ModState.isIronBackpacksLoaded) {
-            PlayerWearingBackpackCapabilities backpackCapability = IronBackpacksCapabilities.getWearingBackpackCapability(player);
-            if (backpackCapability != null) {
-                ItemStack backpackStack = backpackCapability.getEquippedBackpack();
-                if (backpackStack != null) {
-                    inventories.add(new InvWrapper(new InventoryBackpack(backpackStack, true)));
-                }
-            }
-        }
-        
-        return inventories;
-    }
-    
-    public static List<IItemHandler> getInventories(Entity entity) {
-        if (entity instanceof EntityPlayer) {
-            return getInventories((EntityPlayer)entity);
-        }
-        return new ArrayList<>();
-    }
     
     public static int getArmorInventorySize(EntityPlayer player) {
         return player.inventory.armorInventory.length;
@@ -301,132 +145,6 @@ public class InventoryUtil {
          * Return true if the inventory changed
          */
         boolean apply(IItemHandler inventory, int slot, ItemStack itemStack);
-    }
-    
-    public static final int DEFAULT_INVENTORY_RECURSION_DEPTH = 6;
-
-    /**
-     * Return true if the inventory changed
-     */
-    public static boolean forEachItemRecursive(IItemHandler inventory, ItemFunc itemFunc, int recursionDepth) {
-        if (recursionDepth < 0) {
-            return false;
-        }
-
-        boolean changed = false;
-        int n = inventory.getSlots();
-        for (int i = 0; i < n; i++) {
-            ItemStack itemStack = inventory.getStackInSlot(i);
-            
-            if (InventoryUtil.isEmptyItemStack(itemStack)) {
-                continue;
-            }
-            
-            changed |= itemFunc.apply(inventory, i, itemStack);
-
-            for (IItemHandler inventoryStack : InventoryUtil.getInventories(itemStack)) {
-                if (inventory == null) {
-                    continue;
-                }
-                changed |= forEachItemRecursive(inventoryStack, itemFunc, recursionDepth - 1);
-            }
-            
-        }
-        
-        if (changed) {
-            // Check if this inventory is a backpack item from IronBackpacks, and if so update the item NBT
-            if (inventory.getClass() == InvWrapper.class) {
-                IInventory iInventory = ((InvWrapper)inventory).getInv();
-                if (ModState.isIronBackpacksLoaded && iInventory instanceof InventoryBackpack) {
-                    ItemStack backpackStack = ((InventoryBackpack)iInventory).getBackpackStack();
-                    InventoryUtil.saveIronBackpackNbt(inventory, backpackStack);
-                }
-            }
-        }
-        
-        return changed;
-    }
-    
-    /**
-     * Return true if the inventory changed
-     */
-    public static boolean forEachItemRecursive(IItemHandler inventory, ItemFunc itemFunc) {
-        return forEachItemRecursive(inventory, itemFunc, DEFAULT_INVENTORY_RECURSION_DEPTH);
-    }
-    
-    /**
-     * Return true if the inventory changed
-     */
-    public static boolean forEachItemRecursive(Collection<IItemHandler> inventories, ItemFunc itemFunc) {
-        boolean changed = false;
-        for (IItemHandler inventoryToRecurse : inventories) {
-            changed |= forEachItemRecursive(inventoryToRecurse, itemFunc, DEFAULT_INVENTORY_RECURSION_DEPTH);
-        }
-        return changed;
-    }
-    
-    @Optional.Method(modid=ModState.IRON_BACKPACKS_ID)
-    protected static boolean checkIronBackpack(IItemHandler inventory) {
-        if (inventory.getClass() != InvWrapper.class) {
-            return false;
-        }
-        IInventory iInventory = ((InvWrapper)inventory).getInv();
-        return iInventory instanceof InventoryBackpack;
-    }
-    
-    public static boolean isIronBackpack(IItemHandler inventory) {
-        return ModState.isIronBackpacksLoaded && checkIronBackpack(inventory);
-    }
-
-    @Optional.Method(modid = ModState.IRON_BACKPACKS_ID)
-    public static void saveIronBackpackNbt(IItemHandler inventory, ItemStack itemStack) {
-        // Workaround to prevent NPE in InventoryBackpack.writeToNBT due to null player object
-        // We only set the "Items" nbt tag and assume the rest are saved at some other time
-        NBTTagCompound nbt = itemStack.getTagCompound();
-        if (nbt == null) {
-            nbt = new NBTTagCompound();
-            itemStack.setTagCompound(nbt);
-        }
-        NBTTagList inventoryNbt = new NBTTagList();
-        nbt.setTag("Items", inventoryNbt);
-        
-        int slots = inventory.getSlots();
-        for (int i = 0; i < slots; i++) {
-            ItemStack item = inventory.getStackInSlot(i);
-            if (!InventoryUtil.isEmptyItemStack(item)) {
-                NBTTagCompound itemNbt = new NBTTagCompound();
-                itemNbt.setByte("Slot", (byte)i);
-                item.writeToNBT(itemNbt);
-                inventoryNbt.appendTag(itemNbt);
-            }
-        }
-    }
-
-    // TODO: Use this in the generalized for each inventory code
-    /** Check if this inventory is a backpack item from IronBackpacks, and if so update the item nbt */
-    public static void ifIronBackpackThenUpdateNBT(IItemHandler inventory) {
-        if (inventory.getClass() == InvWrapper.class) {
-            IInventory iInventory = ((InvWrapper)inventory).getInv();
-            if (ModState.isIronBackpacksLoaded && iInventory instanceof InventoryBackpack) {
-                ItemStack backpackStack = ((InventoryBackpack)iInventory).getBackpackStack();
-                InventoryUtil.saveIronBackpackNbt(inventory, backpackStack);
-            }
-        }
-    }
-
-    @Nonnull
-    @Optional.Method(modid = ModState.PROJECT_E_ID)
-    public static List<IItemHandler> getAlchemicalBags(@Nonnull EntityPlayer player) {
-        List<IItemHandler> inventories = new ArrayList<>();
-        
-        IAlchBagProvider alchBags = player.getCapability(ProjectEAPI.ALCH_BAG_CAPABILITY, null);
-        if (alchBags != null) {
-            for (EnumDyeColor dyeColor : EnumSet.allOf(EnumDyeColor.class)) {
-                inventories.add(alchBags.getBag(dyeColor));
-            }
-        }
-        
-        return inventories;
     }
 
     /** Get the material for swords, tools, and armor */

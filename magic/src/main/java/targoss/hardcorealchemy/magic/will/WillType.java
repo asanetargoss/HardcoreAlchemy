@@ -18,9 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.will;
+package targoss.hardcorealchemy.magic.will;
 
-public class Wills {
-    public static final WillType AURA_AIR = new WillType();
-    public static final WillType SCOURGE_AIR = new WillType();
+public class WillType {
+
 }

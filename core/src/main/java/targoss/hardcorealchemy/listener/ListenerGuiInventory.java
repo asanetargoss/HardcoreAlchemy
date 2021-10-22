@@ -20,12 +20,7 @@ package targoss.hardcorealchemy.listener;
 
 import java.util.List;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
@@ -36,13 +31,10 @@ import targoss.hardcorealchemy.capability.CapUtil;
 import targoss.hardcorealchemy.capability.food.ICapabilityFood;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.util.FoodLists;
-import targoss.hardcorealchemy.util.InventoryUtil;
 import targoss.hardcorealchemy.util.MorphDiet;
-import targoss.hardcorealchemy.util.MorphState;
 
 @SideOnly(Side.CLIENT)
 public class ListenerGuiInventory extends HardcoreAlchemyListener {
-    private final Minecraft mc = Minecraft.getMinecraft();
     
     @CapabilityInject(ICapabilityHumanity.class)
     public static final Capability<ICapabilityHumanity> HUMANITY_CAPABILITY = null;
@@ -68,26 +60,6 @@ public class ListenerGuiInventory extends HardcoreAlchemyListener {
         if (itemRestriction != null) {
             List<String> tooltips = event.getToolTip();
             tooltips.add(itemRestriction.getFoodTooltip().getFormattedText());
-        }
-    }
-    
-    // A client-side tooltip when hovering over an uncraftable magic item
-    @SubscribeEvent
-    public void onTooltipMagicCrafting(ItemTooltipEvent event) {
-        GuiScreen gui = mc.currentScreen;
-        if (gui == null ||
-                !(gui instanceof GuiContainer) ||
-                !InventoryUtil.isCraftingSlot(((GuiContainer)gui).theSlot)) {
-            return;
-        }
-        
-        if (MorphState.canUseHighMagic(mc.player)) {
-            return;
-        }
-        
-        ItemStack craftResult = event.getItemStack();
-        if (!ListenerPlayerMagic.isCraftingAllowed(craftResult)) {
-            event.getToolTip().add(TextFormatting.DARK_GRAY.toString() + new TextComponentTranslation("hardcorealchemy.magic.disabled.crafttooltip").getUnformattedText());
         }
     }
 }

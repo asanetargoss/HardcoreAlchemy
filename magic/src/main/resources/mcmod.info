@@ -1,0 +1,16 @@
+[
+{
+  "modid": "hardcorealchemy-magic",
+  "name": "Hardcore Alchemy Magic",
+  "description": "Magic integration for hardcore random respawn, plus other cross-mod tweaks and fixes",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["asanetargoss"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": ["hardcorealchemy"]
+}
+]
