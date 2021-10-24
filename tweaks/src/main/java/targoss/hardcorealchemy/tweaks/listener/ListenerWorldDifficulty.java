@@ -27,11 +27,11 @@ import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import targoss.hardcorealchemy.capability.CapUtil;
-import targoss.hardcorealchemy.capability.serverdata.CapabilityServerData;
-import targoss.hardcorealchemy.capability.serverdata.ICapabilityServerData;
-import targoss.hardcorealchemy.capability.serverdata.ProviderServerData;
-import targoss.hardcorealchemy.capability.serverdata.StorageServerData;
 import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
+import targoss.hardcorealchemy.tweaks.capability.serverdata.CapabilityServerData;
+import targoss.hardcorealchemy.tweaks.capability.serverdata.ICapabilityServerData;
+import targoss.hardcorealchemy.tweaks.capability.serverdata.ProviderServerData;
+import targoss.hardcorealchemy.tweaks.capability.serverdata.StorageServerData;
 
 /**
  * Use a capability stored in the overworld to check if

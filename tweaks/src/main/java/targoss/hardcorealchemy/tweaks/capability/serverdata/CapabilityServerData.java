@@ -16,10 +16,26 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.capability.serverdata;
+package targoss.hardcorealchemy.tweaks.capability.serverdata;
 
-public interface ICapabilityServerData {
-    abstract void setHasDifficulty(boolean hasDifficulty);
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.capabilities.CapabilityManager;
+import targoss.hardcorealchemy.HardcoreAlchemy;
+
+public class CapabilityServerData implements ICapabilityServerData {
     
-    abstract boolean getHasDifficulty();
+    public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(HardcoreAlchemy.MOD_ID, "serverData");
+    
+    private boolean hasDifficulty;
+
+    @Override
+    public void setHasDifficulty(boolean hasDifficulty) {
+        this.hasDifficulty = hasDifficulty;
+    }
+
+    @Override
+    public boolean getHasDifficulty() {
+        return hasDifficulty;
+    }
+
 }
