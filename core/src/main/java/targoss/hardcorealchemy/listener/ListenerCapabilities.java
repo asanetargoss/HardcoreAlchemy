@@ -21,9 +21,6 @@ import targoss.hardcorealchemy.capability.humanity.StorageHumanity;
 import targoss.hardcorealchemy.capability.inactive.IInactiveCapabilities;
 import targoss.hardcorealchemy.capability.inactive.InactiveCapabilities;
 import targoss.hardcorealchemy.capability.inactive.StorageInactiveCapabilities;
-import targoss.hardcorealchemy.capability.instinct.CapabilityInstinct;
-import targoss.hardcorealchemy.capability.instinct.ICapabilityInstinct;
-import targoss.hardcorealchemy.capability.instinct.StorageInstinct;
 import targoss.hardcorealchemy.capability.killcount.CapabilityKillCount;
 import targoss.hardcorealchemy.capability.killcount.ICapabilityKillCount;
 import targoss.hardcorealchemy.capability.killcount.StorageKillCount;
@@ -51,7 +48,6 @@ public class ListenerCapabilities extends HardcoreAlchemyListener {
         virtualManager.registerVirtualCapability(CapabilityFood.RESOURCE_LOCATION, CapabilityFood.FOOD_CAPABILITY);
         manager.register(IInactiveCapabilities.class, new StorageInactiveCapabilities(), InactiveCapabilities.class);
         manager.register(ICapabilityMorphState.class, new StorageMorphState(), CapabilityMorphState.class);
-        manager.register(ICapabilityInstinct.class, new StorageInstinct(), CapabilityInstinct.class);
         manager.register(ICapabilityMisc.class, new StorageMisc(), CapabilityMisc.class);
         manager.register(ICapabilityEntityState.class, new StorageEntityState(), CapabilityEntityState.class);
         manager.register(ICapabilityTileHistory.class, new StorageTileHistory(), CapabilityTileHistory.class);

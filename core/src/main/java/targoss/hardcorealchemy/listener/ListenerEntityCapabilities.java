@@ -20,7 +20,6 @@ package targoss.hardcorealchemy.listener;
 
 import java.util.UUID;
 
-import mchorse.metamorph.Metamorph;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.entity.player.EntityPlayer;
@@ -34,6 +33,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerChangedDimensionEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
+import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.capability.CapUtil;
 import targoss.hardcorealchemy.capability.entitystate.ICapabilityEntityState;
 import targoss.hardcorealchemy.capability.humanity.CapabilityHumanity;
@@ -42,23 +42,13 @@ import targoss.hardcorealchemy.capability.humanity.ProviderHumanity;
 import targoss.hardcorealchemy.capability.inactive.IInactiveCapabilities;
 import targoss.hardcorealchemy.capability.inactive.InactiveCapabilities;
 import targoss.hardcorealchemy.capability.inactive.ProviderInactiveCapabilities;
-import targoss.hardcorealchemy.capability.instinct.CapabilityInstinct;
-import targoss.hardcorealchemy.capability.instinct.ICapabilityInstinct;
-import targoss.hardcorealchemy.capability.instinct.ProviderInstinct;
-import targoss.hardcorealchemy.capability.killcount.ICapabilityKillCount;
 import targoss.hardcorealchemy.capability.misc.CapabilityMisc;
 import targoss.hardcorealchemy.capability.misc.ICapabilityMisc;
 import targoss.hardcorealchemy.capability.misc.ProviderMisc;
-import targoss.hardcorealchemy.capability.morphstate.ICapabilityMorphState;
 import targoss.hardcorealchemy.capability.research.CapabilityResearch;
 import targoss.hardcorealchemy.capability.research.ICapabilityResearch;
 import targoss.hardcorealchemy.capability.research.ProviderResearch;
-import targoss.hardcorealchemy.network.MessageHumanity;
 import targoss.hardcorealchemy.network.MessageInactiveCapabilities;
-import targoss.hardcorealchemy.network.MessageInstinct;
-import targoss.hardcorealchemy.network.MessageKillCount;
-import targoss.hardcorealchemy.network.MessageMorphState;
-import targoss.hardcorealchemy.network.PacketHandler;
 
 /**
  * This listener handles most (but not all) of the lifecycles of capabilities and some attributes.
@@ -73,16 +63,8 @@ public class ListenerEntityCapabilities extends HardcoreAlchemyListener {
     @CapabilityInject(ICapabilityEntityState.class)
     public static final Capability<ICapabilityEntityState> ENTITY_STATE_CAPABILITY = null;
     
-    @CapabilityInject(ICapabilityHumanity.class)
-    public static final Capability<ICapabilityHumanity> HUMANITY_CAPABILITY = null;
-    @CapabilityInject(ICapabilityKillCount.class)
-    public static final Capability<ICapabilityKillCount> KILL_COUNT_CAPABILITY = null;
-    @CapabilityInject(ICapabilityMorphState.class)
-    public static final Capability<ICapabilityMorphState> MORPH_STATE_CAPABILITY = null;
     @CapabilityInject(IInactiveCapabilities.class)
     public static final Capability<IInactiveCapabilities> INACTIVE_CAPABILITIES = null;
-    @CapabilityInject(ICapabilityInstinct.class)
-    public static final Capability<ICapabilityInstinct> INSTINCT_CAPABILITY = null;
     @CapabilityInject(ICapabilityMisc.class)
     public static final Capability<ICapabilityMisc> MISC_CAPABILITY = null;
     @CapabilityInject(ICapabilityResearch.class)
@@ -112,13 +94,6 @@ public class ListenerEntityCapabilities extends HardcoreAlchemyListener {
                 attributeMap.registerAttribute(ICapabilityHumanity.MAX_HUMANITY);
             }
         }
-        {
-            event.addCapability(CapabilityInstinct.RESOURCE_LOCATION, new ProviderInstinct());
-            AbstractAttributeMap attributeMap = ((EntityPlayer)event.getObject()).getAttributeMap();
-            if (attributeMap.getAttributeInstance(ICapabilityInstinct.MAX_INSTINCT) == null) {
-                attributeMap.registerAttribute(ICapabilityInstinct.MAX_INSTINCT);
-            }
-        }
     }
     
     @SubscribeEvent
@@ -127,14 +102,8 @@ public class ListenerEntityCapabilities extends HardcoreAlchemyListener {
         EntityPlayer newPlayer = event.getEntityPlayer();
         if (!event.isWasDeath()) {
             CapUtil.copyOldToNew(MISC_CAPABILITY, oldPlayer, newPlayer);
-            CapUtil.copyOldToNew(INSTINCT_CAPABILITY, oldPlayer, newPlayer);
             CapUtil.copyOldToNew(RESEARCH_CAPABILITY, oldPlayer, newPlayer);
             ListenerPlayerResearch.pruneResearchAfterDeath(newPlayer);
-        }
-        if (!event.isWasDeath() || Metamorph.keepMorphs.get()) {
-            CapUtil.copyOldToNew(KILL_COUNT_CAPABILITY, oldPlayer, newPlayer);
-            CapUtil.copyOldToNew(HUMANITY_CAPABILITY, oldPlayer, newPlayer);
-            ListenerPlayerMorphs.updateMaxHumanity(newPlayer);
         }
         // Note: Pruning of individual inactive capabilities only occurs on respawn
         CapUtil.copyOldToNew(INACTIVE_CAPABILITIES, oldPlayer, newPlayer);
@@ -168,29 +137,9 @@ public class ListenerEntityCapabilities extends HardcoreAlchemyListener {
     }
     
     public void syncFullPlayerCapabilities(EntityPlayerMP player) {
-        ICapabilityHumanity humanity = player.getCapability(HUMANITY_CAPABILITY, null);
-        if (humanity != null) {
-            PacketHandler.INSTANCE.sendTo(new MessageHumanity(humanity, true), (EntityPlayerMP)player);
-        }
-        
-        ICapabilityKillCount killCount = player.getCapability(KILL_COUNT_CAPABILITY, null);
-        if (killCount != null) {
-            PacketHandler.INSTANCE.sendTo(new MessageKillCount(killCount), (EntityPlayerMP)player);
-        }
-        
-        ICapabilityMorphState morphState = player.getCapability(MORPH_STATE_CAPABILITY, null);
-        if (morphState != null) {
-            PacketHandler.INSTANCE.sendTo(new MessageMorphState(morphState), (EntityPlayerMP)player);
-        }
-        
         IInactiveCapabilities inactives = player.getCapability(INACTIVE_CAPABILITIES, null);
-        if (morphState != null) {
-            PacketHandler.INSTANCE.sendTo(new MessageInactiveCapabilities(inactives), (EntityPlayerMP)player);
-        }
-        
-        ICapabilityInstinct instinct = player.getCapability(INSTINCT_CAPABILITY, null);
-        if (instinct != null) {
-            PacketHandler.INSTANCE.sendTo(new MessageInstinct(instinct), (EntityPlayerMP)player);
+        if (inactives != null) {
+            HardcoreAlchemy.proxy.messenger.sendTo(new MessageInactiveCapabilities(inactives), (EntityPlayerMP)player);
         }
     }
 }

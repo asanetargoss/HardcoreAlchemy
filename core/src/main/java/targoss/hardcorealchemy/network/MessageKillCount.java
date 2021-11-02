@@ -18,14 +18,10 @@
 
 package targoss.hardcorealchemy.network;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import io.netty.buffer.ByteBuf;
-import mchorse.metamorph.api.morphs.AbstractMorph;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.common.capabilities.Capability;

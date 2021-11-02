@@ -18,13 +18,15 @@
 
 package targoss.hardcorealchemy.test.suite;
 
-import net.minecraft.entity.monster.EntityZombie;
+//import net.minecraft.entity.monster.EntityZombie;
 import targoss.hardcorealchemy.HardcoreAlchemy;
+//import targoss.hardcorealchemy.creatures.util.EntityUtil;
 import targoss.hardcorealchemy.test.api.ITestList;
 import targoss.hardcorealchemy.test.api.ITestSuite;
 import targoss.hardcorealchemy.test.api.TestList;
-import targoss.hardcorealchemy.util.EntityUtil;
 import targoss.hardcorealchemy.util.MiscVanilla;
+
+// TODO: Move
 
 public class TestWorldReference implements ITestSuite {
     @Override
@@ -33,7 +35,7 @@ public class TestWorldReference implements ITestSuite {
         
         tests.put("check server reference", this::checkServerTestReference);
         tests.put("check world available", this::checkWorldAvailable);
-        tests.put("check worldless entity creation", this::checkEntityCreation);
+//        tests.put("check worldless entity creation", this::checkEntityCreation);
         
         return tests;
     }
@@ -46,7 +48,7 @@ public class TestWorldReference implements ITestSuite {
         return MiscVanilla.getWorld() != null;
     }
     
-    public boolean checkEntityCreation() {
-        return EntityUtil.createEntity(EntityZombie.class) != null;
-    }
+//    public boolean checkEntityCreation() {
+//        return EntityUtil.createEntity(EntityZombie.class) != null;
+//    }
 }

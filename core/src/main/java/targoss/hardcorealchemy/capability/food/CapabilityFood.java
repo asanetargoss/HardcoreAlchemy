@@ -21,9 +21,7 @@ package targoss.hardcorealchemy.capability.food;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
-import net.minecraftforge.common.capabilities.CapabilityManager;
 import targoss.hardcorealchemy.HardcoreAlchemy;
-import targoss.hardcorealchemy.capability.CapUtil;
 import targoss.hardcorealchemy.util.MorphDiet;
 import targoss.hardcorealchemy.util.MorphDiet.Restriction;
 

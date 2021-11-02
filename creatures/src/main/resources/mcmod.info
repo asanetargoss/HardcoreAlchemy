@@ -1,0 +1,16 @@
+[
+{
+  "modid": "hardcorealchemy-creatures",
+  "name": "Hardcore Alchemy Creatures",
+  "description": "Get stuck as a chicken for the rest of your life",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["asanetargoss"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": ["hardcorealchemy"]
+}
+]

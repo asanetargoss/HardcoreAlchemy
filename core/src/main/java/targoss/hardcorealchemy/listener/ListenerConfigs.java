@@ -26,7 +26,6 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.network.MessageConfigs;
-import targoss.hardcorealchemy.network.PacketHandler;
 
 public class ListenerConfigs extends HardcoreAlchemyListener {
     // TODO: Handle the player logging out from the server
@@ -55,6 +54,6 @@ public class ListenerConfigs extends HardcoreAlchemyListener {
         if (!(event.getEntity() instanceof EntityPlayerMP)) {
             return;
         }
-        PacketHandler.INSTANCE.sendTo(new MessageConfigs(coreConfigs), (EntityPlayerMP)event.getEntity());
+        HardcoreAlchemy.proxy.messenger.sendTo(new MessageConfigs(coreConfigs), (EntityPlayerMP)event.getEntity());
     }
 }

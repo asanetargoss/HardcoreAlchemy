@@ -31,6 +31,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent.KeyInputEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.capability.misc.ICapabilityMisc;
 import targoss.hardcorealchemy.capability.misc.ProviderMisc;
 import targoss.hardcorealchemy.event.EventSendChatMessage;
@@ -40,7 +41,6 @@ import targoss.hardcorealchemy.incantation.IncantationParts;
 import targoss.hardcorealchemy.incantation.IncantationParts.IncantationDefinition;
 import targoss.hardcorealchemy.incantation.api.ISpell;
 import targoss.hardcorealchemy.incantation.api.Incantation;
-import targoss.hardcorealchemy.network.PacketHandler;
 import targoss.hardcorealchemy.network.RequestIncantation;
 import targoss.hardcorealchemy.util.Chat;
 import targoss.hardcorealchemy.util.Chat.Type;
@@ -180,7 +180,7 @@ public class ListenerPlayerIncantation extends HardcoreAlchemyListener {
         event.setCanceled(true);
         
         // Upon successful incantation parse, send result to the server
-        PacketHandler.INSTANCE.sendToServer(new RequestIncantation(parts));
+        HardcoreAlchemy.proxy.messenger.sendToServer(new RequestIncantation(parts));
     }
     
     protected static ITextComponent getMessageFromParts(IncantationParts parts) {

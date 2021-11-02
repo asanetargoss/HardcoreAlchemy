@@ -22,23 +22,14 @@ package targoss.hardcorealchemy.util;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.google.common.base.Predicate;
-
-import mchorse.metamorph.api.MorphManager;
-import mchorse.metamorph.api.morphs.AbstractMorph;
-import mchorse.metamorph.api.morphs.EntityMorph;
-import mchorse.metamorph.capabilities.morphing.IMorphing;
-import mchorse.metamorph.capabilities.morphing.Morphing;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityList;
@@ -48,7 +39,6 @@ import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
@@ -66,20 +56,11 @@ import targoss.hardcorealchemy.coremod.ObfuscatedName;
  * Functions for working with living entities
  */
 public class EntityUtil {
-    public static Set<Class> humanEntities = new HashSet<>();
-    
     static {
         if (!Loader.instance().hasReachedState(LoaderState.AVAILABLE)) {
             throw new ModStateException(
                     "The EntityUtil class should not be used until all mods and their respective entities are registered"
                     );
-        }
-        
-        for (String humanEntityStrings : MobLists.getHumans()) {
-            Class clazz = EntityList.NAME_TO_CLASS.get(humanEntityStrings);
-            if (clazz != null) {
-                humanEntities.add(clazz);
-            }
         }
     }
     
@@ -268,157 +249,5 @@ public class EntityUtil {
         entityLiving.renderYawOffset = entityLiving.rotationYaw;
         entityLiving.onInitialSpawn(entityLiving.world.getDifficultyForLocation(new BlockPos(entityLiving)), null);
         entityLiving.world.spawnEntity(entityLiving);
-    }
-    
-    public static boolean canMorphInto(EntityLivingBase entity) {
-        String entityName = EntityList.getEntityString(entity);
-        if (entityName == null) {
-            return false;
-        }
-        return !MorphManager.isBlacklisted(entityName);
-    }
-    
-    public static class MorphablePredicate implements java.util.function.Predicate<EntityLivingBase>, Predicate<EntityLivingBase> {
-        @Override
-        public boolean test(EntityLivingBase entity) {
-            return canMorphInto(entity);
-        }
-
-        @Override
-        public boolean apply(EntityLivingBase entity) {
-            return test(entity);
-        }
-    }
-    
-    public static class DistanceComparator implements Comparator<Entity> {
-        protected double posX;
-        protected double posY;
-        protected double posZ;
-        public DistanceComparator(double posX, double posY, double posZ) {
-            this.posX = posX;
-            this.posY = posY;
-            this.posZ = posZ;
-        }
-        @Override
-        public int compare(Entity entity1, Entity entity2) {
-            double distanceSquared1 = entity1.getDistanceSq(posX, posY, posZ);
-            double distanceSquared2 = entity2.getDistanceSq(posX, posY, posZ);
-            if (distanceSquared1 == distanceSquared2) {
-                return 0;
-            } else if (distanceSquared1 < distanceSquared2) {
-                return -1;
-            } else {
-                return 1;
-            }
-        }
-    }
-    
-    /**
-     * Gets living entities and morphed players who resemble the given entity class
-     */
-    public static <T extends EntityLivingBase> List<T> getEntitiesAndMorphs(World world, Class<? extends T> entityClass, AxisAlignedBB aabb, @Nullable Predicate <? super T > filter) {
-        if (EntityPlayer.class.isAssignableFrom(entityClass)) {
-            return (List<T>)world.getEntitiesWithinAABB((Class<? extends T>)entityClass, aabb, new Predicate<T>() {
-                @Override public boolean apply(T player) {
-                    return isUnmorphed((EntityPlayer)player) && entityClass.isAssignableFrom(player.getClass()) && (filter == null || filter.apply(player));
-                }
-            });
-        }
-        else if (entityClass.isAssignableFrom(EntityPlayer.class)) {
-            return (List<T>)world.getEntitiesWithinAABB(entityClass, aabb, new Predicate<T>() {
-                @Override public boolean apply(T entity) {
-                    EntityLivingBase effectiveEntity = getEffectiveEntity(entity);
-                    return entityClass.isAssignableFrom(effectiveEntity.getClass()) && (filter == null || filter.apply((T)effectiveEntity));
-                }
-            });
-        }
-        else {
-            List<T> likeEntities = world.getEntitiesWithinAABB(entityClass, aabb, filter);
-            List<EntityPlayer> morphedPlayers = world.getEntitiesWithinAABB(EntityPlayer.class, aabb, new Predicate<EntityPlayer>() {
-                @Override public boolean apply(EntityPlayer player) {
-                    EntityLivingBase effectiveEntity = getEffectiveEntity(player);
-                    return entityClass.isAssignableFrom(effectiveEntity.getClass()) && (filter == null || filter.apply((T)effectiveEntity));
-                }
-            });
-            likeEntities.addAll((List<T>)morphedPlayers);
-            return likeEntities;
-        }
-    }
-    
-    public static <T extends EntityLivingBase> List<T> getEntitiesAndMorphs(World world, Class<? extends T> entityClass, AxisAlignedBB aabb) {
-        return getEntitiesAndMorphs(world, entityClass, aabb, null);
-    }
-
-    /**
-     * Gets living entities and morphed players who resemble the given entity class,
-     * excluding the given entity.
-     */
-    public static <T extends EntityLivingBase> List<T> getEntitiesAndMorphsExcluding(EntityLivingBase excludingEntity, World world, Class <? extends T> entityClass, AxisAlignedBB aabb, @Nullable Predicate <? super T > filter) {
-        List<T> foundEntities = getEntitiesAndMorphs(world, entityClass, aabb, filter);
-        foundEntities.remove(excludingEntity);
-        return foundEntities;
-    }
-    
-    public static <T extends EntityLivingBase> List<T> getEntitiesAndMorphsExcluding(EntityLivingBase excludingEntity, World world, Class <? extends T> entityClass, AxisAlignedBB aabb) {
-        return getEntitiesAndMorphsExcluding(excludingEntity, world, entityClass, aabb, null);
-    }
-    
-    /**
-     * Whether this entity looks like the given entityClass.
-     */
-    public static boolean isEntityLike(EntityLivingBase entity, Class<? extends EntityLivingBase> entityClass) {
-        if (entity instanceof EntityPlayer) {
-            return isMorphedAs((EntityPlayer)entity, entityClass);
-        }
-        else {
-            return entityClass.isInstance(entity);
-        }
-    }
-
-    public static boolean isUnmorphed(EntityPlayer player) {
-        IMorphing morphing = Morphing.get(player);
-        if (morphing == null) {
-            return true;
-        }
-        return morphing.getCurrentMorph() == null;
-    }
-    
-    public static boolean isMorphedAs(EntityPlayer player, Class<? extends EntityLivingBase> entityClass) {
-        IMorphing morphing = Morphing.get(player);
-        if (morphing == null) {
-            return entityClass.isInstance(player);
-        }
-        AbstractMorph morph = morphing.getCurrentMorph();
-        if (morph == null) {
-            return entityClass.isInstance(player);
-        }
-        if (!(morph instanceof EntityMorph)) {
-            return false;
-        }
-        EntityLivingBase morphEntity = ((EntityMorph)morph).getEntity(player.world);
-        return entityClass.isInstance(morphEntity);
-    }
-    
-    public static EntityLivingBase getEffectiveEntity(@Nonnull EntityPlayer player) {
-        IMorphing morphing = Morphing.get(player);
-        if (morphing == null) {
-            return player;
-        }
-        AbstractMorph morph = morphing.getCurrentMorph();
-        if (morph == null) {
-            return player;
-        }
-        if (!(morph instanceof EntityMorph)) {
-            // Incorrect, but there's no better answer
-            return player;
-        }
-        return ((EntityMorph)morph).getEntity(player.world);
-    }
-    
-    public static EntityLivingBase getEffectiveEntity(@Nonnull EntityLivingBase entity) {
-        if (entity instanceof EntityPlayer) {
-            return getEffectiveEntity((EntityPlayer)entity);
-        }
-        return entity;
     }
 }

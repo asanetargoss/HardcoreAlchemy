@@ -24,11 +24,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Nonnull;
-
-import mchorse.metamorph.api.morphs.AbstractMorph;
-import mchorse.metamorph.capabilities.morphing.IMorphing;
-import mchorse.metamorph.capabilities.morphing.Morphing;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.monster.EntityCreeper;
@@ -42,28 +37,25 @@ import net.minecraft.entity.monster.EntitySlime;
 import net.minecraft.entity.passive.EntityChicken;
 import net.minecraft.entity.passive.EntityPig;
 import net.minecraft.entity.passive.EntitySquid;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
-import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 
 public class MorphDiet {
 
     @CapabilityInject(ICapabilityHumanity.class)
     public static final Capability<ICapabilityHumanity> HUMANITY_CAPABILITY = null;
-    @CapabilityInject(IMorphing.class)
-    public static final Capability<IMorphing> MORPHING_CAPABILITY = null;
     
     /**
      * Dietary needs indexed by the fully-qualified name of the entity class which the morph represents
      */
-    private static Map<String, Needs> morphDiets = new HashMap<String, Needs>();
+    public static Map<String, Needs> morphDiets = new HashMap<String, Needs>();
     public static final Needs PLAYER_NEEDS = new Needs();
+    public static final Needs NO_NEEDS = new Needs(Needs.NO_NUTRIENTS, Restriction.UNFEEDING, false);
     public static final Needs IDEALIST_VEGAN_NEEDS = new Needs(Needs.DEFAULT_NUTRIENTS, Restriction.VEGAN);
     public static final Needs GRAZER_NEEDS = new Needs(new String[]{"grain"}, Restriction.VEGAN);
     public static final Needs NIGHT_MOB_NEEDS = new Needs(Needs.CARNIVORE_NUTRIENTS, Restriction.CARNIVORE);
@@ -127,29 +119,6 @@ public class MorphDiet {
             e.printStackTrace();
             return null;
         }
-    }
-    
-    /**
-     * Get which nutritional needs and restrictions are enabled for this morph
-     */
-    public static Needs getNeeds(AbstractMorph morph) {
-        if (morph == null) {
-            return PLAYER_NEEDS;
-        }
-        Needs needs = morphDiets.get(morph.name);
-        if (needs == null) {
-            return PLAYER_NEEDS;
-        }
-        return needs;
-    }
-    
-    /**
-     * Get which nutritional needs and restrictions are enabled for this morph
-     */
-    public static Needs getNeeds(EntityPlayer player) {
-        IMorphing morphing = player.getCapability(MORPHING_CAPABILITY, null);
-        AbstractMorph morph = morphing.getCurrentMorph();
-        return getNeeds(morph);
     }
     
     /** Do not change the name of these enums as they are used in serialization
@@ -282,38 +251,5 @@ public class MorphDiet {
             }
             return DEFAULT_NUTRIENTS.length / nutrientCount;
         }
-    }
-    
-    public static boolean hasHunger(EntityPlayer player) {
-        if (ModState.isDissolutionLoaded && MorphState.isIncorporeal(player)) {
-            return false;
-        }
-        ICapabilityHumanity humanity = player.getCapability(HUMANITY_CAPABILITY, null);
-        if (humanity == null || humanity.isHuman()) {
-            return true;
-        }
-        IMorphing morphing = Morphing.get(player);
-        if (morphing == null) {
-            return true;
-        }
-        return MorphDiet.getNeeds(morphing.getCurrentMorph()).hasHunger;
-    }
-    
-    /**
-     * Whether a player has thirst (NOTE: Does NOT check if a thirst mod is installed)
-     */
-    public static boolean hasThirst(@Nonnull EntityPlayer player) {
-        if (ModState.isDissolutionLoaded && MorphState.isIncorporeal(player)) {
-            return false;
-        }
-        ICapabilityHumanity humanityCap = player.getCapability(HUMANITY_CAPABILITY, null);
-        if (humanityCap == null || humanityCap.isHuman()) {
-            return true;
-        }
-        IMorphing morphing = Morphing.get(player);
-        if (morphing == null) {
-            return true;
-        }
-        return MorphDiet.getNeeds(morphing.getCurrentMorph()).hasThirst;
     }
 }

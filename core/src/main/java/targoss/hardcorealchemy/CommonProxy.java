@@ -30,32 +30,29 @@ import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import targoss.hardcorealchemy.capability.CapUtil;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.entity.Entities;
 import targoss.hardcorealchemy.incantation.Incantations;
-import targoss.hardcorealchemy.instinct.Instincts;
 import targoss.hardcorealchemy.item.Items;
 import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
 import targoss.hardcorealchemy.listener.ListenerCapabilities;
 import targoss.hardcorealchemy.listener.ListenerConfigs;
 import targoss.hardcorealchemy.listener.ListenerEntityCapabilities;
-import targoss.hardcorealchemy.listener.ListenerInstinctOverheat;
-import targoss.hardcorealchemy.listener.ListenerMobAI;
-import targoss.hardcorealchemy.listener.ListenerPlayerHinderedMind;
-import targoss.hardcorealchemy.listener.ListenerPlayerHumanity;
 import targoss.hardcorealchemy.listener.ListenerPlayerIncantation;
-import targoss.hardcorealchemy.listener.ListenerPlayerInstinct;
 import targoss.hardcorealchemy.listener.ListenerPlayerInventory;
-import targoss.hardcorealchemy.listener.ListenerPlayerMorphState;
-import targoss.hardcorealchemy.listener.ListenerPlayerMorphs;
 import targoss.hardcorealchemy.listener.ListenerPlayerResearch;
-import targoss.hardcorealchemy.listener.ListenerSmallTweaks;
-import targoss.hardcorealchemy.metamorph.HcAMetamorphPack;
 import targoss.hardcorealchemy.modpack.guide.AlchemicAshGuide;
 import targoss.hardcorealchemy.modpack.guide.HCAModpackGuide;
 import targoss.hardcorealchemy.modpack.guide.HCAUpgradeGuides;
-import targoss.hardcorealchemy.network.PacketHandler;
+import targoss.hardcorealchemy.network.MessengerBuilder;
+import targoss.hardcorealchemy.network.MessageConfigs;
+import targoss.hardcorealchemy.network.MessageHumanity;
+import targoss.hardcorealchemy.network.MessageInactiveCapabilities;
+import targoss.hardcorealchemy.network.MessageKillCount;
+import targoss.hardcorealchemy.network.MessageMorphState;
+import targoss.hardcorealchemy.network.RequestIncantation;
 import targoss.hardcorealchemy.registrar.RegistrarUpgradeGuide;
 import targoss.hardcorealchemy.research.Studies;
 
@@ -63,6 +60,8 @@ public class CommonProxy {
     public Configs configs = new Configs();
     
     protected List<HardcoreAlchemyListener> listeners = new ArrayList<>();
+    
+    public SimpleNetworkWrapper messenger;
     
     public void addListener(HardcoreAlchemyListener listener) {
         listener.setConfigs(configs);
@@ -72,22 +71,21 @@ public class CommonProxy {
     public CommonProxy() {
         addListener(new ListenerCapabilities());
         addListener(new ListenerEntityCapabilities());
-        addListener(new ListenerPlayerMorphs());
-        addListener(new ListenerPlayerHumanity());
-        addListener(new ListenerMobAI());
-        addListener(new ListenerSmallTweaks());
-        addListener(new ListenerPlayerMorphState());
-        addListener(new ListenerPlayerInstinct());
-        addListener(new ListenerPlayerHinderedMind());
         addListener(new ListenerPlayerIncantation());
         addListener(new ListenerPlayerInventory());
         addListener(new ListenerPlayerResearch());
         addListener(new ListenerConfigs());
-        addListener(new ListenerInstinctOverheat());
     }
     
     public void registerNetworking() {
-        PacketHandler.register();
+        messenger = new MessengerBuilder()
+            .register(new MessageHumanity())
+            .register(new MessageKillCount())
+            .register(new MessageMorphState())
+            .register(new MessageInactiveCapabilities())
+            .register(new MessageConfigs())
+            .register(new RequestIncantation())
+            .done();
     }
     
     public void preInit(FMLPreInitializationEvent event) {
@@ -100,10 +98,7 @@ public class CommonProxy {
         Items.POTION_TYPES.register();
         Entities.ENTITIES.register();
         Studies.KNOWLEDGE_FACTS.register();
-        // asanetargoss @ 2021-10-03: Moved instinct and incantation registration from init to preInit 
-        Instincts.INSTINCTS.register();
-        Instincts.INSTINCT_NEED_FACTORIES.register();
-        Instincts.INSTINCT_EFFECTS.register();
+        // asanetargoss @ 2021-10-03: Moved incantation registration from init to preInit
         Incantations.INCANTATIONS.register();
         
         if (ModState.isGuideapiLoaded) {
@@ -130,7 +125,6 @@ public class CommonProxy {
         }
         
         Items.registerRecipes();
-        HcAMetamorphPack.registerAbilities();
         
         if (ModState.isGuideapiLoaded) {
             HCAModpackGuide.init();

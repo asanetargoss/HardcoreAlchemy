@@ -62,7 +62,7 @@ import targoss.hardcorealchemy.util.Chat;
 import targoss.hardcorealchemy.util.InventoryExtension;
 import targoss.hardcorealchemy.util.InventoryUtil;
 import targoss.hardcorealchemy.util.MiscVanilla;
-import targoss.hardcorealchemy.util.MorphState;
+import targoss.hardcorealchemy.util.MorphExtension;
 import thaumcraft.api.capabilities.IPlayerKnowledge;
 import thaumcraft.api.capabilities.IPlayerKnowledge.EnumKnowledgeType;
 import thaumcraft.api.capabilities.IPlayerWarp;
@@ -221,7 +221,7 @@ public class ListenerPlayerMagicState extends HardcoreAlchemyListener {
             return;
         }
         
-        if (MorphState.canUseHighMagic(player)) {
+        if (MorphExtension.INSTANCE.canUseHighMagic(player)) {
             if (ModState.isArsMagicaLoaded) {
                 activateSpellcasting(player);
             }
@@ -570,7 +570,7 @@ public class ListenerPlayerMagicState extends HardcoreAlchemyListener {
     @Optional.Method(modid=ModState.THAUMCRAFT_ID)
     @CoremodHook
     public static boolean canStartThaumcraftResearch(EntityPlayer player) {
-        return MorphState.canUseHighMagic(player);
+        return MorphExtension.INSTANCE.canUseHighMagic(player);
     }
     
     /**

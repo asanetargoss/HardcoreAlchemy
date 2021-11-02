@@ -22,19 +22,21 @@ import java.util.Collection;
 import java.util.Map;
 
 import net.minecraft.entity.EntityList;
-import net.minecraft.entity.monster.EntityZombie;
-import net.minecraftforge.event.entity.living.ZombieEvent;
+//import net.minecraft.entity.monster.EntityZombie;
+//import net.minecraftforge.event.entity.living.ZombieEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
-import net.minecraftforge.fml.common.eventhandler.Event.Result;
-import targoss.hardcorealchemy.ModState;
-import targoss.hardcorealchemy.listener.ListenerSmallTweaks;
-import targoss.hardcorealchemy.test.HardcoreAlchemyTests;
+//import net.minecraftforge.fml.common.eventhandler.Event.Result;
+//import targoss.hardcorealchemy.ModState;
+//import targoss.hardcorealchemy.creatures.listener.ListenerSmallTweaks;
+//import targoss.hardcorealchemy.creatures.util.EntityUtil;
+//import targoss.hardcorealchemy.creatures.util.MobLists;
+//import targoss.hardcorealchemy.test.HardcoreAlchemyTests;
 import targoss.hardcorealchemy.test.api.ITestList;
 import targoss.hardcorealchemy.test.api.ITestSuite;
 import targoss.hardcorealchemy.test.api.TestList;
-import targoss.hardcorealchemy.util.EntityUtil;
-import targoss.hardcorealchemy.util.MobLists;
+
+// TODO: Move
 
 public class TestMobLists implements ITestSuite {
     
@@ -48,20 +50,20 @@ public class TestMobLists implements ITestSuite {
     public ITestList getTests() {
         ITestList tests = new TestList();
         
-        tests.put("Test entity domain getter: minecraft", this::testEntityDomainVanilla);
-        tests.put("Test entity domain getter: somemod", this::testEntityDomainMod);
-        tests.put("list integrity: bosses", this::checkBossList);
-        tests.put("list integrity: non-mobs", this::checkNonMobList);
-        tests.put("list integrity: humans", this::checkHumanList);
-        tests.put("list integrity: passive mobs", this::checkPassiveMobList);
-        tests.put("list integrity: tame-ables", this::checkTameableList);
-        tests.put("list integrity: night mobs", this::checkNightMobList);
-        tests.put("list integrity: nether mobs", this::checkNetherMobList);
-        
-        boolean adInferos = Loader.instance().getIndexedModList().containsKey(ModState.ADINFEROS_ID);
-        
-        tests.putIf("test zombie reinforcements (Ad Inferos present)", this::testZombieReinforcements, adInferos);
-        tests.putIf("test obsidian sheepman reinforcements", this::testSheepmanReinforcements, adInferos);
+//        tests.put("Test entity domain getter: minecraft", this::testEntityDomainVanilla);
+//        tests.put("Test entity domain getter: somemod", this::testEntityDomainMod);
+//        tests.put("list integrity: bosses", this::checkBossList);
+//        tests.put("list integrity: non-mobs", this::checkNonMobList);
+//        tests.put("list integrity: humans", this::checkHumanList);
+//        tests.put("list integrity: passive mobs", this::checkPassiveMobList);
+//        tests.put("list integrity: tame-ables", this::checkTameableList);
+//        tests.put("list integrity: night mobs", this::checkNightMobList);
+//        tests.put("list integrity: nether mobs", this::checkNetherMobList);
+//        
+//        boolean adInferos = Loader.instance().getIndexedModList().containsKey(ModState.ADINFEROS_ID);
+//        
+//        tests.putIf("test zombie reinforcements (Ad Inferos present)", this::testZombieReinforcements, adInferos);
+//        tests.putIf("test obsidian sheepman reinforcements", this::testSheepmanReinforcements, adInferos);
         
         return tests;
     }
@@ -97,68 +99,68 @@ public class TestMobLists implements ITestSuite {
         return true;
     }
     
-    public boolean checkBossList() {
-        return checkEntityList(MobLists.getBosses());
-    }
-    
-    public boolean checkNonMobList() {
-        return checkEntityList(MobLists.getNonMobs());
-    }
-    
-    public boolean checkHumanList() {
-        return checkEntityList(MobLists.getHumans());
-    }
-    
-    public boolean checkPassiveMobList() {
-        return checkEntityList(MobLists.getPassiveMobs());
-    }
-    
-    public boolean checkTameableList() {
-        return checkEntityList(MobLists.getEntityTameables());
-    }
-    
-    public boolean checkNightMobList() {
-        return checkEntityList(MobLists.getNightMobs());
-    }
-    
-    public boolean checkNetherMobList() {
-        return checkEntityList(MobLists.getNetherMobs());
-    }
-    
-    public boolean reinforcementAllowed(String zombieEntityName) {
-        EntityZombie zombie = (EntityZombie)EntityUtil.createEntity(EntityList.NAME_TO_CLASS.get(zombieEntityName));
-        
-        ZombieEvent.SummonAidEvent event = new ZombieEvent.SummonAidEvent(zombie, zombie.world, 0, 0, 0, null, zombie.getEntityAttribute(EntityZombie.SPAWN_REINFORCEMENTS_CHANCE).getAttributeValue());
-        ListenerSmallTweaks listener = new ListenerSmallTweaks();
-        listener.setConfigs(HardcoreAlchemyTests.DEFAULT_CONFIGS);
-        listener.onReinforceObsidianSheepman(event);
-        
-        return event.getResult() != Result.DENY;
-    }
-    
-    public boolean testZombieReinforcements() {
-        boolean result = false;
-        try {
-            result = reinforcementAllowed("Zombie");
-        }
-        catch (Exception e) {
-            result = false;
-            e.printStackTrace();
-        }
-        
-        return result;
-    }
-    
-    public boolean testSheepmanReinforcements() {
-        boolean result = false;
-        try {
-            result = !reinforcementAllowed(ModState.ADINFEROS_ID + ".ObsidianSheepman");
-        }
-        catch (Exception e) {
-            result = false;
-            e.printStackTrace();
-        }
-        
-        return result;
-    }
+//    public boolean checkBossList() {
+//        return checkEntityList(MobLists.getBosses());
+//    }
+//    
+//    public boolean checkNonMobList() {
+//        return checkEntityList(MobLists.getNonMobs());
+//    }
+//    
+//    public boolean checkHumanList() {
+//        return checkEntityList(MobLists.getHumans());
+//    }
+//    
+//    public boolean checkPassiveMobList() {
+//        return checkEntityList(MobLists.getPassiveMobs());
+//    }
+//    
+//    public boolean checkTameableList() {
+//        return checkEntityList(MobLists.getEntityTameables());
+//    }
+//    
+//    public boolean checkNightMobList() {
+//        return checkEntityList(MobLists.getNightMobs());
+//    }
+//    
+//    public boolean checkNetherMobList() {
+//        return checkEntityList(MobLists.getNetherMobs());
+//    }
+//    
+//    public boolean reinforcementAllowed(String zombieEntityName) {
+//        EntityZombie zombie = (EntityZombie)EntityUtil.createEntity(EntityList.NAME_TO_CLASS.get(zombieEntityName));
+//        
+//        ZombieEvent.SummonAidEvent event = new ZombieEvent.SummonAidEvent(zombie, zombie.world, 0, 0, 0, null, zombie.getEntityAttribute(EntityZombie.SPAWN_REINFORCEMENTS_CHANCE).getAttributeValue());
+//        ListenerSmallTweaks listener = new ListenerSmallTweaks();
+//        listener.setConfigs(HardcoreAlchemyTests.DEFAULT_CONFIGS);
+//        listener.onReinforceObsidianSheepman(event);
+//        
+//        return event.getResult() != Result.DENY;
+//    }
+//    
+//    public boolean testZombieReinforcements() {
+//        boolean result = false;
+//        try {
+//            result = reinforcementAllowed("Zombie");
+//        }
+//        catch (Exception e) {
+//            result = false;
+//            e.printStackTrace();
+//        }
+//        
+//        return result;
+//    }
+//    
+//    public boolean testSheepmanReinforcements() {
+//        boolean result = false;
+//        try {
+//            result = !reinforcementAllowed(ModState.ADINFEROS_ID + ".ObsidianSheepman");
+//        }
+//        catch (Exception e) {
+//            result = false;
+//            e.printStackTrace();
+//        }
+//        
+//        return result;
+//    }
 }

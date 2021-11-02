@@ -35,6 +35,4 @@ public class Incantations {
             .setType(Incantation.class)
             .setIDRange(0, 1024)
             .create();
-    
-    public static final Incantation CHANGE = INCANTATIONS.add("change", new IncantationChange());
 }

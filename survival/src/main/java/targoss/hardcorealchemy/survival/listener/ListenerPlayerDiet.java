@@ -25,9 +25,6 @@ import java.util.Map;
 import ca.wescook.nutrition.capabilities.CapInterface;
 import ca.wescook.nutrition.nutrients.Nutrient;
 import ca.wescook.nutrition.nutrients.NutrientList;
-import mchorse.metamorph.api.morphs.AbstractMorph;
-import mchorse.metamorph.capabilities.morphing.IMorphing;
-import mchorse.metamorph.capabilities.morphing.Morphing;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -46,7 +43,6 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.CapUtil;
 import targoss.hardcorealchemy.capability.food.ICapabilityFood;
-import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.event.EventCraftPredict;
 import targoss.hardcorealchemy.event.EventPlayerMorphStateChange;
 import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
@@ -54,12 +50,11 @@ import targoss.hardcorealchemy.util.Chat;
 import targoss.hardcorealchemy.util.FoodLists;
 import targoss.hardcorealchemy.util.InventoryUtil;
 import targoss.hardcorealchemy.util.MorphDiet;
+import targoss.hardcorealchemy.util.NutritionExtension;
 import toughasnails.api.TANCapabilities;
 import toughasnails.thirst.ThirstHandler;
 
 public class ListenerPlayerDiet extends HardcoreAlchemyListener {
-    @CapabilityInject(ICapabilityHumanity.class)
-    public static final Capability<ICapabilityHumanity> HUMANITY_CAPABILITY = null;
     @CapabilityInject(ICapabilityFood.class)
     public static final Capability<ICapabilityFood> FOOD_CAPABILITY = null;
 
@@ -90,19 +85,7 @@ public class ListenerPlayerDiet extends HardcoreAlchemyListener {
         if (nutritionCapability == null) {
             return;
         }
-        ICapabilityHumanity humanityCapability = player.getCapability(HUMANITY_CAPABILITY, null);
-        if (humanityCapability == null) {
-            return;
-        }
-        MorphDiet.Needs needs;
-        if (humanityCapability.isHuman()) {
-            needs = MorphDiet.PLAYER_NEEDS;
-        }
-        else if (ModState.isMetamorphLoaded) {
-            needs = MorphDiet.getNeeds(player);
-        } else {
-            needs = new MorphDiet.Needs();
-        }
+        MorphDiet.Needs needs = NutritionExtension.INSTANCE.getNeeds(player);
         Map<Nutrient, Boolean> enabled = nutritionCapability.getEnabled();
         for (Nutrient nutrient : NutrientList.get()) {
             // Manage enabled state
@@ -181,17 +164,7 @@ public class ListenerPlayerDiet extends HardcoreAlchemyListener {
         }
 
         EntityPlayer player = event.getEntityPlayer();
-        ICapabilityHumanity capabilityHumanity = player.getCapability(HUMANITY_CAPABILITY, null);
-        if (capabilityHumanity == null || capabilityHumanity.isHuman()) {
-            return;
-        }
-        
-        IMorphing morphing = Morphing.get(player);
-        AbstractMorph morph = null;
-        if (morphing != null) {
-            morph = morphing.getCurrentMorph();
-        }
-        MorphDiet.Needs needs = MorphDiet.getNeeds(morph);
+        MorphDiet.Needs needs = NutritionExtension.INSTANCE.getNeeds(player);
         
         ICapabilityFood capabilityFood = CapUtil.getVirtualCapability(itemStack, FOOD_CAPABILITY);
         MorphDiet.Restriction itemRestriction = null;
@@ -227,7 +200,7 @@ public class ListenerPlayerDiet extends HardcoreAlchemyListener {
         
         EntityPlayer player = event.player;
         
-        if (!MorphDiet.hasThirst(player)) {
+        if (!NutritionExtension.INSTANCE.getNeeds(player).hasThirst) {
             ThirstHandler thirstStats = (ThirstHandler)player.getCapability(TANCapabilities.THIRST, null);
             if (thirstStats != null) {
                 thirstStats.addStats(20, 20.0F);
@@ -247,7 +220,7 @@ public class ListenerPlayerDiet extends HardcoreAlchemyListener {
         
         EntityPlayer player = event.player;
         
-        if (!MorphDiet.hasHunger(player)) {
+        if (!NutritionExtension.INSTANCE.getNeeds(player).hasHunger) {
             FoodStats food = player.getFoodStats();
             food.setFoodLevel(20);
             food.setFoodSaturationLevel(5.0F);

@@ -63,7 +63,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerChangedDimensionEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.items.IItemHandler;
-import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.CapUtil;
 import targoss.hardcorealchemy.capability.dimensionhistory.ICapabilityDimensionHistory;
 import targoss.hardcorealchemy.capability.entitystate.ICapabilityEntityState;
@@ -76,14 +75,14 @@ import targoss.hardcorealchemy.tweaks.event.EventPlayerInventorySlotSet;
 import targoss.hardcorealchemy.tweaks.item.Items;
 import targoss.hardcorealchemy.util.InventoryExtension;
 import targoss.hardcorealchemy.util.InventoryUtil;
-import targoss.hardcorealchemy.util.MorphState;
+import targoss.hardcorealchemy.util.MorphExtension;
 
 public class ListenerEntityVoidfade extends HardcoreAlchemyListener {
     @CapabilityInject(ICapabilityDimensionHistory.class)
     public static final Capability<ICapabilityDimensionHistory> DIMENSION_HISTORY_CAPABILITY = null;
 
     protected static void applyVoidfade(EntityLivingBase entity, int durationSeconds) {
-        if (ModState.isDissolutionLoaded && MorphState.isIncorporeal(entity)) {
+        if (MorphExtension.INSTANCE.isGhost(entity)) {
             return;
         }
         entity.addPotionEffect(new PotionEffect(Items.POTION_VOIDFADE, durationSeconds * 20, 0, false, true));
@@ -241,7 +240,7 @@ public class ListenerEntityVoidfade extends HardcoreAlchemyListener {
         if (!traveledDimensionally) {
             return;
         }
-        if (ModState.isDissolutionLoaded && MorphState.isIncorporeal(entityLiving)) {
+        if (MorphExtension.INSTANCE.isGhost(entityLiving)) {
             return;
         }
         ICapabilityMisc misc = entityLiving.getCapability(ProviderMisc.MISC_CAPABILITY, null);

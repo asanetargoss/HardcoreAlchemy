@@ -23,23 +23,9 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import net.minecraftforge.fml.relauncher.Side;
 
 public abstract class RequestToServer implements IMessage {
-    public static final SimpleNetworkWrapper INSTANCE = PacketHandler.INSTANCE;
-    
-    @SuppressWarnings("unchecked")
-    public void register() {
-        INSTANCE.registerMessage(
-                    (Class<IMessageHandler<RequestToServer, IMessage>>)this.getHandlerClass(),
-                    (Class<RequestToServer>)this.getClass(),
-                    PacketHandler.getNextId(),
-                    Side.SERVER
-                );
-    }
-    
-    public static IThreadListener getThreadListener(MessageContext ctx) {
+    public IThreadListener getThreadListener(MessageContext ctx) {
         return FMLCommonHandler.instance().getWorldThread(ctx.getServerHandler());
     }
     

@@ -21,8 +21,6 @@ package targoss.hardcorealchemy.util;
 import java.util.HashSet;
 import java.util.Set;
 
-import targoss.hardcorealchemy.entity.Entities;
-
 /**
  * Various mob lists, mainly used for deciding which
  * mobs should have certain tweaks. Each received list
@@ -77,7 +75,7 @@ public class MobLists {
         Set<String> nonMobs = new HashSet<>();
         
         // Hardcore Alchemy
-        nonMobs.add(Entities.FISH_SWARM);
+        nonMobs.add("hardcorealchemy:fish_swarm");
         // Metamorph
         nonMobs.add("metamorph.Morph");
         // Ars Magica

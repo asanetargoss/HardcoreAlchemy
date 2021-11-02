@@ -1,9 +1,12 @@
 package targoss.hardcorealchemy.util;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.util.math.BlockPos;
+import targoss.hardcorealchemy.util.MorphDiet.Needs;
 
 /**
  * An overridable utility class to apply nutrition and thirst changes to the player.
@@ -41,4 +44,11 @@ public class NutritionExtension {
     }
     
     public boolean isItemDrinkable(Item item) { return false; }
+    
+    /**
+     * Get which nutritional needs and restrictions are enabled for this player
+     */
+    public @Nonnull Needs getNeeds(EntityPlayer player) {
+        return MorphDiet.PLAYER_NEEDS;
+    }
 }
