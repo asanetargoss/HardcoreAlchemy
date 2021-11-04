@@ -10,6 +10,10 @@ import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 import targoss.hardcorealchemy.creatures.HardcoreAlchemyCreatures;
 
+@IFMLLoadingPlugin.Name(value = "Hardcore Alchemy Creatures Coremod")
+@IFMLLoadingPlugin.MCVersion(value = "1.10.2")
+@IFMLLoadingPlugin.TransformerExclusions(value = "targoss.hardcorealchemy.creatures.coremod.")
+@IFMLLoadingPlugin.SortingIndex(value = 1001)
 public class HardcoreAlchemyCreaturesCoremod implements IFMLLoadingPlugin {
     private static boolean coremodInitialized = false;
     

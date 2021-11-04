@@ -11,6 +11,10 @@ import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 import targoss.hardcorealchemy.magic.HardcoreAlchemyMagic;
 import targoss.hardcorealchemy.magic.coremod.transform.TEntityExtension;
 
+@IFMLLoadingPlugin.Name(value = "Hardcore Alchemy Magic Coremod")
+@IFMLLoadingPlugin.MCVersion(value = "1.10.2")
+@IFMLLoadingPlugin.TransformerExclusions(value = "targoss.hardcorealchemy.magic.coremod.")
+@IFMLLoadingPlugin.SortingIndex(value = 1001)
 public class HardcoreAlchemyMagicCoremod implements IFMLLoadingPlugin {
     private static boolean coremodInitialized = false;
     

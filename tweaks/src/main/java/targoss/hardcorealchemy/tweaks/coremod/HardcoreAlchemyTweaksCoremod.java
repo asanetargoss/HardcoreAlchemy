@@ -13,6 +13,10 @@ import targoss.hardcorealchemy.tweaks.coremod.transform.TEntityLivingBase;
 import targoss.hardcorealchemy.tweaks.coremod.transform.TInventoryPlayer;
 import targoss.hardcorealchemy.tweaks.coremod.transform.TPlayerControllerMP;
 
+@IFMLLoadingPlugin.Name(value = "Hardcore Alchemy Tweaks Coremod")
+@IFMLLoadingPlugin.MCVersion(value = "1.10.2")
+@IFMLLoadingPlugin.TransformerExclusions(value = "targoss.hardcorealchemy.tweaks.coremod.")
+@IFMLLoadingPlugin.SortingIndex(value = 1001)
 public class HardcoreAlchemyTweaksCoremod implements IFMLLoadingPlugin {
     private static boolean coremodInitialized = false;
     

@@ -17,6 +17,10 @@ import targoss.hardcorealchemy.survival.coremod.transform.TObjectProximityModifi
 import targoss.hardcorealchemy.survival.coremod.transform.TRightClickHarvesting;
 import targoss.hardcorealchemy.survival.coremod.transform.TThirstOverlayHandler;
 
+@IFMLLoadingPlugin.Name(value = "Hardcore Alchemy Survival Coremod")
+@IFMLLoadingPlugin.MCVersion(value = "1.10.2")
+@IFMLLoadingPlugin.TransformerExclusions(value = "targoss.hardcorealchemy.survival.coremod.")
+@IFMLLoadingPlugin.SortingIndex(value = 1001)
 public class HardcoreAlchemySurvivalCoremod implements IFMLLoadingPlugin {
     private static boolean coremodInitialized = false;
     
