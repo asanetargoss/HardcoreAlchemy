@@ -26,7 +26,7 @@ import net.minecraftforge.fml.relauncher.Side;
 
 public class MessengerBuilder {
     protected final SimpleNetworkWrapper messenger;
-    private static int nextId = 0;
+    private int nextId = 0;
     
     public MessengerBuilder(String modId) {
         messenger = NetworkRegistry.INSTANCE.newSimpleChannel(modId);
