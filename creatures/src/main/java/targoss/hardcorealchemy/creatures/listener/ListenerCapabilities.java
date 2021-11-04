@@ -46,7 +46,7 @@ public class ListenerCapabilities extends HardcoreAlchemyListener {
 
     @SubscribeEvent
     public void onAttachPlayerCapabilities(AttachCapabilitiesEvent<Entity> event) {
-        {
+        if (event.getObject() instanceof EntityPlayer) {
             event.addCapability(CapabilityInstinct.RESOURCE_LOCATION, new ProviderInstinct());
             AbstractAttributeMap attributeMap = ((EntityPlayer)event.getObject()).getAttributeMap();
             if (attributeMap.getAttributeInstance(ICapabilityInstinct.MAX_INSTINCT) == null) {
