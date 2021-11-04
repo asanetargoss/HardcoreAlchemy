@@ -32,7 +32,7 @@ import targoss.hardcorealchemy.tweaks.coremod.HardcoreAlchemyTweaksCoremod;
 public class HardcoreAlchemyTweaks
 {
     public static final String MOD_ID = "hardcorealchemy-tweaks";
-    public static final String VERSION = "@HARDCORE_ALCHEMY_TWEAKS_VERSION@";
+    public static final String VERSION = "@HARDCORE_ALCHEMY_CREATURES_VERSION@";
     public static final String DEPENDENCIES = "before:hardcorealchemy;";
     public static final String MC_VERSIONS = "[1.10.2]";
     public static final String CLIENT_PROXY = "targoss.hardcorealchemy.tweaks.ClientProxy";
