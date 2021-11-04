@@ -38,10 +38,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
-import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.capability.humanity.LostMorphReason;
 import targoss.hardcorealchemy.config.Configs;
+import targoss.hardcorealchemy.creatures.HardcoreAlchemyCreatures;
 import targoss.hardcorealchemy.creatures.capability.instinct.ICapabilityInstinct;
 import targoss.hardcorealchemy.creatures.instinct.Instincts;
 import targoss.hardcorealchemy.creatures.instinct.api.Instinct;
@@ -152,7 +152,7 @@ public class MorphState {
             }
             
             if (!player.world.isRemote) {
-                HardcoreAlchemy.proxy.messenger.sendTo(new MessageForceForm(reason, morph), (EntityPlayerMP)player);
+                HardcoreAlchemyCreatures.proxy.messenger.sendTo(new MessageForceForm(reason, morph), (EntityPlayerMP)player);
             }
         }
         
