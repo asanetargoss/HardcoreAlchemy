@@ -23,6 +23,7 @@ import org.apache.logging.log4j.Logger;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import targoss.hardcorealchemy.ModStateException;
 import targoss.hardcorealchemy.creatures.coremod.HardcoreAlchemyCreaturesCoremod;
@@ -58,5 +59,10 @@ public class HardcoreAlchemyCreatures
         LOGGER.info("User is not in the list of known human species. This incident will be reported.");
         
         proxy.preInit(event);
+    }
+    
+    @EventHandler
+    public void preInit(FMLInitializationEvent event) {
+        proxy.init(event);
     }
 }
