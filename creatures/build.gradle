@@ -16,9 +16,9 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 
 // Project settings
 version = "0.1.0"
-group= "targoss.hardcorealchemy.tweaks"
-archivesBaseName = "hardcorealchemy-tweaks"
-String coremodPath="targoss.hardcorealchemy.tweaks.coremod.HardcoreAlchemyTweaksCoremod"
+group= "targoss.hardcorealchemy.creatures"
+archivesBaseName = "hardcorealchemy-creatures"
+String coremodPath="targoss.hardcorealchemy.creatures.coremod.HardcoreAlchemyCreaturesCoremod"
 
 sourceCompatibility = targetCompatibility = "1.8" // Need this here so Eclipse task generates correctly.
 compileJava {
@@ -31,8 +31,8 @@ minecraft {
     
     mappings = "stable_29"
     
-    replace "@HARDCORE_ALCHEMY_TWEAKS_VERSION@", project.version
-    replaceIn "HardcoreAlchemyTweaks.java"
+    replace "@HARDCORE_ALCHEMY_CREATURES_VERSION@", project.version
+    replaceIn "HardcoreAlchemyCreatures.java"
 
     clientJvmArgs += ["-Dfml.coreMods.load=targoss.hardcorealchemy.coremod.HardcoreAlchemyCoremod,${coremodPath}"]
     serverJvmArgs += ["-Dfml.coreMods.load=targoss.hardcorealchemy.coremod.HardcoreAlchemyCoremod,${coremodPath}"]
