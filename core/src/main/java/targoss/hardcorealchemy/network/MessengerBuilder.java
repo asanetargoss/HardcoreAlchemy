@@ -23,11 +23,14 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
-import targoss.hardcorealchemy.HardcoreAlchemy;
 
 public class MessengerBuilder {
-    protected final SimpleNetworkWrapper messenger = NetworkRegistry.INSTANCE.newSimpleChannel(HardcoreAlchemy.MOD_ID);
+    protected final SimpleNetworkWrapper messenger;
     private static int nextId = 0;
+    
+    public MessengerBuilder(String modId) {
+        messenger = NetworkRegistry.INSTANCE.newSimpleChannel(modId);
+    }
     
     @SuppressWarnings("unchecked")
     public MessengerBuilder register(MessageToClient message) {

@@ -31,7 +31,7 @@ public class CommonProxy {
     public SimpleNetworkWrapper messenger;
     
     public void registerNetworking() {
-        messenger = new MessengerBuilder()
+        messenger = new MessengerBuilder(HardcoreAlchemyCreatures.MOD_ID)
             .register(new MessageInstinct())
             .register(new MessageInstinctNeedState())
             .register(new MessageInstinctEffects())

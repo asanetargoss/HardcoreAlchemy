@@ -78,7 +78,7 @@ public class CommonProxy {
     }
     
     public void registerNetworking() {
-        messenger = new MessengerBuilder()
+        messenger = new MessengerBuilder(HardcoreAlchemy.MOD_ID)
             .register(new MessageHumanity())
             .register(new MessageKillCount())
             .register(new MessageMorphState())
