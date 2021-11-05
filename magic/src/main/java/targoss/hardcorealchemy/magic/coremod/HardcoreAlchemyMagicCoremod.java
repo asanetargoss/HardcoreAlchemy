@@ -10,6 +10,8 @@ import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 import targoss.hardcorealchemy.magic.HardcoreAlchemyMagic;
 import targoss.hardcorealchemy.magic.coremod.transform.TEntityExtension;
+import targoss.hardcorealchemy.magic.coremod.transform.TProjectEKeyHandler;
+import targoss.hardcorealchemy.magic.coremod.transform.TThaumcraftPlayerEvents;
 
 @IFMLLoadingPlugin.Name(value = "Hardcore Alchemy Magic Coremod")
 @IFMLLoadingPlugin.MCVersion(value = "1.10.2")
@@ -26,7 +28,9 @@ public class HardcoreAlchemyMagicCoremod implements IFMLLoadingPlugin {
     public String[] getASMTransformerClass() {
         coremodInitialized = true;
         return new String[]{
-            TEntityExtension.class.getName()
+            TEntityExtension.class.getName(),
+            TProjectEKeyHandler.class.getName(),
+            TThaumcraftPlayerEvents.class.getName()
         };
     }
 

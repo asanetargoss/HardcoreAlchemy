@@ -16,7 +16,7 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.coremod.transform;
+package targoss.hardcorealchemy.magic.coremod.transform;
 
 import java.util.ListIterator;
 
@@ -92,7 +92,7 @@ public class TThaumcraftPlayerEvents extends MethodPatcher {
                                 false));
                         // ListenerPlayerMagicState.canStartThaumcraftResearch(EntityItemPickupEvent) (boolean)
                         patch.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
-                                "targoss/hardcorealchemy/listener/ListenerPlayerMagicState",
+                                "targoss/hardcorealchemy/magic/listener/ListenerPlayerMagicState",
                                 "canStartThaumcraftResearch",
                                 "(Lnet/minecraft/entity/player/EntityPlayer;)Z",
                                 false));
@@ -115,7 +115,7 @@ public class TThaumcraftPlayerEvents extends MethodPatcher {
                                 false));
                         // ListenerPlayerMagicState.canThaumonomiconPickupUnlockResearch(EntityItemPickupEvent) (boolean)
                         patch.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
-                                "targoss/hardcorealchemy/listener/ListenerPlayerMagicState",
+                                "targoss/hardcorealchemy/magic/listener/ListenerPlayerMagicState",
                                 "canThaumonomiconPickupUnlockResearch",
                                 "(Lnet/minecraft/entity/player/EntityPlayer;)Z",
                                 false));

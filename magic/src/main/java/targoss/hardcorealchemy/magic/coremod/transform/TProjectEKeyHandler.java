@@ -16,15 +16,13 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.coremod.transform;
+package targoss.hardcorealchemy.magic.coremod.transform;
 
 import java.util.ListIterator;
 
-import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.FrameNode;
 import org.objectweb.asm.tree.InsnList;
@@ -61,7 +59,7 @@ public class TProjectEKeyHandler extends MethodPatcher {
                     InsnList insnList = new InsnList();
                     insnList.add(new InsnNode(Opcodes.DUP)); // Get our own copy of EntityPlayer
                     insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
-                            "targoss/hardcorealchemy/listener/ListenerPlayerMagic",
+                            "targoss/hardcorealchemy/magic/listener/ListenerPlayerMagic",
                             "canUseProjectEKeybinds",
                             "(Lnet/minecraft/entity/player/EntityPlayerMP;)Z",
                             false)); // canUseHighMagic boolean hook

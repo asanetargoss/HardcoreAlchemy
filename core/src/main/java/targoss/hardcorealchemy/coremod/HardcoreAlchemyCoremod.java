@@ -40,11 +40,9 @@ import targoss.hardcorealchemy.coremod.transform.TEntityPlayerSP;
 import targoss.hardcorealchemy.coremod.transform.TGuiContainer;
 import targoss.hardcorealchemy.coremod.transform.TItemRenderer;
 import targoss.hardcorealchemy.coremod.transform.TMinecraftServer;
-import targoss.hardcorealchemy.coremod.transform.TProjectEKeyHandler;
 import targoss.hardcorealchemy.coremod.transform.TRenderEntityItem;
 import targoss.hardcorealchemy.coremod.transform.TRenderItem;
 import targoss.hardcorealchemy.coremod.transform.TSlot;
-import targoss.hardcorealchemy.coremod.transform.TThaumcraftPlayerEvents;
 import targoss.hardcorealchemy.coremod.transform.TThirstOverlayHandler;
 import targoss.hardcorealchemy.coremod.transform.TWorld;
 
@@ -69,11 +67,9 @@ public class HardcoreAlchemyCoremod implements IFMLLoadingPlugin {
 	    coremodInitialized = true;
 		return new String[]{
 				TSlot.class.getName(),
-				TProjectEKeyHandler.class.getName(),
 				TCraftingManager.class.getName(),
 				TThirstOverlayHandler.class.getName(),
 				TClassInheritanceMultiMap.class.getName(),
-				TThaumcraftPlayerEvents.class.getName(),
 				TDataVillage.class.getName(),
 				TGuiContainer.class.getName(),
 				TItemRenderer.class.getName(),
