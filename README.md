@@ -39,11 +39,9 @@ There is a lot more in terms of mod selection, configuration, and tweaking, in o
 
 ### Dependencies
 
-This branch targets the 0.4.1+ version of the modpack. Download the 0.4.1 zip file from the link below and be ready to add its contents to `core/libs/` in the Hardcore Alchemy repository folder when asked:
+This branch targets the 0.4.1+ version of the modpack. Download the 0.4.1 zip file from the link below and be ready to add its contents to `compilelibs/core/` in the Hardcore Alchemy repository folder when asked:
 
 http://www.mediafire.com/folder/grwn2vsjr2lce/Hardcore_Alchemy_Libs
-
-In addition, if you are testing a mod in a development environment, you may also want to take the latest available config zip from the same download folder above. This config will make some aspects of development easier, such as not losing your spawnpoint when testing deaths.
 
 The SHA-256 checksum of the 0.4.1 libs zip is: 6fb01f5764e9943085d0271e38c790795f9741b201e378802bdc575ea39cd7c4
 
@@ -58,11 +56,12 @@ Please note: The following mods included in the HcA_libs zip file above are cust
 ### Overview of Projects and Dependencies
 
 * All projects depend on Minecraft Forge
-* `core/libs/` - Contains common third-party mod dependencies, such as Hwyla. Actually, it currently contains all the third-party mod dependencies, but this is subject to change.
+* `compilelibs/core/` - Contains common third-party mod dependencies, such as Hwyla. Actually, it currently contains all the third-party mod dependencies, but this is subject to change.
 * `core/` - This is a mod project which contains shared code required by the other projects.
 * `tweaks/` - This is a mod project containing magic and survival tweaks, aiming for a minimal number of dependencies.
-* `survival/` - This is a mod project containing various features related to nutrition, thirst, and crop growth. It interacts with various survival and crop mods.
+* `creatures/` - This is a mod project for balanced morphing mechanics and tweaks to mob mods.
 * `magic/` - This is a mod project containing features which make magic mods work better in a hardcore respawn gameplay context. It also contains various tweaks and fixes for magic and utility mods.
+* `survival/` - This is a mod project containing various features related to nutrition, thirst, and crop growth. It interacts with various survival and crop mods.
 
 ### Notes on Windows and IntelliJ IDEA
 
