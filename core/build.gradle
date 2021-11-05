@@ -64,6 +64,13 @@ processResources
     }
 }
 
+// Run configs are shared between submods
+task setupRunConfig(type: Copy) {
+    from "../testconfig"
+    into "run/config"
+}
+setupDecompWorkspace.dependsOn setupRunConfig
+
 jar {
     manifest {
         attributes (

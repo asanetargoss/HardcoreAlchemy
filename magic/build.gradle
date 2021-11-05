@@ -63,6 +63,13 @@ processResources
     }
 }
 
+// Run configs are shared between submods
+task setupRunConfig(type: Copy) {
+    from "../testconfig"
+    into "run/config"
+}
+setupDecompWorkspace.dependsOn setupRunConfig
+
 // Hack to inherit access transformers from core, so the decompiled Minecraft jar that this subproject depends on is effectively the same as the one in core.
 task copyAccessTransformerFromCore(type: Copy) {
     from "../core/src/main/resources/META-INF/hardcorealchemy_at.cfg"
