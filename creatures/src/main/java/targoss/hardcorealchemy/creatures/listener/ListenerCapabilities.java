@@ -14,21 +14,24 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerChangedDimensionEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
-import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.capability.CapUtil;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
-import targoss.hardcorealchemy.capability.killcount.ICapabilityKillCount;
-import targoss.hardcorealchemy.capability.morphstate.ICapabilityMorphState;
 import targoss.hardcorealchemy.creatures.HardcoreAlchemyCreatures;
 import targoss.hardcorealchemy.creatures.capability.instinct.CapabilityInstinct;
 import targoss.hardcorealchemy.creatures.capability.instinct.ICapabilityInstinct;
 import targoss.hardcorealchemy.creatures.capability.instinct.ProviderInstinct;
 import targoss.hardcorealchemy.creatures.capability.instinct.StorageInstinct;
+import targoss.hardcorealchemy.creatures.capability.killcount.CapabilityKillCount;
+import targoss.hardcorealchemy.creatures.capability.killcount.ICapabilityKillCount;
+import targoss.hardcorealchemy.creatures.capability.killcount.StorageKillCount;
+import targoss.hardcorealchemy.creatures.capability.morphstate.CapabilityMorphState;
+import targoss.hardcorealchemy.creatures.capability.morphstate.ICapabilityMorphState;
+import targoss.hardcorealchemy.creatures.capability.morphstate.StorageMorphState;
+import targoss.hardcorealchemy.creatures.network.MessageHumanity;
 import targoss.hardcorealchemy.creatures.network.MessageInstinct;
+import targoss.hardcorealchemy.creatures.network.MessageKillCount;
+import targoss.hardcorealchemy.creatures.network.MessageMorphState;
 import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
-import targoss.hardcorealchemy.network.MessageHumanity;
-import targoss.hardcorealchemy.network.MessageKillCount;
-import targoss.hardcorealchemy.network.MessageMorphState;
 
 public class ListenerCapabilities extends HardcoreAlchemyListener {
     @CapabilityInject(ICapabilityHumanity.class)
@@ -42,7 +45,9 @@ public class ListenerCapabilities extends HardcoreAlchemyListener {
     
     @Override
     public void registerCapabilities(CapabilityManager manager, CapUtil.Manager virtualManager) {
+        manager.register(ICapabilityKillCount.class, new StorageKillCount(), CapabilityKillCount.class);
         manager.register(ICapabilityInstinct.class, new StorageInstinct(), CapabilityInstinct.class);
+        manager.register(ICapabilityMorphState.class, new StorageMorphState(), CapabilityMorphState.class);
     }
 
     @SubscribeEvent
@@ -100,11 +105,11 @@ public class ListenerCapabilities extends HardcoreAlchemyListener {
     public void syncFullPlayerCapabilities(EntityPlayerMP player) {
         ICapabilityHumanity humanity = player.getCapability(HUMANITY_CAPABILITY, null);
         if (humanity != null) {
-            HardcoreAlchemy.proxy.messenger.sendTo(new MessageHumanity(humanity, true), (EntityPlayerMP)player);
+            HardcoreAlchemyCreatures.proxy.messenger.sendTo(new MessageHumanity(humanity, true), (EntityPlayerMP)player);
         }
         ICapabilityKillCount killCount = player.getCapability(KILL_COUNT_CAPABILITY, null);
         if (killCount != null) {
-            HardcoreAlchemy.proxy.messenger.sendTo(new MessageKillCount(killCount), (EntityPlayerMP)player);
+            HardcoreAlchemyCreatures.proxy.messenger.sendTo(new MessageKillCount(killCount), (EntityPlayerMP)player);
         }
         ICapabilityInstinct instinct = player.getCapability(INSTINCT_CAPABILITY, null);
         if (instinct != null) {
@@ -112,7 +117,7 @@ public class ListenerCapabilities extends HardcoreAlchemyListener {
         }
         ICapabilityMorphState morphState = player.getCapability(MORPH_STATE_CAPABILITY, null);
         if (morphState != null) {
-            HardcoreAlchemy.proxy.messenger.sendTo(new MessageMorphState(morphState), (EntityPlayerMP)player);
+            HardcoreAlchemyCreatures.proxy.messenger.sendTo(new MessageMorphState(morphState), (EntityPlayerMP)player);
         }
     }
 }

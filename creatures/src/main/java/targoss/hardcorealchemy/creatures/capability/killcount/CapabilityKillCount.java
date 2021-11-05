@@ -16,7 +16,7 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.capability.killcount;
+package targoss.hardcorealchemy.creatures.capability.killcount;
 
 import java.util.Collections;
 import java.util.HashMap;

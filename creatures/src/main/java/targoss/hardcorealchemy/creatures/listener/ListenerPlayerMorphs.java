@@ -44,9 +44,9 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerChangedDimensionEvent;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
-import targoss.hardcorealchemy.capability.killcount.CapabilityKillCount;
-import targoss.hardcorealchemy.capability.killcount.ICapabilityKillCount;
-import targoss.hardcorealchemy.capability.killcount.ProviderKillCount;
+import targoss.hardcorealchemy.creatures.capability.killcount.CapabilityKillCount;
+import targoss.hardcorealchemy.creatures.capability.killcount.ICapabilityKillCount;
+import targoss.hardcorealchemy.creatures.capability.killcount.ProviderKillCount;
 import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
 import targoss.hardcorealchemy.util.MobLists;
 

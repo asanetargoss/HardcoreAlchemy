@@ -48,16 +48,16 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
-import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.humanity.CapabilityHumanity;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.capability.humanity.LostMorphReason;
 import targoss.hardcorealchemy.capability.misc.ICapabilityMisc;
+import targoss.hardcorealchemy.creatures.HardcoreAlchemyCreatures;
+import targoss.hardcorealchemy.creatures.network.MessageHumanity;
 import targoss.hardcorealchemy.creatures.util.MorphState;
 import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
 import targoss.hardcorealchemy.listener.ListenerPlayerResearch;
-import targoss.hardcorealchemy.network.MessageHumanity;
 import targoss.hardcorealchemy.research.Studies;
 import targoss.hardcorealchemy.util.Chat;
 import targoss.hardcorealchemy.util.InventoryUtil;
@@ -167,7 +167,7 @@ public class ListenerPlayerHumanity extends HardcoreAlchemyListener {
             capabilityHumanity.setMagicInhibition(newMagicInhibition);
             
             if (!player.world.isRemote) {
-                HardcoreAlchemy.proxy.messenger.sendTo(new MessageHumanity(capabilityHumanity, false), (EntityPlayerMP)player);
+                HardcoreAlchemyCreatures.proxy.messenger.sendTo(new MessageHumanity(capabilityHumanity, false), (EntityPlayerMP)player);
             }
             
             if (newHumanity == 0) {
@@ -239,7 +239,7 @@ public class ListenerPlayerHumanity extends HardcoreAlchemyListener {
             double morphReducedMagicInhibition = capabilityHumanity.getMagicInhibition() - humanityLost;
             if (morphReducedMagicInhibition < 0) morphReducedMagicInhibition = 0;
             capabilityHumanity.setMagicInhibition(morphReducedMagicInhibition);
-            HardcoreAlchemy.proxy.messenger.sendTo(new MessageHumanity(capabilityHumanity, false), (EntityPlayerMP)player);
+            HardcoreAlchemyCreatures.proxy.messenger.sendTo(new MessageHumanity(capabilityHumanity, false), (EntityPlayerMP)player);
         }
     }
     
@@ -326,7 +326,7 @@ public class ListenerPlayerHumanity extends HardcoreAlchemyListener {
                     Chat.messageSP(Chat.Type.WARN, player, new TextComponentTranslation("hardcorealchemy.humanity.warn3.variant1"));
                 }
                 else {
-                    HardcoreAlchemy.proxy.messenger.sendTo(new MessageHumanity(capabilityHumanity, false), (EntityPlayerMP)player);
+                    HardcoreAlchemyCreatures.proxy.messenger.sendTo(new MessageHumanity(capabilityHumanity, false), (EntityPlayerMP)player);
                 }
             }
             else if (newHumanity <= HUMANITY_2MIN_LEFT && oldHumanity > HUMANITY_2MIN_LEFT) {
@@ -335,7 +335,7 @@ public class ListenerPlayerHumanity extends HardcoreAlchemyListener {
                     Chat.messageSP(Chat.Type.NOTIFY, player, new TextComponentTranslation("hardcorealchemy.humanity.warn2.variant1"));
                 }
                 else {
-                    HardcoreAlchemy.proxy.messenger.sendTo(new MessageHumanity(capabilityHumanity, false), (EntityPlayerMP)player);
+                    HardcoreAlchemyCreatures.proxy.messenger.sendTo(new MessageHumanity(capabilityHumanity, false), (EntityPlayerMP)player);
                 }
             }
             else if (oldHumanity > HUMANITY_3MIN_LEFT) {
@@ -344,7 +344,7 @@ public class ListenerPlayerHumanity extends HardcoreAlchemyListener {
                     Chat.messageSP(Chat.Type.NOTIFY, player, new TextComponentTranslation("hardcorealchemy.humanity.warn1.variant1"));
                 }
                 else {
-                    HardcoreAlchemy.proxy.messenger.sendTo(new MessageHumanity(capabilityHumanity, false), (EntityPlayerMP)player);
+                    HardcoreAlchemyCreatures.proxy.messenger.sendTo(new MessageHumanity(capabilityHumanity, false), (EntityPlayerMP)player);
                 }
             }
         }
@@ -374,7 +374,7 @@ public class ListenerPlayerHumanity extends HardcoreAlchemyListener {
         newMagicInhibition = MathHelper.clamp(newMagicInhibition, 0.0D, 1.0D+maxHumanity.getAttributeValue());
         capabilityHumanity.setMagicInhibition(newMagicInhibition);
         if (!player.world.isRemote) {
-            HardcoreAlchemy.proxy.messenger.sendTo(new MessageHumanity(capabilityHumanity, false), (EntityPlayerMP)player);
+            HardcoreAlchemyCreatures.proxy.messenger.sendTo(new MessageHumanity(capabilityHumanity, false), (EntityPlayerMP)player);
         }
         
         // Warn the player that using spells (or other select magic items) may interfere with their ability to morph

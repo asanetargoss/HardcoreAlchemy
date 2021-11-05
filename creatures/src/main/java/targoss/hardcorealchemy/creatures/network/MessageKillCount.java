@@ -16,7 +16,7 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.network;
+package targoss.hardcorealchemy.creatures.network;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,11 +29,12 @@ import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import targoss.hardcorealchemy.HardcoreAlchemy;
-import targoss.hardcorealchemy.capability.killcount.ICapabilityKillCount;
+import targoss.hardcorealchemy.creatures.HardcoreAlchemyCreatures;
+import targoss.hardcorealchemy.creatures.capability.killcount.ICapabilityKillCount;
+import targoss.hardcorealchemy.network.MessageToClient;
 import targoss.hardcorealchemy.util.MiscVanilla;
 
-public class MessageKillCount extends MessageToClient<HardcoreAlchemy> {
+public class MessageKillCount extends MessageToClient<HardcoreAlchemyCreatures> {
     
     public MessageKillCount() {}
     
@@ -132,7 +133,7 @@ public class MessageKillCount extends MessageToClient<HardcoreAlchemy> {
     }
 
     @Override
-    public Class<? extends IMessageHandler<? extends MessageToClient<HardcoreAlchemy>, IMessage>> getHandlerClass() {
+    public Class<? extends IMessageHandler<? extends MessageToClient<HardcoreAlchemyCreatures>, IMessage>> getHandlerClass() {
         return Handler.class;
     }
 

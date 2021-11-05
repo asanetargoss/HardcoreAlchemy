@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 asanetargoss
+ * Copyright 2017-2018 asanetargoss
  * 
  * This file is part of Hardcore Alchemy.
  * 
@@ -16,7 +16,7 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.capability.morphstate;
+package targoss.hardcorealchemy.creatures.capability.killcount;
 
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.EnumFacing;
@@ -24,24 +24,25 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 
-public class ProviderMorphState implements ICapabilitySerializable<NBTBase>  {
-    @CapabilityInject(ICapabilityMorphState.class)
-    public static final Capability<ICapabilityMorphState> MORPH_STATE_CAPABILITY = null;
+public class ProviderKillCount implements ICapabilitySerializable<NBTBase> {
     
-    private ICapabilityMorphState instance;
+    @CapabilityInject(ICapabilityKillCount.class)
+    public static final Capability<ICapabilityKillCount> KILL_COUNT_CAPABILITY = null;
     
-    public ProviderMorphState() {
-        this.instance = MORPH_STATE_CAPABILITY.getDefaultInstance();
+    public final ICapabilityKillCount instance;
+    
+    public ProviderKillCount() {
+        this.instance = KILL_COUNT_CAPABILITY.getDefaultInstance();
     }
 
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        return capability == MORPH_STATE_CAPABILITY;
+        return capability == KILL_COUNT_CAPABILITY;
     }
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (capability == MORPH_STATE_CAPABILITY) {
+        if (capability == KILL_COUNT_CAPABILITY) {
             return (T)instance;
         }
         return null;
@@ -49,12 +50,12 @@ public class ProviderMorphState implements ICapabilitySerializable<NBTBase>  {
 
     @Override
     public NBTBase serializeNBT() {
-        return MORPH_STATE_CAPABILITY.writeNBT(instance, null);
+        return KILL_COUNT_CAPABILITY.getStorage().writeNBT(KILL_COUNT_CAPABILITY, instance, null);
     }
 
     @Override
     public void deserializeNBT(NBTBase nbt) {
-        MORPH_STATE_CAPABILITY.readNBT(instance, null, nbt);
+        KILL_COUNT_CAPABILITY.getStorage().readNBT(KILL_COUNT_CAPABILITY, instance, null, nbt);
     }
 
 }

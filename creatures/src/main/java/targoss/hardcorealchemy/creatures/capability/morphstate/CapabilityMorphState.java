@@ -16,7 +16,7 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.capability.morphstate;
+package targoss.hardcorealchemy.creatures.capability.morphstate;
 
 import net.minecraft.util.ResourceLocation;
 import targoss.hardcorealchemy.HardcoreAlchemy;

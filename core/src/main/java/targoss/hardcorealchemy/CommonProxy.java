@@ -46,10 +46,7 @@ import targoss.hardcorealchemy.modpack.guide.AlchemicAshGuide;
 import targoss.hardcorealchemy.modpack.guide.HCAModpackGuide;
 import targoss.hardcorealchemy.modpack.guide.HCAUpgradeGuides;
 import targoss.hardcorealchemy.network.MessageConfigs;
-import targoss.hardcorealchemy.network.MessageHumanity;
 import targoss.hardcorealchemy.network.MessageInactiveCapabilities;
-import targoss.hardcorealchemy.network.MessageKillCount;
-import targoss.hardcorealchemy.network.MessageMorphState;
 import targoss.hardcorealchemy.network.NetMessenger;
 import targoss.hardcorealchemy.network.RequestIncantation;
 import targoss.hardcorealchemy.registrar.RegistrarUpgradeGuide;
@@ -78,9 +75,6 @@ public class CommonProxy {
     
     public void registerNetworking() {
         messenger = new NetMessenger<HardcoreAlchemy>(HardcoreAlchemy.MOD_ID)
-            .register(new MessageHumanity())
-            .register(new MessageKillCount())
-            .register(new MessageMorphState())
             .register(new MessageInactiveCapabilities())
             .register(new MessageConfigs())
             .register(new RequestIncantation());

@@ -16,7 +16,7 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.network;
+package targoss.hardcorealchemy.creatures.network;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.common.capabilities.Capability;
@@ -24,11 +24,12 @@ import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
+import targoss.hardcorealchemy.creatures.HardcoreAlchemyCreatures;
+import targoss.hardcorealchemy.network.MessageToClient;
 import targoss.hardcorealchemy.util.MiscVanilla;
 
-public class MessageHumanity extends MessageToClient<HardcoreAlchemy> {
+public class MessageHumanity extends MessageToClient<HardcoreAlchemyCreatures> {
     
     public MessageHumanity() {}
     
@@ -128,7 +129,7 @@ public class MessageHumanity extends MessageToClient<HardcoreAlchemy> {
     }
 
     @Override
-    public Class<? extends IMessageHandler<? extends MessageToClient<HardcoreAlchemy>, IMessage>> getHandlerClass() {
+    public Class<? extends IMessageHandler<? extends MessageToClient<HardcoreAlchemyCreatures>, IMessage>> getHandlerClass() {
         return Handler.class;
     }
 }

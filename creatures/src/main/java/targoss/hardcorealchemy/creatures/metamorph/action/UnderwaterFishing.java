@@ -23,8 +23,8 @@ import mchorse.metamorph.api.morphs.AbstractMorph;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.TextComponentTranslation;
-import targoss.hardcorealchemy.capability.morphstate.ICapabilityMorphState;
-import targoss.hardcorealchemy.capability.morphstate.ProviderMorphState;
+import targoss.hardcorealchemy.creatures.capability.morphstate.ICapabilityMorphState;
+import targoss.hardcorealchemy.creatures.capability.morphstate.ProviderMorphState;
 import targoss.hardcorealchemy.util.Chat;
 
 /**

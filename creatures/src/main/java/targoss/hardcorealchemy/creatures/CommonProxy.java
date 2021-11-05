@@ -20,10 +20,13 @@ import targoss.hardcorealchemy.creatures.listener.ListenerPlayerMorphs;
 import targoss.hardcorealchemy.creatures.listener.ListenerSmallTweaks;
 import targoss.hardcorealchemy.creatures.metamorph.HcAMetamorphPack;
 import targoss.hardcorealchemy.creatures.network.MessageForceForm;
+import targoss.hardcorealchemy.creatures.network.MessageHumanity;
 import targoss.hardcorealchemy.creatures.network.MessageInstinct;
 import targoss.hardcorealchemy.creatures.network.MessageInstinctEffects;
 import targoss.hardcorealchemy.creatures.network.MessageInstinctNeedChanged;
 import targoss.hardcorealchemy.creatures.network.MessageInstinctNeedState;
+import targoss.hardcorealchemy.creatures.network.MessageKillCount;
+import targoss.hardcorealchemy.creatures.network.MessageMorphState;
 import targoss.hardcorealchemy.network.NetMessenger;
 
 public class CommonProxy {
@@ -31,11 +34,14 @@ public class CommonProxy {
     
     public void registerNetworking() {
         messenger = new NetMessenger<HardcoreAlchemyCreatures>(HardcoreAlchemyCreatures.MOD_ID)
+            .register(new MessageHumanity())
             .register(new MessageInstinct())
             .register(new MessageInstinctNeedState())
             .register(new MessageInstinctEffects())
             .register(new MessageInstinctNeedChanged())
-            .register(new MessageForceForm());
+            .register(new MessageForceForm())
+            .register(new MessageMorphState())
+            .register(new MessageKillCount());
     }
     
     public void preInit(FMLPreInitializationEvent event) {

@@ -50,7 +50,7 @@ import net.minecraft.world.storage.loot.LootTableList;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import targoss.hardcorealchemy.HardcoreAlchemy;
-import targoss.hardcorealchemy.capability.morphstate.ICapabilityMorphState;
+import targoss.hardcorealchemy.creatures.capability.morphstate.ICapabilityMorphState;
 import targoss.hardcorealchemy.creatures.entity.ai.AIWanderWithTiredness;
 
 public class EntityFishSwarm extends EntityMob {
