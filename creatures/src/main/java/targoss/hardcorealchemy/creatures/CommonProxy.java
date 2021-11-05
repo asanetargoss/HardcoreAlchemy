@@ -2,7 +2,6 @@ package targoss.hardcorealchemy.creatures;
 
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.creatures.entity.Entities;
 import targoss.hardcorealchemy.creatures.incantation.Incantations;
@@ -25,19 +24,18 @@ import targoss.hardcorealchemy.creatures.network.MessageInstinct;
 import targoss.hardcorealchemy.creatures.network.MessageInstinctEffects;
 import targoss.hardcorealchemy.creatures.network.MessageInstinctNeedChanged;
 import targoss.hardcorealchemy.creatures.network.MessageInstinctNeedState;
-import targoss.hardcorealchemy.network.MessengerBuilder;
+import targoss.hardcorealchemy.network.NetMessenger;
 
 public class CommonProxy {
-    public SimpleNetworkWrapper messenger;
+    public NetMessenger<HardcoreAlchemyCreatures> messenger;
     
     public void registerNetworking() {
-        messenger = new MessengerBuilder(HardcoreAlchemyCreatures.MOD_ID)
+        messenger = new NetMessenger<HardcoreAlchemyCreatures>(HardcoreAlchemyCreatures.MOD_ID)
             .register(new MessageInstinct())
             .register(new MessageInstinctNeedState())
             .register(new MessageInstinctEffects())
             .register(new MessageInstinctNeedChanged())
-            .register(new MessageForceForm())
-            .done();
+            .register(new MessageForceForm());
     }
     
     public void preInit(FMLPreInitializationEvent event) {

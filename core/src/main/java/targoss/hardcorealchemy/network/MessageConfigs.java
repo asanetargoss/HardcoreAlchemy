@@ -23,10 +23,9 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import targoss.hardcorealchemy.HardcoreAlchemy;
-import targoss.hardcorealchemy.config.ConfigBase;
 import targoss.hardcorealchemy.config.Configs;
 
-public class MessageConfigs extends MessageToClient {
+public class MessageConfigs extends MessageToClient<HardcoreAlchemy> {
     
     public MessageConfigs() {
         this.configs = new Configs();
@@ -82,7 +81,7 @@ public class MessageConfigs extends MessageToClient {
     }
 
     @Override
-    public Class<? extends IMessageHandler<? extends MessageToClient, IMessage>> getHandlerClass() {
+    public Class<? extends IMessageHandler<? extends MessageToClient<HardcoreAlchemy>, IMessage>> getHandlerClass() {
         return Handler.class;
     }
 

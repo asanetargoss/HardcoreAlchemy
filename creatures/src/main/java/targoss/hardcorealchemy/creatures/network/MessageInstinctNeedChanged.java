@@ -26,6 +26,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import targoss.hardcorealchemy.creatures.HardcoreAlchemyCreatures;
 import targoss.hardcorealchemy.creatures.capability.instinct.ICapabilityInstinct;
 import targoss.hardcorealchemy.creatures.capability.instinct.ProviderInstinct;
 import targoss.hardcorealchemy.creatures.instinct.api.IInstinctNeed;
@@ -34,7 +35,7 @@ import targoss.hardcorealchemy.creatures.instinct.network.api.INeedMessenger;
 import targoss.hardcorealchemy.network.MessageToClient;
 import targoss.hardcorealchemy.util.MiscVanilla;
 
-public class MessageInstinctNeedChanged extends MessageToClient {
+public class MessageInstinctNeedChanged extends MessageToClient<HardcoreAlchemyCreatures> {
     public MessageInstinctNeedChanged() {}
     
     // The indices at which the need is located
@@ -44,6 +45,7 @@ public class MessageInstinctNeedChanged extends MessageToClient {
     // Need-specific custom data
     public ByteBuf payload;
     
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public MessageInstinctNeedChanged(int instinctID, int needID, InstinctNeedWrapper wrapper) {
         this.instinctID = instinctID;
         this.needID = needID;
@@ -79,6 +81,7 @@ public class MessageInstinctNeedChanged extends MessageToClient {
             this.payload = payload;
         }
 
+        @SuppressWarnings({ "rawtypes", "unchecked" })
         @Override
         public void run() {
             EntityPlayer player = MiscVanilla.getTheMinecraftPlayer();
@@ -114,7 +117,7 @@ public class MessageInstinctNeedChanged extends MessageToClient {
     }
 
     @Override
-    public Class<? extends IMessageHandler<? extends MessageToClient, IMessage>> getHandlerClass() {
+    public Class<? extends IMessageHandler<? extends MessageToClient<HardcoreAlchemyCreatures>, IMessage>> getHandlerClass() {
         return Handler.class;
     }
 

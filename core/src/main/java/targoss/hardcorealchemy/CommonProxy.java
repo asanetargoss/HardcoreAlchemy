@@ -30,7 +30,6 @@ import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
-import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import targoss.hardcorealchemy.capability.CapUtil;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.entity.Entities;
@@ -46,12 +45,12 @@ import targoss.hardcorealchemy.listener.ListenerPlayerResearch;
 import targoss.hardcorealchemy.modpack.guide.AlchemicAshGuide;
 import targoss.hardcorealchemy.modpack.guide.HCAModpackGuide;
 import targoss.hardcorealchemy.modpack.guide.HCAUpgradeGuides;
-import targoss.hardcorealchemy.network.MessengerBuilder;
 import targoss.hardcorealchemy.network.MessageConfigs;
 import targoss.hardcorealchemy.network.MessageHumanity;
 import targoss.hardcorealchemy.network.MessageInactiveCapabilities;
 import targoss.hardcorealchemy.network.MessageKillCount;
 import targoss.hardcorealchemy.network.MessageMorphState;
+import targoss.hardcorealchemy.network.NetMessenger;
 import targoss.hardcorealchemy.network.RequestIncantation;
 import targoss.hardcorealchemy.registrar.RegistrarUpgradeGuide;
 import targoss.hardcorealchemy.research.Studies;
@@ -61,7 +60,7 @@ public class CommonProxy {
     
     protected List<HardcoreAlchemyListener> listeners = new ArrayList<>();
     
-    public SimpleNetworkWrapper messenger;
+    public NetMessenger<HardcoreAlchemy> messenger;
     
     public void addListener(HardcoreAlchemyListener listener) {
         listener.setConfigs(configs);
@@ -78,14 +77,13 @@ public class CommonProxy {
     }
     
     public void registerNetworking() {
-        messenger = new MessengerBuilder(HardcoreAlchemy.MOD_ID)
+        messenger = new NetMessenger<HardcoreAlchemy>(HardcoreAlchemy.MOD_ID)
             .register(new MessageHumanity())
             .register(new MessageKillCount())
             .register(new MessageMorphState())
             .register(new MessageInactiveCapabilities())
             .register(new MessageConfigs())
-            .register(new RequestIncantation())
-            .done();
+            .register(new RequestIncantation());
     }
     
     public void preInit(FMLPreInitializationEvent event) {

@@ -31,11 +31,12 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.capability.humanity.LostMorphReason;
+import targoss.hardcorealchemy.creatures.HardcoreAlchemyCreatures;
 import targoss.hardcorealchemy.creatures.util.MorphState;
 import targoss.hardcorealchemy.network.MessageToClient;
 import targoss.hardcorealchemy.util.MiscVanilla;
 
-public class MessageForceForm extends MessageToClient {
+public class MessageForceForm extends MessageToClient<HardcoreAlchemyCreatures> {
     public LostMorphReason reason;
     public AbstractMorph morph;
     
@@ -90,7 +91,7 @@ public class MessageForceForm extends MessageToClient {
     }
 
     @Override
-    public Class<? extends IMessageHandler<? extends MessageToClient, IMessage>> getHandlerClass() {
+    public Class<? extends IMessageHandler<? extends MessageToClient<HardcoreAlchemyCreatures>, IMessage>> getHandlerClass() {
         return Handler.class;
     }
 

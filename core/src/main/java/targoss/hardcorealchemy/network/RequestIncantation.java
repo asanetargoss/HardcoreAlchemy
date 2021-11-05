@@ -23,10 +23,11 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.incantation.IncantationParts;
 import targoss.hardcorealchemy.listener.ListenerPlayerIncantation;
 
-public class RequestIncantation extends RequestToServer {
+public class RequestIncantation extends RequestToServer<HardcoreAlchemy> {
     public IncantationParts parts;
 
     public RequestIncantation() {}
@@ -72,7 +73,7 @@ public class RequestIncantation extends RequestToServer {
     }
 
     @Override
-    public Class<? extends IMessageHandler<? extends RequestToServer, IMessage>> getHandlerClass() {
+    public Class<? extends IMessageHandler<? extends RequestToServer<HardcoreAlchemy>, IMessage>> getHandlerClass() {
         return Handler.class;
     }
 

@@ -24,10 +24,10 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public abstract class RequestToServer implements IMessage {
+public abstract class RequestToServer<MOD> implements IMessage {
     public IThreadListener getThreadListener(MessageContext ctx) {
         return FMLCommonHandler.instance().getWorldThread(ctx.getServerHandler());
     }
     
-    public abstract Class<? extends IMessageHandler<? extends RequestToServer, IMessage>> getHandlerClass();
+    public abstract Class<? extends IMessageHandler<? extends RequestToServer<MOD>, IMessage>> getHandlerClass();
 }

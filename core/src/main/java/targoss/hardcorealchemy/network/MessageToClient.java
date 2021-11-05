@@ -23,10 +23,10 @@ import net.minecraft.util.IThreadListener;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 
-public abstract class MessageToClient implements IMessage {
+public abstract class MessageToClient<MOD> implements IMessage {
     public IThreadListener getThreadListener() {
         return Minecraft.getMinecraft();
     }
     
-    public abstract Class<? extends IMessageHandler<? extends MessageToClient, IMessage>> getHandlerClass();
+    public abstract Class<? extends IMessageHandler<? extends MessageToClient<MOD>, IMessage>> getHandlerClass();
 }

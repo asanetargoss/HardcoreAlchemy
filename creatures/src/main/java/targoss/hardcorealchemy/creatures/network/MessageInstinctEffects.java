@@ -28,6 +28,7 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import targoss.hardcorealchemy.creatures.HardcoreAlchemyCreatures;
 import targoss.hardcorealchemy.creatures.capability.instinct.ICapabilityInstinct;
 import targoss.hardcorealchemy.creatures.capability.instinct.ProviderInstinct;
 import targoss.hardcorealchemy.creatures.instinct.Instincts;
@@ -41,7 +42,7 @@ import targoss.hardcorealchemy.util.MiscVanilla;
  * Tells the player that their active effects have changed.
  * This is a differential packet.
  */
-public class MessageInstinctEffects extends MessageToClient {
+public class MessageInstinctEffects extends MessageToClient<HardcoreAlchemyCreatures> {
     public Map<InstinctEffect, InstinctEffectWrapper> effectChanges = new HashMap<>();
     
     public MessageInstinctEffects() {}
@@ -116,7 +117,7 @@ public class MessageInstinctEffects extends MessageToClient {
     }
 
     @Override
-    public Class<? extends IMessageHandler<? extends MessageToClient, IMessage>> getHandlerClass() {
+    public Class<? extends IMessageHandler<? extends MessageToClient<HardcoreAlchemyCreatures>, IMessage>> getHandlerClass() {
         return Handler.class;
     }
 

@@ -14,6 +14,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerChangedDimensionEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
+import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.capability.CapUtil;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.capability.killcount.ICapabilityKillCount;
@@ -99,11 +100,11 @@ public class ListenerCapabilities extends HardcoreAlchemyListener {
     public void syncFullPlayerCapabilities(EntityPlayerMP player) {
         ICapabilityHumanity humanity = player.getCapability(HUMANITY_CAPABILITY, null);
         if (humanity != null) {
-            HardcoreAlchemyCreatures.proxy.messenger.sendTo(new MessageHumanity(humanity, true), (EntityPlayerMP)player);
+            HardcoreAlchemy.proxy.messenger.sendTo(new MessageHumanity(humanity, true), (EntityPlayerMP)player);
         }
         ICapabilityKillCount killCount = player.getCapability(KILL_COUNT_CAPABILITY, null);
         if (killCount != null) {
-            HardcoreAlchemyCreatures.proxy.messenger.sendTo(new MessageKillCount(killCount), (EntityPlayerMP)player);
+            HardcoreAlchemy.proxy.messenger.sendTo(new MessageKillCount(killCount), (EntityPlayerMP)player);
         }
         ICapabilityInstinct instinct = player.getCapability(INSTINCT_CAPABILITY, null);
         if (instinct != null) {
@@ -111,7 +112,7 @@ public class ListenerCapabilities extends HardcoreAlchemyListener {
         }
         ICapabilityMorphState morphState = player.getCapability(MORPH_STATE_CAPABILITY, null);
         if (morphState != null) {
-            HardcoreAlchemyCreatures.proxy.messenger.sendTo(new MessageMorphState(morphState), (EntityPlayerMP)player);
+            HardcoreAlchemy.proxy.messenger.sendTo(new MessageMorphState(morphState), (EntityPlayerMP)player);
         }
     }
 }

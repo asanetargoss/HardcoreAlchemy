@@ -29,10 +29,11 @@ import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.capability.killcount.ICapabilityKillCount;
 import targoss.hardcorealchemy.util.MiscVanilla;
 
-public class MessageKillCount extends MessageToClient {
+public class MessageKillCount extends MessageToClient<HardcoreAlchemy> {
     
     public MessageKillCount() {}
     
@@ -131,7 +132,7 @@ public class MessageKillCount extends MessageToClient {
     }
 
     @Override
-    public Class<? extends IMessageHandler<? extends MessageToClient, IMessage>> getHandlerClass() {
+    public Class<? extends IMessageHandler<? extends MessageToClient<HardcoreAlchemy>, IMessage>> getHandlerClass() {
         return Handler.class;
     }
 

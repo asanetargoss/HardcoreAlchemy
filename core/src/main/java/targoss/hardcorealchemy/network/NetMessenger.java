@@ -18,25 +18,26 @@
 
 package targoss.hardcorealchemy.network;
 
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 
-public class MessengerBuilder {
+public class NetMessenger<MOD> {
     protected final SimpleNetworkWrapper messenger;
     private int nextId = 0;
     
-    public MessengerBuilder(String modId) {
+    public NetMessenger(String modId) {
         messenger = NetworkRegistry.INSTANCE.newSimpleChannel(modId);
     }
     
     @SuppressWarnings("unchecked")
-    public MessengerBuilder register(MessageToClient message) {
+    public NetMessenger<MOD> register(MessageToClient<MOD> message) {
         messenger.registerMessage(
-                (Class<IMessageHandler<MessageToClient, IMessage>>)message.getHandlerClass(),
-                (Class<MessageToClient>)message.getClass(),
+                (Class<IMessageHandler<MessageToClient<MOD>, IMessage>>)message.getHandlerClass(),
+                (Class<MessageToClient<MOD>>)message.getClass(),
                 nextId++,
                 Side.CLIENT
             );
@@ -44,17 +45,21 @@ public class MessengerBuilder {
     }
     
     @SuppressWarnings("unchecked")
-    public MessengerBuilder register(RequestToServer request) {
+    public NetMessenger<MOD> register(RequestToServer<MOD> request) {
         messenger.registerMessage(
-                (Class<IMessageHandler<RequestToServer, IMessage>>)request.getHandlerClass(),
-                (Class<RequestToServer>)request.getClass(),
+                (Class<IMessageHandler<RequestToServer<MOD>, IMessage>>)request.getHandlerClass(),
+                (Class<RequestToServer<MOD>>)request.getClass(),
                 nextId++,
                 Side.SERVER
             );
         return this;
     }
     
-    public SimpleNetworkWrapper done() {
-        return messenger;
+    public void sendTo(MessageToClient<MOD> message, EntityPlayerMP player) {
+        messenger.sendTo(message, player);
+    }
+    
+    public void sendToServer(RequestToServer<MOD> request) {
+        messenger.sendToServer(request);
     }
 }

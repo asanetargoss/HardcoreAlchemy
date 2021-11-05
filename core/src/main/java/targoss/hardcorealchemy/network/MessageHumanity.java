@@ -24,10 +24,11 @@ import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.util.MiscVanilla;
 
-public class MessageHumanity extends MessageToClient {
+public class MessageHumanity extends MessageToClient<HardcoreAlchemy> {
     
     public MessageHumanity() {}
     
@@ -127,7 +128,7 @@ public class MessageHumanity extends MessageToClient {
     }
 
     @Override
-    public Class<? extends IMessageHandler<? extends MessageToClient, IMessage>> getHandlerClass() {
+    public Class<? extends IMessageHandler<? extends MessageToClient<HardcoreAlchemy>, IMessage>> getHandlerClass() {
         return Handler.class;
     }
 }

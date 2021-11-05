@@ -24,12 +24,13 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import targoss.hardcorealchemy.creatures.HardcoreAlchemyCreatures;
 import targoss.hardcorealchemy.creatures.capability.instinct.ICapabilityInstinct;
 import targoss.hardcorealchemy.creatures.capability.instinct.ProviderInstinct;
 import targoss.hardcorealchemy.network.MessageToClient;
 import targoss.hardcorealchemy.util.MiscVanilla;
 
-public class MessageInstinct extends MessageToClient {
+public class MessageInstinct extends MessageToClient<HardcoreAlchemyCreatures> {
     
     public MessageInstinct() { }
     
@@ -78,7 +79,7 @@ public class MessageInstinct extends MessageToClient {
     }
 
     @Override
-    public Class<? extends IMessageHandler<? extends MessageToClient, IMessage>> getHandlerClass() {
+    public Class<? extends IMessageHandler<? extends MessageToClient<HardcoreAlchemyCreatures>, IMessage>> getHandlerClass() {
         return Handler.class;
     }
 }
