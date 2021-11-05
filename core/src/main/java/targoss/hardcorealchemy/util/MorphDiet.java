@@ -24,102 +24,13 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityList;
-import net.minecraft.entity.monster.EntityCreeper;
-import net.minecraft.entity.monster.EntityEnderman;
-import net.minecraft.entity.monster.EntityEndermite;
-import net.minecraft.entity.monster.EntityGuardian;
-import net.minecraft.entity.monster.EntityPolarBear;
-import net.minecraft.entity.monster.EntityShulker;
-import net.minecraft.entity.monster.EntitySkeleton;
-import net.minecraft.entity.monster.EntitySlime;
-import net.minecraft.entity.passive.EntityChicken;
-import net.minecraft.entity.passive.EntityPig;
-import net.minecraft.entity.passive.EntitySquid;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
-import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 
 public class MorphDiet {
-
-    @CapabilityInject(ICapabilityHumanity.class)
-    public static final Capability<ICapabilityHumanity> HUMANITY_CAPABILITY = null;
-    
-    /**
-     * Dietary needs indexed by the fully-qualified name of the entity class which the morph represents
-     */
-    public static Map<String, Needs> morphDiets = new HashMap<String, Needs>();
     public static final Needs PLAYER_NEEDS = new Needs();
-    public static final Needs NO_NEEDS = new Needs(Needs.NO_NUTRIENTS, Restriction.UNFEEDING, false);
-    public static final Needs IDEALIST_VEGAN_NEEDS = new Needs(Needs.DEFAULT_NUTRIENTS, Restriction.VEGAN);
-    public static final Needs GRAZER_NEEDS = new Needs(new String[]{"grain"}, Restriction.VEGAN);
-    public static final Needs NIGHT_MOB_NEEDS = new Needs(Needs.CARNIVORE_NUTRIENTS, Restriction.CARNIVORE);
-    public static final Needs NETHER_MOB_NEEDS = new Needs(Needs.CARNIVORE_NUTRIENTS, Restriction.UNFEEDING, false);
-    public static final Needs AURA_MOB_NEEDS = new Needs(Needs.NO_NUTRIENTS, Restriction.UNFEEDING, false);
-    public static final Needs TAINT_MOB_NEEDS = new Needs(Needs.NO_NUTRIENTS, Restriction.UNFEEDING, false);
-    public static final Needs ELDRITCH_MOB_NEEDS = new Needs(Needs.NO_NUTRIENTS, Restriction.UNFEEDING, false);
-    
-    static {
-        /* With some exceptions, hostile mobs and tameables are carnivores,
-         * and Nether mobs are also thirstless.
-         * Passive mobs are vegans and eat wheat.
-         * Exceptions/uncategorized mobs override the lists
-         */
-        
-        for (String nightMob : MobLists.getNightMobs()) {
-            morphDiets.put(nightMob, NIGHT_MOB_NEEDS);
-        }
-        for (String tameable : MobLists.getEntityTameables()) {
-            morphDiets.put(tameable, NIGHT_MOB_NEEDS);
-        }
-        for (String netherMob : MobLists.getNetherMobs()) {
-            morphDiets.put(netherMob, NETHER_MOB_NEEDS);
-        }
-        for (String passiveMob : MobLists.getPassiveMobs()) {
-            morphDiets.put(passiveMob, GRAZER_NEEDS);
-        }
-        for (String auraMob : MobLists.getAuraMobs()) {
-            morphDiets.put(auraMob, AURA_MOB_NEEDS);
-        }
-        for (String taintMob : MobLists.getTaintMobs()) {
-            morphDiets.put(taintMob, AURA_MOB_NEEDS);
-        }
-        for (String eldritchMob : MobLists.getEldritchMobs()) {
-            morphDiets.put(eldritchMob, ELDRITCH_MOB_NEEDS);
-        }
-        
-        morphDiets.put(entityName(EntityCreeper.class), IDEALIST_VEGAN_NEEDS);
-        morphDiets.put(entityName(EntitySlime.class), PLAYER_NEEDS);
-        morphDiets.put(entityName(EntityChicken.class), IDEALIST_VEGAN_NEEDS);
-        morphDiets.put(entityName(EntityPig.class), IDEALIST_VEGAN_NEEDS);
-        morphDiets.put("toroquest.toro", GRAZER_NEEDS);
-        morphDiets.put("EnderZoo.Owl", new Needs(Needs.CARNIVORE_NUTRIENTS, Restriction.CARNIVORE, true));
-        morphDiets.put(entityName(EntitySkeleton.class), new Needs(Needs.NO_NUTRIENTS, Restriction.UNFEEDING, false));
-        morphDiets.put(entityName(EntityEnderman.class), new Needs(Needs.DEFAULT_NUTRIENTS, Restriction.OMNIVORE, false));
-        morphDiets.put(entityName(EntityEndermite.class), new Needs(Needs.NO_NUTRIENTS, Restriction.OMNIVORE, false));
-        morphDiets.put(entityName(EntitySquid.class), new Needs(Needs.CARNIVORE_NUTRIENTS, Restriction.OMNIVORE, false));
-        morphDiets.put(entityName(EntityGuardian.class), new Needs(Needs.CARNIVORE_NUTRIENTS, Restriction.OMNIVORE, false));
-        morphDiets.put(entityName(EntityShulker.class), new Needs(Needs.NO_NUTRIENTS, Restriction.UNFEEDING, false));
-        morphDiets.put(entityName(EntityPolarBear.class), new Needs(Needs.CARNIVORE_NUTRIENTS, Restriction.OMNIVORE));
-    }
-    
-    public static String entityName(Class<? extends Entity> clazz) {
-        return EntityList.CLASS_TO_NAME.get(clazz);
-    }
-    
-    public static String entityName(String className) {
-        try {
-            return EntityList.CLASS_TO_NAME.get(Class.forName(className));
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
     
     /** Do not change the name of these enums as they are used in serialization
      */
