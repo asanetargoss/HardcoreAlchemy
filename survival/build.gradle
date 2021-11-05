@@ -40,7 +40,8 @@ minecraft {
 
 dependencies {
     compileOnly project(":core")
-    compileOnly fileTree(dir: "libs", include: "*.jar")
+    compileOnly fileTree(dir: "../compilelibs/core", include: "**/*.jar")
+    compileOnly fileTree(dir: "../compilelibs/survival", include: "*.jar")
 }
 
 processResources

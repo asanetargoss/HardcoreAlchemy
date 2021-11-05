@@ -30,3 +30,4 @@ asset_sources
 #
 */src/main/resources/META-INF/hardcorealchemy_at.cfg
 !core/src/main/resources/META-INF/hardcorealchemy_at.cfg
+compilelibs/*

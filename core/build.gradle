@@ -40,8 +40,7 @@ minecraft {
 }
 
 dependencies {
-    // Right now, all mod dependencies are handled by adding the required mods to `libs/`. See the README for more info.
-    compileOnly fileTree(dir: "libs", include: "**/*.jar")
+    compileOnly fileTree(dir: "../compilelibs/core", include: "**/*.jar")
 }
 
 processResources
