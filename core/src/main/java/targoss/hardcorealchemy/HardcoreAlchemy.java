@@ -45,29 +45,14 @@ public class HardcoreAlchemy
 {
     public static final String MOD_ID = "hardcorealchemy";
     public static final String VERSION = "@HARDCORE_ALCHEMY_VERSION@";
-    public static final String DEPENDENCIES = "required-after:metamorph@[1.2.3,);" +
-         /* If/when TaN for 1.10 updates to version 4.x.x, 
-          * remove crop decay code, NPE fix, and thirst overlay fix.
-          * Then, the version specifier should be updated to require 4.x.x
-          */
-            "after:" + ModState.TAN_ID + "@1.1.1.19;" +
-          /* Workaround for Potion Core canceling the armor render and
-           * re-rendering it way too early (this ensures the humanity
-           * bar is rendered first)
-           */
+    public static final String DEPENDENCIES =
+            /* Workaround for Potion Core canceling the armor render and
+             * re-rendering it way too early (this ensures the humanity
+             * bar is rendered first)
+             */
             "before:potioncore;" +
-            "after:astralsorcery;" +
-            "after:adinferos;" +
-            "after:uniquecrops;" +
             "after:" + ModState.GUIDEAPI_ID + ";" +
-            "after:" + ModState.BLOOD_MAGIC_ID + ";" +
-            "after:" + ModState.ARS_MAGICA_ID + ";" +
-            "after:" + ModState.PROJECT_E_ID + ";" +
-            "after:" + ModState.ARS_MAGICA_ID + ";" +
-            "after:" + ModState.HARVESTCRAFT_ID + ";" +
-            "after:" + ModState.THAUMCRAFT_ID + ";" +
-            "after:" + ModState.JEI_ID + ";" +
-            "after:" + ModState.ASTRAL_SORCERY_ID + ";";
+            "after:" + ModState.JEI_ID + ";";
     public static final String MC_VERSIONS = "[1.10.2]";
     public static final String CLIENT_PROXY = "targoss.hardcorealchemy.ClientProxy";
     public static final String COMMON_PROXY = "targoss.hardcorealchemy.CommonProxy";

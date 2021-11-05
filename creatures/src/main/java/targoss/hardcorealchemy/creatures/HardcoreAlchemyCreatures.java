@@ -25,6 +25,8 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.ModStateException;
 import targoss.hardcorealchemy.creatures.coremod.HardcoreAlchemyCreaturesCoremod;
 
@@ -34,7 +36,8 @@ public class HardcoreAlchemyCreatures
 {
     public static final String MOD_ID = "hardcorealchemy-creatures";
     public static final String VERSION = "@HARDCORE_ALCHEMY_CREATURES_VERSION@";
-    public static final String DEPENDENCIES = "before:hardcorealchemy;";
+    public static final String DEPENDENCIES = "required-before:" + HardcoreAlchemy.MOD_ID +";" +
+            "required-after:" + ModState.METAMORPH_ID + "@[1.2.3,);";
     public static final String MC_VERSIONS = "[1.10.2]";
     public static final String CLIENT_PROXY = "targoss.hardcorealchemy.creatures.ClientProxy";
     public static final String COMMON_PROXY = "targoss.hardcorealchemy.creatures.CommonProxy";

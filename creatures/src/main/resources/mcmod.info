@@ -11,6 +11,6 @@
   "credits": "",
   "logoFile": "",
   "screenshots": [],
-  "dependencies": ["hardcorealchemy"]
+  "dependencies": ["hardcorealchemy", "metamorph"]
 }
 ]
