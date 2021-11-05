@@ -18,10 +18,7 @@
 
 package targoss.hardcorealchemy.coremod.transform;
 
-import java.util.ListIterator;
-
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.FrameNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.InsnNode;
@@ -36,8 +33,6 @@ import targoss.hardcorealchemy.coremod.ObfuscatedName;
 
 public class TEntityPlayerSP extends MethodPatcher {
     private static final String ENTITY_PLAYER_SP = "net.minecraft.client.entity.EntityPlayerSP";
-    private final ObfuscatedName UPDATE_AUTO_JUMP = new ObfuscatedName("func_189810_i" /*updateAutoJump*/);
-    private final ObfuscatedName IS_SNEAKING = new ObfuscatedName("func_70093_af" /*isSneaking*/);
     private final ObfuscatedName SEND_CHAT_MESSAGE = new ObfuscatedName("func_71165_d" /*sendChatMessage*/);
 
     @Override
@@ -50,27 +45,7 @@ public class TEntityPlayerSP extends MethodPatcher {
 
     @Override
     public void transformMethod(MethodNode method) {
-        if (method.name.equals(UPDATE_AUTO_JUMP.get())) {
-            InsnList instructions = method.instructions;
-            ListIterator<AbstractInsnNode> iterator = instructions.iterator();
-            while (iterator.hasNext()) {
-                AbstractInsnNode insn = iterator.next();
-                if (insn.getOpcode() == Opcodes.INVOKEVIRTUAL &&
-                        ((MethodInsnNode)insn).name.equals(IS_SNEAKING.get())) {
-                    InsnList patch = new InsnList();
-                    patch.add(new InsnNode(Opcodes.POP));
-                    patch.add(new VarInsnNode(Opcodes.ALOAD, 0));
-                    patch.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
-                            "targoss/hardcorealchemy/listener/ListenerPlayerHinderedMind",
-                            "isPlayerSneakingToPreventAutoJump",
-                            "(Lnet/minecraft/entity/player/EntityPlayer;)Z",
-                            false));
-                    
-                    instructions.insert(insn, patch);
-                    break;
-                }
-            }
-        } else if (method.name.contentEquals(SEND_CHAT_MESSAGE.get())) {
+        if (method.name.contentEquals(SEND_CHAT_MESSAGE.get())) {
             InsnList patch = new InsnList();
             patch.add(new VarInsnNode(Opcodes.ALOAD, 0)); // EntityPlayerSP
             patch.add(new VarInsnNode(Opcodes.ALOAD, 1)); // String message

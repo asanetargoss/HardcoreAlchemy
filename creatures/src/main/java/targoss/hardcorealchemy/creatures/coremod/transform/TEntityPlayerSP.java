@@ -16,29 +16,29 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.coremod.transform;
+package targoss.hardcorealchemy.creatures.coremod.transform;
 
 import java.util.ListIterator;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.JumpInsnNode;
+import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
 import targoss.hardcorealchemy.coremod.MethodPatcher;
 import targoss.hardcorealchemy.coremod.ObfuscatedName;
 
-public class TEntity extends MethodPatcher {
-    private static final String ENTITY = "net.minecraft.entity.Entity";
-    private static final ObfuscatedName MOVE = new ObfuscatedName("func_70091_d" /*move*/);
+public class TEntityPlayerSP extends MethodPatcher {
+    private static final String ENTITY_PLAYER_SP = "net.minecraft.client.entity.EntityPlayerSP";
+    private final ObfuscatedName UPDATE_AUTO_JUMP = new ObfuscatedName("func_189810_i" /*updateAutoJump*/);
+    private final ObfuscatedName IS_SNEAKING = new ObfuscatedName("func_70093_af" /*isSneaking*/);
 
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
-        if (transformedName.equals(ENTITY)) {
+        if (transformedName.equals(ENTITY_PLAYER_SP)) {
             return transformClass(transformedName, basicClass, 0);
         }
         return basicClass;
@@ -46,32 +46,23 @@ public class TEntity extends MethodPatcher {
 
     @Override
     public void transformMethod(MethodNode method) {
-        if (method.name.equals(MOVE.get())) {
+        if (method.name.equals(UPDATE_AUTO_JUMP.get())) {
             InsnList instructions = method.instructions;
             ListIterator<AbstractInsnNode> iterator = instructions.iterator();
             while (iterator.hasNext()) {
                 AbstractInsnNode insn = iterator.next();
-                if (insn.getOpcode() == Opcodes.INSTANCEOF &&
-                        ((TypeInsnNode)insn).desc.equals("net/minecraft/entity/player/EntityPlayer")) {
-                    // The first instance check of EntityPlayer is to decide if the player should be sneaking.
-                    // Let's disable sneaking if the player is mentally hindered, by skipping the block of code
-                    
-                    AbstractInsnNode jumpInsn = iterator.next();
-                    if (jumpInsn.getOpcode() != Opcodes.IFEQ) {
-                        // Sanity check
-                        continue;
-                    }
-                    
+                if (insn.getOpcode() == Opcodes.INVOKEVIRTUAL &&
+                        ((MethodInsnNode)insn).name.equals(IS_SNEAKING.get())) {
                     InsnList patch = new InsnList();
+                    patch.add(new InsnNode(Opcodes.POP));
                     patch.add(new VarInsnNode(Opcodes.ALOAD, 0));
                     patch.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
-                            "targoss/hardcorealchemy/listener/ListenerPlayerHinderedMind",
-                            "canPlayerUseSneakToPreventFall",
-                            "(Lnet/minecraft/entity/Entity;)Z",
+                            "targoss/hardcorealchemy/creatures/listener/ListenerPlayerHinderedMind",
+                            "isPlayerSneakingToPreventAutoJump",
+                            "(Lnet/minecraft/entity/player/EntityPlayer;)Z",
                             false));
-                    patch.add(new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode)jumpInsn).label));
                     
-                    instructions.insert(jumpInsn, patch);
+                    instructions.insert(insn, patch);
                     break;
                 }
             }

@@ -36,7 +36,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
-import targoss.hardcorealchemy.coremod.CoremodHook;
 import targoss.hardcorealchemy.creatures.capability.instinct.ICapabilityInstinct;
 import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
 import targoss.hardcorealchemy.util.MorphExtension;
@@ -314,15 +313,5 @@ public class ListenerGuiHud extends HardcoreAlchemyListener {
                 mc.player != null && MorphExtension.INSTANCE.isGhost(mc.player)) {
             event.setCanceled(true);
         }
-    }
-    
-    @CoremodHook
-    public static boolean clientHasThirst() {
-        EntityPlayer player = mc.player;
-        if (player == null) {
-            return true;
-        }
-        
-        return NutritionExtension.INSTANCE.getNeeds(player).hasThirst;
     }
 }

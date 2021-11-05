@@ -59,7 +59,7 @@ public class TThirstOverlayHandler extends MethodPatcher {
         
         // ListenerGuiHud.clientHasThirst()
         patch.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
-                "targoss/hardcorealchemy/listener/ListenerGuiHud",
+                "targoss/hardcorealchemy/event/MiscHooks$ClientSide",
                 "clientHasThirst",
                 "()Z",
                 false));

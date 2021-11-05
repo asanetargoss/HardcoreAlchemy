@@ -8,7 +8,9 @@ import net.minecraftforge.fml.common.LoadController;
 import net.minecraftforge.fml.common.ModMetadata;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
+import targoss.hardcorealchemy.coremod.transform.TEntityPlayerSP;
 import targoss.hardcorealchemy.creatures.HardcoreAlchemyCreatures;
+import targoss.hardcorealchemy.creatures.coremod.transform.TEntity;
 
 @IFMLLoadingPlugin.Name(value = "Hardcore Alchemy Creatures Coremod")
 @IFMLLoadingPlugin.MCVersion(value = "1.10.2")
@@ -25,6 +27,8 @@ public class HardcoreAlchemyCreaturesCoremod implements IFMLLoadingPlugin {
     public String[] getASMTransformerClass() {
         coremodInitialized = true;
         return new String[]{
+                TEntityPlayerSP.class.getName(),
+                TEntity.class.getName()
         };
     }
 
