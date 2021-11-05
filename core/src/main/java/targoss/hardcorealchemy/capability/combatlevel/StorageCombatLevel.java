@@ -22,7 +22,6 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
-import targoss.hardcorealchemy.capability.combatlevel.ICapabilityCombatLevel;
 
 public class StorageCombatLevel implements Capability.IStorage<ICapabilityCombatLevel> {
 

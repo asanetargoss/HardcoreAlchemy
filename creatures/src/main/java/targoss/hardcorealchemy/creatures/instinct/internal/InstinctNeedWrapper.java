@@ -28,10 +28,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.creatures.instinct.api.IInstinctNeed;
-import targoss.hardcorealchemy.creatures.instinct.api.IInstinctState;
 import targoss.hardcorealchemy.creatures.instinct.api.InstinctNeedFactory;
 import targoss.hardcorealchemy.creatures.instinct.api.InvalidNeed;
-import targoss.hardcorealchemy.creatures.instinct.api.IInstinctState.NeedStatus;
 import targoss.hardcorealchemy.creatures.instinct.network.api.INeedMessenger;
 
 public class InstinctNeedWrapper {

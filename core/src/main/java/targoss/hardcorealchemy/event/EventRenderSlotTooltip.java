@@ -18,14 +18,11 @@
 
 package targoss.hardcorealchemy.event;
 
-import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import targoss.hardcorealchemy.coremod.CoremodHook;
 import targoss.hardcorealchemy.util.InventoryUtil;
 

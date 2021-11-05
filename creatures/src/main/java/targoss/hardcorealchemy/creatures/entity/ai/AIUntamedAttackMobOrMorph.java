@@ -18,11 +18,8 @@
 
 package targoss.hardcorealchemy.creatures.entity.ai;
 
-import com.google.common.base.Predicate;
-
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAITargetNonTamed;
 import net.minecraft.entity.passive.EntityTameable;
 

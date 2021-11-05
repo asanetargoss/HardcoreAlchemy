@@ -24,7 +24,6 @@ import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.util.EntityInfo;
-import targoss.hardcorealchemy.util.EntityInfo.ClientSide;
 
 public class RegistrarEntity extends Registrar<EntityInfo> {
 

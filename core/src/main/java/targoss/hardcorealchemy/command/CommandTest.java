@@ -23,7 +23,6 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextComponentTranslation;
 import targoss.hardcorealchemy.test.HardcoreAlchemyTests;
 
 public class CommandTest extends CommandBase {

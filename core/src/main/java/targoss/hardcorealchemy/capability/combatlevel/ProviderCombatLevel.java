@@ -23,7 +23,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
-import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 
 public class ProviderCombatLevel implements ICapabilitySerializable<NBTBase> {
     

@@ -20,7 +20,6 @@ package targoss.hardcorealchemy.creatures.instinct.api;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraftforge.fml.common.registry.IForgeRegistryEntry;
-import targoss.hardcorealchemy.HardcoreAlchemy;
 
 public abstract class InstinctNeedFactory extends IForgeRegistryEntry.Impl<InstinctNeedFactory> {
     public InstinctNeedFactory() {}

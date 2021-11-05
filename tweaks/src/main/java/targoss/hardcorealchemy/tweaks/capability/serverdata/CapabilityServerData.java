@@ -19,7 +19,6 @@
 package targoss.hardcorealchemy.tweaks.capability.serverdata;
 
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.capabilities.CapabilityManager;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 
 public class CapabilityServerData implements ICapabilityServerData {

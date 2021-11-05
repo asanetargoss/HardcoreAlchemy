@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.capabilities.CapabilityManager;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 
 public class CapabilityKillCount implements ICapabilityKillCount {

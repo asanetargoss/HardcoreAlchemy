@@ -19,11 +19,7 @@
 package targoss.hardcorealchemy.capability.combatlevel;
 
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.capabilities.CapabilityManager;
 import targoss.hardcorealchemy.HardcoreAlchemy;
-import targoss.hardcorealchemy.capability.humanity.CapabilityHumanity;
-import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
-import targoss.hardcorealchemy.capability.humanity.StorageHumanity;
 
 public class CapabilityCombatLevel implements ICapabilityCombatLevel {
     
