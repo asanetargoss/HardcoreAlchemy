@@ -20,12 +20,10 @@ package targoss.hardcorealchemy;
 
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import targoss.hardcorealchemy.entity.Entities;
-import targoss.hardcorealchemy.listener.ListenerGuiInventory;
 
 public class ClientProxy extends CommonProxy {
     public ClientProxy() {
         super();
-        addListener(new ListenerGuiInventory());
     }
     
     @Override

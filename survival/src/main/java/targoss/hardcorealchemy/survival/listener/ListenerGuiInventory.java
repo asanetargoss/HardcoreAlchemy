@@ -16,7 +16,7 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.listener;
+package targoss.hardcorealchemy.survival.listener;
 
 import java.util.List;
 
@@ -30,7 +30,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import targoss.hardcorealchemy.capability.CapUtil;
 import targoss.hardcorealchemy.capability.food.ICapabilityFood;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
-import targoss.hardcorealchemy.util.FoodLists;
+import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
+import targoss.hardcorealchemy.survival.util.FoodLists;
 import targoss.hardcorealchemy.util.MorphDiet;
 
 @SideOnly(Side.CLIENT)

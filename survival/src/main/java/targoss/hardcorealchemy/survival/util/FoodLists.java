@@ -16,7 +16,7 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.util;
+package targoss.hardcorealchemy.survival.util;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -27,6 +27,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
+import targoss.hardcorealchemy.util.InventoryUtil;
+import targoss.hardcorealchemy.util.MorphDiet;
 
 public class FoodLists {
     // For each of these, if meta is not 0 then the item name is domain:itemname:meta, otherwise the item name is domain:itemname
