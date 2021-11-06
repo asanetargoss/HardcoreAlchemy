@@ -30,7 +30,7 @@ import amerifrance.guideapi.api.GuideAPI;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.modpack.HardcoreAlchemyModpack;
 import targoss.hardcorealchemy.modpack.guide.HCAModpackGuide;
 import targoss.hardcorealchemy.modpack.guide.UpgradeGuide;
 import targoss.hardcorealchemy.registrar.Registrar;
@@ -83,7 +83,7 @@ public class RegistrarUpgradeGuide extends Registrar<UpgradeGuide> {
                 // Already got this upgrade guide
                 break;
             }
-            if (UpgradeGuide.compareVersions(HardcoreAlchemy.VERSION, upgradeGuide.upgradeTo) == -1) {
+            if (UpgradeGuide.compareVersions(HardcoreAlchemyModpack.VERSION, upgradeGuide.upgradeTo) == -1) {
                 // Don't give players upgrade guides from the future
                 continue;
             }
