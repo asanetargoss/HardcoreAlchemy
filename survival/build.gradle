@@ -31,7 +31,7 @@ minecraft {
     
     mappings = "stable_29"
     
-    replace "@HARDCORE_ALCHEMY_TWEAKS_VERSION@", project.version
+    replace "@HARDCORE_ALCHEMY_SURVIVAL_VERSION@", project.version
     replaceIn "HardcoreAlchemySurvival.java"
 
     clientJvmArgs += ["-Dfml.coreMods.load=targoss.hardcorealchemy.coremod.HardcoreAlchemyCoremod,${coremodPath}"]
