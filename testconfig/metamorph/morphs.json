@@ -1,57 +1,279 @@
 {
-    "CaveSpider": {
-        "abilities": ["climb", "night_vision"],
-        "attack": "poison",
-        "health": 12,
+    "metamorph.Block": {
+        "hands": false,
         "hostile": true
+    },
+    "Player": {
+    },
+    
+    "Bat": {
+        "abilities": ["fly", "night_vision", "prevent_fall"],
+        "hostile": true
+    },
+    "CaveSpider": {
+        "abilities": ["night_vision", "climb"],
+        "attack": "poison",
+        "hostile": true
+    },
+    "Chicken": {
+        "abilities": ["glide"],
+        "action": "hardcorealchemy:primitive_sustenance",
+        "hands": true
+    },
+    "Cow": {
+        "hands": true,
+        "action": "hardcorealchemy:primitive_sustenance"
+    },
+    "EntityHorse": {
+        "abilities": ["prevent_fall", "step_up"],
+        "action": "hardcorealchemy:primitive_sustenance",
+        "hands": false
+    },
+    "MushroomCow": {
+        "hands": true,
+        "action": "hardcorealchemy:primitive_sustenance"
+    },
+    "Ozelot": {
+        "hands": true,
+        "action": "hardcorealchemy:primitive_sustenance"
+    },
+    "Pig": {
+        "hands": true,
+        "action": "hardcorealchemy:primitive_sustenance"
+    },
+    "PolarBear": {
+        "hands": true,
+        "action": "hardcorealchemy:primitive_sustenance"
+    },
+    "Rabbit": {
+        "abilities": ["prevent_fall", "jumping"],
+        "action": "hardcorealchemy:primitive_sustenance",
+        "action": "jump"
+    },
+    "Sheep": {
+        "hands": true,
+        "action": "hardcorealchemy:primitive_sustenance"
     },
     "Spider": {
-        "abilities": ["climb", "night_vision"],
-        "health": 16,
+        "abilities": ["climb"],
         "hostile": true
     },
+    "Squid": {
+        "abilities": ["water_breath", "swim", "night_vision"],
+        "action": "hardcorealchemy:underwater_fishing",
+        "hands": true
+    },
+    "Wolf": {
+        "hostile": true,
+        "hands": true,
+        "action": "hardcorealchemy:primitive_sustenance"
+    },
     "Enderman": {
-        "abilities": ["water_allergy", "night_vision"],
+        "abilities": ["night_vision", "water_allergy"],
         "action": "teleport",
-        "health": 40,
         "hostile": true,
         "hands": true
+    },
+    "Endermite": {
+        "action": "endermite",
+        "hostile": true
+    },
+    "PigZombie": {
+        "abilities": ["fire_proof", "hungerless", "rotten"],
+        "hostile": true,
+        "hands": true
+    },
+    "SnowMan": {
+        "abilities": ["snow_walk"],
+        "action": "snowball"
+    },
+    "Villager": {
+        "hands": true
+    },
+    "VillagerGolem": {
+        "abilities": ["prevent_fall", "step_up"],
+        "attack": "mob",
+        "attack": "knockback",
+        "hands": true
+    },
+    "Blaze": {
+        "abilities": ["fly", "fire_proof", "water_allergy"],
+        "action": "small_fireball",
+        "hostile": true,
+        "hands": true
+    },
+    "Creeper": {
+        "abilities": ["night_vision"],
+        "action": "explode",
+        "hostile": true,
+        "hands": true
+    },
+    "Ghast": {
+        "abilities": ["fly", "fire_proof"],
+        "action": "fireball",
+        "hostile": true,
+        "hands": true
+    },
+    "Guardian": {
+        "abilities": ["water_breath", "night_vision", "swim", "jumping"],
+        "action": "hardcorealchemy:underwater_fishing",
+        "hostile": true
+    },
+    "LavaSlime": {
+        "abilities": ["jumping", "fire_proof"],
+        "hostile": true
     },
     "Silverfish": {
         "abilities": ["night_vision"],
         "action": "silverfish",
-        "health": 8,
+        "hostile": true
+    },
+    "Shulker": {
+        "action": "shulker_bullet",
+        "hostile": true
+    },
+    "Slime": {
+        "abilities": ["night_vision", "jumping"],
         "hostile": true
     },
     "Skeleton": {
-        "abilities": ["sun_allergy", "night_vision"],
-        "health": 20,
+        "abilities": ["night_vision", "sun_allergy", "rotten"],
+        "hostile": true,
+        "hands": true
+    },
+    "WitherSkeleton": {
+        "abilities": ["night_vision", "fire_proof", "rotten"],
+        "attack": "wither",
         "hostile": true,
         "hands": true
     },
     "Witch": {
-        "abilities": ["night_vision"],
         "action": "potions",
-        "health": 26,
         "hostile": true,
         "hands": true
     },
     "Zombie": {
-        "abilities": ["sun_allergy", "hungerless", "night_vision"],
-        "health": 20,
+        "abilities": ["night_vision", "sun_allergy", "hungerless", "rotten"],
         "hostile": true,
         "hands": true
     },
-    "Squid": {
-        "abilities": ["water_breath", "swim", "night_vision"],
-        "action": "hardcorealchemy:underwater_fishing";
-        "health": 10,
-        "hands": true
+    "EnderDragon": {
+        "abilities": ["fly"],
+        "action": "fire_breath",
+        "hostile": true
     },
-    "Sheep": {
-        "abilities": [],
-        "action": "hardcorealchemy:primitive_sustenance";
-        "health": 6,
-        "hands": true
+    "EnderZoo.Owl": {
+        "abilities": ["night_vision", "fly"],
+        "action": "hardcorealchemy:primitive_sustenance"
+    },
+    "dmonsters.baby": {
+        "abilities": ["night_vision", "sun_allergy"]
+    },
+    "dmonsters.climber": {
+        "abilities": ["night_vision", "sun_allergy", "climb"]
+    },
+    "dmonsters.entrail": {
+        "abilities": ["night_vision", "sun_allergy"]
+    },
+    "dmonsters.freezer": {
+        "abilities": ["night_vision", "sun_allergy", "snow_walk"]
+    },
+    "dmonsters.mutantSteve": {
+        "abilities": ["night_vision", "sun_allergy"]
+    },
+    "dmonsters.present": {
+        "abilities": ["night_vision", "sun_allergy"]
+    },
+    "dmonsters.wideman": {
+        "abilities": ["night_vision", "sun_allergy"]
+    },
+    "dmonsters.woman": {
+        "abilities": ["night_vision", "sun_allergy"]
+    },
+    "dmonsters.zombieChicken": {
+        "abilities": ["night_vision", "sun_allergy", "glide"]
+    },
+    "thaumcraft.BrainyZombie": {
+        "abilities": ["night_vision", "sun_allergy", "hungerless", "rotten"]
+    },
+    "thaumcraft.GiantBrainyZombie": {
+        "abilities": ["night_vision", "sun_allergy", "hungerless", "rotten"]
+    },
+    "thaumcraft.InhabitedZombie": {
+        "abilities": ["night_vision", "sun_allergy", "hungerless", "rotten"]
+    },
+    "EnderZoo.EnderMiny": {
+        "abilities": ["night_vision"],
+        "action": "teleport"
+    },
+    "EnderZoo.ConcussionCreeper": {
+        "abilities": ["night_vision"]
+    },
+    "EnderZoo.FallenKnight": {
+        "abilities": ["night_vision", "sun allergy", "hungerless", "rotten"]
+    },
+    "EnderZoo.FallenMount": {
+        "abilities": ["night_vision", "step_up", "hungerless", "rotten"]
+    },
+    "EnderZoo.WitherCat": {
+        "abilities": ["night_vision"],
+        "action": "hardcorealchemy:primitive_sustenance"
+    },
+    "adinferos.BlackWidow": {
+        "abilities": ["night_vision", "climb", "fire proof"],
+        "attack": "poison"
+    },
+    "adinferos.Curse": {
+        "abilities": ["fire proof"]
+    },
+    "adinferos.Ghost": {
+        "abilities": ["fire proof"]
+    },
+    "adinferos.GlowstoneSkeleton": {
+        "abilities": ["fire proof"],
+        "action": "small_fireball"
+    },
+    "adinferos.Herobrine": {
+        "abilities": ["fire proof", "night vision"]
+    },
+    "adinferos.HerobrineClone": {
+        "abilities": ["fire proof", "night vision"]
+    },
+    "adinferos.InfernalChicken": {
+        "abilities": ["fire proof", "glide"]
+    },
+    "adinferos.ObsidianSheepman": {
+        "abilities": ["fire proof", "hungerless", "rotten"]
+    },
+    "adinferos.Phantom": {
+        "abilities": ["fire proof"]
+    },
+    "adinferos.Reaper": {
+        "abilities": ["fire proof"]
+    },
+    "adinferos.SkeletonHorse": {
+        "abilities": ["fire proof", "night vision", "step_up"]
+    },
+    "adinferos.Summoner": {
+        "abilities": ["fire proof"]
+    },
+    "thaumcraft.Firebat": {
+        "abilities": ["fire proof", "fly", "night vision"],
+        "action": "explode"
+    },
+    "thaumcraft.Wisp": {
+        "abilities": ["fly"]
+    },
+    "arsmagica2.FireElemental": {
+        "abilities": ["fire proof"]
+    },
+    "arsmagica2.ManaElemental": {
+        "abilities": ["fly"]
+    },
+    "arsmagica2.Waterlemental": {
+        "abilities": ["night vision"]
+    },
+    "thaumcraft.MindSpider": {
+        "abilities": ["night vision", "climb"]
     }
 }
