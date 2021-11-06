@@ -36,7 +36,6 @@ import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
-import targoss.hardcorealchemy.command.CommandTest;
 import targoss.hardcorealchemy.coremod.HardcoreAlchemyCoremod;
 
 @Mod(modid = HardcoreAlchemy.MOD_ID, version = HardcoreAlchemy.VERSION,
@@ -77,21 +76,7 @@ public class HardcoreAlchemy
         LOGGER = event.getModLog();
         
         Map<String, ModContainer> modMap = Loader.instance().getIndexedModList();
-        ModState.isMetamorphLoaded = modMap.containsKey(ModState.METAMORPH_ID);
-        ModState.isDissolutionLoaded = modMap.containsKey(ModState.DISSOLUTION_ID);
-        ModState.isNutritionLoaded = modMap.containsKey(ModState.NUTRITION_ID);
-        ModState.isBloodMagicLoaded = modMap.containsKey(ModState.BLOOD_MAGIC_ID);
-        ModState.isArsMagicaLoaded = modMap.containsKey(ModState.ARS_MAGICA_ID);
-        ModState.isProjectELoaded = modMap.containsKey(ModState.PROJECT_E_ID);
-        ModState.isIronBackpacksLoaded = modMap.containsKey(ModState.IRON_BACKPACKS_ID);
-        ModState.isTanLoaded = modMap.containsKey(ModState.TAN_ID);
-        ModState.isGuideapiLoaded = modMap.containsKey(ModState.GUIDEAPI_ID);
-        ModState.isHarvestCraftLoaded = modMap.containsKey(ModState.HARVESTCRAFT_ID);
-        ModState.isThaumcraftLoaded = modMap.containsKey(ModState.THAUMCRAFT_ID);
-        ModState.isAlchemicAshLoaded = modMap.containsKey(ModState.ALCHEMIC_ASH_ID);
-        ModState.isJEILoaded = modMap.containsKey(ModState.JEI_ID);
-        ModState.isSpiceOfLifeLoaded = modMap.containsKey(ModState.SPICE_OF_LIFE_ID);
-        ModState.isAstralSorceryLoaded = modMap.containsKey(ModState.ASTRAL_SORCERY_ID);
+        ModState.registerModMap(modMap);
         
         proxy.preInit(event);
     }
@@ -118,8 +103,6 @@ public class HardcoreAlchemy
     
     @EventHandler
     public void serverStarting(FMLServerStartingEvent event) {
-        event.registerServerCommand(new CommandTest());
-        
         proxy.serverStarting(event);
         
         SERVER_REFERENCE = new WeakReference<>(event.getServer());

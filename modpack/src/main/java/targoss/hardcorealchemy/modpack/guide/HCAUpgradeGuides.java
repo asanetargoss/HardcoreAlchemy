@@ -21,10 +21,11 @@
 package targoss.hardcorealchemy.modpack.guide;
 
 import targoss.hardcorealchemy.HardcoreAlchemy;
-import targoss.hardcorealchemy.registrar.RegistrarUpgradeGuide;
+import targoss.hardcorealchemy.modpack.HardcoreAlchemyModpack;
+import targoss.hardcorealchemy.modpack.registrar.RegistrarUpgradeGuide;
 
 public class HCAUpgradeGuides {
-    public static RegistrarUpgradeGuide UPGRADE_GUIDES = new RegistrarUpgradeGuide("upgrade_guides", HardcoreAlchemy.MOD_ID, HardcoreAlchemy.LOGGER);
+    public static RegistrarUpgradeGuide UPGRADE_GUIDES = new RegistrarUpgradeGuide("upgrade_guides", HardcoreAlchemy.MOD_ID, HardcoreAlchemyModpack.LOGGER);
 
     static {
         UPGRADE_GUIDES.add("0.5.0", new UpgradeGuide(new BookBuilder()

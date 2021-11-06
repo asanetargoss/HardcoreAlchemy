@@ -40,16 +40,11 @@ import targoss.hardcorealchemy.listener.ListenerCapabilities;
 import targoss.hardcorealchemy.listener.ListenerConfigs;
 import targoss.hardcorealchemy.listener.ListenerEntityCapabilities;
 import targoss.hardcorealchemy.listener.ListenerPlayerIncantation;
-import targoss.hardcorealchemy.listener.ListenerPlayerInventory;
 import targoss.hardcorealchemy.listener.ListenerPlayerResearch;
-import targoss.hardcorealchemy.modpack.guide.AlchemicAshGuide;
-import targoss.hardcorealchemy.modpack.guide.HCAModpackGuide;
-import targoss.hardcorealchemy.modpack.guide.HCAUpgradeGuides;
 import targoss.hardcorealchemy.network.MessageConfigs;
 import targoss.hardcorealchemy.network.MessageInactiveCapabilities;
 import targoss.hardcorealchemy.network.NetMessenger;
 import targoss.hardcorealchemy.network.RequestIncantation;
-import targoss.hardcorealchemy.registrar.RegistrarUpgradeGuide;
 import targoss.hardcorealchemy.research.Studies;
 
 public class CommonProxy {
@@ -68,7 +63,6 @@ public class CommonProxy {
         addListener(new ListenerCapabilities());
         addListener(new ListenerEntityCapabilities());
         addListener(new ListenerPlayerIncantation());
-        addListener(new ListenerPlayerInventory());
         addListener(new ListenerPlayerResearch());
         addListener(new ListenerConfigs());
     }
@@ -93,15 +87,6 @@ public class CommonProxy {
         // asanetargoss @ 2021-10-03: Moved incantation registration from init to preInit
         Incantations.INCANTATIONS.register();
         
-        if (ModState.isGuideapiLoaded) {
-            HCAModpackGuide.preInit();
-            HCAUpgradeGuides.UPGRADE_GUIDES.register(RegistrarUpgradeGuide.BOOK_AND_MODEL);
-        }
-        
-        if (ModState.isGuideapiLoaded && ModState.isAlchemicAshLoaded) {
-            AlchemicAshGuide.preInit();
-        }
-        
         registerNetworking();
     }
     
@@ -117,17 +102,6 @@ public class CommonProxy {
         }
         
         Items.registerRecipes();
-        
-        if (ModState.isGuideapiLoaded) {
-            HCAModpackGuide.init();
-            HCAUpgradeGuides.UPGRADE_GUIDES.register(RegistrarUpgradeGuide.RECIPES);
-            HCAUpgradeGuides.UPGRADE_GUIDES.register(RegistrarUpgradeGuide.CATEGORIES);
-            HCAUpgradeGuides.UPGRADE_GUIDES.register(RegistrarUpgradeGuide.CLEANUP);
-        }
-        
-        if (ModState.isGuideapiLoaded && ModState.isAlchemicAshLoaded) {
-            AlchemicAshGuide.init();
-        }
     }
     
     public void postInit(FMLPostInitializationEvent event) {

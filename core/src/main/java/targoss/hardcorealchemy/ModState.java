@@ -18,6 +18,10 @@
 
 package targoss.hardcorealchemy;
 
+import java.util.Map;
+
+import net.minecraftforge.fml.common.ModContainer;
+
 /**
  * Note: Not all ids have a corresponding boolean
  */
@@ -55,6 +59,30 @@ public final class ModState {
     public static boolean isJEILoaded = false;
     public static boolean isSpiceOfLifeLoaded = false;
     public static boolean isAstralSorceryLoaded = false;
+    protected static  boolean modMapRegistered = false;
 
     private ModState() { }
+
+    public static void registerModMap(Map<String, ModContainer> modMap) {
+        if (modMapRegistered) {
+            return;
+        }
+        modMapRegistered = true;
+        
+        isMetamorphLoaded = modMap.containsKey(METAMORPH_ID);
+        isDissolutionLoaded = modMap.containsKey(DISSOLUTION_ID);
+        isNutritionLoaded = modMap.containsKey(NUTRITION_ID);
+        isBloodMagicLoaded = modMap.containsKey(BLOOD_MAGIC_ID);
+        isArsMagicaLoaded = modMap.containsKey(ARS_MAGICA_ID);
+        isProjectELoaded = modMap.containsKey(PROJECT_E_ID);
+        isIronBackpacksLoaded = modMap.containsKey(IRON_BACKPACKS_ID);
+        isTanLoaded = modMap.containsKey(TAN_ID);
+        isGuideapiLoaded = modMap.containsKey(GUIDEAPI_ID);
+        isHarvestCraftLoaded = modMap.containsKey(HARVESTCRAFT_ID);
+        isThaumcraftLoaded = modMap.containsKey(THAUMCRAFT_ID);
+        isAlchemicAshLoaded = modMap.containsKey(ALCHEMIC_ASH_ID);
+        isJEILoaded = modMap.containsKey(JEI_ID);
+        isSpiceOfLifeLoaded = modMap.containsKey(SPICE_OF_LIFE_ID);
+        isAstralSorceryLoaded = modMap.containsKey(ASTRAL_SORCERY_ID);
+    }
 }

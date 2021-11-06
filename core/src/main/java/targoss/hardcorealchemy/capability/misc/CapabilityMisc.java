@@ -25,15 +25,16 @@ import java.util.UUID;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import targoss.hardcorealchemy.HardcoreAlchemy;
-import targoss.hardcorealchemy.modpack.guide.HCAUpgradeGuides;
 
 public class CapabilityMisc implements ICapabilityMisc {
     public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(HardcoreAlchemy.MOD_ID, "misc");
     
+    public static String DEFAULT_EXPECTED_PLAYER_VERSION = "";
+    
     protected UUID lifetimeUUID = null;
     protected int lastIncantationTick = 0;
     protected boolean hasChangedDimensionWhileAlive = false;
-    protected String lastLoginVersion = HCAUpgradeGuides.UPGRADE_GUIDES.getDefaultExpectedPlayerVersion();
+    protected String lastLoginVersion = DEFAULT_EXPECTED_PLAYER_VERSION;
     protected List<ItemStack> pendingInventoryGifts = new ArrayList<>();
 
     @Override

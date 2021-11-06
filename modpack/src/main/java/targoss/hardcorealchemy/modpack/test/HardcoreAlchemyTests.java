@@ -16,19 +16,20 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.test;
+package targoss.hardcorealchemy.modpack.test;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.config.Configs;
-import targoss.hardcorealchemy.test.api.ITestSuite;
-import targoss.hardcorealchemy.test.api.TestSystem;
-import targoss.hardcorealchemy.test.suite.TestHumanity;
-import targoss.hardcorealchemy.test.suite.TestMobLists;
-import targoss.hardcorealchemy.test.suite.TestTimeFuzz;
-import targoss.hardcorealchemy.test.suite.TestWorldReference;
+import targoss.hardcorealchemy.modpack.test.api.ITestSuite;
+import targoss.hardcorealchemy.modpack.test.api.TestSystem;
+import targoss.hardcorealchemy.modpack.test.suite.TestFoodRot;
+import targoss.hardcorealchemy.modpack.test.suite.TestHumanity;
+import targoss.hardcorealchemy.modpack.test.suite.TestMobLists;
+import targoss.hardcorealchemy.modpack.test.suite.TestTimeFuzz;
+import targoss.hardcorealchemy.modpack.test.suite.TestWorldReference;
 
 /**
  * Server-side tests for Hardcore Alchemy
@@ -50,6 +51,7 @@ public class HardcoreAlchemyTests extends TestSystem {
     
     static {
         TEST_SUITES.add(TestWorldReference.class);
+        TEST_SUITES.add(TestFoodRot.class);
         TEST_SUITES.add(TestHumanity.class);
         TEST_SUITES.add(TestMobLists.class);
         TEST_SUITES.add(TestTimeFuzz.class);

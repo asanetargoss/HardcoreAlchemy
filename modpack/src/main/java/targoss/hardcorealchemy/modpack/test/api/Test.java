@@ -16,7 +16,7 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.test.api;
+package targoss.hardcorealchemy.modpack.test.api;
 
 /**
  * Return true on success or false on failure

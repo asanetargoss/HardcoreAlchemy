@@ -16,7 +16,7 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.test.api;
+package targoss.hardcorealchemy.modpack.test.api;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,7 +56,7 @@ public abstract class TestSystem {
      * Logs informational text to the output list.
      */
     public List<String> testAndLogAll() {
-        List<String> logResults = new ArrayList();
+        List<String> logResults = new ArrayList<>();
         
         String suiteName = getTestSystemName();
         if (suiteName != null) {

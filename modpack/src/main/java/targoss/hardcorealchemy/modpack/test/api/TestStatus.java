@@ -16,20 +16,10 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.test.api;
+package targoss.hardcorealchemy.modpack.test.api;
 
-import java.util.ArrayList;
-
-public class TestList extends ArrayList<ITestList.TestEntry> implements ITestList {
-    @Override
-    public void put(String name, Test test) {
-        this.add(new TestEntry(name, test));
-    }
-    
-    @Override
-    public void putIf(String name, Test test, boolean shouldAdd) {
-        if (shouldAdd) {
-            this.add(new TestEntry(name, test));
-        }
-    }
+public class TestStatus {
+    int successfulTests = 0;
+    int totalTests = 0;
+    String failedTestName = null;
 }

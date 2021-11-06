@@ -16,13 +16,13 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.test.suite;
+package targoss.hardcorealchemy.modpack.test.suite;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
-import targoss.hardcorealchemy.test.api.ITestList;
-import targoss.hardcorealchemy.test.api.ITestSuite;
-import targoss.hardcorealchemy.test.api.TestList;
+import targoss.hardcorealchemy.modpack.test.api.ITestList;
+import targoss.hardcorealchemy.modpack.test.api.ITestSuite;
+import targoss.hardcorealchemy.modpack.test.api.TestList;
 import targoss.hardcorealchemy.util.MiscVanilla;
 
 public class TestTimeFuzz implements ITestSuite {

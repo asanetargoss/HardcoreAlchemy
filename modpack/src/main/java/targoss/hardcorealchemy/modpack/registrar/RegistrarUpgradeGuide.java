@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.registrar;
+package targoss.hardcorealchemy.modpack.registrar;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -33,6 +33,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.modpack.guide.HCAModpackGuide;
 import targoss.hardcorealchemy.modpack.guide.UpgradeGuide;
+import targoss.hardcorealchemy.registrar.Registrar;
 
 public class RegistrarUpgradeGuide extends Registrar<UpgradeGuide> {
     public static final int BOOK_AND_MODEL = 0;

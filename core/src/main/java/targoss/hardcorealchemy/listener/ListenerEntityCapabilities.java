@@ -26,7 +26,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
-import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -72,7 +71,7 @@ public class ListenerEntityCapabilities extends HardcoreAlchemyListener {
 
     @SubscribeEvent
     public void onAttachPlayerCapabilities(AttachCapabilitiesEvent<Entity> event) {
-        if (!(event.getObject() instanceof EntityPlayer) || (event.getObject() instanceof FakePlayer)) {
+        if (!(event.getObject() instanceof EntityPlayer)) {
             return;
         }
         EntityPlayer player = (EntityPlayer)(event.getObject());

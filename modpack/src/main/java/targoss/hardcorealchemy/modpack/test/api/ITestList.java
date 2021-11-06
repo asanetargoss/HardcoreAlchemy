@@ -16,7 +16,7 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.test.api;
+package targoss.hardcorealchemy.modpack.test.api;
 
 public interface ITestList extends Iterable<ITestList.TestEntry> {
     int size();

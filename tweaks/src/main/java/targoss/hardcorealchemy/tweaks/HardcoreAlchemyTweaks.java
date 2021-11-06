@@ -35,7 +35,7 @@ import targoss.hardcorealchemy.tweaks.coremod.HardcoreAlchemyTweaksCoremod;
 public class HardcoreAlchemyTweaks
 {
     public static final String MOD_ID = "hardcorealchemy-tweaks";
-    public static final String VERSION = "@HARDCORE_ALCHEMY_CREATURES_VERSION@";
+    public static final String VERSION = "@HARDCORE_ALCHEMY_TWEAKS_VERSION@";
     public static final String DEPENDENCIES = "required-before:" + HardcoreAlchemy.MOD_ID +";" +
             "after:" + ModState.ADINFEROS_ID + ";";
     public static final String MC_VERSIONS = "[1.10.2]";

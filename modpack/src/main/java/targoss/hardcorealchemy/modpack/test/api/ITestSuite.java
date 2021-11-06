@@ -16,10 +16,8 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.test.api;
+package targoss.hardcorealchemy.modpack.test.api;
 
-public class TestStatus {
-    int successfulTests = 0;
-    int totalTests = 0;
-    String failedTestName = null;
+public interface ITestSuite {
+    ITestList getTests();
 }

@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.listener;
+package targoss.hardcorealchemy.modpack.listener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +35,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.capability.misc.ICapabilityMisc;
 import targoss.hardcorealchemy.capability.misc.ProviderMisc;
+import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
 import targoss.hardcorealchemy.modpack.guide.HCAUpgradeGuides;
 
 public class ListenerPlayerInventory extends HardcoreAlchemyListener {

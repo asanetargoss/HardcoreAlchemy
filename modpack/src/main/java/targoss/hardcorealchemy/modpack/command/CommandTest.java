@@ -16,14 +16,14 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.command;
+package targoss.hardcorealchemy.modpack.command;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
-import targoss.hardcorealchemy.test.HardcoreAlchemyTests;
+import targoss.hardcorealchemy.modpack.test.HardcoreAlchemyTests;
 
 public class CommandTest extends CommandBase {
 

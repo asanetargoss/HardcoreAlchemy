@@ -16,8 +16,22 @@
  * along with Hardcore Alchemy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.test.api;
+package targoss.hardcorealchemy.modpack.test.api;
 
-public interface ITestSuite {
-    ITestList getTests();
+import java.util.ArrayList;
+
+public class TestList extends ArrayList<ITestList.TestEntry> implements ITestList {
+    private static final long serialVersionUID = -1075123672610104867L;
+
+    @Override
+    public void put(String name, Test test) {
+        this.add(new TestEntry(name, test));
+    }
+    
+    @Override
+    public void putIf(String name, Test test, boolean shouldAdd) {
+        if (shouldAdd) {
+            this.add(new TestEntry(name, test));
+        }
+    }
 }

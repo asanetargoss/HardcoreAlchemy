@@ -75,7 +75,7 @@ public class MobLists {
         Set<String> nonMobs = new HashSet<>();
         
         // Hardcore Alchemy
-        nonMobs.add("hardcorealchemy:fish_swarm");
+        nonMobs.add("hardcorealchemy.fish_swarm");
         // Metamorph
         nonMobs.add("metamorph.Morph");
         // Ars Magica
@@ -87,7 +87,7 @@ public class MobLists {
         nonMobs.add("arsmagica2.ThrownSickle");
         nonMobs.add("arsmagica2.WinterGuardianArm");
         // Thaumcraft
-        nonMobs.add("thaumcraft.EntityTaintSwarm");
+        nonMobs.add("thaumcraft.TaintSwarm");
         nonMobs.add("thaumcraft.CultistPortalGreater");
         nonMobs.add("thaumcraft.CultistPortalLesser");
         nonMobs.add("thaumcraft.SpecialItem");
