@@ -39,13 +39,13 @@ There is a lot more in terms of mod selection, configuration, and tweaking, in o
 
 ### Dependencies
 
-This branch targets the 0.4.1+ version of the modpack. Download the 0.4.1 zip file from the link below and be ready to add its contents to `compilelibs/core/` in the Hardcore Alchemy repository folder when asked:
+This branch targets the 0.7.0+ version of the modpack. Download the 0.7.0 zip file from the link below and be ready to add its contents to `compilelibs/` in the Hardcore Alchemy repository folder:
 
 http://www.mediafire.com/folder/grwn2vsjr2lce/Hardcore_Alchemy_Libs
 
-The SHA-256 checksum of the 0.4.1 libs zip is: 6fb01f5764e9943085d0271e38c790795f9741b201e378802bdc575ea39cd7c4
+The SHA-256 checksum of the 0.7.0 libs zip is: 0027c53bb97ada66a5c556586d7603fca27966352ff1b98931eeaab0b92be777
 
-Please note: The following mods included in the HcA_libs zip file above are custom forks:
+Please note: The following mods included in the HcA_compilelibs zip file above are custom forks:
 * Nutrition: https://github.com/asanetargoss/Nutrition
 * Changeling: https://github.com/asanetargoss/Changeling
 * Dissolution ([permission](https://i.imgur.com/b7sN6lL.png))
@@ -56,12 +56,12 @@ Please note: The following mods included in the HcA_libs zip file above are cust
 ### Overview of Projects and Dependencies
 
 * All projects depend on Minecraft Forge
-* `compilelibs/core/` - Contains common third-party mod dependencies, such as Hwyla. Actually, it currently contains all the third-party mod dependencies, but this is subject to change.
-* `core/` - This is a mod project which contains shared code required by the other projects.
-* `tweaks/` - This is a mod project containing magic and survival tweaks, aiming for a minimal number of dependencies.
-* `creatures/` - This is a mod project for balanced morphing mechanics and tweaks to mob mods.
-* `magic/` - This is a mod project containing features which make magic mods work better in a hardcore respawn gameplay context. It also contains various tweaks and fixes for magic and utility mods.
-* `survival/` - This is a mod project containing various features related to nutrition, thirst, and crop growth. It interacts with various survival and crop mods.
+* `compilelibs/` - The place to put third-party mods that the various projects depend on. For example, files in `compilelibs/core` are depended on by the core project and any mods which depend on the core project.
+* `core/` - A mod project which contains shared code required by the other projects.
+* `tweaks/` - A mod project containing magic and survival tweaks, aiming for a minimal number of dependencies.
+* `creatures/` - A mod project for balanced morphing mechanics and tweaks to mob mods.
+* `magic/` - A mod project containing features which make magic mods work better in a hardcore respawn gameplay context. It also contains various tweaks and fixes for magic and utility mods.
+* `survival/` - A mod project containing various features related to nutrition, thirst, and crop growth. It interacts with various survival and crop mods.
 
 ### Notes on Windows and IntelliJ IDEA
 
@@ -75,7 +75,7 @@ The commands in the instructions below assume your command line is a unix-style 
 ### Workspace setup
 
 * Clone this repository into a folder. If you are using Eclipse, it is recommended that you create this folder inside of another folder, so the higher-up folder can be used as your multi-project workspace.
-* Navigate into the folder of your new personal copy of this repository. Create the folder `core/libs/`. In that folder, you should copy the mod dependencies you have downloaded from the Dependencies step
+* Navigate into the folder of your new personal copy of this repository. Create the folder `compilelibs/`. In that folder, you should copy the mod dependencies you have downloaded from the Dependencies step
 * Run `./gradlew setupDecompWorkspace eclipse`
     * `setupDecompWorkspace` sets up dependencies for Minecraft, Forge, etc; and updates access transformers for all projects
     * `eclipse` sets up files for all projects that can be imported into the Eclipse IDE
@@ -98,7 +98,7 @@ The commands in the instructions below assume your command line is a unix-style 
 
 * Internet down? Already ran gradle commands before? No problem! Just add the `-offline` flag to your gradle command and it should work normally again.
 * `./gradlew setupDecompWorkspace eclipse` may need to be re-run under the following circumstances:
-    * Adding/changing mods in `core/libs/`
+    * Adding/changing mods in `compilelibs/`
     * Updating dependencies in other places like a `build.gradle` file
     * Updating the access transformers (found at "core/src/main/resources/META-INF/hardcorealchemy_at.cfg") 
     * On rare occasions, when encountering unexplained crashes involving missing classes or methods. This is a bug with CodeChickenCore when used in a development environment.
