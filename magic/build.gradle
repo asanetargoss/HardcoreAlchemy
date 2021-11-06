@@ -34,6 +34,9 @@ minecraft {
     replace "@HARDCORE_ALCHEMY_MAGIC_VERSION@", project.version
     replaceIn "HardcoreAlchemyMagic.java"
 
+    replace "\"required-before:\" + HardcoreAlchemy.MOD_ID", "\"required-before:\" + HardcoreAlchemy.MOD_ID + \"[\" + HardcoreAlchemy.VERSION + \"]\""
+    replaceIn "HardcoreAlchemyMagic.java"
+
     clientJvmArgs += ["-Dfml.coreMods.load=targoss.hardcorealchemy.coremod.HardcoreAlchemyCoremod,${coremodPath}"]
     serverJvmArgs += ["-Dfml.coreMods.load=targoss.hardcorealchemy.coremod.HardcoreAlchemyCoremod,${coremodPath}"]
 }

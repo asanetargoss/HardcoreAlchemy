@@ -35,7 +35,7 @@ public class HardcoreAlchemyMagic
 {
     public static final String MOD_ID = "hardcorealchemy-magic";
     public static final String VERSION = "@HARDCORE_ALCHEMY_MAGIC_VERSION@";
-    public static final String DEPENDENCIES = "required-before:" + HardcoreAlchemy.MOD_ID +";" +
+    public static final String DEPENDENCIES = "required-before:" + HardcoreAlchemy.MOD_ID + ";" +
             "after:" + ModState.ASTRAL_SORCERY_ID + ";" +
             "after:" + ModState.BLOOD_MAGIC_ID + ";" +
             "after:" + ModState.ARS_MAGICA_ID + ";" +

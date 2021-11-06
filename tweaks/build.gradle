@@ -30,10 +30,13 @@ minecraft {
     runDir = "run"
     
     mappings = "stable_29"
-    
+
     replace "@HARDCORE_ALCHEMY_TWEAKS_VERSION@", project.version
     replaceIn "HardcoreAlchemyTweaks.java"
 
+    replace "\"required-before:\" + HardcoreAlchemy.MOD_ID", "\"required-before:\" + HardcoreAlchemy.MOD_ID + \"[\" + HardcoreAlchemy.VERSION + \"]\""
+    replaceIn "HardcoreAlchemyTweaks.java"
+    
     clientJvmArgs += ["-Dfml.coreMods.load=targoss.hardcorealchemy.coremod.HardcoreAlchemyCoremod,${coremodPath}"]
     serverJvmArgs += ["-Dfml.coreMods.load=targoss.hardcorealchemy.coremod.HardcoreAlchemyCoremod,${coremodPath}"]
 }

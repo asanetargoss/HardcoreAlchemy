@@ -36,7 +36,7 @@ public class HardcoreAlchemyCreatures
 {
     public static final String MOD_ID = "hardcorealchemy-creatures";
     public static final String VERSION = "@HARDCORE_ALCHEMY_CREATURES_VERSION@";
-    public static final String DEPENDENCIES = "required-before:" + HardcoreAlchemy.MOD_ID +";" +
+    public static final String DEPENDENCIES = "required-before:" + HardcoreAlchemy.MOD_ID + ";" +
             "required-after:" + ModState.METAMORPH_ID + "@[1.2.3,);";
     public static final String MC_VERSIONS = "[1.10.2]";
     public static final String CLIENT_PROXY = "targoss.hardcorealchemy.creatures.ClientProxy";
