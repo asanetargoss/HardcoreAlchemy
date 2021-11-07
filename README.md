@@ -16,7 +16,7 @@ The Hardcore Alchemy mod suite is released under the LGPL 3, so you are allowed 
 
 The Hardcore Alchemy mod suite is designed around the following mechanics:
 
-* **Balanced shapeshifting** - [Changeling](https://github.com/asanetargoss/Changeling/releases) powers Hardcore Alchemy's balanced morphing features, and is a required dependency.
+* **Balanced shapeshifting** - [Changeling](https://github.com/asanetargoss/Changeling/releases) powers Hardcore Alchemy's balanced morphing features.
   * The following config options should be set in Changeling: `acquire_immediately=false`, `disable_morph_disguise=true`, and `keep_morphs=false`
 * **Random respawn on death** - The Hardcore Alchemy mod is designed around hardcore respawn. For this, I recommend [Iberia HcA edition](https://github.com/asanetargoss/iberia/releases).
 
@@ -51,16 +51,16 @@ Please note: The following mods included in the HcA_compilelibs zip file above a
 * Guide-API (Custom build for development use only. Do not distribute.)
 * AppleCore: https://github.com/asanetargoss/AppleCore
 
-### Overview of Projects and Dependencies
+### Overview of Projects
 
-* `compilelibs/` - The place to put third-party mods that the various projects depend on. For example, files in `compilelibs/core` are depended on by the core project and any mods which depend on the core project.
-* `translations/` - Unlike most mod projects, translation files are stored in this folder, separately from other resources. Most of the translation files are in `translations/core/`, but this may change in the future.
+* `compilelibs/` - The place to put third-party mods that the various projects depend on. For example, files in `compilelibs/core/` are depended on by the core project and any mods which depend on the core project.
+* `translations/` - Unlike most mod projects, translation files are stored in this folder, separately from other resources. Most of the translations are in `translations/core/`, but this may change in the future.
 * `core/` - A mod project which contains shared code required by the other projects.
 * `tweaks/` - A mod project containing magic and survival tweaks, aiming for a minimal number of dependencies.
-* `creatures/` - A mod project for balanced morphing mechanics and tweaks to mob mods.
+* `creatures/` - A mod project for balanced morphing mechanics and tweaks to mob mods. It requires Changeling.
 * `magic/` - A mod project containing features which make magic mods work better in a hardcore respawn gameplay context. It also contains various tweaks and fixes for magic and utility mods.
 * `survival/` - A mod project containing various features related to nutrition, thirst, and crop growth. It interacts with various survival and crop mods.
-* `modpack/` - A mod project intended for the Hardcore Alchemy modpack. It adds guidebooks and integration tests.
+* `modpack/` - A mod project intended for the Hardcore Alchemy modpack. It adds guidebooks and integration tests. If you are building your own modpack, you most likely do not want to use this mod.
 
 ### Notes on Windows and IntelliJ IDEA
 
