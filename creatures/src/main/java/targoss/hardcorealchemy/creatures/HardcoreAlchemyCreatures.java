@@ -34,7 +34,7 @@ import targoss.hardcorealchemy.creatures.coremod.HardcoreAlchemyCreaturesCoremod
     dependencies = HardcoreAlchemyCreatures.DEPENDENCIES, acceptedMinecraftVersions = HardcoreAlchemyCreatures.MC_VERSIONS)
 public class HardcoreAlchemyCreatures
 {
-    public static final String MOD_ID = "hardcorealchemy-creatures";
+    public static final String MOD_ID = "hardcorealchemy_creatures";
     public static final String VERSION = "@HARDCORE_ALCHEMY_CREATURES_VERSION@";
     public static final String DEPENDENCIES = "required-before:" + HardcoreAlchemy.MOD_ID + ";" +
             "required-after:" + ModState.METAMORPH_ID + "@[1.2.3,);";

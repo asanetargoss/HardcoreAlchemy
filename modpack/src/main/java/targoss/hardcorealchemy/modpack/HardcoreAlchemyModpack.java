@@ -42,7 +42,7 @@ import targoss.hardcorealchemy.tweaks.HardcoreAlchemyTweaks;
     dependencies = HardcoreAlchemyModpack.DEPENDENCIES, acceptedMinecraftVersions = HardcoreAlchemyModpack.MC_VERSIONS)
 public class HardcoreAlchemyModpack
 {
-    public static final String MOD_ID = "hardcorealchemy-modpack";
+    public static final String MOD_ID = "hardcorealchemy_modpack";
     public static final String VERSION = "@HARDCORE_ALCHEMY_MODPACK_VERSION@";
     public static final String DEPENDENCIES = "required-before:" + HardcoreAlchemy.MOD_ID + ";" +
             "required-after:" + HardcoreAlchemyTweaks.MOD_ID + ";" +

@@ -33,7 +33,7 @@ import targoss.hardcorealchemy.tweaks.coremod.HardcoreAlchemyTweaksCoremod;
     dependencies = HardcoreAlchemyTweaks.DEPENDENCIES, acceptedMinecraftVersions = HardcoreAlchemyTweaks.MC_VERSIONS)
 public class HardcoreAlchemyTweaks
 {
-    public static final String MOD_ID = "hardcorealchemy-tweaks";
+    public static final String MOD_ID = "hardcorealchemy_tweaks";
     public static final String VERSION = "@HARDCORE_ALCHEMY_TWEAKS_VERSION@";
     public static final String DEPENDENCIES = "required-before:" + HardcoreAlchemy.MOD_ID + ";";
     public static final String MC_VERSIONS = "[1.10.2]";

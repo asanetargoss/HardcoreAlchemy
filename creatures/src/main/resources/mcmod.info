@@ -1,6 +1,6 @@
 [
 {
-  "modid": "hardcorealchemy-creatures",
+  "modid": "hardcorealchemy_creatures",
   "name": "Hardcore Alchemy Creatures",
   "description": "Get stuck as a chicken for the rest of your life",
   "version": "${version}",

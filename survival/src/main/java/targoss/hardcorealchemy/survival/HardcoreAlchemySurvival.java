@@ -33,7 +33,7 @@ import targoss.hardcorealchemy.survival.coremod.HardcoreAlchemySurvivalCoremod;
     dependencies = HardcoreAlchemySurvival.DEPENDENCIES, acceptedMinecraftVersions = HardcoreAlchemySurvival.MC_VERSIONS)
 public class HardcoreAlchemySurvival
 {
-    public static final String MOD_ID = "hardcorealchemy-survival";
+    public static final String MOD_ID = "hardcorealchemy_survival";
     public static final String VERSION = "@HARDCORE_ALCHEMY_SURVIVAL_VERSION@";
     public static final String DEPENDENCIES = "required-before:" + HardcoreAlchemy.MOD_ID + ";" +
             "after:" + ModState.TAN_ID + ";" +

@@ -17,7 +17,7 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 // Project settings
 version = "0.1.0"
 group= "targoss.hardcorealchemy.magic"
-archivesBaseName = "hardcorealchemy-magic"
+archivesBaseName = "hardcorealchemy_magic"
 String coremodPath="targoss.hardcorealchemy.magic.coremod.HardcoreAlchemyMagicCoremod"
 
 sourceCompatibility = targetCompatibility = "1.8" // Need this here so Eclipse task generates correctly.
@@ -46,6 +46,8 @@ dependencies {
     compileOnly fileTree(dir: "../compilelibs/core", include: "**/*.jar")
     compileOnly fileTree(dir: "../compilelibs/magic", include: "*.jar")
 }
+
+sourceSets.main.resources.srcDirs += ["../translations/magic"]
 
 processResources
 {

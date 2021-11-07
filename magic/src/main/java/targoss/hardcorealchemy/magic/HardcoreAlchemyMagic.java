@@ -33,7 +33,7 @@ import targoss.hardcorealchemy.magic.coremod.HardcoreAlchemyMagicCoremod;
     dependencies = HardcoreAlchemyMagic.DEPENDENCIES, acceptedMinecraftVersions = HardcoreAlchemyMagic.MC_VERSIONS)
 public class HardcoreAlchemyMagic
 {
-    public static final String MOD_ID = "hardcorealchemy-magic";
+    public static final String MOD_ID = "hardcorealchemy_magic";
     public static final String VERSION = "@HARDCORE_ALCHEMY_MAGIC_VERSION@";
     public static final String DEPENDENCIES = "required-before:" + HardcoreAlchemy.MOD_ID + ";" +
             "after:" + ModState.ASTRAL_SORCERY_ID + ";" +

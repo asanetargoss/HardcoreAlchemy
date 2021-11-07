@@ -17,7 +17,7 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 // Project settings
 version = "0.1.0"
 group= "targoss.hardcorealchemy"
-archivesBaseName = "hardcorealchemy-core"
+archivesBaseName = "hardcorealchemy_core"
 String coremodPath="targoss.hardcorealchemy.coremod.HardcoreAlchemyCoremod"
 
 sourceCompatibility = targetCompatibility = "1.8" // Need this here so Eclipse task generates correctly.
@@ -42,6 +42,8 @@ minecraft {
 dependencies {
     compileOnly fileTree(dir: "../compilelibs/core", include: "**/*.jar")
 }
+
+sourceSets.main.resources.srcDirs += ["../translations/core"]
 
 processResources
 {

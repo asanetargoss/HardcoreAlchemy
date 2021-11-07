@@ -1,6 +1,6 @@
 [
 {
-  "modid": "hardcorealchemy-magic",
+  "modid": "hardcorealchemy_magic",
   "name": "Hardcore Alchemy Magic",
   "description": "Magic integration for hardcore random respawn, plus other cross-mod tweaks and fixes",
   "version": "${version}",

@@ -17,7 +17,7 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 // Project settings
 version = "0.6.1"
 group= "targoss.hardcorealchemy.modpack"
-archivesBaseName = "hardcorealchemy-modpack"
+archivesBaseName = "hardcorealchemy_modpack"
 
 sourceCompatibility = targetCompatibility = "1.8" // Need this here so Eclipse task generates correctly.
 compileJava {
@@ -69,6 +69,8 @@ dependencies {
     compileOnly fileTree(dir: "../compilelibs/magic", include: "**/*.jar")
     compileOnly fileTree(dir: "../compilelibs/survival", include: "**/*.jar")
 }
+
+sourceSets.main.resources.srcDirs += ["../translations/modpack"]
 
 processResources
 {

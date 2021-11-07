@@ -1,6 +1,6 @@
 [
 {
-  "modid": "hardcorealchemy-modpack",
+  "modid": "hardcorealchemy_modpack",
   "name": "Hardcore Alchemy Modpack",
   "description": "Cinnamon-flavored magic and survival",
   "version": "${version}",

@@ -1,6 +1,6 @@
 [
 {
-  "modid": "hardcorealchemy-survival",
+  "modid": "hardcorealchemy_survival",
   "name": "Hardcore Alchemy Survival",
   "description": "Survival cross-mod compat for Hardcore Alchemy",
   "version": "${version}",

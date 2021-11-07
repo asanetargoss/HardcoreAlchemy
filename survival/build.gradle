@@ -17,7 +17,7 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 // Project settings
 version = "0.1.0"
 group= "targoss.hardcorealchemy.survival"
-archivesBaseName = "hardcorealchemy-survival"
+archivesBaseName = "hardcorealchemy_survival"
 String coremodPath="targoss.hardcorealchemy.survival.coremod.HardcoreAlchemySurvivalCoremod"
 
 sourceCompatibility = targetCompatibility = "1.8" // Need this here so Eclipse task generates correctly.
@@ -46,6 +46,8 @@ dependencies {
     compileOnly fileTree(dir: "../compilelibs/core", include: "**/*.jar")
     compileOnly fileTree(dir: "../compilelibs/survival", include: "*.jar")
 }
+
+sourceSets.main.resources.srcDirs += ["../translations/survival"]
 
 processResources
 {
