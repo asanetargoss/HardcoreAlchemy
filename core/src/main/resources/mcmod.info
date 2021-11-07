@@ -2,7 +2,7 @@
 {
   "modid": "hardcorealchemy",
   "name": "Hardcore Alchemy",
-  "description": "Powering the Hardcore Alchemy Modpack.",
+  "description": "Hardcore Alchemy (Core): An arcane API of inhuman proportions",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",

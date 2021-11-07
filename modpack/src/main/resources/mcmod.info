@@ -2,7 +2,7 @@
 {
   "modid": "hardcorealchemy_modpack",
   "name": "Hardcore Alchemy Modpack",
-  "description": "Cinnamon-flavored magic and survival",
+  "description": "Powering the Hardcore Alchemy Modpack",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",
