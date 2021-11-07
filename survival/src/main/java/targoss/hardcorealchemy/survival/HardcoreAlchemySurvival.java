@@ -60,7 +60,7 @@ public class HardcoreAlchemySurvival
                     "' did not run");
         }
         LOGGER = event.getModLog();
-        LOGGER.info("Stranding travellers...");
+        LOGGER.info("Please remember to drink water.");
         
         proxy.preInit(event);
     }

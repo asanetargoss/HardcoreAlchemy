@@ -74,6 +74,7 @@ public class HardcoreAlchemy
         }
         
         LOGGER = event.getModLog();
+        LOGGER.info("It's time to get magical.");
         
         Map<String, ModContainer> modMap = Loader.instance().getIndexedModList();
         ModState.registerModMap(modMap);
@@ -84,7 +85,6 @@ public class HardcoreAlchemy
     @EventHandler
     public void init(FMLInitializationEvent event)
     {
-        LOGGER.info("It's time to get magical.");
         
         proxy.init(event);
     }

@@ -48,6 +48,16 @@ public class HardcoreAlchemyTweaks
 
     public static Logger LOGGER = null;
     
+    private static final double randomPlusMinus() {
+        java.util.Random r = new java.util.Random();
+        return r.nextDouble() * (r.nextBoolean() ? 1.0D : -1.0D);
+    }
+    
+    private static final double randomPlusMinusGaussian() {
+        java.util.Random r = new java.util.Random();
+        return r.nextGaussian();
+    }
+    
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         if (!HardcoreAlchemyTweaksCoremod.isCoremodInitialized()){
@@ -57,7 +67,15 @@ public class HardcoreAlchemyTweaks
                     "' did not run");
         }
         LOGGER = event.getModLog();
-        LOGGER.info("The crystals are confirmed SHINY.");
+        LOGGER.info("Confirming runtime morphic properties...");
+        LOGGER.info("");
+        LOGGER.info("[OK] pi: " + (Math.PI + (Double.MIN_VALUE * 4.0D * randomPlusMinus())));
+        LOGGER.info("[OK] e: " + (Math.E + (Double.MIN_VALUE * 8.0D * randomPlusMinus())));
+        LOGGER.info("[OK] Atomic mass of H_1 (MeV/c^2): " + (938.7830737655465569D + 000.0000000017699D + ((5.8711556235528e-08D * 1.01D) * randomPlusMinusGaussian())));
+        LOGGER.info("[OK] Number of spatial dimensions: " + (2.999899718952507D + (0.000028759D * randomPlusMinusGaussian())));
+        LOGGER.info("[OK] 13 + 62: " + (13 + 62));
+        LOGGER.info("");
+        LOGGER.info("All tests passed");
         
         proxy.preInit(event);
     }
