@@ -7,7 +7,7 @@ You are currently in the source code repository for the Hardcore Alchemy mod sui
 
 Aside from feedback on the modpack itself, the following contributions are welcome:
 
-- **Translations** - Are always welcome. There are several language files in the [resource folder](https://github.com/asanetargoss/HardcoreAlchemy/tree/master/src/main/resources/), for example `hardcorealchemy_modpack_guide/lang/en_US.lang`.
+- **Translations** - Are always welcome. See the [translations folder](https://github.com/asanetargoss/HardcoreAlchemy/tree/master/translations/).
 - **Code** - If it's a bugfix, and it's faster to write the code than it is to explain it, go right ahead. Otherwise, let's talk about it first
 
 ## Using the mod suite
@@ -35,8 +35,6 @@ There is a lot more in terms of mod selection, configuration, and tweaking, in o
 
 ## Developing/building
 
-**NOTICE:** A build system overhaul and a major refactor is in progress.
-
 ### Dependencies
 
 This branch targets the 0.7.0+ version of the modpack. Download the 0.7.0 zip file from the link below and be ready to add its contents to `compilelibs/` in the Hardcore Alchemy repository folder:
@@ -55,13 +53,14 @@ Please note: The following mods included in the HcA_compilelibs zip file above a
 
 ### Overview of Projects and Dependencies
 
-* All projects depend on Minecraft Forge
 * `compilelibs/` - The place to put third-party mods that the various projects depend on. For example, files in `compilelibs/core` are depended on by the core project and any mods which depend on the core project.
+* `translations/` - Unlike most mod projects, translation files are stored in this folder, separately from other resources. Most of the translation files are in `translations/core/`, but this may change in the future.
 * `core/` - A mod project which contains shared code required by the other projects.
 * `tweaks/` - A mod project containing magic and survival tweaks, aiming for a minimal number of dependencies.
 * `creatures/` - A mod project for balanced morphing mechanics and tweaks to mob mods.
 * `magic/` - A mod project containing features which make magic mods work better in a hardcore respawn gameplay context. It also contains various tweaks and fixes for magic and utility mods.
 * `survival/` - A mod project containing various features related to nutrition, thirst, and crop growth. It interacts with various survival and crop mods.
+* `modpack/` - A mod project intended for the Hardcore Alchemy modpack. It adds guidebooks and integration tests.
 
 ### Notes on Windows and IntelliJ IDEA
 
