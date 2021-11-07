@@ -15,7 +15,7 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 
 
 // Project settings
-version = "0.6.1"
+version = "0.7.0"
 group= "targoss.hardcorealchemy.modpack"
 archivesBaseName = "hardcorealchemy_modpack"
 
