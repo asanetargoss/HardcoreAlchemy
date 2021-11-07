@@ -41,7 +41,7 @@ This branch targets the 0.7.0+ version of the modpack. Download the 0.7.0 zip fi
 
 http://www.mediafire.com/folder/grwn2vsjr2lce/Hardcore_Alchemy_Libs
 
-The SHA-256 checksum of the 0.7.0 libs zip is: 0027c53bb97ada66a5c556586d7603fca27966352ff1b98931eeaab0b92be777
+The SHA-256 checksum of the 0.7.0 compilelibs zip is: 00f0904f21af4f11874bf1ae20e3af11d1a75c82dec358746821e1757c4460d8
 
 Please note: The following mods included in the HcA_compilelibs zip file above are custom forks:
 * Nutrition: https://github.com/asanetargoss/Nutrition
