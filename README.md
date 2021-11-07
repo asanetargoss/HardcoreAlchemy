@@ -16,9 +16,9 @@ The Hardcore Alchemy mod suite is released under the LGPL 3, so you are allowed 
 
 The Hardcore Alchemy mod suite is designed around the following mechanics:
 
-* **Balanced shapeshifting** - [Changeling](https://github.com/asanetargoss/Changeling/releases) powers Hardcore Alchemy's balanced morphing features.
+* **Balanced shapeshifting** - [Changeling](https://github.com/asanetargoss/Changeling/releases) powers Hardcore Alchemy's balanced morphing features. If you are using the `creatures` submod, you must have Changeling installed.
   * The following config options should be set in Changeling: `acquire_immediately=false`, `disable_morph_disguise=true`, and `keep_morphs=false`
-* **Random respawn on death** - The Hardcore Alchemy mod is designed around hardcore respawn. For this, I recommend [Iberia HcA edition](https://github.com/asanetargoss/iberia/releases).
+* **Random respawn on death** - The Hardcore Alchemy mod suite is designed around hardcore respawn. For this, I recommend [Iberia HcA edition](https://github.com/asanetargoss/iberia/releases).
 
 There is also cross-mod compatibility with various other mods. These mods are not required dependencies, but should be used instead of the alternatives:
 
