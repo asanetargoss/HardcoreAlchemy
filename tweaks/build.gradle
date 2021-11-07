@@ -34,7 +34,7 @@ minecraft {
     replace "@HARDCORE_ALCHEMY_TWEAKS_VERSION@", project.version
     replaceIn "HardcoreAlchemyTweaks.java"
 
-    replace "\"required-before:\" + HardcoreAlchemy.MOD_ID", "\"required-before:\" + HardcoreAlchemy.MOD_ID + \"[\" + HardcoreAlchemy.VERSION + \"]\""
+    replace "\"required-before:\" + HardcoreAlchemy.MOD_ID", "\"required-before:\" + HardcoreAlchemy.MOD_ID + \"@[\" + HardcoreAlchemy.VERSION + \"]\""
     replaceIn "HardcoreAlchemyTweaks.java"
     
     clientJvmArgs += ["-Dfml.coreMods.load=targoss.hardcorealchemy.coremod.HardcoreAlchemyCoremod,${coremodPath}"]
