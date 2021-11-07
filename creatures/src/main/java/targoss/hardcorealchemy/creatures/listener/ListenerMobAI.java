@@ -39,7 +39,6 @@ import net.minecraft.entity.monster.EntitySpider;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.fml.common.Loader;
@@ -48,7 +47,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.entitystate.CapabilityEntityState;
 import targoss.hardcorealchemy.capability.entitystate.ICapabilityEntityState;
-import targoss.hardcorealchemy.capability.entitystate.ProviderEntityState;
 import targoss.hardcorealchemy.creatures.entity.ai.AIAttackTargetMobOrMorph;
 import targoss.hardcorealchemy.creatures.entity.ai.AIPolarBearTargetMobOrMorph;
 import targoss.hardcorealchemy.creatures.entity.ai.AISpiderTargetMobOrMorph;
@@ -107,14 +105,6 @@ public class ListenerMobAI extends HardcoreAlchemyListener {
         if (Loader.instance().getIndexedModList().containsKey(ModState.DEADLY_MONSTERS_ID) ) {
             DeadlyMonsters.loadAITweaks();
         }
-    }
-    
-    @SubscribeEvent
-    public void onAttachEntityCapability(AttachCapabilitiesEvent.Entity event) {
-        if (!(event.getObject() instanceof EntityLivingBase)) {
-            return;
-        }
-        event.addCapability(CapabilityEntityState.RESOURCE_LOCATION, new ProviderEntityState());
     }
     
     @SubscribeEvent

@@ -21,6 +21,7 @@ package targoss.hardcorealchemy.listener;
 import java.util.UUID;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -34,7 +35,9 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.capability.CapUtil;
+import targoss.hardcorealchemy.capability.entitystate.CapabilityEntityState;
 import targoss.hardcorealchemy.capability.entitystate.ICapabilityEntityState;
+import targoss.hardcorealchemy.capability.entitystate.ProviderEntityState;
 import targoss.hardcorealchemy.capability.humanity.CapabilityHumanity;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.capability.humanity.ProviderHumanity;
@@ -71,27 +74,29 @@ public class ListenerEntityCapabilities extends HardcoreAlchemyListener {
 
     @SubscribeEvent
     public void onAttachPlayerCapabilities(AttachCapabilitiesEvent<Entity> event) {
-        if (!(event.getObject() instanceof EntityPlayer)) {
-            return;
-        }
-        EntityPlayer player = (EntityPlayer)(event.getObject());
-        {
-            ProviderMisc misc = new ProviderMisc();
-            misc.instance.setLifetimeUUID(UUID.randomUUID());
-            event.addCapability(CapabilityMisc.RESOURCE_LOCATION, misc);
-        }
-        {
-            event.addCapability(InactiveCapabilities.RESOURCE_LOCATION, new ProviderInactiveCapabilities());
-        }
-        {
-            event.addCapability(CapabilityResearch.RESOURCE_LOCATION, new ProviderResearch());
-        }
-        {
-            event.addCapability(CapabilityHumanity.RESOURCE_LOCATION, new ProviderHumanity());
-            AbstractAttributeMap attributeMap = (player).getAttributeMap();
-            if (attributeMap.getAttributeInstance(ICapabilityHumanity.MAX_HUMANITY) == null) {
-                attributeMap.registerAttribute(ICapabilityHumanity.MAX_HUMANITY);
+        if (event.getObject() instanceof EntityPlayer) {
+            EntityPlayer player = (EntityPlayer)(event.getObject());
+            {
+                ProviderMisc misc = new ProviderMisc();
+                misc.instance.setLifetimeUUID(UUID.randomUUID());
+                event.addCapability(CapabilityMisc.RESOURCE_LOCATION, misc);
             }
+            {
+                event.addCapability(InactiveCapabilities.RESOURCE_LOCATION, new ProviderInactiveCapabilities());
+            }
+            {
+                event.addCapability(CapabilityResearch.RESOURCE_LOCATION, new ProviderResearch());
+            }
+            {
+                event.addCapability(CapabilityHumanity.RESOURCE_LOCATION, new ProviderHumanity());
+                AbstractAttributeMap attributeMap = (player).getAttributeMap();
+                if (attributeMap.getAttributeInstance(ICapabilityHumanity.MAX_HUMANITY) == null) {
+                    attributeMap.registerAttribute(ICapabilityHumanity.MAX_HUMANITY);
+                }
+            }
+        }
+        if (event.getObject() instanceof EntityLivingBase) {
+            event.addCapability(CapabilityEntityState.RESOURCE_LOCATION, new ProviderEntityState());
         }
     }
     
