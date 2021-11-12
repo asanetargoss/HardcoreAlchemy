@@ -36,6 +36,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
@@ -44,9 +45,11 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerChangedDimensionEvent;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
+import targoss.hardcorealchemy.creatures.HardcoreAlchemyCreatures;
 import targoss.hardcorealchemy.creatures.capability.killcount.CapabilityKillCount;
 import targoss.hardcorealchemy.creatures.capability.killcount.ICapabilityKillCount;
 import targoss.hardcorealchemy.creatures.capability.killcount.ProviderKillCount;
+import targoss.hardcorealchemy.creatures.network.MessageMaxHumanity;
 import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
 import targoss.hardcorealchemy.util.MobLists;
 
@@ -209,6 +212,10 @@ public class ListenerPlayerMorphs extends HardcoreAlchemyListener {
         ICapabilityHumanity humanity = player.getCapability(HUMANITY_CAPABILITY, null);
         if (humanity != null && newCap > oldCap) {
             humanity.setHumanity(humanity.getHumanity() + newCap - oldCap);
+        }
+        
+        if (!player.world.isRemote) {
+            HardcoreAlchemyCreatures.proxy.messenger.sendTo(new MessageMaxHumanity(), (EntityPlayerMP)player);
         }
     }
 }

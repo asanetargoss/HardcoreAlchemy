@@ -26,6 +26,7 @@ import targoss.hardcorealchemy.creatures.network.MessageInstinctEffects;
 import targoss.hardcorealchemy.creatures.network.MessageInstinctNeedChanged;
 import targoss.hardcorealchemy.creatures.network.MessageInstinctNeedState;
 import targoss.hardcorealchemy.creatures.network.MessageKillCount;
+import targoss.hardcorealchemy.creatures.network.MessageMaxHumanity;
 import targoss.hardcorealchemy.creatures.network.MessageMorphState;
 import targoss.hardcorealchemy.network.NetMessenger;
 
@@ -41,7 +42,8 @@ public class CommonProxy {
             .register(new MessageInstinctNeedChanged())
             .register(new MessageForceForm())
             .register(new MessageMorphState())
-            .register(new MessageKillCount());
+            .register(new MessageKillCount())
+            .register(new MessageMaxHumanity());
     }
     
     public void preInit(FMLPreInitializationEvent event) {
