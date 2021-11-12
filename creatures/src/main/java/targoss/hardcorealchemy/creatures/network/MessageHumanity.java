@@ -39,7 +39,6 @@ public class MessageHumanity extends MessageToClient<HardcoreAlchemyCreatures> {
     public double magicInhibition;
     public boolean hasLostHumanity;
     public boolean hasLostMorphAbility;
-    public boolean isMarried;
     
     public MessageHumanity(ICapabilityHumanity humanity, boolean syncLastHumanity) {
         this.humanity = humanity.getHumanity();
@@ -48,7 +47,6 @@ public class MessageHumanity extends MessageToClient<HardcoreAlchemyCreatures> {
         this.magicInhibition = humanity.getMagicInhibition();
         this.hasLostHumanity = humanity.getHasLostHumanity();
         this.hasLostMorphAbility = humanity.getHasLostMorphAbility();
-        this.isMarried = humanity.getIsMarried();
     }
 
     @Override
@@ -61,7 +59,6 @@ public class MessageHumanity extends MessageToClient<HardcoreAlchemyCreatures> {
         buf.writeDouble(magicInhibition);
         buf.writeBoolean(hasLostHumanity);
         buf.writeBoolean(hasLostMorphAbility);
-        buf.writeBoolean(isMarried);
     }
 
     @Override
@@ -74,7 +71,6 @@ public class MessageHumanity extends MessageToClient<HardcoreAlchemyCreatures> {
         magicInhibition = buf.readDouble();
         hasLostHumanity = buf.readBoolean();
         hasLostMorphAbility = buf.readBoolean();
-        isMarried = buf.readBoolean();
     }
     
     public static class ReceiveAction implements Runnable {
@@ -87,17 +83,15 @@ public class MessageHumanity extends MessageToClient<HardcoreAlchemyCreatures> {
         private double magicInhibition;
         private boolean hasLostHumanity;
         private boolean hasLostMorphAbility;
-        private boolean isMarried;
         
         public ReceiveAction(double humanity, boolean syncLastHumanity, double lastHumanity, double magicInhibition,
-                boolean hasLostHumanity, boolean hasLostMorphAbility, boolean isMarried) {
+                boolean hasLostHumanity, boolean hasLostMorphAbility) {
             this.humanity = humanity;
             this.syncLastHumanity = syncLastHumanity;
             this.lastHumanity = lastHumanity;
             this.magicInhibition = magicInhibition;
             this.hasLostHumanity = hasLostHumanity;
             this.hasLostMorphAbility = hasLostMorphAbility;
-            this.isMarried = isMarried;
         }
         
         @Override
@@ -111,7 +105,6 @@ public class MessageHumanity extends MessageToClient<HardcoreAlchemyCreatures> {
                 humanity.setMagicInhibition(this.magicInhibition);
                 humanity.setHasLostHumanity(this.hasLostHumanity);
                 humanity.setHasLostMorphAbility(this.hasLostMorphAbility);
-                humanity.setIsMarried(this.isMarried);
             }
         }
     }
@@ -122,7 +115,7 @@ public class MessageHumanity extends MessageToClient<HardcoreAlchemyCreatures> {
             message.getThreadListener().addScheduledTask(
                     new ReceiveAction(
                             message.humanity, message.syncLastHumanity, message.lastHumanity, message.magicInhibition,
-                            message.hasLostHumanity, message.hasLostMorphAbility, message.isMarried)
+                            message.hasLostHumanity, message.hasLostMorphAbility)
                     );
             return null;
         }

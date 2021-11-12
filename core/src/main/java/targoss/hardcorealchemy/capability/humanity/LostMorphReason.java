@@ -24,11 +24,8 @@ import java.util.Map;
 
 public enum LostMorphReason {
     REGAINED_MORPH_ABILITY,
-    /** When a player spawns without the ability to morph to begin with */
     NO_ABILITY,
-    /** When a player spends too much time as a morph */
-    LOST_HUMANITY,
-    MARRIED
+    LOST_HUMANITY
     ;
     
     private static Map<String, LostMorphReason> stringMap;

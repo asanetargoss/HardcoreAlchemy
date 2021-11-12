@@ -34,14 +34,12 @@ public class CapabilityHumanity implements ICapabilityHumanity {
     private double magicInhibition;
     private boolean hasLostHumanity;
     private boolean hasLostMorphAbility;
-    private boolean isMarried;
     
     public CapabilityHumanity() {
         humanity = DEFAULT_HUMANITY_VALUE;
         lastHumanity = DEFAULT_HUMANITY_VALUE;
         hasLostHumanity = false;
         hasLostMorphAbility = false;
-        isMarried = false;
     }
     
     @Override
@@ -70,31 +68,18 @@ public class CapabilityHumanity implements ICapabilityHumanity {
     }
     
     @Override
-    public void setIsMarried(boolean isMarried) {
-        this.isMarried = isMarried;
-    }
-    
-    @Override
     public void loseMorphAbilityFor(LostMorphReason reason) {
         switch (reason) {
         case REGAINED_MORPH_ABILITY:
             this.hasLostHumanity = false;
-            this.isMarried = false;
             this.hasLostMorphAbility = false;
             break;
         case LOST_HUMANITY:
             this.hasLostHumanity = true;
-            this.isMarried = false;
-            this.hasLostMorphAbility = false;
-            break;
-        case MARRIED:
-            this.isMarried = true;
-            this.hasLostHumanity = false;
             this.hasLostMorphAbility = false;
             break;
         case NO_ABILITY:
             this.hasLostMorphAbility = true;
-            this.isMarried = false;
             this.hasLostHumanity = false;
             break;
         default:
@@ -108,28 +93,23 @@ public class CapabilityHumanity implements ICapabilityHumanity {
     }
     
     @Override
-    public boolean getIsMarried() {
-        return isMarried;
-    }
-    
-    @Override
     public boolean isHuman() {
         return !(hasLostHumanity || hasLostMorphAbility);
     }
     
     @Override
     public boolean canMorphRightNow() {
-        return !(hasLostHumanity || hasLostMorphAbility || isMarried || magicInhibition >= humanity);
+        return !(hasLostHumanity || hasLostMorphAbility || magicInhibition >= humanity);
     }
     
     @Override
     public boolean canMorph() {
-        return !(hasLostHumanity || hasLostMorphAbility || isMarried);
+        return !(hasLostHumanity || hasLostMorphAbility);
     }
     
     @Override
     public boolean shouldDisplayHumanity() {
-        return humanity > 0 && !(hasLostHumanity || hasLostMorphAbility || isMarried);
+        return humanity > 0 && !(hasLostHumanity || hasLostMorphAbility);
     }
     
     @Override
@@ -139,9 +119,6 @@ public class CapabilityHumanity implements ICapabilityHumanity {
         }
         if (hasLostHumanity) {
             return new TextComponentTranslation("hardcorealchemy.morph.disabled.nohumanity");
-        }
-        if (isMarried) {
-            return new TextComponentTranslation("hardcorealchemy.morph.disabled.marriage");
         }
         if (magicInhibition >= humanity) {
             return new TextComponentTranslation("hardcorealchemy.morph.disabled.magic_inhibition");

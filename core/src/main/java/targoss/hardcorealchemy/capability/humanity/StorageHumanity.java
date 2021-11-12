@@ -33,7 +33,6 @@ public class StorageHumanity implements Capability.IStorage<ICapabilityHumanity>
         nbt.setDouble("magicInhibition", instance.getMagicInhibition());
         nbt.setBoolean("hasLostHumanity", instance.getHasLostHumanity());
         nbt.setBoolean("hasLostMorphAbility", instance.getHasLostMorphAbility());
-        nbt.setBoolean("isMarried", instance.getIsMarried());
         return nbt;
     }
 
@@ -49,7 +48,6 @@ public class StorageHumanity implements Capability.IStorage<ICapabilityHumanity>
         instance.setMagicInhibition(nbtCompound.getDouble("magicInhibition"));
         instance.setHasLostHumanity(nbtCompound.getBoolean("hasLostHumanity"));
         instance.setHasLostMorphAbility(nbtCompound.getBoolean("hasLostMorphAbility"));
-        instance.setIsMarried(nbtCompound.getBoolean("isMarried"));
     }
     
 }

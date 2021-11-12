@@ -32,7 +32,6 @@ public interface ICapabilityHumanity {
     public abstract void setMagicInhibition(double magicInhibition);
     public abstract void setHasLostHumanity(boolean hasLostHumanity);
     public abstract void setHasLostMorphAbility(boolean hasLostMorphAbility);
-    public abstract void setIsMarried(boolean isMarried);
     public abstract void loseMorphAbilityFor(LostMorphReason reason);
     
     public abstract double getHumanity();
@@ -40,7 +39,6 @@ public interface ICapabilityHumanity {
     public abstract double getMagicInhibition();
     public abstract boolean getHasLostHumanity();
     public abstract boolean getHasLostMorphAbility();
-    public abstract boolean getIsMarried();
     /** Returns false if the player is stuck as a morph */
     public abstract boolean isHuman();
     /** Returns false if the player is temporarily unable to morph */
