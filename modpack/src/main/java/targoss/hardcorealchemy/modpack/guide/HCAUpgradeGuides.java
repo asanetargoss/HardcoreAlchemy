@@ -47,6 +47,11 @@ public class HCAUpgradeGuides {
                         .addEntry("earlygame", "sign", "1")
                         .build())
                 ));
+        UPGRADE_GUIDES.add("0.7.1", new UpgradeGuide(new BookBuilder()
+                .addCategory(new BookBuilder.Category().setId("gameplay_tips").setItemId("sign")
+                        .addEntry("midgame", "sign", "1", "2")
+                        .build())
+                ));
     }
     
 }
