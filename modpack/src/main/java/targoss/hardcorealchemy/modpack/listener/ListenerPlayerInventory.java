@@ -32,10 +32,10 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
-import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.capability.misc.ICapabilityMisc;
 import targoss.hardcorealchemy.capability.misc.ProviderMisc;
 import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
+import targoss.hardcorealchemy.modpack.HardcoreAlchemyModpack;
 import targoss.hardcorealchemy.modpack.guide.HCAUpgradeGuides;
 
 public class ListenerPlayerInventory extends HardcoreAlchemyListener {
@@ -72,7 +72,7 @@ public class ListenerPlayerInventory extends HardcoreAlchemyListener {
         if (nextGift != 0) {
             player.world.playSound((EntityPlayer)null, player.posX, player.posY, player.posZ, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2F, ((random.nextFloat() - random.nextFloat()) * 0.7F + 1.0F) * 2.0F);
             if (nextGift == pendingGifts.size()) {
-                misc.setLastLoginVersion(HardcoreAlchemy.VERSION);
+                misc.setLastLoginVersion(HardcoreAlchemyModpack.VERSION);
             }
         }
     }
