@@ -101,6 +101,9 @@ hardcorealchemy.upgradeguide.0.7.1.welcome=Hardcore Alchemy
 
 hardcorealchemy.upgradeguide.0.7.1.gameplay_tips.title=Gameplay tips
 
+hardcorealchemy.upgradeguide.0.7.1.gameplay_tips.earlygame.title=Early game
+hardcorealchemy.upgradeguide.0.7.1.gameplay_tips.earlygame.1=The "Modpack Info" section of Traveling Alchemist now has a "Keybinding Primer" and a "JEI Primer". These are intended for less experienced modded Minecraft players, but also contain a few advanced tips.
+
 hardcorealchemy.upgradeguide.0.7.1.gameplay_tips.midgame.title=Mid game
-hardcorealchemy.upgradeguide.0.7.1.gameplay_tips.midgame.1=Is the Journal from Astral Sorcery slow to navigate? Try using the WASD keys.
+hardcorealchemy.upgradeguide.0.7.1.gameplay_tips.midgame.1=Is the Journal from Astral Sorcery slow to navigate? Try using the WASD keys or arrow keys.
 hardcorealchemy.upgradeguide.0.7.1.gameplay_tips.midgame.2=Players building wizard towers, especially for Astral Sorcery, should consider crafting elevator blocks for easier navigation. You can jump or sneak while on an Elevator block to go to the next higher/lower Elevator block at the same latitude and longitude.
