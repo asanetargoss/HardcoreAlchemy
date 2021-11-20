@@ -15,7 +15,7 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 
 
 // Project settings
-version = "0.1.0"
+version = "0.1.1"
 group= "targoss.hardcorealchemy.tweaks"
 archivesBaseName = "hardcorealchemy_tweaks"
 String coremodPath="targoss.hardcorealchemy.tweaks.coremod.HardcoreAlchemyTweaksCoremod"

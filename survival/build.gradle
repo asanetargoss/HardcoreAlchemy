@@ -15,7 +15,7 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 
 
 // Project settings
-version = "0.1.0"
+version = "0.1.1"
 group= "targoss.hardcorealchemy.survival"
 archivesBaseName = "hardcorealchemy_survival"
 String coremodPath="targoss.hardcorealchemy.survival.coremod.HardcoreAlchemySurvivalCoremod"
