@@ -21,22 +21,21 @@ package targoss.hardcorealchemy.creatures.listener;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.GuiIngameForge;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
+import targoss.hardcorealchemy.capability.humanity.ProviderHumanity;
 import targoss.hardcorealchemy.creatures.capability.instinct.ICapabilityInstinct;
+import targoss.hardcorealchemy.creatures.capability.instinct.ProviderInstinct;
 import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
 import targoss.hardcorealchemy.util.MorphExtension;
 import targoss.hardcorealchemy.util.NutritionExtension;
@@ -49,10 +48,6 @@ public class ListenerGuiHud extends HardcoreAlchemyListener {
     // Settable seed helps to freeze GUI elements in place when the game is paused
     private RandomWithPublicSeed rand = new RandomWithPublicSeed();
     private long randSeed = rand.getSeed();
-    
-    @CapabilityInject(ICapabilityHumanity.class)
-    public static final Capability<ICapabilityHumanity> HUMANITY_CAPABILITY = null;
-    public static final IAttribute MAX_HUMANITY = ICapabilityHumanity.MAX_HUMANITY;
     
     public static final int HUMANITY_ICONS = 10;
     private static double HUMANITY_3MIN_LEFT = ListenerPlayerHumanity.HUMANITY_3MIN_LEFT;
@@ -78,12 +73,12 @@ public class ListenerGuiHud extends HardcoreAlchemyListener {
             return;
         }
         
-        ICapabilityHumanity humanityCap = player.getCapability(HUMANITY_CAPABILITY, null);
+        ICapabilityHumanity humanityCap = player.getCapability(ProviderHumanity.HUMANITY_CAPABILITY, null);
         if (humanityCap == null || !humanityCap.shouldDisplayHumanity()) {
             return;
         }
         
-        IAttributeInstance maxHumanityAttribute = player.getEntityAttribute(MAX_HUMANITY);
+        IAttributeInstance maxHumanityAttribute = player.getEntityAttribute(ICapabilityHumanity.MAX_HUMANITY);
         if (maxHumanityAttribute == null) {
             return;
         }
@@ -176,10 +171,6 @@ public class ListenerGuiHud extends HardcoreAlchemyListener {
         GuiIngameForge.left_height += 10;
     }
     
-    @CapabilityInject(ICapabilityInstinct.class)
-    public static final Capability<ICapabilityInstinct> INSTINCT_CAPABILITY = null;
-    public static final IAttribute MAX_INSTINCT = ICapabilityInstinct.MAX_INSTINCT;
-    
     @SubscribeEvent(priority=EventPriority.HIGHEST,receiveCanceled=true)
     public void onRenderInstinct(RenderGameOverlayEvent.Pre event) {
         if (event.getType() != ElementType.ARMOR) {
@@ -192,12 +183,12 @@ public class ListenerGuiHud extends HardcoreAlchemyListener {
             return;
         }
         
-        ICapabilityInstinct instinctCap = player.getCapability(INSTINCT_CAPABILITY, null);
+        ICapabilityInstinct instinctCap = player.getCapability(ProviderInstinct.INSTINCT_CAPABILITY, null);
         if (instinctCap == null || instinctCap.getInstincts().size() == 0) {
             return;
         }
         
-        IAttributeInstance maxInstinctAttribute = player.getEntityAttribute(MAX_INSTINCT);
+        IAttributeInstance maxInstinctAttribute = player.getEntityAttribute(ICapabilityInstinct.MAX_INSTINCT);
         if (maxInstinctAttribute == null) {
             return;
         }

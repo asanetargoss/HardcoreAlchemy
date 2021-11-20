@@ -21,28 +21,19 @@ package targoss.hardcorealchemy.survival.listener;
 import java.util.List;
 
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import targoss.hardcorealchemy.capability.CapUtil;
 import targoss.hardcorealchemy.capability.food.ICapabilityFood;
-import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
+import targoss.hardcorealchemy.capability.food.ProviderFood;
 import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
 import targoss.hardcorealchemy.survival.util.FoodLists;
 import targoss.hardcorealchemy.util.MorphDiet;
 
 @SideOnly(Side.CLIENT)
 public class ListenerGuiInventory extends HardcoreAlchemyListener {
-    
-    @CapabilityInject(ICapabilityHumanity.class)
-    public static final Capability<ICapabilityHumanity> HUMANITY_CAPABILITY = null;
-    
-    @CapabilityInject(ICapabilityFood.class)
-    public static final Capability<ICapabilityFood> FOOD_CAPABILITY = null;
-    
     @SubscribeEvent
     public void onDisplayRestrictionTooltip(ItemTooltipEvent event) {
         ItemStack itemStack = event.getItemStack();
@@ -50,7 +41,7 @@ public class ListenerGuiInventory extends HardcoreAlchemyListener {
 
         // We're on the client side. NBT tags are synchronized, but we need to
         // turn it into a capability ourselves.
-        ICapabilityFood capabilityFood = CapUtil.getVirtualCapability(itemStack, FOOD_CAPABILITY);
+        ICapabilityFood capabilityFood = CapUtil.getVirtualCapability(itemStack, ProviderFood.FOOD_CAPABILITY);
         if (capabilityFood != null) {
             itemRestriction = capabilityFood.getRestriction();
         }

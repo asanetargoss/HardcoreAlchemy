@@ -21,12 +21,11 @@ package targoss.hardcorealchemy.creatures.listener;
 import mchorse.metamorph.api.morphs.AbstractMorph;
 import mchorse.metamorph.api.morphs.EntityMorph;
 import mchorse.metamorph.capabilities.morphing.IMorphing;
+import mchorse.metamorph.capabilities.morphing.MorphingProvider;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
@@ -37,9 +36,6 @@ import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
 
 @SideOnly(Side.CLIENT)
 public class ListenerRenderView extends HardcoreAlchemyListener {
-    @CapabilityInject(IMorphing.class)
-    public static final Capability<IMorphing> MORPHING_CAPABILITY = null;
-    
     public static final float DEFAULT_PLAYER_HEIGHT = 1.8F;
     public static final float MIN_VIEW_SCALE_MULTIPLIER = 0.05F;
     public static float zoomScaleMultiplier = 1.0F;
@@ -54,7 +50,7 @@ public class ListenerRenderView extends HardcoreAlchemyListener {
         EntityPlayer player = event.player;
         
         float heightForCamera = player.height;
-        IMorphing morphing = player.getCapability(MORPHING_CAPABILITY, null);
+        IMorphing morphing = player.getCapability(MorphingProvider.MORPHING_CAP, null);
         if (morphing == null) {
             heightForCamera = DEFAULT_PLAYER_HEIGHT;
         }
