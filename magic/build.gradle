@@ -15,9 +15,7 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 
 
 // Project settings
-version = "0.1.1"
-group= "targoss.hardcorealchemy.magic"
-archivesBaseName = "hardcorealchemy_magic"
+archivesBaseName = jarLabel
 String coremodPath="targoss.hardcorealchemy.magic.coremod.HardcoreAlchemyMagicCoremod"
 
 sourceCompatibility = targetCompatibility = "1.8" // Need this here so Eclipse task generates correctly.

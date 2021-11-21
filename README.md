@@ -89,9 +89,10 @@ The commands in the instructions below assume your command line is a unix-style 
 
 ### Compiling
 
-* To compile all projects, run `./gradlew build`. Outputs will be in `[PROJECT_NAME]/build/libs`
+* To compile all mods, run `./gradlew build`. Outputs will be in `[PROJECT_NAME]/build/libs`
     * `[PROJECT_NAME]` is the name of each project that was built
     * The outputted release jar name will be `hardcorealchemy-[PROJECT_NAME]-[PROJECT_VERSION].jar` where `[PROJECT_VERSION]` is defined in `[PROJECT_NAME]/build.gradle`.
+* To bundle all the mods into one convenient .zip file (excluding the modpack mod), run `./gradlew buildModSuite`. The output will be in `modpack/build/distributions`
 
 ### Development tips
 

@@ -15,9 +15,7 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 
 
 // Project settings
-version = "0.1.1"
-group= "targoss.hardcorealchemy.tweaks"
-archivesBaseName = "hardcorealchemy_tweaks"
+archivesBaseName = jarLabel
 String coremodPath="targoss.hardcorealchemy.tweaks.coremod.HardcoreAlchemyTweaksCoremod"
 
 sourceCompatibility = targetCompatibility = "1.8" // Need this here so Eclipse task generates correctly.
