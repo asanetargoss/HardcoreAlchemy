@@ -1,0 +1,16 @@
+task exportModsToDev(type: Copy) {
+    dependsOn ":core:build"
+    dependsOn ":tweaks:build"
+    dependsOn ":creatures:build"
+    dependsOn ":magic:build"
+    dependsOn ":survival:build"
+    dependsOn ":modpack:build"
+
+    from ("core/build/libs/${project(":core").jarLabel}-${project(":core").version}.jar")
+    from ("tweaks/build/libs/${project(":tweaks").jarLabel}-${project(":tweaks").version}.jar")
+    from ("creatures/build/libs/${project(":creatures").jarLabel}-${project(":creatures").version}.jar")
+    from ("magic/build/libs/${project(":magic").jarLabel}-${project(":magic").version}.jar")
+    from ("survival/build/libs/${project(":survival").jarLabel}-${project(":survival").version}.jar")
+    from ("modpack/build/libs/${project(":modpack").jarLabel}-${project(":modpack").version}.jar")
+    into(modpack_dev_dir)
+}
