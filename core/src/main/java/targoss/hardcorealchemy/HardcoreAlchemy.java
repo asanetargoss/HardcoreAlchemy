@@ -43,6 +43,7 @@ import targoss.hardcorealchemy.coremod.HardcoreAlchemyCoremod;
 public class HardcoreAlchemy
 {
     public static final String MOD_ID = "hardcorealchemy";
+    public static final String SHORT_MOD_ID = "hca";
     public static final String VERSION = "@HARDCORE_ALCHEMY_VERSION@";
     public static final String DEPENDENCIES =
             /* Workaround for Potion Core canceling the armor render and

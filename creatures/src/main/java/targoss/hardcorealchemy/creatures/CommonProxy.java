@@ -34,7 +34,7 @@ public class CommonProxy {
     public NetMessenger<HardcoreAlchemyCreatures> messenger;
     
     public void registerNetworking() {
-        messenger = new NetMessenger<HardcoreAlchemyCreatures>(HardcoreAlchemyCreatures.MOD_ID)
+        messenger = new NetMessenger<HardcoreAlchemyCreatures>(HardcoreAlchemyCreatures.MOD_ID.replace(HardcoreAlchemy.MOD_ID, HardcoreAlchemy.SHORT_MOD_ID))
             .register(new MessageHumanity())
             .register(new MessageInstinct())
             .register(new MessageInstinctNeedState())

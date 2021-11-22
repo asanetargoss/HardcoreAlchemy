@@ -68,7 +68,7 @@ public class CommonProxy {
     }
     
     public void registerNetworking() {
-        messenger = new NetMessenger<HardcoreAlchemy>(HardcoreAlchemy.MOD_ID)
+        messenger = new NetMessenger<HardcoreAlchemy>(HardcoreAlchemy.SHORT_MOD_ID)
             .register(new MessageInactiveCapabilities())
             .register(new MessageConfigs())
             .register(new RequestIncantation());

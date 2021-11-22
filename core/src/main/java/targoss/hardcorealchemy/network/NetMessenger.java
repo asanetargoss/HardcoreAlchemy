@@ -29,8 +29,12 @@ public class NetMessenger<MOD> {
     protected final SimpleNetworkWrapper messenger;
     private int nextId = 0;
     
-    public NetMessenger(String modId) {
-        messenger = NetworkRegistry.INSTANCE.newSimpleChannel(modId);
+    public NetMessenger(String channelId) {
+        // Throw exception if channelId is too long (due to restrictions in SPacketCustomPayload.readPacketData)
+        if (channelId.length() > 20) {
+            throw new IllegalArgumentException("Simple channel IDs cannot be longer than 20 characters due to parsing restrictions in vanilla Minecraft code");
+        }
+        messenger = NetworkRegistry.INSTANCE.newSimpleChannel(channelId);
     }
     
     @SuppressWarnings("unchecked")
