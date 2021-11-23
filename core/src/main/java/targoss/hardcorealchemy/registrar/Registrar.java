@@ -38,7 +38,6 @@ public abstract class Registrar<T> {
     }
     
     public <V extends T> V add(String entryName, V entry) {
-        logger.debug("Adding registry entry '" + entryName + "' to registrar '" + name + "'");
         entries.add(entry);
         return entry;
     }
