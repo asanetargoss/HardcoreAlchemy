@@ -158,3 +158,9 @@ splash_potion.effect.hardcorealchemy:voidfade=Splash Potion of Voidfade
 lingering_potion.effect.hardcorealchemy:voidfade=Lingering Potion of Voidfade
 tipped_arrow.effect.hardcorealchemy:voidfade=Arrow of Voidfade
 
+potion.hardcorealchemy:slip=Slip
+potion.effect.hardcorealchemy:slip=Potion of Slip
+splash_potion.effect.hardcorealchemy:slip=Splash Potion of Slip
+lingering_potion.effect.hardcorealchemy:slip=Lingering Potion of Slip
+tipped_arrow.effect.hardcorealchemy:slip=Arrow of Slip
+
