@@ -18,11 +18,15 @@
 
 package targoss.hardcorealchemy.util;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.annotation.Nullable;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
@@ -30,11 +34,13 @@ import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.item.ItemTool;
+import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandler;
+import targoss.hardcorealchemy.coremod.ObfuscatedName;
 import targoss.hardcorealchemy.event.EventDrawInventoryItem;
 import targoss.hardcorealchemy.event.EventTakeStack;
 
@@ -186,5 +192,24 @@ public class InventoryUtil {
             return ((ItemArmor)item).getArmorMaterial().name();
         }
         return null;
+    }
+    
+    protected static ObfuscatedName ON_ITEM_USE_FINISH = new ObfuscatedName("func_77654_b" /*onItemUseFinish*/);
+    protected static Map<Item, Boolean> hasHoldRightClick = new HashMap<>();
+    /** Currently, we assume this function is only called on the client side, so we deliberately choose a very small cache. */
+    protected static final int MAX_HOLD_RIGHT_CLICK_CACHE = 16;
+    public static boolean isHoldRightClickItem(Item item) {
+        Boolean has = hasHoldRightClick.get(item);
+        if (has != null) {
+            return has;
+        }
+        // Clear the cache from time to time so it doesn't get too big
+        if (hasHoldRightClick.size() >= MAX_HOLD_RIGHT_CLICK_CACHE) {
+            hasHoldRightClick.clear();
+        }
+        // An item is considered to have hold-right-click functionality when it overrides Item::onItemUseFinish(...)
+        has = InvokeUtil.hasPrivateMethod(false, item.getClass(), Item.class, ON_ITEM_USE_FINISH.get(), ItemStack.class, World.class, EntityLivingBase.class);
+        hasHoldRightClick.put(item, has);
+        return has;
     }
 }

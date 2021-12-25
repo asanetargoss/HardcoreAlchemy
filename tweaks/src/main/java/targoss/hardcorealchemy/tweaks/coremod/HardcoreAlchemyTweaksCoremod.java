@@ -11,7 +11,9 @@ import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 import targoss.hardcorealchemy.tweaks.HardcoreAlchemyTweaks;
 import targoss.hardcorealchemy.tweaks.coremod.transform.TEntityLivingBase;
 import targoss.hardcorealchemy.tweaks.coremod.transform.TInventoryPlayer;
+import targoss.hardcorealchemy.tweaks.coremod.transform.TNetHandlerPlayServer;
 import targoss.hardcorealchemy.tweaks.coremod.transform.TPlayerControllerMP;
+import targoss.hardcorealchemy.tweaks.listener.TPlayerInteractionManager;
 
 @IFMLLoadingPlugin.Name(value = "Hardcore Alchemy Tweaks Coremod")
 @IFMLLoadingPlugin.MCVersion(value = "1.10.2")
@@ -30,7 +32,9 @@ public class HardcoreAlchemyTweaksCoremod implements IFMLLoadingPlugin {
         return new String[]{
             TPlayerControllerMP.class.getName(),
             TInventoryPlayer.class.getName(),
-            TEntityLivingBase.class.getName()
+            TEntityLivingBase.class.getName(),
+            TNetHandlerPlayServer.class.getName(),
+            TPlayerInteractionManager.class.getName()
         };
     }
 
