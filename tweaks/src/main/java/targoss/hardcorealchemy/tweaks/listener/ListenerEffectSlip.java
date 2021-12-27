@@ -11,6 +11,7 @@ import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
 import targoss.hardcorealchemy.tweaks.event.EventItemUseResult;
 import targoss.hardcorealchemy.tweaks.item.Items;
@@ -27,6 +28,12 @@ public class ListenerEffectSlip extends HardcoreAlchemyListener {
         EventItemUseResult.onItemUseFinish(event);
     }
     
+    protected static final String[] UNSLIPPABLE_ITEMS = new String[] {
+        "minecraft:shield",
+        ModState.ARS_MAGICA_ID + ":bound_shield",
+        "voidcraft:items/voidcrystalshield"
+    };
+    
     public void onUseItemFinished(EntityPlayer player, EnumHand hand) {
         // When a player with the Slip effect uses an item, they drop the item after use (if it is still there)
         // If an item is actually dropped, and the effect is Slip Level 1 (amplifier = 0), remove the effect
@@ -40,6 +47,14 @@ public class ListenerEffectSlip extends HardcoreAlchemyListener {
         ItemStack slipStack = player.getHeldItem(hand);
         if (InventoryUtil.isEmptyItemStack(slipStack)) {
             return;
+        }
+        
+        // Don't make the player let go of their shield
+        String slipId = slipStack.getItem().getRegistryName().toString();
+        for (String unslippableItem : UNSLIPPABLE_ITEMS) {
+            if (unslippableItem.equals(slipId)) {
+                return;
+            }
         }
 
         // Only call this server-side, to prevent desyncs
