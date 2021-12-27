@@ -17,7 +17,7 @@ import targoss.hardcorealchemy.tweaks.event.EventItemUseResult;
 import targoss.hardcorealchemy.tweaks.item.Items;
 import targoss.hardcorealchemy.util.InventoryUtil;
 
-public class ListenerEffectSlip extends HardcoreAlchemyListener {
+public class ListenerPlayerSlip extends HardcoreAlchemyListener {
     @SubscribeEvent(priority=EventPriority.LOWEST)
     public void onAttackEntityEvent(AttackEntityEvent event) {
         EventItemUseResult.onAttackEntityEvent(event);
