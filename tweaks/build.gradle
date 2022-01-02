@@ -66,20 +66,29 @@ processResources
     }
 }
 
-// Run configs are shared between submods
-task setupRunConfig(type: Copy) {
-    from "../testconfig"
-    into "run/config"
+// Hack to inherit recompiled Minecraft files with access transformers applied from core, so the decompiled Minecraft jar that this subproject depends on is effectively the same as the one in core.
+task setupDecompWorkspace(type: Copy, overwrite: true, dependsOn: project(":core").setupDecompWorkspace) {
+    from "../core/.gradle/minecraft/"
+    into ".gradle/minecraft/"
+    rename { String fileName ->
+        fileName.replace("(core)", "(${project.name})")
+    }
 }
-setupDecompWorkspace.dependsOn setupRunConfig
-
-// Hack to inherit access transformers from core, so the decompiled Minecraft jar that this subproject depends on is effectively the same as the one in core.
+tasks["eclipse"].dependsOn setupDecompWorkspace
+// Need to also have an (unused) access transformer file in this project so that the eclipse classpath uses the patched Minecraft jar
 task copyAccessTransformerFromCore(type: Copy) {
     from "../core/src/main/resources/META-INF/hardcorealchemy_at.cfg"
     into "src/main/resources/META-INF"
 }
 setupDecompWorkspace.dependsOn copyAccessTransformerFromCore
 processResources.dependsOn copyAccessTransformerFromCore
+
+// Run configs are shared between submods
+task setupRunConfig(type: Copy) {
+    from "../testconfig"
+    into "run/config"
+}
+setupDecompWorkspace.dependsOn setupRunConfig
 
 jar {
     manifest {
