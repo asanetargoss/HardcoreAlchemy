@@ -210,9 +210,14 @@ public class ListenerPlayerMorphs extends HardcoreAlchemyListener {
         
         IMorphing morphing = Morphing.get(player);
         if (morphing != null) {
-            // Count all the player's acquired entity morphs (screen out variants)
+            // Count all the player's acquired entity morphs (screen out variants and freebie mobs)
+            Set<String> freebieMobs = MobLists.getFreebieMobs();
             Set<String> creatureNames = new HashSet<>();
             for (AbstractMorph morph : morphing.getAcquiredMorphs()) {
+                if (freebieMobs.contains(morph.name)) {
+                    // Screen out freebie morphs. They are just for fun.
+                    continue;
+                }
                 if (morph instanceof EntityMorph) {
                     creatureNames.add(morph.name);
                 }

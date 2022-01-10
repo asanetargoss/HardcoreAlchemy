@@ -411,4 +411,34 @@ public class MobLists {
         return trollMobs;
     }
 
+    /**
+     * Morphs of these mobs do not increase max humanity
+     * when acquired.
+     */
+    public static Set<String> getFreebieMobs() {
+        Set<String> freebieMobs = new HashSet<>();
+
+        // Meme in a Bottle
+        freebieMobs.add("miab.memeSplash");
+        freebieMobs.add("miab.DogeWolf");
+        freebieMobs.add("miab.GrumpyCat");
+        freebieMobs.add("miab.PPAPGuy");
+        freebieMobs.add("miab.Shrek");
+        freebieMobs.add("miab.DatBoi");
+        freebieMobs.add("miab.GrandDad");
+        freebieMobs.add("miab.Sanic");
+        freebieMobs.add("miab.Pepe");
+        freebieMobs.add("miab.ForeverAlone");
+        freebieMobs.add("miab.NyanCat");
+        freebieMobs.add("miab.TacNyan");
+        freebieMobs.add("miab.DankeyKang");
+        freebieMobs.add("miab.Donaldtrump");
+        freebieMobs.add("miab.EduardKhil");
+        freebieMobs.add("miab.MoonMan");
+        freebieMobs.add("miab.RottenRobbie");
+        freebieMobs.add("miab.Nigelthornberry");
+        
+        return freebieMobs;
+    }
+
 }
