@@ -75,7 +75,37 @@ public class ListenerPlayerMorphs extends HardcoreAlchemyListener {
     public static final Capability<IMorphing> MORPHING_CAPABILITY = null;
 
     static {
-        // TODO: add the rest of the morph counts
+        // Decide how many times a mob needs to be killed to get its morph
+        // More valuable/powerful mobs have higher kill requirements
+        // More rare/hard-to-access mobs have lower kill requirements to balance time spent searching
+        
+        // Defaults
+        for (String mob : MobLists.getLandAnimals()) {
+            mapRequiredKills.put(mob, 6);
+        }
+        for (String mob : MobLists.getEntityTameables()) {
+            mapRequiredKills.put(mob, 12);
+        }
+        for (String mob : MobLists.getNightMobs()) {
+            mapRequiredKills.put(mob, 24);
+        }
+        for (String mob : MobLists.getNetherMobs()) {
+            mapRequiredKills.put(mob, 20);
+        }
+        for (String mob : MobLists.getAuraMobs()) {
+            mapRequiredKills.put(mob, 16);
+        }
+        for (String mob : MobLists.getTaintMobs()) {
+            mapRequiredKills.put(mob, 24);
+        }
+        for (String mob : MobLists.getEldritchMobs()) {
+            mapRequiredKills.put(mob, 26);
+        }
+        for (String mob : MobLists.getTrollMobs()) {
+            mapRequiredKills.put(mob, 6);
+        }
+        
+        // Custom
         // Overworld animals
         mapRequiredKills.put("Chicken", 5);
         mapRequiredKills.put("Pig", 6);
@@ -103,6 +133,8 @@ public class ListenerPlayerMorphs extends HardcoreAlchemyListener {
         mapRequiredKills.put("LavaSlime", 14);
         mapRequiredKills.put("Blaze", 40);
         mapRequiredKills.put("Ghast", 8);
+        // Ender Zoo
+        mapRequiredKills.put("EnderZoo.Owl", 25);
     }
     
     /**
