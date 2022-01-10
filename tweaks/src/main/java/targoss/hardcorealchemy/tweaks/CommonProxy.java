@@ -5,10 +5,11 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.tweaks.item.Items;
 import targoss.hardcorealchemy.tweaks.listener.ListenerBedBreakHarvest;
-import targoss.hardcorealchemy.tweaks.listener.ListenerPlayerSlip;
 import targoss.hardcorealchemy.tweaks.listener.ListenerEntityVoidfade;
 import targoss.hardcorealchemy.tweaks.listener.ListenerInventoryFoodRot;
 import targoss.hardcorealchemy.tweaks.listener.ListenerMobLevel;
+import targoss.hardcorealchemy.tweaks.listener.ListenerPlayerShield;
+import targoss.hardcorealchemy.tweaks.listener.ListenerPlayerSlip;
 import targoss.hardcorealchemy.tweaks.listener.ListenerWorldDifficulty;
 
 public class CommonProxy {
@@ -19,6 +20,7 @@ public class CommonProxy {
         HardcoreAlchemy.proxy.addListener(new ListenerInventoryFoodRot());
         HardcoreAlchemy.proxy.addListener(new ListenerWorldDifficulty());
         HardcoreAlchemy.proxy.addListener(new ListenerPlayerSlip());
+        HardcoreAlchemy.proxy.addListener(new ListenerPlayerShield());
     }
     
     public void init(FMLInitializationEvent event) {

@@ -46,7 +46,7 @@ public class ListenerMobLevel extends HardcoreAlchemyListener {
     public static Capability<ICapabilityCombatLevel> COMBAT_LEVEL_CAPABILITY = null;
     public static final ResourceLocation COMBAT_LEVEL_RESOURCE_LOCATION = CapabilityCombatLevel.RESOURCE_LOCATION;
     
-    public static Set<String> levelBlacklist = new HashSet();
+    public static Set<String> levelBlacklist = new HashSet<>();
     
     static {
         levelBlacklist.addAll(MobLists.getBosses());
@@ -89,7 +89,7 @@ public class ListenerMobLevel extends HardcoreAlchemyListener {
     
     
     @SubscribeEvent
-    public void onLivingHurt(EventLivingAttack event) {
+    public void onLivingHurt(EventLivingAttack.Start event) {
         DamageSource source = event.source;
         Entity entity = source.getEntity();
         if (entity == null) {

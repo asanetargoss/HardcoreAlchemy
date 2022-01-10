@@ -19,9 +19,15 @@
 package targoss.hardcorealchemy.capability.misc;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.DamageSource;
 
 /**
  * For information too small to warrant a separate capability
@@ -39,4 +45,11 @@ public interface ICapabilityMisc {
     void setLastLoginVersion(String lastLoginVersion);
     List<ItemStack> getPendingInventoryGifts();
     void setPendingInventoryGifts(List<ItemStack> pendingInventoryGifts);
+    Map<Potion, PotionEffect> getActivePotionsCache();
+    void setActivePotionsCache(Map<Potion, PotionEffect> activePotionsCache);
+    int getFireCache();
+    void setFireCache(int fireCache);
+    /** Not for general use - May be null even if this entity has been attacked recently */
+    @Nullable DamageSource getLastDamageSource();
+    void setLastDamageSource(DamageSource lastDamageSource);
 }

@@ -19,10 +19,17 @@
 package targoss.hardcorealchemy.capability.misc;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 
@@ -36,6 +43,9 @@ public class CapabilityMisc implements ICapabilityMisc {
     protected boolean hasChangedDimensionWhileAlive = false;
     protected String lastLoginVersion = DEFAULT_EXPECTED_PLAYER_VERSION;
     protected List<ItemStack> pendingInventoryGifts = new ArrayList<>();
+    protected Map<Potion, PotionEffect> activePotionsCache = new HashMap<>();
+    protected int fireCache = -1;
+    protected @Nullable DamageSource lastDamageSource;
 
     @Override
     public UUID getLifetimeUUID() {
@@ -85,5 +95,35 @@ public class CapabilityMisc implements ICapabilityMisc {
     @Override
     public void setPendingInventoryGifts(List<ItemStack> pendingInventoryGifts) {
         this.pendingInventoryGifts = pendingInventoryGifts;
+    }
+
+    @Override
+    public Map<Potion, PotionEffect> getActivePotionsCache() {
+        return activePotionsCache;
+    }
+
+    @Override
+    public void setActivePotionsCache(Map<Potion, PotionEffect> activePotionsCache) {
+        this.activePotionsCache = activePotionsCache;
+    }
+
+    @Override
+    public int getFireCache() {
+        return this.fireCache;
+    }
+
+    @Override
+    public void setFireCache(int fireCache) {
+        this.fireCache = fireCache;
+    }
+
+    @Override
+    public DamageSource getLastDamageSource() {
+        return lastDamageSource;
+    }
+
+    @Override
+    public void setLastDamageSource(DamageSource lastDamageSource) {
+        this.lastDamageSource = lastDamageSource;
     }
 }

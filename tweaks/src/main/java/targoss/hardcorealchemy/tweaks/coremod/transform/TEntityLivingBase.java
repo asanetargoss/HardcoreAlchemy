@@ -18,8 +18,12 @@
 
 package targoss.hardcorealchemy.tweaks.coremod.transform;
 
+import java.util.ListIterator;
+
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
@@ -29,7 +33,7 @@ import targoss.hardcorealchemy.coremod.ObfuscatedName;
 
 public class TEntityLivingBase extends MethodPatcher {
     private static final String ENTITY_LIVING_BASE = "net.minecraft.entity.EntityLivingBase";
-	private static final ObfuscatedName ENTITY_DAMAGE = new ObfuscatedName("func_70097_a" /*attackEntityFrom*/);
+	private static final ObfuscatedName ATTACK_ENTITY_FROM = new ObfuscatedName("func_70097_a" /*attackEntityFrom*/);
 	
 	@Override
 	public byte[] transform(String name, String transformedName, byte[] basicClass) {
@@ -41,20 +45,41 @@ public class TEntityLivingBase extends MethodPatcher {
 
     @Override
     public void transformMethod(MethodNode method) {
-        if (method.name.equals(ENTITY_DAMAGE.get())) {
+        if (method.name.equals(ATTACK_ENTITY_FROM.get())) {
             InsnList instructions = method.instructions;
             
-            InsnList eventHook = new InsnList();
-            eventHook.add(new VarInsnNode(Opcodes.ALOAD, 0));
-            eventHook.add(new VarInsnNode(Opcodes.ALOAD, 1));
-            eventHook.add(new VarInsnNode(Opcodes.FLOAD, 2));
-            eventHook.add(new MethodInsnNode(
-                    Opcodes.INVOKESTATIC, "targoss/hardcorealchemy/tweaks/event/EventLivingAttack",
-                    "onLivingAttack", "(Lnet/minecraft/entity/EntityLivingBase;Lnet/minecraft/util/DamageSource;F)F", false
-                    ));
-            eventHook.add(new VarInsnNode(Opcodes.FSTORE, 2));
-            
-            instructions.insert(eventHook);
+            {
+                ListIterator<AbstractInsnNode> it = instructions.iterator();
+                while (it.hasNext()) {
+                    AbstractInsnNode insn = it.next();
+                    if (insn.getOpcode() == Opcodes.IRETURN) {
+                        InsnList hook = new InsnList();
+                        hook.add(new InsnNode(Opcodes.DUP));
+                        hook.add(new VarInsnNode(Opcodes.ALOAD, 0));
+                        hook.add(new VarInsnNode(Opcodes.ALOAD, 1));
+                        hook.add(new VarInsnNode(Opcodes.FLOAD, 2));
+                        hook.add(new MethodInsnNode(
+                                Opcodes.INVOKESTATIC, "targoss/hardcorealchemy/tweaks/event/EventLivingAttack",
+                                "onLivingAttackEnd", "(ZLnet/minecraft/entity/EntityLivingBase;Lnet/minecraft/util/DamageSource;F)V", false
+                                ));
+                        
+                        instructions.insertBefore(insn, hook);
+                    }
+                }
+            }
+            {
+                InsnList hook = new InsnList();
+                hook.add(new VarInsnNode(Opcodes.ALOAD, 0));
+                hook.add(new VarInsnNode(Opcodes.ALOAD, 1));
+                hook.add(new VarInsnNode(Opcodes.FLOAD, 2));
+                hook.add(new MethodInsnNode(
+                        Opcodes.INVOKESTATIC, "targoss/hardcorealchemy/tweaks/event/EventLivingAttack",
+                        "onLivingAttackStart", "(Lnet/minecraft/entity/EntityLivingBase;Lnet/minecraft/util/DamageSource;F)F", false
+                        ));
+                hook.add(new VarInsnNode(Opcodes.FSTORE, 2));
+                
+                instructions.insert(hook);
+            }
         }
     }
 	
