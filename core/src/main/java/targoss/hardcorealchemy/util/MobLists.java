@@ -30,6 +30,8 @@ import java.util.Set;
  */
 public class MobLists {
     
+    public static final String SPIDER = "Spider";
+    
     public static Set<String> getBosses() {
         Set<String> bosses = new HashSet<>();
         

@@ -7,6 +7,7 @@ import targoss.hardcorealchemy.tweaks.item.Items;
 import targoss.hardcorealchemy.tweaks.listener.ListenerBedBreakHarvest;
 import targoss.hardcorealchemy.tweaks.listener.ListenerEntityVoidfade;
 import targoss.hardcorealchemy.tweaks.listener.ListenerInventoryFoodRot;
+import targoss.hardcorealchemy.tweaks.listener.ListenerMobEffect;
 import targoss.hardcorealchemy.tweaks.listener.ListenerMobLevel;
 import targoss.hardcorealchemy.tweaks.listener.ListenerPlayerShield;
 import targoss.hardcorealchemy.tweaks.listener.ListenerPlayerSlip;
@@ -21,6 +22,7 @@ public class CommonProxy {
         HardcoreAlchemy.proxy.addListener(new ListenerWorldDifficulty());
         HardcoreAlchemy.proxy.addListener(new ListenerPlayerSlip());
         HardcoreAlchemy.proxy.addListener(new ListenerPlayerShield());
+        HardcoreAlchemy.proxy.addListener(new ListenerMobEffect());
     }
     
     public void init(FMLInitializationEvent event) {
