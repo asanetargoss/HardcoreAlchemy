@@ -3,8 +3,11 @@ package targoss.hardcorealchemy.creatures.listener;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
+
 import mchorse.metamorph.api.morphs.AbstractMorph;
 import mchorse.metamorph.capabilities.morphing.IMorphing;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.monster.EntityCreeper;
@@ -19,11 +22,14 @@ import net.minecraft.entity.passive.EntityChicken;
 import net.minecraft.entity.passive.EntityPig;
 import net.minecraft.entity.passive.EntitySquid;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
+import targoss.hardcorealchemy.util.INutritionExtension;
 import targoss.hardcorealchemy.util.MobLists;
 import targoss.hardcorealchemy.util.MorphDiet;
 import targoss.hardcorealchemy.util.MorphDiet.Needs;
@@ -32,20 +38,20 @@ import targoss.hardcorealchemy.util.MorphExtension;
 import targoss.hardcorealchemy.util.NutritionExtension;
 
 public class ListenerNutritionExtension extends HardcoreAlchemyListener {
-    public static class Wrapper extends NutritionExtension {
+    public static class Wrapper implements INutritionExtension {
         @CapabilityInject(IMorphing.class)
         public static final Capability<IMorphing> MORPHING_CAPABILITY = null;
         @CapabilityInject(ICapabilityHumanity.class)
         public static final Capability<ICapabilityHumanity> HUMANITY_CAPABILITY = null;
         
-        public NutritionExtension delegate;
+        public INutritionExtension delegate;
 
-        public Wrapper(NutritionExtension delegate) {
+        public Wrapper(INutritionExtension delegate) {
             this.delegate = delegate;
         }
         
         @Override
-        public Needs getNeeds(EntityPlayer player) {
+        public @Nonnull Needs getNeeds(EntityPlayer player) {
             if (MorphExtension.INSTANCE.isGhost(player)) {
                 return NO_NEEDS;
             }
@@ -66,6 +72,32 @@ public class ListenerNutritionExtension extends HardcoreAlchemyListener {
                 return delegate.getNeeds(player);
             }
             return needs;
+        }
+
+        @Override
+        public void restoreNutrient(EntityPlayer player, String nutrientName, float amount) {
+            delegate.restoreNutrient(player, nutrientName, amount);
+        }
+
+        @Override
+        public void addGrassToFoodHistory(EntityPlayer player) {
+            delegate.addGrassToFoodHistory(player);
+        }
+
+        @Override
+        public void restoreThirst(EntityPlayer player, Needs needs, int thirstSustain, int thirstSaturationSustain) {
+            delegate.restoreThirst(player, needs, thirstSustain, thirstSaturationSustain);
+        }
+
+        @Override
+        public int drinkWater(EntityPlayer player, Needs needs, BlockPos pos, IBlockState blockState, int thirstSustain,
+                int thirstSaturationSustain) {
+            return delegate.drinkWater(player, needs, pos, blockState, thirstSustain, thirstSaturationSustain);
+        }
+
+        @Override
+        public boolean isItemDrinkable(Item item) {
+            return delegate.isItemDrinkable(item);
         }
         
     }

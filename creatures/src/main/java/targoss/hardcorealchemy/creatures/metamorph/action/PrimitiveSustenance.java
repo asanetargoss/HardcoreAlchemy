@@ -41,6 +41,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.util.Chat;
+import targoss.hardcorealchemy.util.INutritionExtension;
 import targoss.hardcorealchemy.util.MiscVanilla;
 import targoss.hardcorealchemy.util.MorphDiet;
 import targoss.hardcorealchemy.util.NutritionExtension;
@@ -81,11 +82,11 @@ public class PrimitiveSustenance implements IAction {
     }
     
     protected final SustenanceCondition[] sustenanceConditions = {
-        new SustenanceCondition(NutritionExtension.Success.NOT_AVAILABLE, NutritionExtension.Success.NONE, NOT_AVAILABLE_GRASS),
-        new SustenanceCondition(NutritionExtension.Success.NONE, NutritionExtension.Success.NOT_AVAILABLE, NOT_AVAILABLE_DRINK),
-        new SustenanceCondition(NutritionExtension.Success.NOT_AVAILABLE, NutritionExtension.Success.NOT_AVAILABLE, NOT_AVAILABLE_GRASS_DRINK),
-        new SustenanceCondition(NutritionExtension.Success.NOT_READY, NutritionExtension.Success.NOT_AVAILABLE | NutritionExtension.Success.NONE, NOT_READY_GRASS),
-        new SustenanceCondition(NutritionExtension.Success.NOT_AVAILABLE | NutritionExtension.Success.NONE, NutritionExtension.Success.NOT_READY, NOT_READY_DRINK)
+        new SustenanceCondition(INutritionExtension.Success.NOT_AVAILABLE, INutritionExtension.Success.NONE, NOT_AVAILABLE_GRASS),
+        new SustenanceCondition(INutritionExtension.Success.NONE, INutritionExtension.Success.NOT_AVAILABLE, NOT_AVAILABLE_DRINK),
+        new SustenanceCondition(INutritionExtension.Success.NOT_AVAILABLE, INutritionExtension.Success.NOT_AVAILABLE, NOT_AVAILABLE_GRASS_DRINK),
+        new SustenanceCondition(INutritionExtension.Success.NOT_READY, INutritionExtension.Success.NOT_AVAILABLE | INutritionExtension.Success.NONE, NOT_READY_GRASS),
+        new SustenanceCondition(INutritionExtension.Success.NOT_AVAILABLE | INutritionExtension.Success.NONE, INutritionExtension.Success.NOT_READY, NOT_READY_DRINK)
     };
     
     protected final ITextComponent getSustenanceResponse(int grassNutritionExtensionSuccess, int drinkNutritionExtensionSuccess) {
@@ -121,19 +122,19 @@ public class PrimitiveSustenance implements IAction {
         IBlockState blockState = player.world.getBlockState(lookPos);
         
         int grassNutritionExtensionSuccess = eatGrass(player, needs, lookPos, blockState);
-        if (grassNutritionExtensionSuccess == NutritionExtension.Success.SUCCESS) {
+        if (grassNutritionExtensionSuccess == INutritionExtension.Success.SUCCESS) {
             return;
         }
         
-        int thirstNutritionExtensionSuccess = NutritionExtension.Success.NONE;
+        int thirstNutritionExtensionSuccess = INutritionExtension.Success.NONE;
         if (ModState.isTanLoaded) {
             thirstNutritionExtensionSuccess = NutritionExtension.INSTANCE.drinkWater(player, needs, lookPos, blockState, THIRST_SUSTAIN, 0);
-            if (thirstNutritionExtensionSuccess == NutritionExtension.Success.SUCCESS) {
+            if (thirstNutritionExtensionSuccess == INutritionExtension.Success.SUCCESS) {
                 return;
             }
         }
         
-        if (grassNutritionExtensionSuccess == NutritionExtension.Success.NONE && thirstNutritionExtensionSuccess == NutritionExtension.Success.NONE) {
+        if (grassNutritionExtensionSuccess == INutritionExtension.Success.NONE && thirstNutritionExtensionSuccess == INutritionExtension.Success.NONE) {
             // This ability is doing nothing for this morph due to external configuration.
             return;
         }
@@ -150,14 +151,14 @@ public class PrimitiveSustenance implements IAction {
     
     protected int eatGrass(EntityPlayer player, MorphDiet.Needs needs, BlockPos pos, IBlockState blockState) {
         if (needs.nutrients.length != 1 || !needs.containsNutrient("grain")) {
-            return NutritionExtension.Success.NONE;
+            return INutritionExtension.Success.NONE;
         }
         
         FoodStats foodStats = player.getFoodStats();
         
         if (IS_TALL_GRASS.apply(blockState) || IS_DOUBLE_TALL_GRASS.apply(blockState)) {
             if (foodStats.getFoodLevel() >= FOOD_SUSTAIN) {
-                return NutritionExtension.Success.NOT_READY;
+                return INutritionExtension.Success.NOT_READY;
             }
             
             if (!player.world.isRemote) {
@@ -166,12 +167,12 @@ public class PrimitiveSustenance implements IAction {
             restoreHunger(player, foodStats);
             NutritionExtension.INSTANCE.restoreThirst(player, needs, THIRST_SUSTAIN, THIRST_SATURATION_SUSTAIN);
             NutritionExtension.INSTANCE.addGrassToFoodHistory(player);
-            return NutritionExtension.Success.SUCCESS;
+            return INutritionExtension.Success.SUCCESS;
         }
         
         if (blockState.getBlock() instanceof BlockGrass) {
             if (foodStats.getFoodLevel() >= FOOD_SUSTAIN) {
-                return NutritionExtension.Success.NOT_READY;
+                return INutritionExtension.Success.NOT_READY;
             }
             
             if (!player.world.isRemote) {
@@ -181,10 +182,10 @@ public class PrimitiveSustenance implements IAction {
             restoreHunger(player, foodStats);
             NutritionExtension.INSTANCE.restoreThirst(player, needs, THIRST_SUSTAIN, THIRST_SATURATION_SUSTAIN);
             NutritionExtension.INSTANCE.addGrassToFoodHistory(player);
-            return NutritionExtension.Success.SUCCESS;
+            return INutritionExtension.Success.SUCCESS;
         }
         
-        return NutritionExtension.Success.NOT_AVAILABLE;
+        return INutritionExtension.Success.NOT_AVAILABLE;
     }
     
     protected void restoreHunger(EntityPlayer player, FoodStats foodStats) {

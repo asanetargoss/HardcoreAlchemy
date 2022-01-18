@@ -19,17 +19,19 @@ import squeek.spiceoflife.foodtracker.FoodEaten;
 import squeek.spiceoflife.foodtracker.FoodHistory;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
+import targoss.hardcorealchemy.util.INutritionExtension;
 import targoss.hardcorealchemy.util.MorphDiet;
+import targoss.hardcorealchemy.util.MorphDiet.Needs;
 import targoss.hardcorealchemy.util.NutritionExtension;
 import toughasnails.api.stat.capability.IThirst;
 import toughasnails.api.thirst.IDrink;
 import toughasnails.api.thirst.ThirstHelper;
 
 public class ListenerNutritionExtension extends HardcoreAlchemyListener {
-    public static class Wrapper extends NutritionExtension {
-        public NutritionExtension delegate;
+    public static class Wrapper implements INutritionExtension {
+        public INutritionExtension delegate;
 
-        public Wrapper(NutritionExtension delegate) {
+        public Wrapper(INutritionExtension delegate) {
             this.delegate = delegate;
         }
         
@@ -80,24 +82,24 @@ public class ListenerNutritionExtension extends HardcoreAlchemyListener {
             
             public static int drinkWater(EntityPlayer player, MorphDiet.Needs needs, BlockPos pos, IBlockState blockState, int thirstSustain) {
                 if (!needs.hasThirst) {
-                    return NutritionExtension.Success.NONE;
+                    return INutritionExtension.Success.NONE;
                 }
                 
                 Block block = blockState.getBlock();
                 if (block == Blocks.WATER || block == Blocks.FLOWING_WATER) {
                     IThirst thirst = ThirstHelper.getThirstData(player);
                     if (thirst.getThirst() >= thirstSustain) {
-                        return NutritionExtension.Success.NOT_READY;
+                        return INutritionExtension.Success.NOT_READY;
                     }
                     restoreThirst(player, needs, thirstSustain, 0);
                     if (!player.world.isRemote) {
                         player.world.playSound(null, player.posX, player.posY, player.posZ, SoundEvents.ENTITY_GENERIC_DRINK, SoundCategory.PLAYERS, 0.5F, player.world.rand.nextFloat() * 0.1F + 0.9F);
                     }
                     
-                    return NutritionExtension.Success.SUCCESS;
+                    return INutritionExtension.Success.SUCCESS;
                 }
                 
-                return NutritionExtension.Success.NOT_AVAILABLE;
+                return INutritionExtension.Success.NOT_AVAILABLE;
             }
 
             public static boolean isItemDrinkable(Item item) {
@@ -133,13 +135,13 @@ public class ListenerNutritionExtension extends HardcoreAlchemyListener {
         @Override
         public int drinkWater(EntityPlayer player, MorphDiet.Needs needs, BlockPos pos, IBlockState blockState, int thirstSustain, int thirstSaturationSustain) {
             int success = delegate.drinkWater(player, needs, pos, blockState, thirstSustain, thirstSaturationSustain);
-            if (success == NutritionExtension.Success.SUCCESS) {
-                return NutritionExtension.Success.SUCCESS;
+            if (success == INutritionExtension.Success.SUCCESS) {
+                return INutritionExtension.Success.SUCCESS;
             }
             if (ModState.isTanLoaded) {
                 success &= ToughAsNails.drinkWater(player, needs, pos, blockState, thirstSustain);
             }
-            return NutritionExtension.Success.getSuccessValue(success);
+            return INutritionExtension.Success.getSuccessValue(success);
         }
         
         @Override
@@ -151,6 +153,11 @@ public class ListenerNutritionExtension extends HardcoreAlchemyListener {
                 return true;
             }
             return false;
+        }
+
+        @Override
+        public Needs getNeeds(EntityPlayer player) {
+            return delegate.getNeeds(player);
         }
     }
     
