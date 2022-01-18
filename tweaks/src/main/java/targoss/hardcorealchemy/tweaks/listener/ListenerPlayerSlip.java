@@ -1,9 +1,8 @@
 package targoss.hardcorealchemy.tweaks.listener;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.play.server.SPacketRemoveEntityEffect;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
@@ -17,6 +16,8 @@ import targoss.hardcorealchemy.capability.misc.ProviderMisc;
 import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
 import targoss.hardcorealchemy.tweaks.event.EventHeldItemChange;
 import targoss.hardcorealchemy.tweaks.event.EventItemUseResult;
+import targoss.hardcorealchemy.tweaks.event.EventPlayerAcquireStack;
+import targoss.hardcorealchemy.tweaks.event.EventPlayerInventorySlotSet;
 import targoss.hardcorealchemy.tweaks.item.Items;
 import targoss.hardcorealchemy.util.InventoryUtil;
 
@@ -37,13 +38,19 @@ public class ListenerPlayerSlip extends HardcoreAlchemyListener {
         "voidcraft:items/voidcrystalshield"
     };
     
-    public void afterSlipEffectApplied(EntityPlayer player, PotionEffect effect) {
-        if (effect.getAmplifier() < 1) {
-            player.removeActivePotionEffect(Items.POTION_SLIP);
+    public void checkSlipEffectCanceled(EntityPlayer player, PotionEffect effect, int persistAmplifier) {
+        boolean shouldCancelEffect;
+        if (persistAmplifier > 0) {
+            shouldCancelEffect = effect.getAmplifier() < persistAmplifier;
+        } else if (effect.getAmplifier() == 0) {
+            // Small chance for amplifier to go away
+            shouldCancelEffect = player.getRNG().nextFloat() < 0.18F;
+        } else {
+            shouldCancelEffect = false;
+        }
+        if (shouldCancelEffect) {
             if (!player.world.isRemote) {
-                // Should be true, but just in case...
-                EntityPlayerMP playerMP = ((EntityPlayerMP)player);
-                playerMP.connection.sendPacket(new SPacketRemoveEntityEffect(playerMP.getEntityId(), effect.getPotion()));
+                player.removePotionEffect(Items.POTION_SLIP);
             }
         }
     }
@@ -73,11 +80,13 @@ public class ListenerPlayerSlip extends HardcoreAlchemyListener {
 
         // Only call this server-side, to prevent desyncs
         if (!player.world.isRemote) {
-            player.dropItem(slipStack, false /*unused*/);
+            Object itemDropped = player.dropItem(slipStack, false /*unused*/);
             player.setHeldItem(hand, InventoryUtil.ITEM_STACK_EMPTY);
+            
+            if (itemDropped != null) {
+                checkSlipEffectCanceled(player, effect, 1);
+            }
         }
-        
-        afterSlipEffectApplied(player, effect);
     }
     
     public void onHotbarItemSelectDrop(EntityPlayer player, int slotToDrop) {
@@ -93,10 +102,12 @@ public class ListenerPlayerSlip extends HardcoreAlchemyListener {
         // Switch temporarily to the hotbar slot if needed.
         int currentSlot = player.inventory.currentItem;
         player.inventory.currentItem = slotToDrop;
-        player.dropItem(true);
+        Object itemDropped = player.dropItem(true);
         player.inventory.currentItem = currentSlot;
         
-        afterSlipEffectApplied(player, effect);
+        if (itemDropped != null) {
+            checkSlipEffectCanceled(player, effect, 0);
+        }
     }
     
     @SubscribeEvent
@@ -106,7 +117,6 @@ public class ListenerPlayerSlip extends HardcoreAlchemyListener {
         }
     }
     
-    // TODO: Under slip effect, drop item when switching items (see EntityPlayer.setItemStackToSlot, (TODO: Some case where the slot in a hotbar slot is set to a new item))
     @SubscribeEvent
     public void onPlayerChangeHeldItemPre(EventHeldItemChange.Pre event) {
         ICapabilityMisc misc = event.player.getCapability(ProviderMisc.MISC_CAPABILITY, null);
@@ -132,15 +142,78 @@ public class ListenerPlayerSlip extends HardcoreAlchemyListener {
             return;
         }
         
-        ItemStack oldSlotStack = event.player.inventory.getStackInSlot(oldSlot);
-        if (!InventoryUtil.isEmptyItemStack(oldSlotStack)) {
-            onHotbarItemSelectDrop(event.player, oldSlot);
-        } else {
+        ItemStack newSlotStack = event.player.inventory.getStackInSlot(newSlot);
+        if (!InventoryUtil.isEmptyItemStack(newSlotStack)) {
             onHotbarItemSelectDrop(event.player, newSlot);
+        } else {
+            onHotbarItemSelectDrop(event.player, oldSlot);
+        }
+    }
+
+    @SubscribeEvent
+    public void onPlayerInventorySlotSet(EventPlayerInventorySlotSet event) {
+        if (!InventoryUtil.isHotbarSlotIndex(event.slotIndex)) {
+            return;
+        }
+        if (InventoryUtil.isEmptyItemStack(event.itemStack)) {
+            return;
+        }
+        EntityPlayer player = event.inventoryPlayer.player;
+        PotionEffect effect = player.getActivePotionEffect(Items.POTION_SLIP);
+        if (effect == null) {
+            return;
+        }
+        if (event.itemStack.stackSize == 0) {
+            // The stack size can be 0. Weird things happen if you try to do stuff with it...
+            return;
+        }
+        // Only do this if this is the player's held slot
+        if (event.inventoryPlayer.currentItem != event.slotIndex) {
+            return;
+        }
+        if (!player.world.isRemote) {
+            // NOTE: I now set event.itemStack to empty *before* the player drops the item in-world.
+            // Hopefully this prevents the dupe bug encountered in testing.
+            // Further testing with the change in place revealed one occasion where an item
+            // was deleted instead.
+            // Hopefully the hilarity of temporarily failing to pick up a bunch of items makes up for this.
+            // This was probably caused by a race condition, most likely not caused by this code.
+            ItemStack trueStack = event.itemStack.copy();
+            event.itemStack = InventoryUtil.ITEM_STACK_EMPTY;
+            player.dropItem(trueStack, false);
+            checkSlipEffectCanceled(player, effect, 0);
+        } else {
+            // Desync workaround
+            event.itemStack = InventoryUtil.ITEM_STACK_EMPTY;
         }
     }
     
-    public static class ClientSide {
-        // TODO: Make hotbar items jiggle when player has slip effect (see GuiIngame.renderHotbarItem)
+    @SubscribeEvent
+    public void onPlayerAcquireStack(EventPlayerAcquireStack event) {
+        ItemStack itemStack = event.itemStack;
+        if (InventoryUtil.isEmptyItemStack(itemStack)) {
+            return;
+        }
+        if (itemStack.stackSize == 0) {
+            return;
+        }
+        if (itemStack.getItem() == null) {
+            return;
+        }
+        InventoryPlayer inventoryPlayer = event.inventoryPlayer;
+        EntityPlayer player = inventoryPlayer.player;
+        PotionEffect effect = player.getActivePotionEffect(Items.POTION_SLIP);
+        if (effect == null) {
+            return;
+        }
+        // Guess where the stack is about to go by mirroring the InventoryPlayer logic
+        // and use that to determine if the item should be kept
+        int insertionSlot = InventoryUtil.getInsertionSlot(inventoryPlayer, itemStack);
+        // Only do this if this is the player's held slot
+        if (event.inventoryPlayer.currentItem != insertionSlot) {
+            return;
+        }
+        event.setCanceled(true);
+        checkSlipEffectCanceled(player, effect, 0);
     }
 }

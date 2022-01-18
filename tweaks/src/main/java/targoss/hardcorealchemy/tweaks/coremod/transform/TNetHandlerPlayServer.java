@@ -91,41 +91,57 @@ public class TNetHandlerPlayServer extends MethodPatcher {
     
     protected void transformHeldItemChangeMethod(MethodNode method) {
         InsnList insns = method.instructions;
-        ListIterator<AbstractInsnNode> iter = insns.iterator();
-        while (iter.hasNext()) {
-            AbstractInsnNode insn = iter.next();
-            if (insn.getOpcode() == Opcodes.INVOKESTATIC && ((MethodInsnNode)insn).name.equals(CHECK_THREAD_AND_ENQUEUE.get())) {
-                InsnList patch = new InsnList();
-                patch.add(new VarInsnNode(Opcodes.ALOAD, 1)); // CPacketHeldItemChange
-                patch.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
-                        "targoss/hardcorealchemy/EventHeldItemChange",
-                        "onSlotChangePre",
-                        "(Lnet/minecraft/network/play/client/CPacketHeldItemChange;)V",
-                        false));
-                patch.add(new VarInsnNode(Opcodes.ALOAD, 0));
-                patch.add(new FieldInsnNode(Opcodes.GETFIELD,
-                        NET_HANDLER_PLAY_SERVER.replace('.', '/'),
-                        PLAYER_ENTITY.get(),
-                        "Lnet/minecraft/entity/player/EntityPlayerMP;")); // EntityPlayerMP player
-                insns.insert(insn, patch);
-                
-                return; // Done patching
+        {
+            ListIterator<AbstractInsnNode> iter = insns.iterator();
+            while (iter.hasNext()) {
+                AbstractInsnNode insn = iter.next();
+                if (insn.getOpcode() == Opcodes.INVOKESTATIC && ((MethodInsnNode)insn).name.equals(CHECK_THREAD_AND_ENQUEUE.get())) {
+                    InsnList patch = new InsnList();
+                    patch.add(new VarInsnNode(Opcodes.ALOAD, 1)); // CPacketHeldItemChange
+                    patch.add(new VarInsnNode(Opcodes.ALOAD, 0));
+                    patch.add(new FieldInsnNode(Opcodes.GETFIELD,
+                            NET_HANDLER_PLAY_SERVER.replace('.', '/'),
+                            PLAYER_ENTITY.get(),
+                            "Lnet/minecraft/entity/player/EntityPlayerMP;")); // EntityPlayerMP player
+                    patch.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
+                            "targoss/hardcorealchemy/tweaks/event/EventHeldItemChange",
+                            "onHeldItemChangePre",
+                            "(Lnet/minecraft/network/play/client/CPacketHeldItemChange;" +
+                                "Lnet/minecraft/entity/player/EntityPlayerMP;)" +
+                                "V",
+                            false));
+                    
+                    insns.insert(insn, patch);
+                    
+                    break; // Done with this patch
+                }
             }
         }
-        
         {
-            InsnList patch = new InsnList();
-            patch.add(new VarInsnNode(Opcodes.ALOAD, 1)); // CPacketHeldItemChange
-            patch.add(new VarInsnNode(Opcodes.ALOAD, 0));
-            patch.add(new FieldInsnNode(Opcodes.GETFIELD,
-                    NET_HANDLER_PLAY_SERVER.replace('.', '/'),
-                    PLAYER_ENTITY.get(),
-                    "Lnet/minecraft/entity/player/EntityPlayerMP;")); // EntityPlayerMP player
-            patch.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
-                    "targoss/hardcorealchemy/EventHeldItemChange",
-                    "onSlotChangePost",
-                    "(Lnet/minecraft/network/play/client/CPacketHeldItemChange;)V",
-                    false));
+            ListIterator<AbstractInsnNode> iter = insns.iterator();
+            while (iter.hasNext()) {
+                AbstractInsnNode insn = iter.next();
+                if (insn.getOpcode() == Opcodes.RETURN) {
+                    InsnList patch = new InsnList();
+                    patch.add(new VarInsnNode(Opcodes.ALOAD, 1)); // CPacketHeldItemChange
+                    patch.add(new VarInsnNode(Opcodes.ALOAD, 0));
+                    patch.add(new FieldInsnNode(Opcodes.GETFIELD,
+                            NET_HANDLER_PLAY_SERVER.replace('.', '/'),
+                            PLAYER_ENTITY.get(),
+                            "Lnet/minecraft/entity/player/EntityPlayerMP;")); // EntityPlayerMP player
+                    patch.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
+                            "targoss/hardcorealchemy/tweaks/event/EventHeldItemChange",
+                            "onHeldItemChangePost",
+                            "(Lnet/minecraft/network/play/client/CPacketHeldItemChange;" +
+                                    "Lnet/minecraft/entity/player/EntityPlayerMP;)" +
+                                    "V",
+                            false));
+                    
+                    insns.insertBefore(insn, patch);
+                    
+                    break; // Done with this patch
+                }
+            }
         }
     }
 

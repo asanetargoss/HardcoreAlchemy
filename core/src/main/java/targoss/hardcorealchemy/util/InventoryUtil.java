@@ -28,6 +28,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
@@ -93,7 +94,19 @@ public class InventoryUtil {
         
         return true;
     }
-
+    
+    public static boolean isHotbarSlotIndex(int index) {
+        return InventoryPlayer.isHotbar(index);
+    }
+    
+    public static int getInsertionSlot(InventoryPlayer inventoryPlayer, ItemStack itemStack) {
+        int existing = inventoryPlayer.storeItemStack(itemStack);
+        if (existing != -1) {
+            return existing;
+        }
+        return inventoryPlayer.getFirstEmptyStack();
+    }
+    
     /**
      * Check if the slot is a slot containing an item the player can take and/or place,
      * as opposed to some documentation/display slot.
