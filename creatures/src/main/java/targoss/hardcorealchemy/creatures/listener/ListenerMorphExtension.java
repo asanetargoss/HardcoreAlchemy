@@ -1,6 +1,10 @@
 package targoss.hardcorealchemy.creatures.listener;
 
+import java.util.List;
+
 import javax.annotation.Nonnull;
+
+import com.google.common.base.Predicate;
 
 import ladysnake.dissolution.common.capabilities.CapabilityIncorporealHandler;
 import ladysnake.dissolution.common.capabilities.IIncorporealHandler;
@@ -12,22 +16,25 @@ import mchorse.metamorph.capabilities.morphing.Morphing;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
+import targoss.hardcorealchemy.util.IMorphExtension;
 import targoss.hardcorealchemy.util.MorphExtension;
 
 public class ListenerMorphExtension extends HardcoreAlchemyListener {
-    public static class Wrapper extends MorphExtension {
+    public static class Wrapper implements IMorphExtension {
         @CapabilityInject(ICapabilityHumanity.class)
         public static final Capability<ICapabilityHumanity> HUMANITY_CAPABILITY = null;
         
-        public MorphExtension delegate;
+        public IMorphExtension delegate;
 
-        public Wrapper(MorphExtension delegate) {
+        public Wrapper(IMorphExtension delegate) {
             this.delegate = delegate;
         }
         
@@ -126,6 +133,39 @@ public class ListenerMorphExtension extends HardcoreAlchemyListener {
                 return delegate.getEffectiveEntity(player);
             }
             return ((EntityMorph)morph).getEntity(player.world);
+        }
+
+        @Override
+        public boolean canUseHighMagic(EntityPlayer player) {
+            return delegate.canUseHighMagic(player);
+        }
+
+        @Override
+        public <T extends EntityLivingBase> List<T> getEntitiesAndMorphs(World world, Class<? extends T> entityClass,
+                AxisAlignedBB aabb) {
+            return delegate.getEntitiesAndMorphs(world, entityClass, aabb);
+        }
+
+        @Override
+        public <T extends EntityLivingBase> List<T> getEntitiesAndMorphsExcluding(EntityLivingBase excludingEntity,
+                World world, Class<? extends T> entityClass, AxisAlignedBB aabb, Predicate<? super T> filter) {
+            return delegate.getEntitiesAndMorphsExcluding(excludingEntity, world, entityClass, aabb, filter);
+        }
+
+        @Override
+        public <T extends EntityLivingBase> List<T> getEntitiesAndMorphsExcluding(EntityLivingBase excludingEntity,
+                World world, Class<? extends T> entityClass, AxisAlignedBB aabb) {
+            return delegate.getEntitiesAndMorphsExcluding(excludingEntity, world, entityClass, aabb);
+        }
+
+        @Override
+        public boolean isEntityLike(EntityLivingBase entity, Class<? extends EntityLivingBase> entityClass) {
+            return delegate.isEntityLike(entity, entityClass);
+        }
+
+        @Override
+        public EntityLivingBase getEffectiveEntity(EntityLivingBase entity) {
+            return delegate.getEffectiveEntity(entity);
         }
     }
 

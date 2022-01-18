@@ -1,5 +1,6 @@
 package targoss.hardcorealchemy.magic.listener;
 
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -12,6 +13,7 @@ import gr8pefish.ironbackpacks.container.backpack.InventoryBackpack;
 import gr8pefish.ironbackpacks.items.backpacks.ItemBackpack;
 import moze_intel.projecte.api.ProjectEAPI;
 import moze_intel.projecte.api.capabilities.IAlchBagProvider;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
@@ -19,21 +21,23 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
+import targoss.hardcorealchemy.util.IInventoryExtension;
 import targoss.hardcorealchemy.util.InventoryExtension;
 import targoss.hardcorealchemy.util.InventoryUtil;
 import targoss.hardcorealchemy.util.InventoryUtil.ItemFunc;
 import thaumcraft.common.container.slot.SlotCraftingArcaneWorkbench;
 
 public class ListenerInventoryExtension extends HardcoreAlchemyListener {
-    public static class Wrapper extends InventoryExtension {
-        public InventoryExtension delegate;
+    public static class Wrapper implements IInventoryExtension {
+        public IInventoryExtension delegate;
         
-        public Wrapper(InventoryExtension delegate) {
+        public Wrapper(IInventoryExtension delegate) {
             this.delegate = delegate;
         }
         
@@ -179,6 +183,31 @@ public class ListenerInventoryExtension extends HardcoreAlchemyListener {
             }
             
             return changed;
+        }
+
+        @Override
+        public List<IItemHandler> getLocalInventories(Entity entity) {
+            return delegate.getLocalInventories(entity);
+        }
+
+        @Override
+        public List<IItemHandler> getInventories(TileEntity tileEntity) {
+            return delegate.getInventories(tileEntity);
+        }
+
+        @Override
+        public List<IItemHandler> getInventories(Entity entity) {
+            return delegate.getInventories(entity);
+        }
+
+        @Override
+        public boolean forEachItemRecursive(IItemHandler inventory, ItemFunc itemFunc) {
+            return delegate.forEachItemRecursive(inventory, itemFunc);
+        }
+
+        @Override
+        public boolean forEachItemRecursive(Collection<IItemHandler> inventories, ItemFunc itemFunc) {
+            return delegate.forEachItemRecursive(inventories, itemFunc);
         }
     }
     

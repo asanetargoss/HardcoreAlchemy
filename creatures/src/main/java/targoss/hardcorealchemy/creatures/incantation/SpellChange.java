@@ -36,6 +36,7 @@ import targoss.hardcorealchemy.capability.humanity.ProviderHumanity;
 import targoss.hardcorealchemy.creatures.util.MorphState;
 import targoss.hardcorealchemy.incantation.api.ISpell;
 import targoss.hardcorealchemy.util.Chat;
+import targoss.hardcorealchemy.util.IMorphExtension;
 import targoss.hardcorealchemy.util.MorphExtension;
 
 public class SpellChange implements ISpell {
@@ -69,13 +70,13 @@ public class SpellChange implements ISpell {
         float maxDistance = 30.0F;
 
         AxisAlignedBB aabb = player.getEntityBoundingBox().expandXyz(maxDistance);
-        Predicate<EntityLivingBase> ableToMorphInto = new MorphExtension.MorphablePredicate();
+        Predicate<EntityLivingBase> ableToMorphInto = new IMorphExtension.MorphablePredicate();
         List<EntityLivingBase> nearbyEntities = MorphExtension.INSTANCE.getEntitiesAndMorphsExcluding(player, player.world, EntityLivingBase.class, aabb, ableToMorphInto);
         if (nearbyEntities.size() == 0) {
             Chat.message(Chat.Type.NOTIFY, player, new TextComponentTranslation("hardcorealchemy.incantation.change.error.no_nearby_entities"));
             return;
         }
-        nearbyEntities.sort(new MorphExtension.DistanceComparator(player.posX, player.posY, player.posZ));
+        nearbyEntities.sort(new IMorphExtension.DistanceComparator(player.posX, player.posY, player.posZ));
         int entitySelected = randomMostLikelyZero(random, nearbyEntities.size());
         EntityLivingBase entity = nearbyEntities.get(entitySelected);
         // CHAAAAANGE!

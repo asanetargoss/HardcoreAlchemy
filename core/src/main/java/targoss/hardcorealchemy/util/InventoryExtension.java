@@ -21,9 +21,11 @@ import targoss.hardcorealchemy.util.InventoryUtil.ItemFunc;
 /**
  * An overridable utility class for interacting with inventories.
  */
-public class InventoryExtension {
-    public static InventoryExtension INSTANCE = new InventoryExtension();
+public class InventoryExtension implements IInventoryExtension {
+    public static IInventoryExtension INSTANCE = new InventoryExtension();
     
+    public static final int DEFAULT_INVENTORY_RECURSION_DEPTH = 6;
+
     /**
      * Check if the slot is a crafting table output slot.
      * This function also handles "technical" slots used by EventDrawInventoryItem.
@@ -109,8 +111,6 @@ public class InventoryExtension {
         return inventories;
     }
     
-    public static final int DEFAULT_INVENTORY_RECURSION_DEPTH = 6;
-
     /**
      * Return true if the inventory changed
      */

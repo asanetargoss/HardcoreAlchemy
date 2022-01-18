@@ -1,6 +1,5 @@
 package targoss.hardcorealchemy.util;
 
-import java.util.Comparator;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -8,15 +7,14 @@ import javax.annotation.Nullable;
 
 import com.google.common.base.Predicate;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
 import targoss.hardcorealchemy.item.Items;
 
-public class MorphExtension {
-    public static MorphExtension INSTANCE = new MorphExtension();
+public class MorphExtension implements IMorphExtension {
+    public static IMorphExtension INSTANCE = new MorphExtension();
     
     public boolean canUseHighMagicWithoutBuff(EntityPlayer player) {
         return true;
@@ -35,41 +33,6 @@ public class MorphExtension {
     
     public boolean canMorphInto(EntityLivingBase entity) {
         return true;
-    }
-    
-    public static class MorphablePredicate implements java.util.function.Predicate<EntityLivingBase>, Predicate<EntityLivingBase> {
-        @Override
-        public boolean test(EntityLivingBase entity) {
-            return INSTANCE.canMorphInto(entity);
-        }
-
-        @Override
-        public boolean apply(EntityLivingBase entity) {
-            return test(entity);
-        }
-    }
-    
-    public static class DistanceComparator implements Comparator<Entity> {
-        protected double posX;
-        protected double posY;
-        protected double posZ;
-        public DistanceComparator(double posX, double posY, double posZ) {
-            this.posX = posX;
-            this.posY = posY;
-            this.posZ = posZ;
-        }
-        @Override
-        public int compare(Entity entity1, Entity entity2) {
-            double distanceSquared1 = entity1.getDistanceSq(posX, posY, posZ);
-            double distanceSquared2 = entity2.getDistanceSq(posX, posY, posZ);
-            if (distanceSquared1 == distanceSquared2) {
-                return 0;
-            } else if (distanceSquared1 < distanceSquared2) {
-                return -1;
-            } else {
-                return 1;
-            }
-        }
     }
     
     /**
