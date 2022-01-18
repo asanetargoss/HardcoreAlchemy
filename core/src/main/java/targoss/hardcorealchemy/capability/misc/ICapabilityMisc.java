@@ -45,6 +45,8 @@ public interface ICapabilityMisc {
     void setLastLoginVersion(String lastLoginVersion);
     List<ItemStack> getPendingInventoryGifts();
     void setPendingInventoryGifts(List<ItemStack> pendingInventoryGifts);
+    
+    // These are not stored
     Map<Potion, PotionEffect> getActivePotionsCache();
     void setActivePotionsCache(Map<Potion, PotionEffect> activePotionsCache);
     int getFireCache();
@@ -52,4 +54,7 @@ public interface ICapabilityMisc {
     /** Not for general use - May be null even if this entity has been attacked recently */
     @Nullable DamageSource getLastDamageSource();
     void setLastDamageSource(DamageSource lastDamageSource);
+    /** May be -1 if unset */
+    int getLastItem();
+    void setLastItem(int lastItem);
 }

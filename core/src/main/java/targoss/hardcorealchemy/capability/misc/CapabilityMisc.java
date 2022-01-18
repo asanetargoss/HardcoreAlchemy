@@ -46,6 +46,7 @@ public class CapabilityMisc implements ICapabilityMisc {
     protected Map<Potion, PotionEffect> activePotionsCache = new HashMap<>();
     protected int fireCache = -1;
     protected @Nullable DamageSource lastDamageSource;
+    protected int lastItem = -1;
 
     @Override
     public UUID getLifetimeUUID() {
@@ -125,5 +126,15 @@ public class CapabilityMisc implements ICapabilityMisc {
     @Override
     public void setLastDamageSource(DamageSource lastDamageSource) {
         this.lastDamageSource = lastDamageSource;
+    }
+
+    @Override
+    public int getLastItem() {
+        return lastItem;
+    }
+
+    @Override
+    public void setLastItem(int lastItem) {
+        this.lastItem = lastItem;
     }
 }

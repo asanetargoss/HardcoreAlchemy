@@ -25,6 +25,8 @@ public class TNetHandlerPlayServer extends MethodPatcher {
     protected static final Pattern USE_PACKET_REGEX = Pattern.compile("Lnet/minecraft/network/play/client/CPacket(UseEntity|PlayerTryUseItem|PlayerTryUseItemOnBlock);");
     protected static final Pattern ITEM_USE_HOOK_DESC_REGEX = Pattern.compile("\\(.*\\)Lnet/minecraft/util/EnumActionResult;"); // Identifies a function that returns EnumActionResult
     protected static final ObfuscatedName PLAYER_ENTITY = new ObfuscatedName("field_147369_b" /*playerEntity*/);
+    protected static final ObfuscatedName PROCESS_HELD_ITEM_CHANGE = new ObfuscatedName("func_147355_a" /*NetHandlerPlayServer::processHeldItemChange*/);
+    protected static final ObfuscatedName CHECK_THREAD_AND_ENQUEUE = new ObfuscatedName("func_180031_a" /*PacketThreadUtil.checkThreadAndEnqueue*/);
     
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
@@ -57,38 +59,86 @@ public class TNetHandlerPlayServer extends MethodPatcher {
         }
         return matches;
     }
+    
+    protected void transformUseItemMethod(MethodNode method, String usePacketDesc) {
+        InsnList insns = method.instructions;
+        ListIterator<AbstractInsnNode> iter = insns.iterator();
+        while (iter.hasNext()) {
+            AbstractInsnNode insn = iter.next();
+            if (insn instanceof MethodInsnNode && regexMatches(((MethodInsnNode)insn).desc, ITEM_USE_HOOK_DESC_REGEX, insn)) {
+                InsnList patch = new InsnList();
+                // This code *roughly* does this:
+                // EventItemUseResult.onItemUseResult(result, packetIn, this.playerEntity);
+                // onItemUseResult returns void so we have to clone the result object on the stack with DUP
+                patch.add(new InsnNode(Opcodes.DUP)); // EnumActionResult result
+                patch.add(new VarInsnNode(Opcodes.ALOAD, 1)); // CPacket[item_use_type] packet
+                patch.add(new VarInsnNode(Opcodes.ALOAD, 0));
+                patch.add(new FieldInsnNode(Opcodes.GETFIELD,
+                        NET_HANDLER_PLAY_SERVER.replace('.', '/'),
+                        PLAYER_ENTITY.get(),
+                        "Lnet/minecraft/entity/player/EntityPlayerMP;")); // EntityPlayerMP player
+                patch.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
+                        "targoss/hardcorealchemy/tweaks/event/EventItemUseResult",
+                        "onItemUseResult",
+                        "(Lnet/minecraft/util/EnumActionResult;" +
+                                usePacketDesc +
+                                "Lnet/minecraft/entity/player/EntityPlayer;)V",
+                        false)); // EventItemUseResult.onItemUseResult(result, packetIn, player)
+                insns.insert(insn, patch);
+            }
+        }
+    }
+    
+    protected void transformHeldItemChangeMethod(MethodNode method) {
+        InsnList insns = method.instructions;
+        ListIterator<AbstractInsnNode> iter = insns.iterator();
+        while (iter.hasNext()) {
+            AbstractInsnNode insn = iter.next();
+            if (insn.getOpcode() == Opcodes.INVOKESTATIC && ((MethodInsnNode)insn).name.equals(CHECK_THREAD_AND_ENQUEUE.get())) {
+                InsnList patch = new InsnList();
+                patch.add(new VarInsnNode(Opcodes.ALOAD, 1)); // CPacketHeldItemChange
+                patch.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
+                        "targoss/hardcorealchemy/EventHeldItemChange",
+                        "onSlotChangePre",
+                        "(Lnet/minecraft/network/play/client/CPacketHeldItemChange;)V",
+                        false));
+                patch.add(new VarInsnNode(Opcodes.ALOAD, 0));
+                patch.add(new FieldInsnNode(Opcodes.GETFIELD,
+                        NET_HANDLER_PLAY_SERVER.replace('.', '/'),
+                        PLAYER_ENTITY.get(),
+                        "Lnet/minecraft/entity/player/EntityPlayerMP;")); // EntityPlayerMP player
+                insns.insert(insn, patch);
+                
+                return; // Done patching
+            }
+        }
+        
+        {
+            InsnList patch = new InsnList();
+            patch.add(new VarInsnNode(Opcodes.ALOAD, 1)); // CPacketHeldItemChange
+            patch.add(new VarInsnNode(Opcodes.ALOAD, 0));
+            patch.add(new FieldInsnNode(Opcodes.GETFIELD,
+                    NET_HANDLER_PLAY_SERVER.replace('.', '/'),
+                    PLAYER_ENTITY.get(),
+                    "Lnet/minecraft/entity/player/EntityPlayerMP;")); // EntityPlayerMP player
+            patch.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
+                    "targoss/hardcorealchemy/EventHeldItemChange",
+                    "onSlotChangePost",
+                    "(Lnet/minecraft/network/play/client/CPacketHeldItemChange;)V",
+                    false));
+        }
+    }
 
     @Override
     public void transformMethod(MethodNode method) {
         // Look for methods in the vanilla client packet handling code that involve the player using items
         String usePacketDesc = regexGet(method.desc, USE_PACKET_REGEX, method);
         if (usePacketDesc != null) {
-            InsnList insns = method.instructions;
-            ListIterator<AbstractInsnNode> iter = insns.iterator();
-            while (iter.hasNext()) {
-                AbstractInsnNode insn = iter.next();
-                if (insn instanceof MethodInsnNode && regexMatches(((MethodInsnNode)insn).desc, ITEM_USE_HOOK_DESC_REGEX, insn)) {
-                    InsnList patch = new InsnList();
-                    // This code *roughly* does this:
-                    // EventItemUseResult.onItemUseResult(result, packetIn, this.playerEntity);
-                    // onItemUseResult returns void so we have to clone the result object on the stack with DUP
-                    patch.add(new InsnNode(Opcodes.DUP)); // EnumActionResult result
-                    patch.add(new VarInsnNode(Opcodes.ALOAD, 1)); // CPacket[item_use_type] packet
-                    patch.add(new VarInsnNode(Opcodes.ALOAD, 0));
-                    patch.add(new FieldInsnNode(Opcodes.GETFIELD,
-                            NET_HANDLER_PLAY_SERVER.replace('.', '/'),
-                            PLAYER_ENTITY.get(),
-                            "Lnet/minecraft/entity/player/EntityPlayerMP;")); // EntityPlayerMP player
-                    patch.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
-                            "targoss/hardcorealchemy/tweaks/event/EventItemUseResult",
-                            "onItemUseResult",
-                            "(Lnet/minecraft/util/EnumActionResult;" +
-                                    usePacketDesc +
-                                    "Lnet/minecraft/entity/player/EntityPlayer;)V",
-                            false)); // EventItemUseResult.onItemUseResult(result, packetIn, player)
-                    insns.insert(insn, patch);
-                }
-            }
+            transformUseItemMethod(method, usePacketDesc);
+        }
+        
+        if (method.name.equals(PROCESS_HELD_ITEM_CHANGE.get())) {
+            transformHeldItemChangeMethod(method);
         }
     }
 
