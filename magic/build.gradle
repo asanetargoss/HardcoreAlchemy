@@ -73,13 +73,6 @@ task setupRunConfig(type: Copy) {
     into "run/config"
 }
 setupDecompWorkspace.dependsOn setupRunConfig
-// Need to also have an (unused) access transformer file in this project so that the eclipse classpath uses the patched Minecraft jar
-task copyAccessTransformerFromCore(type: Copy) {
-    from "../core/src/main/resources/META-INF/hardcorealchemy_at.cfg"
-    into "src/main/resources/META-INF"
-}
-setupDecompWorkspace.dependsOn copyAccessTransformerFromCore
-processResources.dependsOn copyAccessTransformerFromCore
 
 // Hack to inherit recompiled Minecraft files with access transformers applied from core, so the decompiled Minecraft jar that this subproject depends on is effectively the same as the one in core.
 task setupDecompWorkspace(type: Copy, overwrite: true, dependsOn: project(":core").setupDecompWorkspace) {
@@ -90,6 +83,13 @@ task setupDecompWorkspace(type: Copy, overwrite: true, dependsOn: project(":core
     }
 }
 tasks["eclipse"].dependsOn setupDecompWorkspace
+// Need to also have an (unused) access transformer file in this project so that the eclipse classpath uses the patched Minecraft jar
+task copyAccessTransformerFromCore(type: Copy) {
+    from "../core/src/main/resources/META-INF/hardcorealchemy_at.cfg"
+    into "src/main/resources/META-INF"
+}
+setupDecompWorkspace.dependsOn copyAccessTransformerFromCore
+processResources.dependsOn copyAccessTransformerFromCore
 
 jar {
     manifest {
