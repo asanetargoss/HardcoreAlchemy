@@ -26,7 +26,7 @@ import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import targoss.hardcorealchemy.capability.CapUtil;
+import targoss.hardcorealchemy.capability.VirtualCapabilityManager;
 import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
 import targoss.hardcorealchemy.tweaks.capability.serverdata.CapabilityServerData;
 import targoss.hardcorealchemy.tweaks.capability.serverdata.ICapabilityServerData;
@@ -41,7 +41,7 @@ import targoss.hardcorealchemy.tweaks.capability.serverdata.StorageServerData;
  */
 public class ListenerWorldDifficulty extends HardcoreAlchemyListener {
     @Override
-    public void registerCapabilities(CapabilityManager manager, CapUtil.Manager virtualManager) {
+    public void registerCapabilities(CapabilityManager manager, VirtualCapabilityManager virtualManager) {
         manager.register(ICapabilityServerData.class, new StorageServerData(), CapabilityServerData.class);
     }
     

@@ -15,6 +15,7 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerChangedDimensio
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
 import targoss.hardcorealchemy.capability.CapUtil;
+import targoss.hardcorealchemy.capability.VirtualCapabilityManager;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.creatures.HardcoreAlchemyCreatures;
 import targoss.hardcorealchemy.creatures.capability.instinct.CapabilityInstinct;
@@ -44,7 +45,7 @@ public class ListenerCapabilities extends HardcoreAlchemyListener {
     public static final Capability<ICapabilityMorphState> MORPH_STATE_CAPABILITY = null;
     
     @Override
-    public void registerCapabilities(CapabilityManager manager, CapUtil.Manager virtualManager) {
+    public void registerCapabilities(CapabilityManager manager, VirtualCapabilityManager virtualManager) {
         manager.register(ICapabilityKillCount.class, new StorageKillCount(), CapabilityKillCount.class);
         manager.register(ICapabilityInstinct.class, new StorageInstinct(), CapabilityInstinct.class);
         manager.register(ICapabilityMorphState.class, new StorageMorphState(), CapabilityMorphState.class);

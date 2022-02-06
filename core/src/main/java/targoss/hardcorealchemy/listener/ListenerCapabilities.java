@@ -1,7 +1,7 @@
 package targoss.hardcorealchemy.listener;
 
 import net.minecraftforge.common.capabilities.CapabilityManager;
-import targoss.hardcorealchemy.capability.CapUtil;
+import targoss.hardcorealchemy.capability.VirtualCapabilityManager;
 import targoss.hardcorealchemy.capability.combatlevel.CapabilityCombatLevel;
 import targoss.hardcorealchemy.capability.combatlevel.ICapabilityCombatLevel;
 import targoss.hardcorealchemy.capability.combatlevel.StorageCombatLevel;
@@ -34,7 +34,7 @@ import targoss.hardcorealchemy.capability.tilehistory.StorageTileHistory;
 public class ListenerCapabilities extends HardcoreAlchemyListener {
     
     @Override
-    public void registerCapabilities(CapabilityManager manager, CapUtil.Manager virtualManager) {
+    public void registerCapabilities(CapabilityManager manager, VirtualCapabilityManager virtualManager) {
         manager.register(ICapabilityHumanity.class, new StorageHumanity(), CapabilityHumanity.class);
         manager.register(ICapabilityCombatLevel.class, new StorageCombatLevel(), CapabilityCombatLevel.class);
         manager.register(ICapabilityFood.class, new StorageFood(), CapabilityFood.class);

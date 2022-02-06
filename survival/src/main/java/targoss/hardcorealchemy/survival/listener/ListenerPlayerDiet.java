@@ -41,7 +41,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import targoss.hardcorealchemy.ModState;
-import targoss.hardcorealchemy.capability.CapUtil;
+import targoss.hardcorealchemy.capability.VirtualCapabilityManager;
 import targoss.hardcorealchemy.capability.food.ICapabilityFood;
 import targoss.hardcorealchemy.event.EventCraftPredict;
 import targoss.hardcorealchemy.event.EventPlayerMorphStateChange;
@@ -135,7 +135,7 @@ public class ListenerPlayerDiet extends HardcoreAlchemyListener {
             }
             if (!FoodLists.getIgnoresCrafting(inputStack)) {
                 MorphDiet.Restriction inputRestriction = null;
-                ICapabilityFood inputFoodCap = CapUtil.getVirtualCapability(inputStack, FOOD_CAPABILITY);
+                ICapabilityFood inputFoodCap = VirtualCapabilityManager.INSTANCE.getVirtualCapability(inputStack, FOOD_CAPABILITY, false);
                 if (inputFoodCap != null) {
                     inputRestriction = inputFoodCap.getRestriction();
                 }
@@ -150,9 +150,9 @@ public class ListenerPlayerDiet extends HardcoreAlchemyListener {
         }
         
         if (restriction != null) {
-            ICapabilityFood capabilityFood = FOOD_CAPABILITY.getDefaultInstance();
-            capabilityFood.setRestriction(restriction);
-            CapUtil.setVirtualCapability(outputStack, FOOD_CAPABILITY, capabilityFood);
+            ICapabilityFood outputFoodCap = VirtualCapabilityManager.INSTANCE.getVirtualCapability(outputStack, FOOD_CAPABILITY, true);
+            outputFoodCap.setRestriction(restriction);
+            VirtualCapabilityManager.INSTANCE.updateVirtualCapability(outputStack, FOOD_CAPABILITY);
         }
     }
 
@@ -166,7 +166,7 @@ public class ListenerPlayerDiet extends HardcoreAlchemyListener {
         EntityPlayer player = event.getEntityPlayer();
         MorphDiet.Needs needs = NutritionExtension.INSTANCE.getNeeds(player);
         
-        ICapabilityFood capabilityFood = CapUtil.getVirtualCapability(itemStack, FOOD_CAPABILITY);
+        ICapabilityFood capabilityFood = VirtualCapabilityManager.INSTANCE.getVirtualCapability(itemStack, FOOD_CAPABILITY, false);
         MorphDiet.Restriction itemRestriction = null;
         if (capabilityFood != null) {
             itemRestriction = capabilityFood.getRestriction();

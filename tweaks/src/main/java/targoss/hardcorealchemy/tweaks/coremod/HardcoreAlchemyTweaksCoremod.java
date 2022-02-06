@@ -9,6 +9,7 @@ import net.minecraftforge.fml.common.ModMetadata;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 import targoss.hardcorealchemy.tweaks.HardcoreAlchemyTweaks;
+import targoss.hardcorealchemy.tweaks.coremod.transform.TContainer;
 import targoss.hardcorealchemy.tweaks.coremod.transform.TEntityAIAttackMelee;
 import targoss.hardcorealchemy.tweaks.coremod.transform.TEntityArrow;
 import targoss.hardcorealchemy.tweaks.coremod.transform.TEntityLivingBase;
@@ -40,7 +41,8 @@ public class HardcoreAlchemyTweaksCoremod implements IFMLLoadingPlugin {
             TPlayerInteractionManager.class.getName(),
             TEntityAIAttackMelee.class.getName(),
             TEntityArrow.class.getName(),
-            TGuiIngame.class.getName()
+            TGuiIngame.class.getName(),
+            TContainer.class.getName()
         };
     }
 

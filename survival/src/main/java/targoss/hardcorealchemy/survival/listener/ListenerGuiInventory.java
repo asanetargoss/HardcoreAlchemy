@@ -25,7 +25,7 @@ import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import targoss.hardcorealchemy.capability.CapUtil;
+import targoss.hardcorealchemy.capability.VirtualCapabilityManager;
 import targoss.hardcorealchemy.capability.food.ICapabilityFood;
 import targoss.hardcorealchemy.capability.food.ProviderFood;
 import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
@@ -41,7 +41,7 @@ public class ListenerGuiInventory extends HardcoreAlchemyListener {
 
         // We're on the client side. NBT tags are synchronized, but we need to
         // turn it into a capability ourselves.
-        ICapabilityFood capabilityFood = CapUtil.getVirtualCapability(itemStack, ProviderFood.FOOD_CAPABILITY);
+        ICapabilityFood capabilityFood = VirtualCapabilityManager.INSTANCE.getVirtualCapability(itemStack, ProviderFood.FOOD_CAPABILITY, false);
         if (capabilityFood != null) {
             itemRestriction = capabilityFood.getRestriction();
         }

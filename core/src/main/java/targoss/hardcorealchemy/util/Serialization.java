@@ -38,7 +38,8 @@ public class Serialization {
         }
         return nbtType;
     }
-    
+
+    public static final int NBT_FLOAT_ID = checkForNBTType("FLOAT");
     public static final int NBT_STRING_ID = checkForNBTType("STRING");
     public static final int NBT_LIST_ID = checkForNBTType("LIST");
     public static final int NBT_COMPOUND_ID = checkForNBTType("COMPOUND");

@@ -57,4 +57,7 @@ public interface ICapabilityMisc {
     /** May be -1 if unset */
     int getLastItem();
     void setLastItem(int lastItem);
+    /** Sent from client, used for storing render state when crafting timefrozen items */
+    Map<String, Float> getEnqueuedItemModelProperties();
+    void setEnqueuedItemModelProperties(Map<String, Float> enqueuedItemModelProperties);
 }

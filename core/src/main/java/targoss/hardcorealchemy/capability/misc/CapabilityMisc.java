@@ -47,6 +47,7 @@ public class CapabilityMisc implements ICapabilityMisc {
     protected int fireCache = -1;
     protected @Nullable DamageSource lastDamageSource;
     protected int lastItem = -1;
+    protected Map<String, Float> enqueuedItemModelProperties = new HashMap<>();
 
     @Override
     public UUID getLifetimeUUID() {
@@ -136,5 +137,15 @@ public class CapabilityMisc implements ICapabilityMisc {
     @Override
     public void setLastItem(int lastItem) {
         this.lastItem = lastItem;
+    }
+
+    @Override
+    public Map<String, Float> getEnqueuedItemModelProperties() {
+        return this.enqueuedItemModelProperties;
+    }
+
+    @Override
+    public void setEnqueuedItemModelProperties(Map<String, Float> enqueuedItemModelProperties) {
+        this.enqueuedItemModelProperties = enqueuedItemModelProperties;
     }
 }

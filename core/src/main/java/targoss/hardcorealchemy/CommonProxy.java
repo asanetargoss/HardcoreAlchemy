@@ -30,7 +30,7 @@ import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
-import targoss.hardcorealchemy.capability.CapUtil;
+import targoss.hardcorealchemy.capability.VirtualCapabilityManager;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.entity.Entities;
 import targoss.hardcorealchemy.incantation.Incantations;
@@ -95,7 +95,7 @@ public class CommonProxy {
             MinecraftForge.EVENT_BUS.register(listener);
         }
         for (HardcoreAlchemyListener listener : listeners) {
-            listener.registerCapabilities(CapabilityManager.INSTANCE, CapUtil.Manager.INSTANCE);
+            listener.registerCapabilities(CapabilityManager.INSTANCE, VirtualCapabilityManager.INSTANCE);
         }
         for (HardcoreAlchemyListener listener : listeners) {
             listener.init(event);

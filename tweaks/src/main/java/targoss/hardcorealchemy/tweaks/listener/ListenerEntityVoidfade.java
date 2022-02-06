@@ -29,6 +29,7 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -63,7 +64,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerChangedDimensionEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.items.IItemHandler;
-import targoss.hardcorealchemy.capability.CapUtil;
+import targoss.hardcorealchemy.capability.VirtualCapabilityManager;
 import targoss.hardcorealchemy.capability.dimensionhistory.ICapabilityDimensionHistory;
 import targoss.hardcorealchemy.capability.entitystate.ICapabilityEntityState;
 import targoss.hardcorealchemy.capability.entitystate.ProviderEntityState;
@@ -98,29 +99,24 @@ public class ListenerEntityVoidfade extends HardcoreAlchemyListener {
      * The returned history should always have a length of at least one.
      * WARNING: Be sure to call CapUtil.setVirtualCapability
      */
-    public static @Nullable ICapabilityDimensionHistory getOrInitDimensionHistory(ItemStack itemStack, int initialDimension, DimensionHistoryChangedFlag changedFlag) {
+    protected static @Nullable ICapabilityDimensionHistory getOrSpawnDimensionHistory(ItemStack itemStack, int initialDimension, DimensionHistoryChangedFlag changedFlag) {
         if (itemStack.getItem() != net.minecraft.init.Items.QUARTZ &&
             itemStack.getItem() != Items.DIMENSIONAL_FLUX_CRYSTAL) {
             return null;
         }
-        ICapabilityDimensionHistory dimHistoryCap = null;
-        if (!CapUtil.hasVirtualCapability(itemStack, DIMENSION_HISTORY_CAPABILITY)) {
+        ICapabilityDimensionHistory dimHistoryCap = VirtualCapabilityManager.INSTANCE.getVirtualCapability(itemStack, DIMENSION_HISTORY_CAPABILITY, false);
+        if (dimHistoryCap == null) {
             dimHistoryCap = DIMENSION_HISTORY_CAPABILITY.getDefaultInstance();
-            changedFlag.changed = true;
-        } else {
-            dimHistoryCap = CapUtil.getVirtualCapability(itemStack, DIMENSION_HISTORY_CAPABILITY);
         }
-        if (dimHistoryCap != null) {
-            if (dimHistoryCap.getDimensionHistory().size() == 0) {
-                dimHistoryCap.getDimensionHistory().add(initialDimension);
-                changedFlag.changed = true;
-            }
+        if (dimHistoryCap.getDimensionHistory().size() == 0) {
+            dimHistoryCap.getDimensionHistory().add(initialDimension);
+            changedFlag.changed = true;
         }
         return dimHistoryCap;
     }
 
     public static @Nullable ICapabilityDimensionHistory appendDimensionHistory(ItemStack itemStack, int newDimension, DimensionHistoryChangedFlag changedFlag) {
-        ICapabilityDimensionHistory dimHistoryCap = getOrInitDimensionHistory(itemStack, newDimension, changedFlag);
+        ICapabilityDimensionHistory dimHistoryCap = getOrSpawnDimensionHistory(itemStack, newDimension, changedFlag);
         if (dimHistoryCap != null) {
             List<Integer> dimHistory = dimHistoryCap.getDimensionHistory();
             if (dimHistory.size() < 12) {
@@ -152,7 +148,7 @@ public class ListenerEntityVoidfade extends HardcoreAlchemyListener {
         if (event.getItemStack().getItem() != Items.DIMENSIONAL_FLUX_CRYSTAL) {
             return;
         }
-        ICapabilityDimensionHistory history = getOrInitDimensionHistory(event.getItemStack(), event.getEntityPlayer().world.provider.getDimension(), DimensionHistoryChangedFlag.IGNORE_CHANGES);
+        ICapabilityDimensionHistory history = getOrSpawnDimensionHistory(event.getItemStack(), event.getEntityPlayer().world.provider.getDimension(), DimensionHistoryChangedFlag.IGNORE_CHANGES);
         if (history == null) {
             event.getToolTip().add(new TextComponentTranslation("hardcorealchemy.dimensional_flux_crystal.description.origin", getDimensionName(null)).getFormattedText());
             event.getToolTip().add(new TextComponentTranslation("hardcorealchemy.dimensional_flux_crystal.description.fluxed_unknown_one").getFormattedText());
@@ -195,9 +191,21 @@ public class ListenerEntityVoidfade extends HardcoreAlchemyListener {
             newHistoryCrystal = itemStack;
             itemStack.setItem(newItem);
         }
-        CapUtil.setVirtualCapability(newHistoryCrystal, DIMENSION_HISTORY_CAPABILITY, dimHistoryCap);
-        changedFlag.changed = true;
+        VirtualCapabilityManager.INSTANCE.setVirtualCapability(newHistoryCrystal, DIMENSION_HISTORY_CAPABILITY, dimHistoryCap);
+        VirtualCapabilityManager.INSTANCE.updateVirtualCapability(newHistoryCrystal, DIMENSION_HISTORY_CAPABILITY);
         return newHistoryCrystal;
+    }
+    
+    /**
+     * WARNING: This doesn't automatically serialize the item's capability
+     */
+    public static @Nullable ICapabilityDimensionHistory getOrInitDimensionHistoryInPlace(ItemStack itemStack, int initialDimension) {
+        DimensionHistoryChangedFlag changedFlag = new DimensionHistoryChangedFlag();
+        ICapabilityDimensionHistory dimHistoryCap = getOrSpawnDimensionHistory(itemStack, initialDimension, changedFlag);
+        if (changedFlag.changed) {
+            VirtualCapabilityManager.INSTANCE.setVirtualCapability(itemStack, DIMENSION_HISTORY_CAPABILITY, dimHistoryCap);
+        }
+        return dimHistoryCap;
     }
     
     protected static class FluxifyItemFunc implements InventoryUtil.ItemFunc {
@@ -226,12 +234,18 @@ public class ListenerEntityVoidfade extends HardcoreAlchemyListener {
     
     protected static void fluxifyItems(EntityLivingBase entity, int previousDimension, int currentDimension) {
         List<IItemHandler> inventories = InventoryExtension.INSTANCE.getLocalInventories(entity);
-        InventoryExtension.INSTANCE.forEachItemRecursive(inventories, new FluxifyItemFunc(previousDimension, currentDimension));
+        boolean changed = InventoryExtension.INSTANCE.forEachItemRecursive(inventories, new FluxifyItemFunc(previousDimension, currentDimension));
+        if (changed && (entity instanceof EntityPlayerMP)) {
+            EntityPlayer player = (EntityPlayer)entity;
+            player.inventoryContainer.detectAndSendChanges();
+        }
     }
     
     protected static void handleTraveledDimensionally(EntityLivingBase entityLiving, int previousDimension, int currentDimension) {
         applyVoidfade(entityLiving, 20);
-        fluxifyItems(entityLiving, previousDimension, currentDimension);
+        if (!entityLiving.world.isRemote) {
+            fluxifyItems(entityLiving, previousDimension, currentDimension);
+        }
     }
     
     protected void handleEntityLivingEnteringDimension(EntityLivingBase entityLiving, boolean definitelyTraveledToDimension) {
@@ -402,6 +416,9 @@ public class ListenerEntityVoidfade extends HardcoreAlchemyListener {
     
     @SubscribeEvent
     public void onPlayerInventorySlotSet(EventPlayerInventorySlotSet event) {
+        if (event.inventoryPlayer.player.world.isRemote) {
+            return;
+        }
         ItemStack itemStack = event.itemStack;
         if (itemStack == null) {
             return;

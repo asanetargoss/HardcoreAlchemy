@@ -26,7 +26,7 @@ import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
-import targoss.hardcorealchemy.capability.CapUtil;
+import targoss.hardcorealchemy.capability.VirtualCapabilityManager;
 import targoss.hardcorealchemy.config.Configs;
 
 /**
@@ -48,7 +48,7 @@ public abstract class HardcoreAlchemyListener {
     
     public void preInit(FMLPreInitializationEvent event) { }
     
-    public void registerCapabilities(CapabilityManager manager, CapUtil.Manager virtualManager) { }
+    public void registerCapabilities(CapabilityManager manager, VirtualCapabilityManager virtualManager) { }
     
     public void init(FMLInitializationEvent event) { }
     
