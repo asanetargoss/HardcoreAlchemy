@@ -18,6 +18,8 @@
 
 package targoss.hardcorealchemy.modpack.guide;
 
+import static targoss.hardcorealchemy.tweaks.item.Items.DIMENSIONAL_FLUX_CRYSTAL;
+
 import amerifrance.guideapi.api.GuideAPI;
 import amerifrance.guideapi.api.impl.Book;
 import net.minecraft.item.Item;
@@ -63,6 +65,9 @@ public class HCAModpackGuide {
                         .addEntry("ability_primitive_sustenance", "grass", "1")
                         .addEntry("instinct_homesick_nature", "sapling", "1")
                         .addEntry("instinct_homesick_nether", "magma_cream", "1")
+                        .build())
+                .addCategory(new BookBuilder.Category().setId("curiosities").setItemId(DIMENSIONAL_FLUX_CRYSTAL.getRegistryName().toString())
+                        .addEntry("dimensional_flux_crystals", DIMENSIONAL_FLUX_CRYSTAL.getRegistryName().toString(), "1", "2")
                         .build())
                 .build();
             

@@ -1,5 +1,5 @@
 #
-# Copyright 2017-2018 asanetargoss
+# Copyright 2017-2022 asanetargoss
 # 
 # This file is part of Hardcore Alchemy translations.
 # 
@@ -174,3 +174,12 @@ hardcorealchemy.guide.morphing.instinct_homesick_nature.1=If you find yourself i
 ## A Calculated Risk: Call of The Nether
 hardcorealchemy.guide.morphing.instinct_homesick_nether.title=Call of The Nether
 hardcorealchemy.guide.morphing.instinct_homesick_nether.1=Should you become stuck in a form from a more infernal realm, it may be wise to keep a Nether portal close at hand. Without the heat of the Nether, your body will begin to cool, and sources of cold will increasingly weaken you and slow you down. Fire or lava from the overworld may restore your warmth at first, but you will eventually lose control over your newly restored flame, and find yourself setting things on fire that you didn't intend to. Accidental pyromancy can be very destructive, but on the other hand, the Nether is very dangerous, even to a creature native to it. An occasional visit to the nether should be enough to stabilize the flame.
+
+
+## Curiosities
+hardcorealchemy.guide.curiosities.title=Curiosities
+
+## Curiosities: Dimensional Flux Crystals
+hardcorealchemy.guide.curiosities.dimensional_flux_crystals.title=Dimensional Flux Crystals
+hardcorealchemy.guide.curiosities.dimensional_flux_crystals.1=Dimensional Flux Crystals are newly discovered, exotic materials which are imbued with the energy of the dimension they came from. When dissolved into a potion and consumed, the drinker becomes temporarily like a ghost, unable to be harmed by the world nor able to interact with it. The potion's duration can be extended significantly with redstone.
+hardcorealchemy.guide.curiosities.dimensional_flux_crystals.2=The crystals can also be used to freeze an item in time, when combined with snowballs. Timefrozen food will not spoil, while timefrozen clocks will freeze in place. In general, any object which is timefrozen will do nothing, and cannot be interacted with or crafted with, except to craft the object back into its original, temporal form. Almost any item can be timefrozen. Keep in mind that Dimensional Flux Crystals used for timefreezing are destroyed.
