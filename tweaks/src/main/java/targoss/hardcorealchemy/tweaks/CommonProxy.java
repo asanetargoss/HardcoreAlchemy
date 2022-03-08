@@ -15,6 +15,7 @@ import targoss.hardcorealchemy.tweaks.listener.ListenerPlayerSlip;
 import targoss.hardcorealchemy.tweaks.listener.ListenerCraftTimefrozen;
 import targoss.hardcorealchemy.tweaks.listener.ListenerWorldDifficulty;
 import targoss.hardcorealchemy.tweaks.network.RequestCraftItemTimefrozen;
+import targoss.hardcorealchemy.tweaks.research.Studies;
 
 public class CommonProxy {
     public NetMessenger<HardcoreAlchemyTweaks> messenger;
@@ -34,6 +35,9 @@ public class CommonProxy {
         HardcoreAlchemy.proxy.addListener(new ListenerPlayerShield());
         HardcoreAlchemy.proxy.addListener(new ListenerMobEffect());
         HardcoreAlchemy.proxy.addListener(new ListenerCraftTimefrozen());
+        
+        // Initialize via classload
+        new Studies();
         
         registerNetworking();
     }

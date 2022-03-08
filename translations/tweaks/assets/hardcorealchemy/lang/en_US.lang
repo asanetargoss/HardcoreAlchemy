@@ -20,6 +20,10 @@ language.name=English
 language.region=United States
 language.code=en_US
 
+# Research
+
+hardcorealchemy.research.knowledge_fact.dimensional_flux_crystal_accident.acquire=The crystals in your pocket have transformed into something new.
+
 # Items, Potions
 
 item.hardcorealchemy:timefrozen.name=Timefrozen %s

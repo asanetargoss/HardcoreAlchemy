@@ -29,7 +29,6 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -71,9 +70,11 @@ import targoss.hardcorealchemy.capability.entitystate.ProviderEntityState;
 import targoss.hardcorealchemy.capability.misc.ICapabilityMisc;
 import targoss.hardcorealchemy.capability.misc.ProviderMisc;
 import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
+import targoss.hardcorealchemy.listener.ListenerPlayerResearch;
 import targoss.hardcorealchemy.tweaks.event.EventPlayerDamageBlockSound;
 import targoss.hardcorealchemy.tweaks.event.EventPlayerInventorySlotSet;
 import targoss.hardcorealchemy.tweaks.item.Items;
+import targoss.hardcorealchemy.tweaks.research.Studies;
 import targoss.hardcorealchemy.util.InventoryExtension;
 import targoss.hardcorealchemy.util.InventoryUtil;
 import targoss.hardcorealchemy.util.MorphExtension;
@@ -235,9 +236,14 @@ public class ListenerEntityVoidfade extends HardcoreAlchemyListener {
     protected static void fluxifyItems(EntityLivingBase entity, int previousDimension, int currentDimension) {
         List<IItemHandler> inventories = InventoryExtension.INSTANCE.getLocalInventories(entity);
         boolean changed = InventoryExtension.INSTANCE.forEachItemRecursive(inventories, new FluxifyItemFunc(previousDimension, currentDimension));
-        if (changed && (entity instanceof EntityPlayerMP)) {
-            EntityPlayer player = (EntityPlayer)entity;
-            player.inventoryContainer.detectAndSendChanges();
+        if (changed) {
+            if (entity instanceof EntityPlayer) {
+                EntityPlayer player = (EntityPlayer)entity;
+                ListenerPlayerResearch.acquireFactAndSendChatMessage(player, Studies.DIMENSIONAL_FLUX_CRYSTAL_ACCIDENT);
+                if (!player.world.isRemote) {
+                    player.inventoryContainer.detectAndSendChanges();
+                }
+            }
         }
     }
     
