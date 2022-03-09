@@ -20,6 +20,8 @@
 
 package targoss.hardcorealchemy.tweaks.coremod.transform;
 
+import javax.annotation.Nullable;
+
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.FrameNode;
 import org.objectweb.asm.tree.InsnList;
@@ -30,13 +32,17 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
+import net.minecraft.item.ItemStack;
+import targoss.hardcorealchemy.coremod.CoremodHook;
 import targoss.hardcorealchemy.coremod.MethodPatcher;
 import targoss.hardcorealchemy.coremod.ObfuscatedName;
+import targoss.hardcorealchemy.tweaks.listener.ListenerEntityVoidfade;
 
 public class TInventoryPlayer extends MethodPatcher {
     protected static final String INVENTORY_PLAYER = "net.minecraft.entity.player.InventoryPlayer";
     protected static final ObfuscatedName SET_INVENTORY_SLOT_CONTENTS = new ObfuscatedName("func_70299_a" /*setInventorySlotContents*/);
     protected static final ObfuscatedName ADD_ITEM_STACK_TO_INVENTORY = new ObfuscatedName("func_70441_a" /*addItemStackToInventory*/);
+    protected static final ObfuscatedName CAN_MERGE_STACKS = new ObfuscatedName("func_184436_a" /*canMergeStacks*/);
 
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
@@ -61,7 +67,7 @@ public class TInventoryPlayer extends MethodPatcher {
             patch.add(new VarInsnNode(Opcodes.ASTORE, 2));
             method.instructions.insert(patch);
         }
-        if (method.name.equals(ADD_ITEM_STACK_TO_INVENTORY.get())) {
+        else if (method.name.equals(ADD_ITEM_STACK_TO_INVENTORY.get())) {
             InsnList patch = new InsnList();
             patch.add(new VarInsnNode(Opcodes.ALOAD, 0)); // InventoryPlayer
             /* NOTE: The itemStack parameter of this method is final. However,
@@ -81,6 +87,29 @@ public class TInventoryPlayer extends MethodPatcher {
             patch.add(new FrameNode(Opcodes.F_SAME, 0, null, 0, null));
             method.instructions.insert(patch);
         }
+        else if (method.name.equals(CAN_MERGE_STACKS.get())) {
+            InsnList patch = new InsnList();
+            patch.add(new VarInsnNode(Opcodes.ALOAD, 1)); // ItemStack currently in the slot (may be empty)
+            patch.add(new VarInsnNode(Opcodes.ALOAD, 2)); // ItemStack to be merged into in the slot (non-empty)
+            patch.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
+                    this.getClass().getName().replace('.', '/') + "$Hooks",
+                    "onCheckMergeStacks",
+                    "(Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;)Z",
+                    false));
+            LabelNode keepCheckingMergeStacks = new LabelNode();
+            patch.add(new JumpInsnNode(Opcodes.IFEQ, keepCheckingMergeStacks));
+            patch.add(new InsnNode(Opcodes.ICONST_1));
+            patch.add(new InsnNode(Opcodes.IRETURN));
+            patch.add(keepCheckingMergeStacks);
+            patch.add(new FrameNode(Opcodes.F_SAME, 0, null, 0, null));
+            method.instructions.insert(patch);
+        }
     }
-
+    
+    public static class Hooks {
+        @CoremodHook
+        public static boolean onCheckMergeStacks(@Nullable ItemStack stackInSlot, ItemStack incomingStack) {
+            return ListenerEntityVoidfade.canMergeQuartzStacks(stackInSlot, incomingStack);
+        }
+    }
 }

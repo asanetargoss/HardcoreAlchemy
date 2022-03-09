@@ -449,6 +449,26 @@ public class ListenerEntityVoidfade extends HardcoreAlchemyListener {
         event.itemStack = itemStack;
     }
     
+    /**
+     * Adding dimension history to Nether Quartz when it enters the player's inventory prevents
+     * newly acquired quartz from stacking with existing quartz. To work around this, change the
+     * player inventory stacking logic to allow "new" quartz to stack with existing quartz with
+     * dimension history. This works because we assume Nether quartz in the player's inventory
+     * is from the same dimension -- otherwise it wouldn't be Nether Quartz!
+     */
+    public static boolean canMergeQuartzStacks(@Nullable ItemStack stackInSlot, ItemStack incomingStack) {
+        if (InventoryUtil.isEmptyItemStack(stackInSlot)) {
+            return false;
+        }
+        if (stackInSlot.getItem() != net.minecraft.init.Items.QUARTZ) {
+            return false;
+        }
+        if (incomingStack.getItem() != net.minecraft.init.Items.QUARTZ) {
+            return false;
+        }
+        return !VirtualCapabilityManager.INSTANCE.hasVirtualCapability(incomingStack, DIMENSION_HISTORY_CAPABILITY);
+    }
+    
     public static class ClientSide extends HardcoreAlchemyListener {
         private static final Minecraft mc = Minecraft.getMinecraft();
         
