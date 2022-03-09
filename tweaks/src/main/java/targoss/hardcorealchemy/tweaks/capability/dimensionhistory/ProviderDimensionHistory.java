@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.capability.dimensionhistory;
+package targoss.hardcorealchemy.tweaks.capability.dimensionhistory;
 
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.EnumFacing;

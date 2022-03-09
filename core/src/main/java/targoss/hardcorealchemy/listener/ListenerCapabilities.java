@@ -5,10 +5,6 @@ import targoss.hardcorealchemy.capability.VirtualCapabilityManager;
 import targoss.hardcorealchemy.capability.combatlevel.CapabilityCombatLevel;
 import targoss.hardcorealchemy.capability.combatlevel.ICapabilityCombatLevel;
 import targoss.hardcorealchemy.capability.combatlevel.StorageCombatLevel;
-import targoss.hardcorealchemy.capability.dimensionhistory.CapabilityDimensionHistory;
-import targoss.hardcorealchemy.capability.dimensionhistory.ICapabilityDimensionHistory;
-import targoss.hardcorealchemy.capability.dimensionhistory.ProviderDimensionHistory;
-import targoss.hardcorealchemy.capability.dimensionhistory.StorageDimensionHistory;
 import targoss.hardcorealchemy.capability.entitystate.CapabilityEntityState;
 import targoss.hardcorealchemy.capability.entitystate.ICapabilityEntityState;
 import targoss.hardcorealchemy.capability.entitystate.StorageEntityState;
@@ -44,8 +40,6 @@ public class ListenerCapabilities extends HardcoreAlchemyListener {
         manager.register(ICapabilityEntityState.class, new StorageEntityState(), CapabilityEntityState.class);
         manager.register(ICapabilityTileHistory.class, new StorageTileHistory(), CapabilityTileHistory.class);
         manager.register(ICapabilityResearch.class, new StorageResearch(), CapabilityResearch.class);
-        manager.register(ICapabilityDimensionHistory.class, new StorageDimensionHistory(), CapabilityDimensionHistory.class);
-        virtualManager.registerVirtualCapability(CapabilityDimensionHistory.RESOURCE_LOCATION, ProviderDimensionHistory.DIMENSION_HISTORY_CAPABILITY);
     }
 
 }

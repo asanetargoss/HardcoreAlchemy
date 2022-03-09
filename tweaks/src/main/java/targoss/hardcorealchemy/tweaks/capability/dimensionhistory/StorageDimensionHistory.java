@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.capability.dimensionhistory;
+package targoss.hardcorealchemy.tweaks.capability.dimensionhistory;
 
 import static targoss.hardcorealchemy.util.Serialization.NBT_INT_ARRAY_ID;
 

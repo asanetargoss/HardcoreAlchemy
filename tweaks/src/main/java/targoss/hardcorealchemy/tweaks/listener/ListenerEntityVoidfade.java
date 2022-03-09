@@ -48,6 +48,7 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -64,13 +65,16 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerChangedDimensio
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.items.IItemHandler;
 import targoss.hardcorealchemy.capability.VirtualCapabilityManager;
-import targoss.hardcorealchemy.capability.dimensionhistory.ICapabilityDimensionHistory;
 import targoss.hardcorealchemy.capability.entitystate.ICapabilityEntityState;
 import targoss.hardcorealchemy.capability.entitystate.ProviderEntityState;
 import targoss.hardcorealchemy.capability.misc.ICapabilityMisc;
 import targoss.hardcorealchemy.capability.misc.ProviderMisc;
 import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
 import targoss.hardcorealchemy.listener.ListenerPlayerResearch;
+import targoss.hardcorealchemy.tweaks.capability.dimensionhistory.CapabilityDimensionHistory;
+import targoss.hardcorealchemy.tweaks.capability.dimensionhistory.ICapabilityDimensionHistory;
+import targoss.hardcorealchemy.tweaks.capability.dimensionhistory.ProviderDimensionHistory;
+import targoss.hardcorealchemy.tweaks.capability.dimensionhistory.StorageDimensionHistory;
 import targoss.hardcorealchemy.tweaks.event.EventPlayerDamageBlockSound;
 import targoss.hardcorealchemy.tweaks.event.EventPlayerInventorySlotSet;
 import targoss.hardcorealchemy.tweaks.item.Items;
@@ -82,6 +86,12 @@ import targoss.hardcorealchemy.util.MorphExtension;
 public class ListenerEntityVoidfade extends HardcoreAlchemyListener {
     @CapabilityInject(ICapabilityDimensionHistory.class)
     public static final Capability<ICapabilityDimensionHistory> DIMENSION_HISTORY_CAPABILITY = null;
+    
+    @Override
+    public void registerCapabilities(CapabilityManager manager, VirtualCapabilityManager virtualManager) {
+        manager.register(ICapabilityDimensionHistory.class, new StorageDimensionHistory(), CapabilityDimensionHistory.class);
+        virtualManager.registerVirtualCapability(CapabilityDimensionHistory.RESOURCE_LOCATION, ProviderDimensionHistory.DIMENSION_HISTORY_CAPABILITY);
+    }
 
     protected static void applyVoidfade(EntityLivingBase entity, int durationSeconds) {
         if (MorphExtension.INSTANCE.isGhost(entity)) {

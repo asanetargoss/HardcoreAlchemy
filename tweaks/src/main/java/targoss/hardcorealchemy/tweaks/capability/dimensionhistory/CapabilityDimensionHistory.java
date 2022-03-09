@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.capability.dimensionhistory;
+package targoss.hardcorealchemy.tweaks.capability.dimensionhistory;
 
 import java.util.ArrayList;
 import java.util.List;
