@@ -36,7 +36,6 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.capability.CapUtil;
 import targoss.hardcorealchemy.capability.entitystate.CapabilityEntityState;
-import targoss.hardcorealchemy.capability.entitystate.ICapabilityEntityState;
 import targoss.hardcorealchemy.capability.entitystate.ProviderEntityState;
 import targoss.hardcorealchemy.capability.humanity.CapabilityHumanity;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
@@ -53,8 +52,7 @@ import targoss.hardcorealchemy.capability.research.ProviderResearch;
 import targoss.hardcorealchemy.network.MessageInactiveCapabilities;
 
 /**
- * This listener handles most (but not all) of the lifecycles of capabilities and some attributes.
- * I may have missed some.
+ * This listener handles lifecycles of some capabilities.
  * Certain capabilities are cleared on death, or after death.
  * The capability clearing process is a bit complicated due to
  * Dissolution compat, and the different lifetime needs of various capabilities.
@@ -62,9 +60,6 @@ import targoss.hardcorealchemy.network.MessageInactiveCapabilities;
  * temporarily losing magic ability.
  */
 public class ListenerEntityCapabilities extends HardcoreAlchemyListener {
-    @CapabilityInject(ICapabilityEntityState.class)
-    public static final Capability<ICapabilityEntityState> ENTITY_STATE_CAPABILITY = null;
-    
     @CapabilityInject(IInactiveCapabilities.class)
     public static final Capability<IInactiveCapabilities> INACTIVE_CAPABILITIES = null;
     @CapabilityInject(ICapabilityMisc.class)
