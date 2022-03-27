@@ -27,3 +27,19 @@ hardcorealchemy.research.knowledge_fact.dimensional_flux_crystal_accident.acquir
 # Items, Potions
 
 item.hardcorealchemy:timefrozen.name=Timefrozen %s
+
+# Hearts
+
+item.hardcorealchemy:heart_flame.name=Heart of Flame
+item.hardcorealchemy:heart_flame_shard.name=Broken Heart of Flame
+item.hardcorealchemy:heart_hunter.name=Heart of the Hunter
+item.hardcorealchemy:heart_hunter_shard.name=Broken Heart of the Hunter
+item.hardcorealchemy:heart_tears.name=Heart of Tears
+item.hardcorealchemy:heart_tears_shard.name=Broken Heart of Tears
+
+hardcorealchemy.heart.already_added=You already have this heart.
+hardcorealchemy.heart.generic_hint.1=Can only acquire once per life.
+hardcorealchemy.heart.generic_hint.2=Must not already have the heart.
+hardcorealchemy.heart.flame.hint=Trial by fire. Must take damage.
+hardcorealchemy.heart.hunter.hint=Kill 5 hostile creatures in 2 minutes. No repeats.
+hardcorealchemy.heart.tears.hint=Kill a Ghast.

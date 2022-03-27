@@ -36,6 +36,7 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.EnumCreatureType;
+import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.player.EntityPlayer;
@@ -240,6 +241,29 @@ public class EntityUtil {
             aiTargetTasksOriginal.addAll(aiTargetTasksCopy);
             return aiTargetTasksAll;
         }
+    }
+    
+    /**
+     * A hostile mob is a mob that attacks players, generally without provocation.
+     * This function tries to detect if a mob is hostile based on its AI.
+     */
+    public static boolean isHostileMob(EntityLiving entity) {
+        Set<EntityAITasks.EntityAITaskEntry> aiTargetTasks = getAiTargetTasks(entity);
+        for (EntityAITasks.EntityAITaskEntry entry : aiTargetTasks) {
+            if (entry.action instanceof EntityAINearestAttackableTarget) {
+                @SuppressWarnings("rawtypes")
+                Class<?> targetClass = ((EntityAINearestAttackableTarget)entry.action).targetClass;
+                if (EntityPlayer.class.isAssignableFrom(targetClass)) {
+                    return true;
+                }
+            }
+            if (entry.action.getClass().getSimpleName().toLowerCase().contains("player")) {
+                // Probably a player-targeting class
+                return true;
+            }
+        }
+
+        return false;
     }
     
     // Adapted from ItemMonsterPlacer.spawnCreature (1.10.2 stable)

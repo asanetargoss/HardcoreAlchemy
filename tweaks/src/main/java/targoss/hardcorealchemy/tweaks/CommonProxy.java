@@ -1,19 +1,24 @@
 package targoss.hardcorealchemy.tweaks;
 
+import static targoss.hardcorealchemy.item.Items.HEARTS;
+
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 import targoss.hardcorealchemy.network.NetMessenger;
 import targoss.hardcorealchemy.tweaks.item.Items;
 import targoss.hardcorealchemy.tweaks.listener.ListenerBedBreakHarvest;
+import targoss.hardcorealchemy.tweaks.listener.ListenerCraftTimefrozen;
 import targoss.hardcorealchemy.tweaks.listener.ListenerEntityVoidfade;
+import targoss.hardcorealchemy.tweaks.listener.ListenerHeartShards;
+import targoss.hardcorealchemy.tweaks.listener.ListenerHearts;
 import targoss.hardcorealchemy.tweaks.listener.ListenerInventoryFoodRot;
 import targoss.hardcorealchemy.tweaks.listener.ListenerMobEffect;
 import targoss.hardcorealchemy.tweaks.listener.ListenerMobLevel;
 import targoss.hardcorealchemy.tweaks.listener.ListenerPlayerShield;
 import targoss.hardcorealchemy.tweaks.listener.ListenerPlayerSlip;
-import targoss.hardcorealchemy.tweaks.listener.ListenerCraftTimefrozen;
 import targoss.hardcorealchemy.tweaks.listener.ListenerWorldDifficulty;
+import targoss.hardcorealchemy.tweaks.network.MessageHearts;
 import targoss.hardcorealchemy.tweaks.network.RequestCraftItemTimefrozen;
 import targoss.hardcorealchemy.tweaks.research.Studies;
 
@@ -22,7 +27,8 @@ public class CommonProxy {
     
     public void registerNetworking() {
         messenger = new NetMessenger<HardcoreAlchemyTweaks>(HardcoreAlchemyTweaks.MOD_ID.replace(HardcoreAlchemy.MOD_ID, HardcoreAlchemy.SHORT_MOD_ID))
-            .register(new RequestCraftItemTimefrozen());
+            .register(new RequestCraftItemTimefrozen())
+            .register(new MessageHearts());
     }
     
     public void preInit(FMLPreInitializationEvent event) {
@@ -35,7 +41,12 @@ public class CommonProxy {
         HardcoreAlchemy.proxy.addListener(new ListenerPlayerShield());
         HardcoreAlchemy.proxy.addListener(new ListenerMobEffect());
         HardcoreAlchemy.proxy.addListener(new ListenerCraftTimefrozen());
-        
+        HardcoreAlchemy.proxy.addListener(new ListenerHearts());
+        HardcoreAlchemy.proxy.addListener(new ListenerHeartShards());
+
+        // Initialize via classload
+        new Items();
+        HEARTS.register();
         // Initialize via classload
         new Studies();
         

@@ -40,12 +40,14 @@ public class MessageConfigs extends MessageToClient<HardcoreAlchemy> {
     @Override
     public void toBytes(ByteBuf buf) {
         buf.writeInt(configs.base.version);
+        buf.writeBoolean(configs.base.enableHearts);
         buf.writeBoolean(configs.base.enableInstincts);
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
         configs.base.version = buf.readInt();
+        configs.base.enableHearts = buf.readBoolean();
         configs.base.enableInstincts = buf.readBoolean();
     }
     
@@ -54,6 +56,7 @@ public class MessageConfigs extends MessageToClient<HardcoreAlchemy> {
         
         public ReceiveAction(Configs configs) {
             this.configs.base.version = configs.base.version;
+            this.configs.base.enableHearts = configs.base.enableHearts;
             this.configs.base.enableInstincts = configs.base.enableInstincts;
         }
 

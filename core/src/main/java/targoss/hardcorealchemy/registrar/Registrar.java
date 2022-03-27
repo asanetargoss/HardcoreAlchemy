@@ -42,6 +42,10 @@ public abstract class Registrar<T> {
         return entry;
     }
     
+    public int getPhase() {
+        return lastPhase;
+    }
+    
     public boolean register(int phase) {
         if (phase < 0) {
             logger.warn("Registrar '" + name + "' cannot execute invalid phase " + phase);

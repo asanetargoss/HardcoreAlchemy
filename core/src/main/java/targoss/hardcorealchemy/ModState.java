@@ -44,6 +44,7 @@ public final class ModState {
     public static final String WAWLA_ID = "Waila";
     public static final String SPICE_OF_LIFE_ID = "SpiceOfLife";
     public static final String ASTRAL_SORCERY_ID = "astralsorcery";
+    public static final String MANTLE_ID = "mantle";
     public static boolean isMetamorphLoaded = false;
     public static boolean isDissolutionLoaded = false;
     public static boolean isNutritionLoaded = false;
@@ -59,6 +60,7 @@ public final class ModState {
     public static boolean isJEILoaded = false;
     public static boolean isSpiceOfLifeLoaded = false;
     public static boolean isAstralSorceryLoaded = false;
+    public static boolean isMantleLoaded = false;
     protected static  boolean modMapRegistered = false;
 
     private ModState() { }
@@ -84,5 +86,6 @@ public final class ModState {
         isJEILoaded = modMap.containsKey(JEI_ID);
         isSpiceOfLifeLoaded = modMap.containsKey(SPICE_OF_LIFE_ID);
         isAstralSorceryLoaded = modMap.containsKey(ASTRAL_SORCERY_ID);
+        isMantleLoaded = modMap.containsKey(MANTLE_ID);
     }
 }

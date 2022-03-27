@@ -23,7 +23,6 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.GuiIngameForge;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
@@ -31,7 +30,7 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.ClientProxy;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.capability.humanity.ProviderHumanity;
 import targoss.hardcorealchemy.creatures.capability.instinct.ICapabilityInstinct;
@@ -44,7 +43,6 @@ import targoss.hardcorealchemy.util.RandomWithPublicSeed;
 @SideOnly(Side.CLIENT)
 public class ListenerGuiHud extends HardcoreAlchemyListener {
     private static final Minecraft mc = Minecraft.getMinecraft();
-    public static final ResourceLocation TILESET = new ResourceLocation(HardcoreAlchemy.MOD_ID, "textures/gui/icon_tileset.png");
     // Settable seed helps to freeze GUI elements in place when the game is paused
     private RandomWithPublicSeed rand = new RandomWithPublicSeed();
     private long randSeed = rand.getSeed();
@@ -97,7 +95,7 @@ public class ListenerGuiHud extends HardcoreAlchemyListener {
         int left = width/2 - 91;
         int top = height - GuiIngameForge.left_height;
         // Bind our tileset and set up graphics state.
-        mc.getTextureManager().bindTexture(TILESET);
+        mc.getTextureManager().bindTexture(ClientProxy.TILESET);
         GlStateManager.enableBlend();
         
         for (int i = 1; i <= HUMANITY_ICONS; i++) {
@@ -205,7 +203,7 @@ public class ListenerGuiHud extends HardcoreAlchemyListener {
         int left = width/2 - 91;
         int top = height - GuiIngameForge.left_height;
         // Bind our tileset and set up graphics state.
-        mc.getTextureManager().bindTexture(TILESET);
+        mc.getTextureManager().bindTexture(ClientProxy.TILESET);
         GlStateManager.enableBlend();
         
         int texX = 0;

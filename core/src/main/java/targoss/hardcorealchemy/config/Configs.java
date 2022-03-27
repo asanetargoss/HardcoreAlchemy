@@ -25,7 +25,7 @@ import net.minecraftforge.common.config.Configuration;
 import targoss.hardcorealchemy.HardcoreAlchemy;
 
 public class Configs {
-    public static final int VERSION = 2;
+    public static final int VERSION = 3;
     public static final String BASE_CONFIG_NAME = HardcoreAlchemy.MOD_ID + ".cfg";
     
     public File hcaConfigurationDir;
