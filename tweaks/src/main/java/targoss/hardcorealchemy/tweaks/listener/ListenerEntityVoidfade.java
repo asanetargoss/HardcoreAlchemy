@@ -26,6 +26,7 @@ import javax.annotation.Nullable;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -490,8 +491,12 @@ public class ListenerEntityVoidfade extends HardcoreAlchemyListener {
                 // If the portal produces the greater visual effect, let the portal do the rendering
                 return;
             }
+            
             event.setCanceled(true);
+            
+            GlStateManager.enableBlend();
             mc.ingameGUI.renderPortal(effectiveTimeInPortal, event.getResolution());
+            GlStateManager.disableBlend();
         }
     }
 }
