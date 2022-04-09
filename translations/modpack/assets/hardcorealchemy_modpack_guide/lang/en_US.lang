@@ -89,23 +89,23 @@ hardcorealchemy.upgradeguide.0.6.1.gameplay_tips.earlygame.title=Early game
 hardcorealchemy.upgradeguide.0.6.1.gameplay_tips.earlygame.1=Heads up! It should be a bit easier to find reeds in new chunks in winter, as the bottom blocks of reeds can now survive next to ice. However, as a tradeoff, reeds and cacti no longer grow in winter.
 
 ############
-# 0.7.1 Upgrade Guide
+# 0.7.2 Upgrade Guide
 ############
 
-hardcorealchemy.upgradeguide.0.7.1.author=Hardcore Alchemy
-hardcorealchemy.upgradeguide.0.7.1.display=0.7.1 Upgrade Guide
-hardcorealchemy.upgradeguide.0.7.1.title=0.7.1 Upgrade Guide
-hardcorealchemy.upgradeguide.0.7.1.welcome=Hardcore Alchemy
+hardcorealchemy.upgradeguide.0.7.2.author=Hardcore Alchemy
+hardcorealchemy.upgradeguide.0.7.2.display=0.7.2 Upgrade Guide
+hardcorealchemy.upgradeguide.0.7.2.title=0.7.2 Upgrade Guide
+hardcorealchemy.upgradeguide.0.7.2.welcome=Hardcore Alchemy
 
-# 0.7.1 Upgrade Guide: Gameplay tips
+# 0.7.2 Upgrade Guide: Gameplay tips
 
-hardcorealchemy.upgradeguide.0.7.1.gameplay_tips.title=Gameplay tips
+hardcorealchemy.upgradeguide.0.7.2.gameplay_tips.title=Gameplay tips
 
-hardcorealchemy.upgradeguide.0.7.1.gameplay_tips.earlygame.title=Early game
-hardcorealchemy.upgradeguide.0.7.1.gameplay_tips.earlygame.1=You should strongly consider crafting a shovel. Whispers from other worlds mention the story of a legendary engineer named Direwolf20, who became accustomed to harvesting all blocks with an Industrial mining drill. After several iterations of Redstone Flux technology, his mining drill stopped working after a software update, but then he proceeded to harvest all blocks with a single pickaxe. This habit would lead to his demise. Don't be Direwolf20. Craft a shovel.
-hardcorealchemy.upgradeguide.0.7.1.gameplay_tips.earlygame.2=Also, the "Modpack Info" section of Traveling Alchemist now has a "Keybinding Primer" and a "JEI Primer". These are intended for less experienced modded Minecraft players, but also contain a few advanced tips.
+hardcorealchemy.upgradeguide.0.7.2.gameplay_tips.earlygame.title=Early game
+hardcorealchemy.upgradeguide.0.7.2.gameplay_tips.earlygame.1=You should strongly consider crafting a shovel. Whispers from other worlds mention the story of a legendary engineer named Direwolf20, who became accustomed to harvesting all blocks with an Industrial mining drill. After several iterations of Redstone Flux technology, his mining drill stopped working after a software update, but then he proceeded to harvest all blocks with a single pickaxe. This habit would lead to his demise. Don't be Direwolf20. Craft a shovel.
+hardcorealchemy.upgradeguide.0.7.2.gameplay_tips.earlygame.2=Also, the "Modpack Info" section of Traveling Alchemist now has a "Keybinding Primer" and a "JEI Primer". These are intended for less experienced modded Minecraft players, but also contain a few advanced tips.
 
-hardcorealchemy.upgradeguide.0.7.1.gameplay_tips.midgame.title=Mid game
-hardcorealchemy.upgradeguide.0.7.1.gameplay_tips.midgame.1=Is the Journal from Astral Sorcery slow to navigate? Try using the WASD keys or arrow keys.
-hardcorealchemy.upgradeguide.0.7.1.gameplay_tips.midgame.2=Players building wizard towers, especially for Astral Sorcery, should consider crafting elevator blocks for easier navigation. You can jump or sneak while on an Elevator block to go to the next higher/lower Elevator block at the same latitude and longitude.
-hardcorealchemy.upgradeguide.0.7.1.gameplay_tips.midgame.3=Another shovel tip: You need an iron shovel or better to dig up aquamarine, which is needed for Astral Sorcery.
+hardcorealchemy.upgradeguide.0.7.2.gameplay_tips.midgame.title=Mid game
+hardcorealchemy.upgradeguide.0.7.2.gameplay_tips.midgame.1=Is the Journal from Astral Sorcery slow to navigate? Try using the WASD keys or arrow keys.
+hardcorealchemy.upgradeguide.0.7.2.gameplay_tips.midgame.2=Players building wizard towers, especially for Astral Sorcery, should consider crafting elevator blocks for easier navigation. You can jump or sneak while on an Elevator block to go to the next higher/lower Elevator block at the same latitude and longitude.
+hardcorealchemy.upgradeguide.0.7.2.gameplay_tips.midgame.3=Another shovel tip: You need an iron shovel or better to dig up aquamarine, which is needed for Astral Sorcery.
