@@ -46,6 +46,7 @@ import targoss.hardcorealchemy.tweaks.capability.hearts.ProviderHearts;
 import targoss.hardcorealchemy.tweaks.capability.hearts.StorageHearts;
 import targoss.hardcorealchemy.tweaks.network.MessageHearts;
 import targoss.hardcorealchemy.util.MiscVanilla;
+import targoss.hardcorealchemy.util.MorphExtension;
 
 public class ListenerHearts extends HardcoreAlchemyListener {
     @CapabilityInject(ICapabilityHearts.class)
@@ -214,6 +215,12 @@ public class ListenerHearts extends HardcoreAlchemyListener {
         @SubscribeEvent(priority=EventPriority.HIGHEST)
         public void onRenderHeartsPost(RenderGameOverlayEvent.Post event) {
             EntityPlayer player = MiscVanilla.getTheMinecraftPlayer();
+            if (player.isCreative()) {
+                return;
+            }
+            if (MorphExtension.INSTANCE.isGhost(player)) {
+                return;
+            }
             if (player.isPotionActive(MobEffects.POISON)) {
                 // Heart variants are not implemented
                 return;
@@ -361,7 +368,10 @@ public class ListenerHearts extends HardcoreAlchemyListener {
                 mc.getTextureManager().bindTexture(vanillaTileset);
             }
 
-            GlStateManager.disableBlend();
+            // HACK: Don't disable blend if Tough As Nails is altering the GUI
+            if (!ModState.isTanLoaded) {
+                GlStateManager.disableBlend();
+            }
         }
     }
 }

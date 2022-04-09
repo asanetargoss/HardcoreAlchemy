@@ -98,6 +98,8 @@ public class ListenerGuiHud extends HardcoreAlchemyListener {
         mc.getTextureManager().bindTexture(ClientProxy.TILESET);
         GlStateManager.enableBlend();
         
+        boolean drawDottedIcons = MorphExtension.INSTANCE.shouldDrawHumanityDottedIcons();
+        
         for (int i = 1; i <= HUMANITY_ICONS; i++) {
             int y = top;
             
@@ -158,8 +160,10 @@ public class ListenerGuiHud extends HardcoreAlchemyListener {
                 }
             }
             else {
-                // Dotted icon
-                mc.ingameGUI.drawTexturedModalRect(left + (i-1)*8, top, 27, 0, 9, 9);
+                if (drawDottedIcons) {
+                    // Dotted icon
+                    mc.ingameGUI.drawTexturedModalRect(left + (i-1)*8, top, 27, 0, 9, 9);
+                }
             }
         }
         

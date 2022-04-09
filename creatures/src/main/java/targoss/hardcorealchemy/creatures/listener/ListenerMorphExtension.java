@@ -136,6 +136,11 @@ public class ListenerMorphExtension extends HardcoreAlchemyListener {
         }
 
         @Override
+        public boolean shouldDrawHumanityDottedIcons() {
+            return delegate.shouldDrawHumanityDottedIcons();
+        }
+
+        @Override
         public boolean canUseHighMagic(EntityPlayer player) {
             return delegate.canUseHighMagic(player);
         }

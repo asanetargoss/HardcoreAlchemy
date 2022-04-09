@@ -48,6 +48,7 @@ public interface IMorphExtension {
             }
         }
     }
+    public boolean shouldDrawHumanityDottedIcons();
     public boolean canUseHighMagicWithoutBuff(EntityPlayer player);
     public boolean canUseHighMagic(EntityPlayer player);
     public boolean isGhost(EntityLivingBase entity);

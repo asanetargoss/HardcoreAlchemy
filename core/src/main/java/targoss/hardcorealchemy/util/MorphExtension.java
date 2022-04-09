@@ -15,6 +15,11 @@ import targoss.hardcorealchemy.item.Items;
 
 public class MorphExtension implements IMorphExtension {
     public static IMorphExtension INSTANCE = new MorphExtension();
+
+    @Override
+    public boolean shouldDrawHumanityDottedIcons() {
+        return false;
+    }
     
     public boolean canUseHighMagicWithoutBuff(EntityPlayer player) {
         return true;
