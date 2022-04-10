@@ -5,7 +5,6 @@ import static net.minecraft.init.Items.BONE;
 import static net.minecraft.init.Items.DIAMOND;
 import static net.minecraft.init.Items.FEATHER;
 import static net.minecraft.init.Items.FIRE_CHARGE;
-import static net.minecraft.init.Items.GHAST_TEAR;
 import static net.minecraft.init.Items.IRON_INGOT;
 import static net.minecraft.init.Items.REDSTONE;
 import static net.minecraft.init.Items.ROTTEN_FLESH;
@@ -97,11 +96,10 @@ public class Items {
         GameRegistry.addShapedRecipe(new ItemStack(HEART_TEARS.ITEM),
             "RDR",
             "FHF",
-            "RGR",
+            "RFR",
             'H', new ItemStack(HEART_TEARS.ITEM_SHARD),
             'R', new ItemStack(ROTTEN_FLESH),
             'D', new ItemStack(DIAMOND),
-            'G', new ItemStack(GHAST_TEAR),
             'F', new ItemStack(FEATHER)
         );
         GameRegistry.addShapedRecipe(new ItemStack(HEART_HUNTER.ITEM),
