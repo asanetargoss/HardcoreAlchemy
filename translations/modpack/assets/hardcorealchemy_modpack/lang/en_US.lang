@@ -57,7 +57,6 @@ hardcorealchemy.guide.modpack_info.known_issues.3=Magic level from Ars Magica is
 hardcorealchemy.guide.modpack_info.known_issues.4=Ex Nihilo silkworm infestation causes lag (Workaround: ensure the silkworms do not spread to too many neighboring trees. The lag will stop once all leaves are fully infested)
 hardcorealchemy.guide.modpack_info.known_issues.5=JEI overlaps with the Inventory Tweaks buttons when using alchemical chests (Workaround: Use the Inventory Tweaks sorting keybind, or use the JEI keybind to temporarily disable the JEI item list)
 hardcorealchemy.guide.modpack_info.known_issues.6=Ars Magica etherium routing and storage are not working properly (Workaround: Currently, you can still link the obelisk directly to the contraption you wish to power. The developer has also configured the crafting altar to not require etherium, so if the crafting recipe asks for etherium, simply flip the lever and the crafting process will continue.)
-hardcorealchemy.guide.modpack_info.known_issues.7=Embers item pipes cannot connect directly to the mod's item dropper (Workaround: Use a hopper in between them)
 
 
 # An Unexpected Journey
