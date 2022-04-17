@@ -81,8 +81,6 @@ The commands in the instructions below assume your command line is a unix-style 
     * `eclipse` sets up files for all projects that can be imported into the Eclipse IDE
     * During the very first setup, you may encounter an error where the forge jar is missing from your Eclipse classpath. To fix this, re-run `./gradlew eclipse` (this is a known bug with the gradle scripts)
 <!-- TODO: Figure out what is preventing the eclipse .classpath for each submod from resolving the forge source jar correctly, when `./gradlew setupDecompWorkspace eclipse` is run for the first time -->
-* (Optional but recommended) For the desired `[PROJECT_NAME]` you want to test with (ex: `core` or `tweaks`):
-    * `[PROJECT_NAME]/run/config/` - Here you should copy the configs you have downloaded from the Dependencies step (this is optional, but recommended)
 
 ### Testing
 
