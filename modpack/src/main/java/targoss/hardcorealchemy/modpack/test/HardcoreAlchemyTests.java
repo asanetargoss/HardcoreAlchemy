@@ -35,8 +35,9 @@ import targoss.hardcorealchemy.modpack.test.suite.TestWorldReference;
  * Server-side tests for Hardcore Alchemy
  */
 public class HardcoreAlchemyTests extends TestSystem {
-    public void runAndLogTests() {
-        List<String> resultsToLog = testAndLogAll();
+    public static void runAndLogTests() {
+        HardcoreAlchemyTests tests = new HardcoreAlchemyTests();
+        List<String> resultsToLog = tests.testAndLogAll();
         for (String logEntry : resultsToLog) {
             HardcoreAlchemy.LOGGER.debug(logEntry);
         }

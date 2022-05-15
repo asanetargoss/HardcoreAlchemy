@@ -44,13 +44,12 @@ public class CommandTest extends CommandBase {
 
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-        HardcoreAlchemyTests tests = new HardcoreAlchemyTests();
         /* Hardcore Alchemy development requires English,
          * and ambiguity in technical assistance should be avoided,
          * so no translations here.
          */
         sender.sendMessage(new TextComponentString("Running tests..."));
-        tests.runAndLogTests();
+        HardcoreAlchemyTests.runAndLogTests();
         sender.sendMessage(new TextComponentString("Tests finished and logged to logs/fml-client-latest.log"));
     }
     
