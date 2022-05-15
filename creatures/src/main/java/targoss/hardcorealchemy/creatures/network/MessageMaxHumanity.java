@@ -22,7 +22,7 @@ public class MessageMaxHumanity extends MessageToClient<HardcoreAlchemyCreatures
         public static final ReceiveAction INSTANCE = new ReceiveAction();
         @Override
         public void run() {
-            ListenerPlayerMorphs.updateMaxHumanity(MiscVanilla.getTheMinecraftPlayer());
+            ListenerPlayerMorphs.updateMaxHumanity(MiscVanilla.getTheMinecraftPlayer(), false);
         }
     }
     

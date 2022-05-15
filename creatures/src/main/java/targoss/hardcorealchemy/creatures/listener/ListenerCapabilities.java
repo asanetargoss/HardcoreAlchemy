@@ -72,7 +72,7 @@ public class ListenerCapabilities extends HardcoreAlchemyListener {
         if (!event.isWasDeath() || Metamorph.keepMorphs.get()) {
             CapUtil.copyOldToNew(KILL_COUNT_CAPABILITY, oldPlayer, newPlayer);
             CapUtil.copyOldToNew(HUMANITY_CAPABILITY, oldPlayer, newPlayer);
-            ListenerPlayerMorphs.updateMaxHumanity(newPlayer);
+            ListenerPlayerMorphs.updateMaxHumanity(newPlayer, false);
         }
     }
     

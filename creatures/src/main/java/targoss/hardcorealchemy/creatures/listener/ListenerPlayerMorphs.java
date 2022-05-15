@@ -49,6 +49,7 @@ import targoss.hardcorealchemy.creatures.HardcoreAlchemyCreatures;
 import targoss.hardcorealchemy.creatures.capability.killcount.CapabilityKillCount;
 import targoss.hardcorealchemy.creatures.capability.killcount.ICapabilityKillCount;
 import targoss.hardcorealchemy.creatures.capability.killcount.ProviderKillCount;
+import targoss.hardcorealchemy.creatures.network.MessageHumanity;
 import targoss.hardcorealchemy.creatures.network.MessageMaxHumanity;
 import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
 import targoss.hardcorealchemy.util.MobLists;
@@ -194,7 +195,7 @@ public class ListenerPlayerMorphs extends HardcoreAlchemyListener {
     
     @SubscribeEvent
     public void onPlayerAcquireMorph(AcquireMorphEvent.Post event) {
-        updateMaxHumanity(event.player);
+        updateMaxHumanity(event.player, true);
     }
     
     @SubscribeEvent
@@ -202,10 +203,10 @@ public class ListenerPlayerMorphs extends HardcoreAlchemyListener {
         // Fix removal of the humanity modifier when switching dimensions
         // I'm not sure why Minecraft insists on clearing modifiers on change dimension,
         // but no use arguing with it.
-        updateMaxHumanity(event.player);
+        updateMaxHumanity(event.player, false);
     }
     
-    public static void updateMaxHumanity(EntityPlayer player) {
+    public static void updateMaxHumanity(EntityPlayer player, boolean isUpgrade) {
         double bonusCap = 0.0D;
         
         IMorphing morphing = Morphing.get(player);
@@ -246,13 +247,18 @@ public class ListenerPlayerMorphs extends HardcoreAlchemyListener {
         
         double newCap = maxHumanity.getAttributeValue();
         
-        ICapabilityHumanity humanity = player.getCapability(HUMANITY_CAPABILITY, null);
-        if (humanity != null && newCap > oldCap) {
-            humanity.setHumanity(humanity.getHumanity() + newCap - oldCap);
-        }
-        
         if (!player.world.isRemote) {
             HardcoreAlchemyCreatures.proxy.messenger.sendTo(new MessageMaxHumanity(), (EntityPlayerMP)player);
+        }
+        
+        if (isUpgrade && newCap > oldCap) {
+            ICapabilityHumanity humanity = player.getCapability(HUMANITY_CAPABILITY, null);
+            if (humanity != null) {
+                humanity.setHumanity(humanity.getHumanity() + newCap - oldCap);
+                if (!player.world.isRemote) {
+                    HardcoreAlchemyCreatures.proxy.messenger.sendTo(new MessageHumanity(humanity, false), (EntityPlayerMP)player);
+                }
+            }
         }
     }
 }
