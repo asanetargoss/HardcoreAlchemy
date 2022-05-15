@@ -1,0 +1,70 @@
+#
+# Copyright 2022 asanetargoss
+# 
+# This file is part of Hardcore Alchemy translations.
+# 
+# Hardcore Alchemy translations is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation version 3 of the License.
+# 
+# Hardcore Alchemy translations is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+# 
+# You should have received a copy of the GNU Lesser General Public License
+# along with Hardcore Alchemy translations.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+language.name=English
+language.region=United States
+language.code=en_US
+
+# Gameplay
+
+hardcorealchemy.humanity.warn1.variant1=You begin to tire of remembering your human form in the back of your mind.
+hardcorealchemy.humanity.warn2.variant1=You fantasize a life without thought or inhibition.
+hardcorealchemy.humanity.warn3.variant1=You panic as you realize you don't remember who you are.
+hardcorealchemy.humanity.lost=You feel your humanity fade away.
+
+hardcorealchemy.morph.suffocation_risk=There is not enough space to morph here.
+
+hardcorealchemy.ability.fishing.beginhunt=You begin the hunt.
+hardcorealchemy.ability.fishing.endhunt=You end the hunt.
+hardcorealchemy.ability.fishing.error.notinwater=You must be in water to begin the hunt.
+
+hardcorealchemy.ability.sustenance.not_available.grass=There is no grass to eat here.
+hardcorealchemy.ability.sustenance.not_available.drink=There is nothing to drink here.
+hardcorealchemy.ability.sustenance.not_available.grass_drink=There is no grass or water here.
+hardcorealchemy.ability.sustenance.not_ready.grass=You are not desperate enough to eat this grass.
+hardcorealchemy.ability.sustenance.not_ready.drink=You are not desperate enough to drink this water.
+hardcorealchemy.ability.sustenance.disabled=Your instincts are not strong enough to find sustenance here.
+hardcorealchemy.ability.sustenance.invalid=Invalid sustenance message. Please report to mod developer.
+
+hardcorealchemy.effect.tempered_flame.fulfilled=The heat restores you and drives away the cold.
+
+hardcorealchemy.effect.overheat.exposed=Your form overflows with uncontrollable heat.
+
+hardcorealchemy.instinct.attack_prey.need=You yearn to hunt %s.
+hardcorealchemy.instinct.attack_prey.need.generic=You yearn to hunt.
+hardcorealchemy.instinct.attack_prey.detect=You sense a %s.
+hardcorealchemy.instinct.attack_prey.gone=You no longer sense prey.
+hardcorealchemy.instinct.attack_prey.kill_another=You kill the %s, but you feel the urge to kill more.
+hardcorealchemy.instinct.attack_prey.resist=You resist the urge to kill the %s, but it only makes the urge stronger.
+hardcorealchemy.instinct.attack_prey.preserve_own_kind=You refuse to hunt your own kind.
+hardcorealchemy.instinct.attack_prey.something_else=You want badly to kill %s instead.
+hardcorealchemy.instinct.attack_prey.something_else.generic=You want badly to kill something else.
+hardcorealchemy.instinct.attack_prey.finished=The hunting urges start to fade.
+
+hardcorealchemy.instinct.home.generic.need=You yearn to be somewhere else.
+hardcorealchemy.instinct.home.generic.need_nearby=You yearn to return to your home.
+hardcorealchemy.instinct.home.generic.fulfilled=You feel at home here.
+hardcorealchemy.instinct.home.nature.need=You yearn for your natural habitat.
+hardcorealchemy.instinct.home.nature.need_nearby=You restlessly yearn to return to nature.
+hardcorealchemy.instinct.home.nature.fulfilled=This natural environment makes you feel at ease.
+hardcorealchemy.instinct.home.nether.need=You yearn for eternal, otherwordly heat.
+hardcorealchemy.instinct.home.nether.need_nearby=The heat of the Nether calls you.
+hardcorealchemy.instinct.home.nether.fulfilled=Your inner flame stabilizes.
+
+hardcorealchemy.instinct.unencumbered.need=You despise having your movements constrained.
+hardcorealchemy.instinct.unencumbered.action=You tear off the armor.
