@@ -44,6 +44,7 @@ public class HardcoreAlchemyModpack
 {
     public static final String MOD_ID = "hardcorealchemy_modpack";
     public static final String VERSION = "@HARDCORE_ALCHEMY_MODPACK_VERSION@";
+    // These dependencies are replaced in modpack/build.gradle
     public static final String DEPENDENCIES = "required-before:" + HardcoreAlchemy.MOD_ID + ";" +
             "required-after:" + HardcoreAlchemyTweaks.MOD_ID + ";" +
             "required-after:" + HardcoreAlchemyCreatures.MOD_ID + ";" +
