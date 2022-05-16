@@ -308,22 +308,24 @@ public class ListenerPlayerHumanity extends HardcoreAlchemyListener {
         }
     }
     
+    private static final int HUMANITY_WARN_VARIANT_COUNT = 4;
+    
     private void sendHumanityWarnings(EntityPlayer player, ICapabilityHumanity capabilityHumanity, double oldHumanity, double newHumanity) {
         // We are only interested if humanity decreases
         if (newHumanity >= oldHumanity) {
             return;
         }
-        //TODO: add random variety to messages
         // If humanity passes a critical threshold, display message (most urgent one first)
         if (newHumanity <= 0) {
             // Display lost humanity message
             Chat.messageSP(Chat.Type.NOTIFY, player, new TextComponentTranslation("hardcorealchemy.humanity.lost"));
         }
         else if (newHumanity <= HUMANITY_3MIN_LEFT) {
+            int humanityWarnVariant = 1 + random.nextInt(HUMANITY_WARN_VARIANT_COUNT);
             if (newHumanity <= HUMANITY_1MIN_LEFT && oldHumanity > HUMANITY_1MIN_LEFT) {
                 // Display 1 minute left message
                 if (player.world.isRemote) {
-                    Chat.messageSP(Chat.Type.WARN, player, new TextComponentTranslation("hardcorealchemy.humanity.warn3.variant1"));
+                    Chat.messageSP(Chat.Type.WARN, player, new TextComponentTranslation("hardcorealchemy.humanity.warn3.variant" + humanityWarnVariant));
                 }
                 else {
                     HardcoreAlchemyCreatures.proxy.messenger.sendTo(new MessageHumanity(capabilityHumanity, false), (EntityPlayerMP)player);
@@ -332,7 +334,7 @@ public class ListenerPlayerHumanity extends HardcoreAlchemyListener {
             else if (newHumanity <= HUMANITY_2MIN_LEFT && oldHumanity > HUMANITY_2MIN_LEFT) {
                 // Display 2 minutes left message
                 if (player.world.isRemote) {
-                    Chat.messageSP(Chat.Type.NOTIFY, player, new TextComponentTranslation("hardcorealchemy.humanity.warn2.variant1"));
+                    Chat.messageSP(Chat.Type.NOTIFY, player, new TextComponentTranslation("hardcorealchemy.humanity.warn2.variant" + humanityWarnVariant));
                 }
                 else {
                     HardcoreAlchemyCreatures.proxy.messenger.sendTo(new MessageHumanity(capabilityHumanity, false), (EntityPlayerMP)player);
@@ -341,7 +343,7 @@ public class ListenerPlayerHumanity extends HardcoreAlchemyListener {
             else if (oldHumanity > HUMANITY_3MIN_LEFT) {
                 // Display 3 minutes left message
                 if (player.world.isRemote) {
-                    Chat.messageSP(Chat.Type.NOTIFY, player, new TextComponentTranslation("hardcorealchemy.humanity.warn1.variant1"));
+                    Chat.messageSP(Chat.Type.NOTIFY, player, new TextComponentTranslation("hardcorealchemy.humanity.warn1.variant" + humanityWarnVariant));
                 }
                 else {
                     HardcoreAlchemyCreatures.proxy.messenger.sendTo(new MessageHumanity(capabilityHumanity, false), (EntityPlayerMP)player);

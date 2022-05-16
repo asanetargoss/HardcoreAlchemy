@@ -22,9 +22,23 @@ language.code=en_US
 
 # Gameplay
 
+# The Tragedy of the Changeling Mage who Got Stuck That Way, in four parts
+# Part 1: A Lapse of Judgement
 hardcorealchemy.humanity.warn1.variant1=You begin to tire of remembering your human form in the back of your mind.
+hardcorealchemy.humanity.warn1.variant2=You forgot something magic-related. It probably wasn't important.
+hardcorealchemy.humanity.warn1.variant3=Your periodic self-awareness checks begin to bore you.
+hardcorealchemy.humanity.warn1.variant4=You lose your sense of direction. You are not concerned. Temporary disorientation is common after morphing.
+# Part 2: The Lure of Inhumanity
 hardcorealchemy.humanity.warn2.variant1=You fantasize a life without thought or inhibition.
+hardcorealchemy.humanity.warn2.variant2=You become obsessed with unfamiliar senses.
+hardcorealchemy.humanity.warn2.variant3=Your new body starts to feel more familiar than your human one.
+hardcorealchemy.humanity.warn2.variant4=You grow fond of this creature you have become.
+# Part 3: Terror of Becoming
 hardcorealchemy.humanity.warn3.variant1=You panic as you realize you don't remember who you are.
+hardcorealchemy.humanity.warn3.variant2=Your body is imprisoning you. You must escape it before it's too late.
+hardcorealchemy.humanity.warn3.variant3=You fear you cannot suppress your new identity much longer.
+hardcorealchemy.humanity.warn3.variant4=Your light of humanity flickers weakly as an instinctive darkness closes in.
+# Part 4: Humanity Lost (no variants)
 hardcorealchemy.humanity.lost=You feel your humanity fade away.
 
 hardcorealchemy.morph.suffocation_risk=There is not enough space to morph here.
