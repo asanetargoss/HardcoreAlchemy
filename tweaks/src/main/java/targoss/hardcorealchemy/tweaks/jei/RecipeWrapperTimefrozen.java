@@ -17,7 +17,7 @@ public class RecipeWrapperTimefrozen extends BlankRecipeWrapper {
 
     @Override
     public void getIngredients(IIngredients ingredients) {
-        List<ItemStack> inputs = Arrays.asList(recipe.recipeTemplate);
+        List<ItemStack> inputs = Arrays.asList(Arrays.copyOf(recipe.recipeTemplate, recipe.recipeTemplate.length));
         int n = inputs.size();
         ItemStack itemToFreeze = new ItemStack(net.minecraft.init.Items.APPLE);
         for (int i = 0; i < n; ++i) {
