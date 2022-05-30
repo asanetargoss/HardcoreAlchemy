@@ -1,38 +1,48 @@
-# Hardcore Alchemy
-Hardcore Alchemy is a hardcore/magic/survival modpack built for Minecraft 1.10.2.
+# Hardcore Alchemy Mod Suite
 
-You are currently in the source code repository for the Hardcore Alchemy mod suite, which powers many of Hardcore Alchemy's most unique features. The best way to learn more information about the modpack is to [visit the wiki](https://github.com/asanetargoss/HardcoreAlchemy/wiki).
+The Hardcore Alchemy Mod Suite is a collection of mods for Minecraft 1.10.2 with a focus on cross-mod compatibility in a hardcore/magic/survival setting.
 
-## Contributing
+## Hardcore Alchemy: Magic With Consequences
 
-Aside from feedback on the modpack itself, the following contributions are welcome:
-
-- **Translations** - Are always welcome. See the [translations folder](https://github.com/asanetargoss/HardcoreAlchemy/tree/master/translations/).
-- **Code** - If it's a bugfix, and it's faster to write the code than it is to explain it, go right ahead. Otherwise, let's talk about it first
+For more information about the Hardcore Alchemy modpack, [visit its post on the Minecraft Forum](https://www.minecraftforum.net/forums/mapping-and-modding-java-edition/minecraft-mods/mod-packs/2900247-hardcore-alchemy-0-7-3-inhumanity-hotfix).
 
 ## Using the mod suite
 
-The Hardcore Alchemy mod suite is released under the LGPL 3, so you are allowed to use any of the mods in your own modpack. However, since the mods were built for the HcA modpack, they were designed with a particular gameplay experience in mind. This means that certain mods work better with it than others. Also, config options are not planned, except as needed for compatibility with vanilla hardcore mode and serious accessibility concerns.
+### Licenses
 
-The Hardcore Alchemy mod suite is designed around the following mechanics:
+The Hardcore Alchemy mod suite is released under different licenses depending on the mod:
 
-* **Balanced shapeshifting** - [Changeling](https://github.com/asanetargoss/Changeling/releases) powers Hardcore Alchemy's balanced morphing features. If you are using the `creatures` submod, you must have Changeling installed.
+- core, tweaks, creatures, magic, survival - GNU LGPL v3 or later
+- capstone - GNU GPL v3
+
+In short: You are allowed to use any of these listed mods in your own modpack.
+
+### Gameplay dependencies
+
+The Hardcore Alchemy mod suite is tested to work with specific mods. Below are the recommended mods and config settings that work best.
+
+#### Required/Recommended mods
+
+* [Changeling](https://github.com/asanetargoss/Changeling/releases) - This powers Hardcore Alchemy's balanced morphing features. If you are using the `creatures` submod, you must have Changeling installed.
   * The following config options should be set in Changeling: `acquire_immediately=false`, `disable_morph_disguise=true`, and `keep_morphs=false`
-* **Random respawn on death** - The Hardcore Alchemy mod suite is designed around hardcore respawn. For this, I recommend [Iberia HcA edition](https://github.com/asanetargoss/iberia/releases).
+* [Iberia HcA edition](https://github.com/asanetargoss/iberia/releases) - The Hardcore Alchemy mod suite is designed around hardcore respawn, which this mod will implement for you.
 
-There is also cross-mod compatibility with various other mods. These mods are not required dependencies, but should be used instead of the alternatives:
+#### Optional mods
 
-* [Hwyla](https://www.curseforge.com/minecraft/mc-mods/hwyla) - In-game overlays.
+* [Hwyla](htjps://www.curseforge.com/minecraft/mc-mods/hwyla) - In-game overlays.
 * [Nutrition HcA Edition](https://github.com/asanetargoss/Nutrition/releases) and/or [Spice of Life](https://www.curseforge.com/minecraft/mc-mods/the-spice-of-life) - For nutrition.
   * The official version of the Nutrition mod will not work, and HcA assumes the default 5 nutrients
 * [Pam's Harvestcraft](https://www.curseforge.com/minecraft/mc-mods/pams-harvestcraft) - Right-click harvesting and food support
 * [Tough as Nails](https://www.curseforge.com/minecraft/mc-mods/tough-as-nails) - Thirst
     - Note: Reduced starting health should be disabled in the config, to prevent feature overlap with the heart upgrade mechanic in the `tweaks` submod
 * [Minecraft Comes Alive](https://www.minecraftforum.net/forums/mapping-and-modding-java-edition/minecraft-mods/1280154-mc-1-12-x-minecraft-comes-alive-v6-0-0-millions) and/or [Village Box](https://www.curseforge.com/minecraft/mc-mods/village-box) - Villager alternatives
+* Various magic mods according to one's personal tastes
 
-Finally, there is integration with many magic mods.
+### Game design notes
 
-There is a lot more in terms of mod selection, configuration, and tweaking, in order for a hardcore modpack to work well. Please exercise discretion when selecting punishing mechanics for your modpack and be mindful of the player's time. :)
+There is a lot more in terms of mod selection, configuration, and tweaking, in order for a hardcore modpack to work well. Please exercise discretion when selecting punishing mechanics for your modpack and be mindful of the player's time.
+
+Also, since these mods were built for the Hardcore Alchemy modpack, config options are not planned, except as needed for compatibility with vanilla hardcore mode and serious accessibility concerns. If a third-party modpack developer is interested in these mods having a another type of config option or compatibility, they are welcome to contribute code.
 
 ## Developing/building
 
@@ -42,7 +52,7 @@ This branch targets the 0.7.2+ version of the modpack. Download the file `compil
 
 http://www.mediafire.com/folder/grwn2vsjr2lce/Hardcore_Alchemy_Libs
 
-The SHA-256 checksum of `compilelibs-0.7.2.zip` is: 220b5f8d0c9c1c507e78078c54dfce6ae14fddb18cd9a3bbe73c9dd2ce727cb9
+The SHA-256 checksum of `compilelibs-0.7.2.zip` is: `220b5f8d0c9c1c507e78078c54dfce6ae14fddb18cd9a3bbe73c9dd2ce727cb9`
 
 Please note: The following mods included in the HcA_compilelibs zip file above are custom forks:
 * Nutrition: https://github.com/asanetargoss/Nutrition
@@ -59,9 +69,9 @@ Please note: The following mods included in the HcA_compilelibs zip file above a
 * `core/` - A mod project which contains shared code required by the other projects.
 * `tweaks/` - A mod project containing magic and survival tweaks, aiming for a minimal number of dependencies.
 * `creatures/` - A mod project for balanced morphing mechanics and tweaks to mob mods. It requires Changeling.
-* `magic/` - A mod project containing features which make magic mods work better in a hardcore respawn gameplay context. It also contains various tweaks and fixes for magic and utility mods.
+* `magic/` - A mod project containing features which make magic mods work better in a hardcore respawn gameplay context. It also contains various tweaks and fixes for magic mods.
 * `survival/` - A mod project containing various features related to nutrition, thirst, and crop growth. It interacts with various survival and crop mods.
-* `modpack/` - A mod project intended for the Hardcore Alchemy modpack. It adds guidebooks and integration tests. If you are building your own modpack, you most likely do not want to use this mod.
+* `capstone/` - A mod project which handles magic/survival cross-mod compatibility for GPLv3-licensed mods. It also adds guidebooks and integration tests for the Hardcore Alchemy modpack.
 
 ### Notes on Windows and IntelliJ IDEA
 
@@ -94,6 +104,7 @@ The commands in the instructions below assume your command line is a unix-style 
     * `[PROJECT_NAME]` is the name of each project that was built
     * The outputted release jar name will be `hardcorealchemy-[PROJECT_NAME]-[PROJECT_VERSION].jar` where `[PROJECT_VERSION]` is defined in `[PROJECT_NAME]/build.gradle`.
 * To bundle all the mods into one convenient .zip file (excluding the modpack mod), run `./gradlew buildModSuite`. The output will be in `modpack/build/distributions`
+* If you add new files to a project, you will likely need to add licenses to the files, or you will get errors. To fix this, run `./gradlew [PROJECT_NAME]:updateLicenses` for each project you have added files to.
 
 ### Development tips
 
@@ -106,7 +117,7 @@ The commands in the instructions below assume your command line is a unix-style 
 * If you want to work with a specific project only, there are several ways to do this
     * If you only want to set up a certain `[PROJECT_NAME]`, you can run `./gradlew [PROJECT_NAME]:setupDecompWorkspace [PROJECT_NAME]:eclipse`
     * If you only want to build a certain `[PROJECT_NAME]`, you can run `./gradlew [PROJECT_NAME]:build`
-    * You can comment out a project in `settings.gradle` to completely ignore it
+    * You can comment out a project in the top-level `settings.gradle` and `build.gradle` to completely ignore it
 
 ### Other resources
 
