@@ -27,7 +27,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import targoss.hardcorealchemy.HardcoreAlchemy;
@@ -78,11 +77,6 @@ public class HardcoreAlchemyCapstone
         CapstoneModState.registerModMap(modMap);
         
         proxy.preInit(event);
-    }
-    
-    @EventHandler
-    public void init(FMLInitializationEvent event) {
-        proxy.init(event);
     }
     
     @EventHandler
