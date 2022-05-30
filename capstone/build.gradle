@@ -79,7 +79,7 @@ dependencies {
     compileOnly fileTree(dir: "../compilelibs/survival", include: "**/*.jar")
 }
 
-sourceSets.main.resources.srcDirs += ["../translations/modpack"]
+sourceSets.main.resources.srcDirs += ["../translations/capstone"]
 
 processResources
 {
@@ -125,7 +125,7 @@ task copyAccessTransformerFromCore(type: Copy) {
 setupDecompWorkspace.dependsOn copyAccessTransformerFromCore
 processResources.dependsOn copyAccessTransformerFromCore
 
-// Creates a compilelibs archive at modpack/build/distributions, bundling all the different jar dependencies used for development
+// Creates a compilelibs archive at capstone/build/distributions, bundling all the different jar dependencies used for development
 // NOTE: I have learned that you MUST define project properties referenced by other projects in the referencee's gradle.properties file, not the build.gradle file. If you do not do this, you may run into issues where the project property you are trying to reference is undefined, because that project's build.gradle file has not been fully evaluated yet!
 task buildCompileLibs(type: Zip) {
     //archiveName = "hardcorealchemy_modsuite"
@@ -137,7 +137,7 @@ task buildCompileLibs(type: Zip) {
     }
 }
 
-// Creates a mod suite archive at modpack/build/distributions, bundling all the different mod jars (except for the modpack jar), for ease of distribution
+// Creates a mod suite archive at capstone/build/distributions, bundling all the different mod jars (except for the capstone jar), for ease of distribution
 // NOTE: I have learned that you MUST define project properties referenced by other projects in the referencee's gradle.properties file, not the build.gradle file. If you do not do this, you may run into issues where the project property you are trying to reference is undefined, because that project's build.gradle file has not been fully evaluated yet!
 task buildModSuite(type: Zip) {
     dependsOn ":core:build"
@@ -146,7 +146,6 @@ task buildModSuite(type: Zip) {
     dependsOn ":magic:build"
     dependsOn ":survival:build"
 
-    //archiveName = "hardcorealchemy_modsuite"
     baseName = "hardcorealchemy_modsuite"
     version = project.version
 
