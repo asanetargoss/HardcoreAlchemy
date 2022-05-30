@@ -22,12 +22,12 @@ package targoss.hardcorealchemy.capability.food;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.util.MorphDiet;
 import targoss.hardcorealchemy.util.MorphDiet.Restriction;
 
 public class CapabilityFood implements ICapabilityFood {
-    public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(HardcoreAlchemy.MOD_ID, "food");
+    public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(HardcoreAlchemyCore.MOD_ID, "food");
     
     @CapabilityInject(ICapabilityFood.class)
     public static final Capability<ICapabilityFood> FOOD_CAPABILITY = null;

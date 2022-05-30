@@ -53,7 +53,7 @@ public class CommonProxy {
     
     protected List<HardcoreAlchemyListener> listeners = new ArrayList<>();
     
-    public NetMessenger<HardcoreAlchemy> messenger;
+    public NetMessenger<HardcoreAlchemyCore> messenger;
     
     public void addListener(HardcoreAlchemyListener listener) {
         listener.setConfigs(configs);
@@ -69,7 +69,7 @@ public class CommonProxy {
     }
     
     public void registerNetworking() {
-        messenger = new NetMessenger<HardcoreAlchemy>(HardcoreAlchemy.SHORT_MOD_ID)
+        messenger = new NetMessenger<HardcoreAlchemyCore>(HardcoreAlchemyCore.SHORT_MOD_ID)
             .register(new MessageInactiveCapabilities())
             .register(new MessageConfigs())
             .register(new RequestIncantation());

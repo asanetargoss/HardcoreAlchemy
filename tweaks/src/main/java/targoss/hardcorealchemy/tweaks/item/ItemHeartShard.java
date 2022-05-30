@@ -28,7 +28,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.heart.Heart;
 
 public class ItemHeartShard extends Item {
@@ -51,13 +51,13 @@ public class ItemHeartShard extends Item {
         tooltip.add(tooltipLine);
         
         {
-            String generalHintKey1 = HardcoreAlchemy.MOD_ID + ".heart.generic_hint.1";
+            String generalHintKey1 = HardcoreAlchemyCore.MOD_ID + ".heart.generic_hint.1";
             ITextComponent generalHintComponent1 = new TextComponentTranslation(generalHintKey1);
             String generalHintLine1 = generalHintComponent1.getFormattedText();
             tooltip.add(generalHintLine1);
         }
         {
-            String generalHintKey2 = HardcoreAlchemy.MOD_ID + ".heart.generic_hint.2";
+            String generalHintKey2 = HardcoreAlchemyCore.MOD_ID + ".heart.generic_hint.2";
             ITextComponent generalHintComponent2 = new TextComponentTranslation(generalHintKey2);
             String generalHintLine2 = generalHintComponent2.getFormattedText();
             tooltip.add(generalHintLine2);

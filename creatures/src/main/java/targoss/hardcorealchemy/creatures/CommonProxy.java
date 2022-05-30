@@ -21,7 +21,7 @@ package targoss.hardcorealchemy.creatures;
 
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.creatures.entity.Entities;
 import targoss.hardcorealchemy.creatures.incantation.Incantations;
 import targoss.hardcorealchemy.creatures.instinct.Instincts;
@@ -53,7 +53,7 @@ public class CommonProxy {
     public NetMessenger<HardcoreAlchemyCreatures> messenger;
     
     public void registerNetworking() {
-        messenger = new NetMessenger<HardcoreAlchemyCreatures>(HardcoreAlchemyCreatures.MOD_ID.replace(HardcoreAlchemy.MOD_ID, HardcoreAlchemy.SHORT_MOD_ID))
+        messenger = new NetMessenger<HardcoreAlchemyCreatures>(HardcoreAlchemyCreatures.MOD_ID.replace(HardcoreAlchemyCore.MOD_ID, HardcoreAlchemyCore.SHORT_MOD_ID))
             .register(new MessageHumanity())
             .register(new MessageInstinct())
             .register(new MessageInstinctNeedState())
@@ -66,17 +66,17 @@ public class CommonProxy {
     }
     
     public void preInit(FMLPreInitializationEvent event) {
-        HardcoreAlchemy.proxy.addListener(new ListenerCapabilities());
-        HardcoreAlchemy.proxy.addListener(new ListenerMorphExtension());
-        HardcoreAlchemy.proxy.addListener(new ListenerNutritionExtension());
-        HardcoreAlchemy.proxy.addListener(new ListenerPlayerMorphs());
-        HardcoreAlchemy.proxy.addListener(new ListenerPlayerHumanity());
-        HardcoreAlchemy.proxy.addListener(new ListenerMobAI());
-        HardcoreAlchemy.proxy.addListener(new ListenerSmallTweaks());
-        HardcoreAlchemy.proxy.addListener(new ListenerPlayerMorphState());
-        HardcoreAlchemy.proxy.addListener(new ListenerPlayerInstinct());
-        HardcoreAlchemy.proxy.addListener(new ListenerPlayerHinderedMind());
-        HardcoreAlchemy.proxy.addListener(new ListenerInstinctOverheat());
+        HardcoreAlchemyCore.proxy.addListener(new ListenerCapabilities());
+        HardcoreAlchemyCore.proxy.addListener(new ListenerMorphExtension());
+        HardcoreAlchemyCore.proxy.addListener(new ListenerNutritionExtension());
+        HardcoreAlchemyCore.proxy.addListener(new ListenerPlayerMorphs());
+        HardcoreAlchemyCore.proxy.addListener(new ListenerPlayerHumanity());
+        HardcoreAlchemyCore.proxy.addListener(new ListenerMobAI());
+        HardcoreAlchemyCore.proxy.addListener(new ListenerSmallTweaks());
+        HardcoreAlchemyCore.proxy.addListener(new ListenerPlayerMorphState());
+        HardcoreAlchemyCore.proxy.addListener(new ListenerPlayerInstinct());
+        HardcoreAlchemyCore.proxy.addListener(new ListenerPlayerHinderedMind());
+        HardcoreAlchemyCore.proxy.addListener(new ListenerInstinctOverheat());
         
         // Initialize via classload
         new Items();

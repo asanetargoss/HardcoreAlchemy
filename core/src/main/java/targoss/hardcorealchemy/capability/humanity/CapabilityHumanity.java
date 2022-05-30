@@ -23,11 +23,11 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 
 public class CapabilityHumanity implements ICapabilityHumanity {
     
-    public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(HardcoreAlchemy.MOD_ID, "humanity");
+    public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(HardcoreAlchemyCore.MOD_ID, "humanity");
     
     private double humanity;
     // Humanity in the previous tick after humanity tick calculations; allows us to see if humanity was changed in other ways

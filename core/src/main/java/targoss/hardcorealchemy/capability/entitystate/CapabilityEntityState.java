@@ -25,10 +25,10 @@ import javax.annotation.Nullable;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.ResourceLocation;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 
 public class CapabilityEntityState implements ICapabilityEntityState {
-    public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(HardcoreAlchemy.MOD_ID, "entity_state");
+    public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(HardcoreAlchemyCore.MOD_ID, "entity_state");
     
     protected UUID targetPlayerID = null;
     protected EntityLivingBase lastAttackTarget = null;

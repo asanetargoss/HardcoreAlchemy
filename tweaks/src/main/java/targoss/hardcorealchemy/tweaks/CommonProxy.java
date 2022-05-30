@@ -23,7 +23,7 @@ import static targoss.hardcorealchemy.item.Items.HEARTS;
 
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.network.NetMessenger;
 import targoss.hardcorealchemy.tweaks.item.Items;
 import targoss.hardcorealchemy.tweaks.listener.ListenerBedBreakHarvest;
@@ -45,23 +45,23 @@ public class CommonProxy {
     public NetMessenger<HardcoreAlchemyTweaks> messenger;
     
     public void registerNetworking() {
-        messenger = new NetMessenger<HardcoreAlchemyTweaks>(HardcoreAlchemyTweaks.MOD_ID.replace(HardcoreAlchemy.MOD_ID, HardcoreAlchemy.SHORT_MOD_ID))
+        messenger = new NetMessenger<HardcoreAlchemyTweaks>(HardcoreAlchemyTweaks.MOD_ID.replace(HardcoreAlchemyCore.MOD_ID, HardcoreAlchemyCore.SHORT_MOD_ID))
             .register(new RequestCraftItemTimefrozen())
             .register(new MessageHearts());
     }
     
     public void preInit(FMLPreInitializationEvent event) {
-        HardcoreAlchemy.proxy.addListener(new ListenerMobLevel());
-        HardcoreAlchemy.proxy.addListener(new ListenerEntityVoidfade());
-        HardcoreAlchemy.proxy.addListener(new ListenerBedBreakHarvest());
-        HardcoreAlchemy.proxy.addListener(new ListenerInventoryFoodRot());
-        HardcoreAlchemy.proxy.addListener(new ListenerWorldDifficulty());
-        HardcoreAlchemy.proxy.addListener(new ListenerPlayerSlip());
-        HardcoreAlchemy.proxy.addListener(new ListenerPlayerShield());
-        HardcoreAlchemy.proxy.addListener(new ListenerMobEffect());
-        HardcoreAlchemy.proxy.addListener(new ListenerCraftTimefrozen());
-        HardcoreAlchemy.proxy.addListener(new ListenerHearts());
-        HardcoreAlchemy.proxy.addListener(new ListenerHeartShards());
+        HardcoreAlchemyCore.proxy.addListener(new ListenerMobLevel());
+        HardcoreAlchemyCore.proxy.addListener(new ListenerEntityVoidfade());
+        HardcoreAlchemyCore.proxy.addListener(new ListenerBedBreakHarvest());
+        HardcoreAlchemyCore.proxy.addListener(new ListenerInventoryFoodRot());
+        HardcoreAlchemyCore.proxy.addListener(new ListenerWorldDifficulty());
+        HardcoreAlchemyCore.proxy.addListener(new ListenerPlayerSlip());
+        HardcoreAlchemyCore.proxy.addListener(new ListenerPlayerShield());
+        HardcoreAlchemyCore.proxy.addListener(new ListenerMobEffect());
+        HardcoreAlchemyCore.proxy.addListener(new ListenerCraftTimefrozen());
+        HardcoreAlchemyCore.proxy.addListener(new ListenerHearts());
+        HardcoreAlchemyCore.proxy.addListener(new ListenerHeartShards());
 
         // Initialize via classload
         new Items();

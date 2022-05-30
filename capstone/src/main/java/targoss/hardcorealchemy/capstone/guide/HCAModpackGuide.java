@@ -25,7 +25,7 @@ import amerifrance.guideapi.api.impl.Book;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.item.Items;
 
 public class HCAModpackGuide {
@@ -33,7 +33,7 @@ public class HCAModpackGuide {
     public static Book guide = null;
     
     public static void preInit() {
-        guideBuildResult = new BookBuilder().setNamespace(HardcoreAlchemy.MOD_ID).setID("guide")
+        guideBuildResult = new BookBuilder().setNamespace(HardcoreAlchemyCore.MOD_ID).setID("guide")
                 .addCategory(new BookBuilder.Category().setId("modpack_info").setItemId("sign")
                         .addEntry("about_the_pack", "compass", "1", "2", "3")
                         .addEntry("keybinding_primer", "feather", "1", "2", "3")

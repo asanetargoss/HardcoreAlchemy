@@ -30,13 +30,13 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.capability.inactive.IInactiveCapabilities;
 import targoss.hardcorealchemy.capability.inactive.IInactiveCapabilities.Cap;
 import targoss.hardcorealchemy.capability.inactive.ProviderInactiveCapabilities;
 import targoss.hardcorealchemy.util.MiscVanilla;
 
-public class MessageInactiveCapabilities extends MessageToClient<HardcoreAlchemy> {
+public class MessageInactiveCapabilities extends MessageToClient<HardcoreAlchemyCore> {
     
     public MessageInactiveCapabilities() { }
     
@@ -109,7 +109,7 @@ public class MessageInactiveCapabilities extends MessageToClient<HardcoreAlchemy
     }
 
     @Override
-    public Class<? extends IMessageHandler<? extends MessageToClient<HardcoreAlchemy>, IMessage>> getHandlerClass() {
+    public Class<? extends IMessageHandler<? extends MessageToClient<HardcoreAlchemyCore>, IMessage>> getHandlerClass() {
         return Handler.class;
     }
 

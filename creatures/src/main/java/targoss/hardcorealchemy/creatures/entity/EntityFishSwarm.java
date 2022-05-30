@@ -50,7 +50,7 @@ import net.minecraft.world.storage.loot.LootTable;
 import net.minecraft.world.storage.loot.LootTableList;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.creatures.capability.morphstate.ICapabilityMorphState;
 import targoss.hardcorealchemy.creatures.entity.ai.AIWanderWithTiredness;
 
@@ -73,7 +73,7 @@ public class EntityFishSwarm extends EntityMob {
         this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(400.0D);
     }
     
-    public static final String DEATH_TIMER_KEY = HardcoreAlchemy.MOD_ID + ":death_timer";
+    public static final String DEATH_TIMER_KEY = HardcoreAlchemyCore.MOD_ID + ":death_timer";
     
     @Override
     public void readEntityFromNBT(NBTTagCompound nbt) {

@@ -27,7 +27,7 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.creatures.instinct.api.IInstinctNeed;
 import targoss.hardcorealchemy.creatures.instinct.api.InstinctNeedFactory;
 import targoss.hardcorealchemy.creatures.instinct.api.InvalidNeed;
@@ -75,7 +75,7 @@ public class InstinctNeedWrapper {
             
             need = factory.createNeed(morphEntity);
             if (need == null) {
-                HardcoreAlchemy.LOGGER.error("Failed to create instinct need for factory: '" +
+                HardcoreAlchemyCore.LOGGER.error("Failed to create instinct need for factory: '" +
                         factory.getRegistryName().toString() +
                         "', when morphed as: '" +
                         EntityList.getEntityString(morphEntity) +

@@ -30,13 +30,13 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.capability.combatlevel.ICapabilityCombatLevel;
 
 public class ProviderCombatLevel implements IWailaEntityProvider {
     
-    public static final String NBT_LABEL_LEVEL = HardcoreAlchemy.MOD_ID + ":combat_level";
-    public static final String NBT_LABEL_LEVEL_DEFINED = HardcoreAlchemy.MOD_ID + ":combat_level_defined";
+    public static final String NBT_LABEL_LEVEL = HardcoreAlchemyCore.MOD_ID + ":combat_level";
+    public static final String NBT_LABEL_LEVEL_DEFINED = HardcoreAlchemyCore.MOD_ID + ":combat_level_defined";
     
     public static Class getTargetClass() {
         return EntityLiving.class;

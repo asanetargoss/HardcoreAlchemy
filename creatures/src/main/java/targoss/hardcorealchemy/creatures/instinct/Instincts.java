@@ -22,7 +22,7 @@ package targoss.hardcorealchemy.creatures.instinct;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.IForgeRegistry;
 import net.minecraftforge.fml.common.registry.RegistryBuilder;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.coremod.HardcoreAlchemyPreInit;
 import targoss.hardcorealchemy.creatures.instinct.api.Instinct;
 import targoss.hardcorealchemy.creatures.instinct.api.InstinctEffect;
@@ -32,24 +32,24 @@ import targoss.hardcorealchemy.registrar.Registrar;
 import targoss.hardcorealchemy.registrar.RegistrarForge;
 
 public class Instincts {
-    public static final Registrar<Instinct> INSTINCTS = new RegistrarForge<Instinct>("instincts", HardcoreAlchemy.MOD_ID, HardcoreAlchemyPreInit.LOGGER);
-    public static final Registrar<InstinctNeedFactory> INSTINCT_NEED_FACTORIES = new RegistrarForge<InstinctNeedFactory>("instinct need factories", HardcoreAlchemy.MOD_ID, HardcoreAlchemyPreInit.LOGGER);
-    public static final Registrar<InstinctEffect> INSTINCT_EFFECTS = new RegistrarForge<InstinctEffect>("instinct needs", HardcoreAlchemy.MOD_ID, HardcoreAlchemyPreInit.LOGGER);
+    public static final Registrar<Instinct> INSTINCTS = new RegistrarForge<Instinct>("instincts", HardcoreAlchemyCore.MOD_ID, HardcoreAlchemyPreInit.LOGGER);
+    public static final Registrar<InstinctNeedFactory> INSTINCT_NEED_FACTORIES = new RegistrarForge<InstinctNeedFactory>("instinct need factories", HardcoreAlchemyCore.MOD_ID, HardcoreAlchemyPreInit.LOGGER);
+    public static final Registrar<InstinctEffect> INSTINCT_EFFECTS = new RegistrarForge<InstinctEffect>("instinct needs", HardcoreAlchemyCore.MOD_ID, HardcoreAlchemyPreInit.LOGGER);
 
     public static final IForgeRegistry<Instinct> REGISTRY = new RegistryBuilder<Instinct>()
-            .setName(new ResourceLocation(HardcoreAlchemy.MOD_ID, "instincts"))
+            .setName(new ResourceLocation(HardcoreAlchemyCore.MOD_ID, "instincts"))
             .setType(Instinct.class)
             .setIDRange(0, 1024)
             .create();
     
     public static final IForgeRegistry<InstinctNeedFactory> NEED_FACTORY_REGISTRY = new RegistryBuilder<InstinctNeedFactory>()
-            .setName(new ResourceLocation(HardcoreAlchemy.MOD_ID, "instinct_factories"))
+            .setName(new ResourceLocation(HardcoreAlchemyCore.MOD_ID, "instinct_factories"))
             .setType(InstinctNeedFactory.class)
             .setIDRange(0, 1024)
             .create();
     
     public static final IForgeRegistry<InstinctEffect> EFFECT_REGISTRY = new RegistryBuilder<InstinctEffect>()
-            .setName(new ResourceLocation(HardcoreAlchemy.MOD_ID, "effects"))
+            .setName(new ResourceLocation(HardcoreAlchemyCore.MOD_ID, "effects"))
             .setType(InstinctEffect.class)
             .setIDRange(0, 1024)
             .create();

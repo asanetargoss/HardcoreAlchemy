@@ -27,7 +27,7 @@ import java.util.Map;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.creatures.instinct.api.IInstinctEffectData;
 import targoss.hardcorealchemy.creatures.instinct.api.Instinct;
 import targoss.hardcorealchemy.creatures.instinct.api.InstinctEffect;
@@ -35,7 +35,7 @@ import targoss.hardcorealchemy.creatures.instinct.internal.InstinctEffectWrapper
 import targoss.hardcorealchemy.util.IDList;
 
 public class CapabilityInstinct implements ICapabilityInstinct {
-    public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(HardcoreAlchemy.MOD_ID, "instinct");
+    public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(HardcoreAlchemyCore.MOD_ID, "instinct");
     
     protected boolean enabled = true;
     private float instinct = ICapabilityInstinct.DEFAULT_INSTINCT_VALUE;
@@ -167,7 +167,7 @@ public class CapabilityInstinct implements ICapabilityInstinct {
         try {
             ForcedEffectEntry entry = forcedEffects.get(effectForceKey);
             if (!expectedEffect.equals(entry.effect)) {
-                HardcoreAlchemy.LOGGER.warn("A forced instinct effect of type " +
+                HardcoreAlchemyCore.LOGGER.warn("A forced instinct effect of type " +
                         expectedEffect.getRegistryName() + " could not be removed at index " +
                         effectForceKey + ".");
             }
@@ -178,7 +178,7 @@ public class CapabilityInstinct implements ICapabilityInstinct {
         catch (Exception e) {
             // This really shouldn't happen, but if it does...
             assert(false);
-            HardcoreAlchemy.LOGGER.error(
+            HardcoreAlchemyCore.LOGGER.error(
                     "An error occurred removing an instinct effect at index  " + effectForceKey + ". " +
                     "This may be a sign of a severe problem with handling instinct state.",
                     e);

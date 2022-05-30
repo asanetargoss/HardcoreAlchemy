@@ -23,10 +23,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.util.ResourceLocation;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 
 public class CapabilityDimensionHistory implements ICapabilityDimensionHistory {
-    public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(HardcoreAlchemy.MOD_ID, "dimension_history");
+    public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(HardcoreAlchemyCore.MOD_ID, "dimension_history");
     
     protected List<Integer> dimensionHistory = new ArrayList<>();
 

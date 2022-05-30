@@ -20,11 +20,11 @@
 package targoss.hardcorealchemy.tweaks.capability.serverdata;
 
 import net.minecraft.util.ResourceLocation;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 
 public class CapabilityServerData implements ICapabilityServerData {
     
-    public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(HardcoreAlchemy.MOD_ID, "serverData");
+    public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(HardcoreAlchemyCore.MOD_ID, "serverData");
     
     private boolean hasDifficulty;
 

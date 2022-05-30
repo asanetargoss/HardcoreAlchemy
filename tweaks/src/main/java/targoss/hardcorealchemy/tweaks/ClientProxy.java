@@ -20,7 +20,7 @@
 package targoss.hardcorealchemy.tweaks;
 
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.tweaks.item.Items;
 import targoss.hardcorealchemy.tweaks.listener.ListenerClientItems;
 import targoss.hardcorealchemy.tweaks.listener.ListenerCraftTimefrozen;
@@ -31,10 +31,10 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void preInit(FMLPreInitializationEvent event) {
         super.preInit(event);
-        HardcoreAlchemy.proxy.addListener(new ListenerEntityVoidfade.ClientSide());
-        HardcoreAlchemy.proxy.addListener(new ListenerClientItems());
-        HardcoreAlchemy.proxy.addListener(new ListenerCraftTimefrozen.ClientSide());
-        HardcoreAlchemy.proxy.addListener(new ListenerHearts.ClientSide());
+        HardcoreAlchemyCore.proxy.addListener(new ListenerEntityVoidfade.ClientSide());
+        HardcoreAlchemyCore.proxy.addListener(new ListenerClientItems());
+        HardcoreAlchemyCore.proxy.addListener(new ListenerCraftTimefrozen.ClientSide());
+        HardcoreAlchemyCore.proxy.addListener(new ListenerHearts.ClientSide());
         Items.ClientSide.registerSpecialModels();
     }
 }

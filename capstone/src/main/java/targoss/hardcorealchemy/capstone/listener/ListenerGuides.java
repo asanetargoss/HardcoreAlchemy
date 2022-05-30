@@ -20,7 +20,7 @@ package targoss.hardcorealchemy.capstone.listener;
 
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.misc.CapabilityMisc;
 import targoss.hardcorealchemy.capstone.CapstoneModState;
@@ -33,7 +33,7 @@ import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
 public class ListenerGuides extends HardcoreAlchemyListener {
     @Override
     public void preInit(FMLPreInitializationEvent event) {
-        if (!HardcoreAlchemy.proxy.configs.base.enableModpack || !CapstoneModState.isGuideapiLoaded) {
+        if (!HardcoreAlchemyCore.proxy.configs.base.enableModpack || !CapstoneModState.isGuideapiLoaded) {
             return;
         }
 
@@ -46,7 +46,7 @@ public class ListenerGuides extends HardcoreAlchemyListener {
     }
     @Override
     public void init(FMLInitializationEvent event) {
-        if (!HardcoreAlchemy.proxy.configs.base.enableModpack || !CapstoneModState.isGuideapiLoaded) {
+        if (!HardcoreAlchemyCore.proxy.configs.base.enableModpack || !CapstoneModState.isGuideapiLoaded) {
             return;
         }
         

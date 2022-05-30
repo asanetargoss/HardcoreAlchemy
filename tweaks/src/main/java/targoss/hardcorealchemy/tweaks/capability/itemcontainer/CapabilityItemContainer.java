@@ -24,11 +24,11 @@ import java.util.Map;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.util.InventoryUtil;
 
 public class CapabilityItemContainer implements ICapabilityItemContainer {
-    public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(HardcoreAlchemy.MOD_ID, "item_container");
+    public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(HardcoreAlchemyCore.MOD_ID, "item_container");
     
     ItemStack containedItem = InventoryUtil.ITEM_STACK_EMPTY;
     Map<ResourceLocation, Float> propertyOverrides = new HashMap<>();

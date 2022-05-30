@@ -50,7 +50,7 @@ import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.creatures.instinct.api.IInstinctNeed;
 import targoss.hardcorealchemy.creatures.instinct.api.IInstinctState;
 import targoss.hardcorealchemy.creatures.instinct.internal.InstinctState;
@@ -175,7 +175,7 @@ public class InstinctNeedAttackPrey implements IInstinctNeed {
     @Override
     public IInstinctNeed createInstanceFromMorphEntity(EntityLivingBase morphEntity) {
         if (!(morphEntity instanceof EntityLiving)) {
-            HardcoreAlchemy.LOGGER.error("Cannot create an instance of " + InstinctNeedAttackPrey.class.getName() + " with a morph that is not EntityLiving");
+            HardcoreAlchemyCore.LOGGER.error("Cannot create an instance of " + InstinctNeedAttackPrey.class.getName() + " with a morph that is not EntityLiving");
             return null;
         }
         return new InstinctNeedAttackPrey((EntityLiving)morphEntity);

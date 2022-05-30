@@ -19,7 +19,7 @@
 package targoss.hardcorealchemy.capstone.test.suite;
 
 import net.minecraft.entity.monster.EntityZombie;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.capstone.test.api.ITestList;
 import targoss.hardcorealchemy.capstone.test.api.ITestSuite;
 import targoss.hardcorealchemy.capstone.test.api.TestList;
@@ -39,7 +39,7 @@ public class TestWorldReference implements ITestSuite {
     }
 
     public boolean checkServerTestReference() {
-        return HardcoreAlchemy.SERVER_REFERENCE != null && HardcoreAlchemy.SERVER_REFERENCE.get() != null;
+        return HardcoreAlchemyCore.SERVER_REFERENCE != null && HardcoreAlchemyCore.SERVER_REFERENCE.get() != null;
     }
 
     public boolean checkWorldAvailable() {

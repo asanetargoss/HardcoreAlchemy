@@ -19,16 +19,16 @@
 
 package targoss.hardcorealchemy.entity;
 
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.coremod.HardcoreAlchemyPreInit;
 import targoss.hardcorealchemy.registrar.Registrar;
 import targoss.hardcorealchemy.registrar.RegistrarEntity;
 import targoss.hardcorealchemy.util.EntityInfo;
 
 public class Entities {
-    public static final Registrar<EntityInfo> ENTITIES = new RegistrarEntity("entities", HardcoreAlchemy.MOD_ID, HardcoreAlchemyPreInit.LOGGER);
+    public static final Registrar<EntityInfo> ENTITIES = new RegistrarEntity("entities", HardcoreAlchemyCore.MOD_ID, HardcoreAlchemyPreInit.LOGGER);
     
     public static class ClientSide {
-        public static final Registrar<EntityInfo.ClientSide> ENTITIES = new RegistrarEntity.ClientSide("entities_client", HardcoreAlchemy.MOD_ID, HardcoreAlchemyPreInit.LOGGER);
+        public static final Registrar<EntityInfo.ClientSide> ENTITIES = new RegistrarEntity.ClientSide("entities_client", HardcoreAlchemyCore.MOD_ID, HardcoreAlchemyPreInit.LOGGER);
     }
 }

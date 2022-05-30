@@ -27,7 +27,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.creatures.HardcoreAlchemyCreatures;
 import targoss.hardcorealchemy.creatures.capability.instinct.ICapabilityInstinct;
 import targoss.hardcorealchemy.creatures.capability.instinct.ProviderInstinct;
@@ -124,7 +124,7 @@ public class MessageInstinctNeedState extends MessageToClient<HardcoreAlchemyCre
             // Sync which needs are/are not being met
             List<ICapabilityInstinct.InstinctEntry> instincts = instinct.getInstincts();
             if (!doSizesMatch(player, instincts, needStatesPerInstinct)) {
-                HardcoreAlchemy.LOGGER.error("Could not sync instinct need statuses because the instincts are out of sync");
+                HardcoreAlchemyCore.LOGGER.error("Could not sync instinct need statuses because the instincts are out of sync");
             }
             else {
                 int n = instincts.size();

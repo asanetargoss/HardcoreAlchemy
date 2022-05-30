@@ -50,7 +50,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.IForgeRegistry;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.heart.Heart;
 import targoss.hardcorealchemy.item.HcAPotion;
 import targoss.hardcorealchemy.registrar.RegistrarHeart;
@@ -148,7 +148,7 @@ public class Items {
     }
     
     public static class ClientSide {
-        public static final ResourceLocation PROPERTY_NATIVE_DIMENSION = new ResourceLocation(HardcoreAlchemy.MOD_ID, "native_dimension");
+        public static final ResourceLocation PROPERTY_NATIVE_DIMENSION = new ResourceLocation(HardcoreAlchemyCore.MOD_ID, "native_dimension");
         
         public static void registerSpecialModels() {
             DIMENSIONAL_FLUX_CRYSTAL.addPropertyOverride(PROPERTY_NATIVE_DIMENSION, new IItemPropertyGetter() {

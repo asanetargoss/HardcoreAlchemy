@@ -32,7 +32,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.coremod.CoremodHook;
 
 /**
@@ -67,10 +67,10 @@ public class MiscVanilla {
     }
     
     public static World getWorldServer() {
-        if (HardcoreAlchemy.SERVER_REFERENCE == null) {
+        if (HardcoreAlchemyCore.SERVER_REFERENCE == null) {
             return null;
         }
-        MinecraftServer server = HardcoreAlchemy.SERVER_REFERENCE.get();
+        MinecraftServer server = HardcoreAlchemyCore.SERVER_REFERENCE.get();
         if (server == null) {
             return null;
         }

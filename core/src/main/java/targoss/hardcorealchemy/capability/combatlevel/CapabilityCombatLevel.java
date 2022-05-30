@@ -20,11 +20,11 @@
 package targoss.hardcorealchemy.capability.combatlevel;
 
 import net.minecraft.util.ResourceLocation;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 
 public class CapabilityCombatLevel implements ICapabilityCombatLevel {
     
-    public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(HardcoreAlchemy.MOD_ID, "combat_level");
+    public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(HardcoreAlchemyCore.MOD_ID, "combat_level");
     
     private int combatLevel;
     private boolean hasCombatLevel;

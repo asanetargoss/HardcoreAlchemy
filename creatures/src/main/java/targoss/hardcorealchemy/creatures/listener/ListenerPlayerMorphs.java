@@ -44,7 +44,7 @@ import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerChangedDimensionEvent;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.creatures.HardcoreAlchemyCreatures;
 import targoss.hardcorealchemy.creatures.capability.killcount.CapabilityKillCount;
@@ -70,7 +70,7 @@ public class ListenerPlayerMorphs extends HardcoreAlchemyListener {
     @CapabilityInject(ICapabilityHumanity.class)
     public static final Capability<ICapabilityHumanity> HUMANITY_CAPABILITY = null;
     public static final UUID MORPH_COUNT_BONUS = UUID.fromString("aaca31f4-1778-4c54-9a2f-02c95912b012");
-    public static final String MORPH_COUNT_BONUS_NAME = HardcoreAlchemy.MOD_ID + ":morphCountBonus";
+    public static final String MORPH_COUNT_BONUS_NAME = HardcoreAlchemyCore.MOD_ID + ":morphCountBonus";
 
     // The capability from Metamorph itself
     @CapabilityInject(IMorphing.class)

@@ -39,7 +39,7 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import net.minecraftforge.fml.relauncher.Side;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.capability.inactive.IInactiveCapabilities;
 import targoss.hardcorealchemy.capstone.CapstoneModState;
 import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
@@ -49,7 +49,7 @@ public class ListenerPlayerMagicState extends HardcoreAlchemyListener {
     @CapabilityInject(IInactiveCapabilities.class)
     private static final Capability<IInactiveCapabilities> INACTIVE_CAPABILITIES = null;
     
-    public static final String INACTIVE_STELLAR_ALIGNMENT = HardcoreAlchemy.MOD_ID + ":stellar_alignment";
+    public static final String INACTIVE_STELLAR_ALIGNMENT = HardcoreAlchemyCore.MOD_ID + ":stellar_alignment";
     
     /**
      * EventPriority.HIGH so it runs before ListenerPlayerMagicState.onPlayerRespawn.
@@ -156,7 +156,7 @@ public class ListenerPlayerMagicState extends HardcoreAlchemyListener {
                 ResearchManager.savePlayerKnowledge(player);
             }
             catch (Exception e) {
-                HardcoreAlchemy.LOGGER.error("Stellar alignment could not be deactivated for player ID " + player.getUniqueID(), e);
+                HardcoreAlchemyCore.LOGGER.error("Stellar alignment could not be deactivated for player ID " + player.getUniqueID(), e);
                 playerProgress.load(cap.data);
             }
         }
@@ -172,7 +172,7 @@ public class ListenerPlayerMagicState extends HardcoreAlchemyListener {
             clearStellarAlignmentProgress(playerProgress);
         }
         catch (Exception e) {
-            HardcoreAlchemy.LOGGER.error("Stellar alignment could not be cleared for player ID " + player.getUniqueID(), e);
+            HardcoreAlchemyCore.LOGGER.error("Stellar alignment could not be cleared for player ID " + player.getUniqueID(), e);
         }
     }
 
@@ -199,7 +199,7 @@ public class ListenerPlayerMagicState extends HardcoreAlchemyListener {
             syncMethod.invoke(null, player);
         }
         catch (Exception e) {
-            HardcoreAlchemy.LOGGER.error("Stellar alignment could not be synced to client for player ID " + player.getUniqueID(), e);
+            HardcoreAlchemyCore.LOGGER.error("Stellar alignment could not be synced to client for player ID " + player.getUniqueID(), e);
         }
     }
 }

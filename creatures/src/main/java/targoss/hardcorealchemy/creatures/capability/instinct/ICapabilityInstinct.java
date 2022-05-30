@@ -29,7 +29,7 @@ import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.creatures.instinct.api.IInstinctEffectData;
 import targoss.hardcorealchemy.creatures.instinct.api.Instinct;
 import targoss.hardcorealchemy.creatures.instinct.api.InstinctEffect;
@@ -41,7 +41,7 @@ import targoss.hardcorealchemy.util.IDList;
 import targoss.hardcorealchemy.util.MorphExtension;
 
 public interface ICapabilityInstinct {
-    public static final IAttribute MAX_INSTINCT = new RangedAttribute(null, HardcoreAlchemy.MOD_ID + ":max_instinct", 20.0D, Double.MIN_VALUE, Double.MAX_VALUE).setShouldWatch(true);
+    public static final IAttribute MAX_INSTINCT = new RangedAttribute(null, HardcoreAlchemyCore.MOD_ID + ":max_instinct", 20.0D, Double.MIN_VALUE, Double.MAX_VALUE).setShouldWatch(true);
     public static final float DEFAULT_INSTINCT_VALUE = (float)(MAX_INSTINCT.getDefaultValue()*0.51);
     
     boolean getEnabled();

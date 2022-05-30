@@ -31,7 +31,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.heart.Heart;
 import targoss.hardcorealchemy.tweaks.capability.hearts.ICapabilityHearts;
 import targoss.hardcorealchemy.tweaks.listener.ListenerHearts;
@@ -53,7 +53,7 @@ public class ItemHeart extends Item {
         boolean added = false;
         ICapabilityHearts hearts = player.getCapability(HEARTS_CAPABILITY, null);
         if (hearts != null) {
-            added = ListenerHearts.addHeart(HardcoreAlchemy.proxy.configs, player, hearts, heart);
+            added = ListenerHearts.addHeart(HardcoreAlchemyCore.proxy.configs, player, hearts, heart);
             if (!added) {
                 if (!player.world.isRemote) {
                     Chat.message(Chat.Type.NOTIFY, (EntityPlayerMP)player, new TextComponentTranslation("hardcorealchemy.heart.already_added"));

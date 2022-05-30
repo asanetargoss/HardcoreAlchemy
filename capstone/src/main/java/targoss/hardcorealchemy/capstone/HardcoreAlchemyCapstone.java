@@ -29,7 +29,7 @@ import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capstone.command.CommandTest;
 import targoss.hardcorealchemy.creatures.HardcoreAlchemyCreatures;
@@ -44,7 +44,7 @@ public class HardcoreAlchemyCapstone
     public static final String MOD_ID = "hardcorealchemy_capstone";
     public static final String VERSION = "@HARDCORE_ALCHEMY_CAPSTONE_VERSION@";
     // These dependencies are replaced in capstone/build.gradle
-    public static final String DEPENDENCIES = "required-before:" + HardcoreAlchemy.MOD_ID + ";" +
+    public static final String DEPENDENCIES = "required-before:" + HardcoreAlchemyCore.MOD_ID + ";" +
             "required-after:" + HardcoreAlchemyTweaks.MOD_ID + ";" +
             "required-after:" + HardcoreAlchemyCreatures.MOD_ID + ";" +
             "required-after:" + HardcoreAlchemyMagic.MOD_ID + ";" +

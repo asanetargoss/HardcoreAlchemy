@@ -20,10 +20,10 @@
 package targoss.hardcorealchemy.creatures.capability.morphstate;
 
 import net.minecraft.util.ResourceLocation;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 
 public class CapabilityMorphState implements ICapabilityMorphState {
-    public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(HardcoreAlchemy.MOD_ID, "morph_state");
+    public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(HardcoreAlchemyCore.MOD_ID, "morph_state");
     
     private boolean isFishingUnderwater = false;
     private int fishingTimer = 0;

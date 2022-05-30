@@ -44,7 +44,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBloc
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.oredict.OreDictionary;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.coremod.CoremodHook;
 import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
@@ -108,7 +108,7 @@ public class ListenerCrops extends HardcoreAlchemyListener {
             }
         }
         catch (Exception e) {
-            HardcoreAlchemy.LOGGER.error("Failed to modify Harvestcraft to make crops drop seeds");
+            HardcoreAlchemyCore.LOGGER.error("Failed to modify Harvestcraft to make crops drop seeds");
             e.printStackTrace();
         }
     }

@@ -32,7 +32,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.creatures.capability.instinct.ICapabilityInstinct.ForcedEffectEntry;
 import targoss.hardcorealchemy.creatures.capability.instinct.ICapabilityInstinct.InstinctEntry;
 import targoss.hardcorealchemy.creatures.instinct.Instincts;
@@ -97,7 +97,7 @@ public class StorageInstinct implements Capability.IStorage<ICapabilityInstinct>
         NBTTagList activeEffectsNBT = new NBTTagList();
         for (InstinctEffectWrapper wrapper : instance.getActiveEffects().values()) {
             if (wrapper.effect == null) {
-                HardcoreAlchemy.LOGGER.warn("An effect wrapper is missing an effect. It will not be serialized to NBT.");
+                HardcoreAlchemyCore.LOGGER.warn("An effect wrapper is missing an effect. It will not be serialized to NBT.");
                 continue;
             }
             activeEffectsNBT.appendTag(serializeEffectWrapper(wrapper));
@@ -132,7 +132,7 @@ public class StorageInstinct implements Capability.IStorage<ICapabilityInstinct>
         for (int i = 0; i < numInstincts; i++) {
             InstinctEntry entry = deserializeInstinctEntry(instinctsNBT.getCompoundTagAt(i));
             if (entry.instinct == null) {
-                HardcoreAlchemy.LOGGER.warn("An instinct is undefined. It will be ignored.");
+                HardcoreAlchemyCore.LOGGER.warn("An instinct is undefined. It will be ignored.");
             }
             else {
                 instincts.add(entry);
@@ -146,7 +146,7 @@ public class StorageInstinct implements Capability.IStorage<ICapabilityInstinct>
         for (int i = 0; i < numActiveEffects; i++) {
             InstinctEffectWrapper effectWrapper = deserializeEffectWrapper(activeEffectsNBT.getCompoundTagAt(i));
             if (effectWrapper.effect == null) {
-                HardcoreAlchemy.LOGGER.warn("An active instinct effect is undefined. It will be ignored.");
+                HardcoreAlchemyCore.LOGGER.warn("An active instinct effect is undefined. It will be ignored.");
                 continue;
             }
             activeEffects.put(effectWrapper.effect, effectWrapper);
@@ -178,7 +178,7 @@ public class StorageInstinct implements Capability.IStorage<ICapabilityInstinct>
             NBTTagList needsNBT = new NBTTagList();
             for (InstinctNeedWrapper wrapper : entry.needs) {
                 if (wrapper.factory == null) {
-                    HardcoreAlchemy.LOGGER.warn("An instinct need is missing a factory. It will not be saved to NBT.");
+                    HardcoreAlchemyCore.LOGGER.warn("An instinct need is missing a factory. It will not be saved to NBT.");
                     continue;
                 }
                 needsNBT.appendTag(serializeNeedWrapper(wrapper));
@@ -207,7 +207,7 @@ public class StorageInstinct implements Capability.IStorage<ICapabilityInstinct>
         
         instinctEntry.instinct = Instincts.REGISTRY.getValue(new ResourceLocation(nbt.getString(INSTINCT_ID)));
         if (instinctEntry.instinct == null) {
-            HardcoreAlchemy.LOGGER.warn("Could not find instinct ' " + nbt.getString(INSTINCT_ID) + "' from instinct NBT");
+            HardcoreAlchemyCore.LOGGER.warn("Could not find instinct ' " + nbt.getString(INSTINCT_ID) + "' from instinct NBT");
             return instinctEntry;
         }
         
@@ -220,7 +220,7 @@ public class StorageInstinct implements Capability.IStorage<ICapabilityInstinct>
                 InstinctNeedWrapper wrapper = deserializeNeedWrapper(needsNBT.getCompoundTagAt(i));
                 if (wrapper.factory == null) {
                     // Do not add the wrapper if the factory is not defined, i.e. is not in the registry
-                    HardcoreAlchemy.LOGGER.warn("An instinct need read from NBT is missing the factory. It will be ignored.");
+                    HardcoreAlchemyCore.LOGGER.warn("An instinct need read from NBT is missing the factory. It will be ignored.");
                     continue;
                 }
                 needs.add(wrapper);
@@ -236,7 +236,7 @@ public class StorageInstinct implements Capability.IStorage<ICapabilityInstinct>
             for (int i = 0; i < numEffects; i++) {
                 InstinctEffectWrapper wrapper = deserializeEffectWrapper(effectsNBT.getCompoundTagAt(i));
                 if (wrapper.effect == null) {
-                    HardcoreAlchemy.LOGGER.warn("An inactive/candidate instinct effect is undefined. It will be ignored.");
+                    HardcoreAlchemyCore.LOGGER.warn("An inactive/candidate instinct effect is undefined. It will be ignored.");
                     continue;
                 }
                 // Only add the wrapper if the effect is defined, i.e. is in the registry
@@ -272,7 +272,7 @@ public class StorageInstinct implements Capability.IStorage<ICapabilityInstinct>
         
         wrapper.factory = Instincts.NEED_FACTORY_REGISTRY.getValue(new ResourceLocation(nbt.getString(NEED_ID)));
         if (wrapper.factory == null) {
-            HardcoreAlchemy.LOGGER.warn("Could not find factory '" + nbt.getString(NEED_ID) + "' from instinct need NBT");
+            HardcoreAlchemyCore.LOGGER.warn("Could not find factory '" + nbt.getString(NEED_ID) + "' from instinct need NBT");
             return wrapper;
         }
         
@@ -314,7 +314,7 @@ public class StorageInstinct implements Capability.IStorage<ICapabilityInstinct>
         
         byte needStatusValue = nbt.getByte(INSTINCT_STATE_NEED_STATUS);
         if (needStatusValue < 0 || needStatusValue >= IInstinctState.NeedStatus.values().length) {
-            HardcoreAlchemy.LOGGER.warn("Invalid need status enum " + needStatusValue + " when deserializing instinct need data. The default " + state.needStatus.ordinal() + " will be used. (" + state.needStatus.toString() + ")");
+            HardcoreAlchemyCore.LOGGER.warn("Invalid need status enum " + needStatusValue + " when deserializing instinct need data. The default " + state.needStatus.ordinal() + " will be used. (" + state.needStatus.toString() + ")");
         }
         else {
             state.needStatus = IInstinctState.NeedStatus.values()[needStatusValue];
@@ -327,7 +327,7 @@ public class StorageInstinct implements Capability.IStorage<ICapabilityInstinct>
             NBTTagCompound amplifierNBT = amplifiersNBT.getCompoundTagAt(i);
             InstinctEffect effect = Instincts.EFFECT_REGISTRY.getValue(new ResourceLocation(amplifierNBT.getString(EFFECT_AMPLIFIER_ID)));
             if (effect == null) {
-                HardcoreAlchemy.LOGGER.warn("Invalid effect name '" + amplifierNBT.getString(EFFECT_AMPLIFIER_ID) + "' when deserializing instinct effect amplifier. The effect amplifier will be ignored.");
+                HardcoreAlchemyCore.LOGGER.warn("Invalid effect name '" + amplifierNBT.getString(EFFECT_AMPLIFIER_ID) + "' when deserializing instinct effect amplifier. The effect amplifier will be ignored.");
                 continue;
             }
             state.effectAmplifiers.put(effect, amplifierNBT.getFloat(EFFECT_AMPLIFIER_AMOUNT));
@@ -351,7 +351,7 @@ public class StorageInstinct implements Capability.IStorage<ICapabilityInstinct>
         
         wrapper.effect = Instincts.EFFECT_REGISTRY.getValue(new ResourceLocation(nbt.getString(EFFECT_ID)));
         if (wrapper.effect == null) {
-            HardcoreAlchemy.LOGGER.warn("Invalid effect name '" + nbt.getString(EFFECT_ID) + "' when deserializing instinct effect wrapper.");
+            HardcoreAlchemyCore.LOGGER.warn("Invalid effect name '" + nbt.getString(EFFECT_ID) + "' when deserializing instinct effect wrapper.");
             return wrapper;
         }
         
@@ -416,7 +416,7 @@ public class StorageInstinct implements Capability.IStorage<ICapabilityInstinct>
         ForcedEffectEntry entry = new ForcedEffectEntry();
         entry.effect = Instincts.EFFECT_REGISTRY.getValue(new ResourceLocation(nbt.getString(FORCED_EFFECT_TYPE)));
         if (entry.effect == null) {
-            HardcoreAlchemy.LOGGER.warn("Invalid effect name '" + nbt.getString(FORCED_EFFECT_TYPE) + "' when deserializing forced instinct effect.");
+            HardcoreAlchemyCore.LOGGER.warn("Invalid effect name '" + nbt.getString(FORCED_EFFECT_TYPE) + "' when deserializing forced instinct effect.");
             return null;
         }
         entry.amplitude = nbt.getFloat(FORCED_EFFECT_AMPLITUDE);

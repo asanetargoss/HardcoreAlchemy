@@ -37,15 +37,15 @@ import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
-import targoss.hardcorealchemy.coremod.HardcoreAlchemyCoremod;
+import targoss.hardcorealchemy.coremod.HardcoreAlchemyCoreCoremod;
 
-@Mod(modid = HardcoreAlchemy.MOD_ID, version = HardcoreAlchemy.VERSION,
-    dependencies = HardcoreAlchemy.DEPENDENCIES, acceptedMinecraftVersions = HardcoreAlchemy.MC_VERSIONS)
-public class HardcoreAlchemy
+@Mod(modid = HardcoreAlchemyCore.MOD_ID, version = HardcoreAlchemyCore.VERSION,
+    dependencies = HardcoreAlchemyCore.DEPENDENCIES, acceptedMinecraftVersions = HardcoreAlchemyCore.MC_VERSIONS)
+public class HardcoreAlchemyCore
 {
     public static final String MOD_ID = "hardcorealchemy";
     public static final String SHORT_MOD_ID = "hca";
-    public static final String VERSION = "@HARDCORE_ALCHEMY_VERSION@";
+    public static final String VERSION = "@HARDCORE_ALCHEMY_CORE_VERSION@";
     public static final String DEPENDENCIES =
             /* Workaround for Potion Core canceling the armor render and
              * re-rendering it way too early (this ensures the humanity
@@ -57,8 +57,8 @@ public class HardcoreAlchemy
     public static final String CLIENT_PROXY = "targoss.hardcorealchemy.ClientProxy";
     public static final String COMMON_PROXY = "targoss.hardcorealchemy.CommonProxy";
     
-    @Mod.Instance(HardcoreAlchemy.MOD_ID)
-    public static HardcoreAlchemy INSTANCE;
+    @Mod.Instance(HardcoreAlchemyCore.MOD_ID)
+    public static HardcoreAlchemyCore INSTANCE;
     
     @SidedProxy(modId=MOD_ID, clientSide=CLIENT_PROXY, serverSide=COMMON_PROXY)
     public static CommonProxy proxy;
@@ -67,10 +67,10 @@ public class HardcoreAlchemy
     
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-        if (!HardcoreAlchemyCoremod.isCoremodInitialized()){
+        if (!HardcoreAlchemyCoreCoremod.isCoremodInitialized()){
             throw new ModStateException(
                     "The coremod at '" +
-                    HardcoreAlchemyCoremod.class.getName() +
+                    HardcoreAlchemyCoreCoremod.class.getName() +
                     "' did not run");
         }
         

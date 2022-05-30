@@ -23,11 +23,11 @@ import java.io.File;
 import java.nio.file.Path;
 
 import net.minecraftforge.common.config.Configuration;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 
 public class Configs {
     public static final int VERSION = 4;
-    public static final String BASE_CONFIG_NAME = HardcoreAlchemy.MOD_ID + ".cfg";
+    public static final String BASE_CONFIG_NAME = HardcoreAlchemyCore.MOD_ID + ".cfg";
     
     public File hcaConfigurationDir;
     

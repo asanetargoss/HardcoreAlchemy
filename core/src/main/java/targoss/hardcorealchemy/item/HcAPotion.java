@@ -31,14 +31,14 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.util.Color;
 
 /**
  * A base for custom potion effects.
  */
 public class HcAPotion extends Potion {
-    private static final ResourceLocation TILESET = new ResourceLocation(HardcoreAlchemy.MOD_ID, "textures/gui/icon_tileset.png");
+    private static final ResourceLocation TILESET = new ResourceLocation(HardcoreAlchemyCore.MOD_ID, "textures/gui/icon_tileset.png");
     private static final int EFFECT_WIDTH = 18;
     private static final int EFFECT_COUNT = 4;
     private static final int REGION_X = 72;

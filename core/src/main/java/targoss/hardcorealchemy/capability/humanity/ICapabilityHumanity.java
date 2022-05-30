@@ -22,10 +22,10 @@ package targoss.hardcorealchemy.capability.humanity;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.util.text.ITextComponent;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 
 public interface ICapabilityHumanity {
-    public static final IAttribute MAX_HUMANITY = new RangedAttribute(null, HardcoreAlchemy.MOD_ID + ":max_humanity", 4.0D, 1e-45, Double.MAX_VALUE).setShouldWatch(true);
+    public static final IAttribute MAX_HUMANITY = new RangedAttribute(null, HardcoreAlchemyCore.MOD_ID + ":max_humanity", 4.0D, 1e-45, Double.MAX_VALUE).setShouldWatch(true);
     public static final double DEFAULT_HUMANITY_VALUE = MAX_HUMANITY.getDefaultValue();
     
     public abstract void setHumanity(double humanity);

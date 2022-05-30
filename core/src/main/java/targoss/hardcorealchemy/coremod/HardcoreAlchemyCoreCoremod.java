@@ -47,11 +47,11 @@ import targoss.hardcorealchemy.coremod.transform.TSlot;
 import targoss.hardcorealchemy.coremod.transform.TThirstOverlayHandler;
 import targoss.hardcorealchemy.coremod.transform.TWorld;
 
-@IFMLLoadingPlugin.Name(value = "Hardcore Alchemy Coremod")
+@IFMLLoadingPlugin.Name(value = "Hardcore Alchemy Core Coremod")
 @IFMLLoadingPlugin.MCVersion(value = "1.10.2")
 @IFMLLoadingPlugin.TransformerExclusions(value = "targoss.hardcorealchemy.coremod.")
 @IFMLLoadingPlugin.SortingIndex(value = 1001)
-public class HardcoreAlchemyCoremod implements IFMLLoadingPlugin {
+public class HardcoreAlchemyCoreCoremod implements IFMLLoadingPlugin {
     private static boolean coremodInitialized = false;
     
     public static boolean isCoremodInitialized() {
@@ -61,7 +61,7 @@ public class HardcoreAlchemyCoremod implements IFMLLoadingPlugin {
     public static boolean obfuscated = false;
     public static boolean TAN_LOADED = false;
     
-    public static final Logger LOGGER = LogManager.getLogger("Hardcore Alchemy Coremod");
+    public static final Logger LOGGER = LogManager.getLogger("Hardcore Alchemy Core Coremod");
     
 	@Override
 	public String[] getASMTransformerClass() {
@@ -92,8 +92,8 @@ public class HardcoreAlchemyCoremod implements IFMLLoadingPlugin {
 			super(new ModMetadata());
 			ModMetadata meta = getMetadata();
 			meta.modId = "hardcorealchemy-coremod";
-			meta.name = "Hardcore Alchemy Coremod";
-			meta.version = targoss.hardcorealchemy.HardcoreAlchemy.VERSION;
+			meta.name = "Hardcore Alchemy Core Coremod";
+			meta.version = targoss.hardcorealchemy.HardcoreAlchemyCore.VERSION;
 			meta.credits = "";
 			meta.authorList = Arrays.asList("asanetargoss");
 			meta.description = "The secret sauce.";

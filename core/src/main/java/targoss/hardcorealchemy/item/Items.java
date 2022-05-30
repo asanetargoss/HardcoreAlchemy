@@ -32,7 +32,7 @@ import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.IForgeRegistry;
 import net.minecraftforge.fml.common.registry.RegistryBuilder;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.coremod.HardcoreAlchemyPreInit;
 import targoss.hardcorealchemy.heart.Heart;
 import targoss.hardcorealchemy.registrar.Registrar;
@@ -43,14 +43,14 @@ import targoss.hardcorealchemy.registrar.RegistrarPotionType;
 import targoss.hardcorealchemy.util.Color;
 
 public class Items {
-    public static final Registrar<Item> ITEMS = new RegistrarItem("items", HardcoreAlchemy.MOD_ID, HardcoreAlchemyPreInit.LOGGER);
-    public static final Registrar<Potion> POTIONS = new RegistrarPotion("potions", HardcoreAlchemy.MOD_ID, HardcoreAlchemyPreInit.LOGGER);
-    public static final Registrar<PotionType> POTION_TYPES = new RegistrarPotionType("potion types", HardcoreAlchemy.MOD_ID, HardcoreAlchemyPreInit.LOGGER);
+    public static final Registrar<Item> ITEMS = new RegistrarItem("items", HardcoreAlchemyCore.MOD_ID, HardcoreAlchemyPreInit.LOGGER);
+    public static final Registrar<Potion> POTIONS = new RegistrarPotion("potions", HardcoreAlchemyCore.MOD_ID, HardcoreAlchemyPreInit.LOGGER);
+    public static final Registrar<PotionType> POTION_TYPES = new RegistrarPotionType("potion types", HardcoreAlchemyCore.MOD_ID, HardcoreAlchemyPreInit.LOGGER);
     /** This is in core so other mods can add hearts, however Hardcore Alchemy Tweaks must be installed for the hearts to be available in-game */
-    public static final Registrar<Heart> HEARTS = new RegistrarHeart("hearts", HardcoreAlchemy.MOD_ID, HardcoreAlchemyPreInit.LOGGER);
+    public static final Registrar<Heart> HEARTS = new RegistrarHeart("hearts", HardcoreAlchemyCore.MOD_ID, HardcoreAlchemyPreInit.LOGGER);
     
     public static final IForgeRegistry<Heart> HEART_REGISTRY = new RegistryBuilder<Heart>()
-            .setName(new ResourceLocation(HardcoreAlchemy.MOD_ID, "hearts"))
+            .setName(new ResourceLocation(HardcoreAlchemyCore.MOD_ID, "hearts"))
             .setType(Heart.class)
             .setIDRange(0, 1024)
             .create();

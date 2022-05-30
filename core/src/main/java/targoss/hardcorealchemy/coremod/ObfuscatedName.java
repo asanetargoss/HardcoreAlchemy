@@ -43,7 +43,7 @@ public class ObfuscatedName {
      * if mcpName is not present in the mapping.
      */
     public @Nonnull String get() {
-        if (HardcoreAlchemyCoremod.obfuscated) {
+        if (HardcoreAlchemyCoreCoremod.obfuscated) {
             return srgName;
         }
         else {

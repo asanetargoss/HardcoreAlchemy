@@ -38,7 +38,7 @@ public abstract class ClassPatcher implements IClassTransformer {
      */
     public final byte[] transformClass(String name, byte[] basicClass, int flags) {
         if (enableDebug()) {
-            HardcoreAlchemyCoremod.LOGGER.debug("Attempt to patch class '" +
+            HardcoreAlchemyCoreCoremod.LOGGER.debug("Attempt to patch class '" +
                     name + "' started by '" +
                     this.getClass().getName() + "'");
         }
@@ -55,34 +55,34 @@ public abstract class ClassPatcher implements IClassTransformer {
             byte[] newClass = writer.toByteArray();
             
             if (enableDebug()) {
-                HardcoreAlchemyCoremod.LOGGER.debug(
+                HardcoreAlchemyCoreCoremod.LOGGER.debug(
                         "Outputting result of patch to class '" +
                         name + "' made by '" +
                         this.getClass().getName() + "'"
                         );
-                HardcoreAlchemyCoremod.logBytesToDebug(newClass);
+                HardcoreAlchemyCoreCoremod.logBytesToDebug(newClass);
             }
 
             return newClass;
         }
         catch (Exception e) {
-            HardcoreAlchemyCoremod.LOGGER.error(
+            HardcoreAlchemyCoreCoremod.LOGGER.error(
                     "Error occurred when attempting to patch class '" +
                     name + "' using '" +
                     this.getClass().getName() + "'." +
                     "The patch has been aborted.",
                     e);
             if (enableDebug()) {
-                HardcoreAlchemyCoremod.LOGGER.debug(
+                HardcoreAlchemyCoreCoremod.LOGGER.debug(
                         "Debug is enabled. The bytecode of the unpatched " +
                         "class will follow the stack trace.");
             };
             
             if (enableDebug()) {
-                HardcoreAlchemyCoremod.LOGGER.debug(
+                HardcoreAlchemyCoreCoremod.LOGGER.debug(
                         "Outputting unpatched class '" +
                         name + "'");
-                HardcoreAlchemyCoremod.logBytesToDebug(basicClass);
+                HardcoreAlchemyCoreCoremod.logBytesToDebug(basicClass);
             }
         }
         

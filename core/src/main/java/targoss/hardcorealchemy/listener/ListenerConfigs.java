@@ -25,7 +25,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.network.MessageConfigs;
 
 public class ListenerConfigs extends HardcoreAlchemyListener {
@@ -33,7 +33,7 @@ public class ListenerConfigs extends HardcoreAlchemyListener {
     
     @Override
     public void preInit(FMLPreInitializationEvent event) {
-        coreConfigs.init(event.getModConfigurationDirectory().toPath().resolve(HardcoreAlchemy.MOD_ID).toFile());
+        coreConfigs.init(event.getModConfigurationDirectory().toPath().resolve(HardcoreAlchemyCore.MOD_ID).toFile());
         coreConfigs.load();
         coreConfigs.save();
     }
@@ -55,6 +55,6 @@ public class ListenerConfigs extends HardcoreAlchemyListener {
         if (!(event.getEntity() instanceof EntityPlayerMP)) {
             return;
         }
-        HardcoreAlchemy.proxy.messenger.sendTo(new MessageConfigs(coreConfigs), (EntityPlayerMP)event.getEntity());
+        HardcoreAlchemyCore.proxy.messenger.sendTo(new MessageConfigs(coreConfigs), (EntityPlayerMP)event.getEntity());
     }
 }

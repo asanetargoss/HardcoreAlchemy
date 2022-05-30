@@ -35,7 +35,7 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
-import targoss.hardcorealchemy.coremod.HardcoreAlchemyCoremod;
+import targoss.hardcorealchemy.coremod.HardcoreAlchemyCoreCoremod;
 import targoss.hardcorealchemy.coremod.MethodPatcher;
 import targoss.hardcorealchemy.coremod.ObfuscatedName;
 
@@ -59,12 +59,12 @@ public class TNetHandlerPlayServer extends MethodPatcher {
         Matcher m = p.matcher(s);
         boolean matches = m.find();
         if (enableDebug()) {
-            HardcoreAlchemyCoremod.LOGGER.debug(debugObj.toString() + ": " + s + " matches " + p.toString() + "? " + matches);
+            HardcoreAlchemyCoreCoremod.LOGGER.debug(debugObj.toString() + ": " + s + " matches " + p.toString() + "? " + matches);
         }
         if (matches) {
             String g = m.group();
             if (enableDebug()) {
-                HardcoreAlchemyCoremod.LOGGER.debug("Match is " + g);
+                HardcoreAlchemyCoreCoremod.LOGGER.debug("Match is " + g);
             }
             return g;
         }
@@ -74,7 +74,7 @@ public class TNetHandlerPlayServer extends MethodPatcher {
     protected boolean regexMatches(String s, Pattern p, Object debugObj) {
         boolean matches = p.matcher(s).find();
         if (enableDebug()) {
-            HardcoreAlchemyCoremod.LOGGER.debug(debugObj.toString() + ": " + s + " matches " + p.toString() + "? " + matches);
+            HardcoreAlchemyCoreCoremod.LOGGER.debug(debugObj.toString() + ": " + s + " matches " + p.toString() + "? " + matches);
         }
         return matches;
     }

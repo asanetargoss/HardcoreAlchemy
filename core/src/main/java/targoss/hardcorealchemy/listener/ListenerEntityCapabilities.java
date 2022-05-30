@@ -34,7 +34,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerChangedDimensionEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.capability.CapUtil;
 import targoss.hardcorealchemy.capability.entitystate.CapabilityEntityState;
 import targoss.hardcorealchemy.capability.entitystate.ProviderEntityState;
@@ -139,7 +139,7 @@ public class ListenerEntityCapabilities extends HardcoreAlchemyListener {
     public void syncFullPlayerCapabilities(EntityPlayerMP player) {
         IInactiveCapabilities inactives = player.getCapability(INACTIVE_CAPABILITIES, null);
         if (inactives != null) {
-            HardcoreAlchemy.proxy.messenger.sendTo(new MessageInactiveCapabilities(inactives), (EntityPlayerMP)player);
+            HardcoreAlchemyCore.proxy.messenger.sendTo(new MessageInactiveCapabilities(inactives), (EntityPlayerMP)player);
         }
     }
 }

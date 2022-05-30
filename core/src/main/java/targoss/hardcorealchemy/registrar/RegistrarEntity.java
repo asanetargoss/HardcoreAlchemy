@@ -23,7 +23,7 @@ import org.apache.logging.log4j.Logger;
 
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.util.EntityInfo;
 
 public class RegistrarEntity extends Registrar<EntityInfo> {
@@ -46,7 +46,7 @@ public class RegistrarEntity extends Registrar<EntityInfo> {
         }
 
         for (EntityInfo info : entries) {
-            EntityRegistry.registerModEntity(info.clazz, info.name, info.id, HardcoreAlchemy.INSTANCE, 64, 3, true);
+            EntityRegistry.registerModEntity(info.clazz, info.name, info.id, HardcoreAlchemyCore.INSTANCE, 64, 3, true);
             EntityRegistry.registerEgg(info.clazz, info.primaryColor.toPackedRGB(), info.secondaryColor.toPackedRGB());
         }
         

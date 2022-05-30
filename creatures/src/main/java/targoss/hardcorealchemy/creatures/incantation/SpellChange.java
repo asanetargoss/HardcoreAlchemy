@@ -30,7 +30,7 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.text.TextComponentTranslation;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.capability.humanity.LostMorphReason;
 import targoss.hardcorealchemy.capability.humanity.ProviderHumanity;
@@ -81,7 +81,7 @@ public class SpellChange implements ISpell {
         int entitySelected = randomMostLikelyZero(random, nearbyEntities.size());
         EntityLivingBase entity = nearbyEntities.get(entitySelected);
         // CHAAAAANGE!
-        MorphState.forceForm(HardcoreAlchemy.proxy.configs, player, LostMorphReason.LOST_HUMANITY, entity);
+        MorphState.forceForm(HardcoreAlchemyCore.proxy.configs, player, LostMorphReason.LOST_HUMANITY, entity);
         // A thunderous boom for magical effect
         player.world.playSound(null, player.getPosition(), SoundEvents.ENTITY_LIGHTNING_THUNDER, SoundCategory.WEATHER,
                 100.0F, 0.8F + (random.nextFloat() - random.nextFloat()) * 0.8F);

@@ -24,11 +24,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.minecraft.util.ResourceLocation;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 
 public class CapabilityKillCount implements ICapabilityKillCount {
     
-    public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(HardcoreAlchemy.MOD_ID, "kill_count");
+    public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(HardcoreAlchemyCore.MOD_ID, "kill_count");
     
     public Map<String, Integer> killCounts = Collections.synchronizedMap(new HashMap<String, Integer>());
     

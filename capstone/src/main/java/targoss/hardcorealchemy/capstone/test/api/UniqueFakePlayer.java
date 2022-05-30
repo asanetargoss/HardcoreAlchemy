@@ -27,7 +27,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.FakePlayer;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 
 public class UniqueFakePlayer extends FakePlayer {
     private static int ID_COUNT = 0;
@@ -37,7 +37,7 @@ public class UniqueFakePlayer extends FakePlayer {
     }
     
     public static FakePlayer create() {
-        MinecraftServer server = HardcoreAlchemy.SERVER_REFERENCE.get();
+        MinecraftServer server = HardcoreAlchemyCore.SERVER_REFERENCE.get();
         WorldServer worldServer = server.worldServerForDimension(DimensionType.OVERWORLD.getId());
         
         return new UniqueFakePlayer(worldServer, new GameProfile(UUID.randomUUID(), "UniqueFakePlayer_" + String.valueOf(ID_COUNT++)));

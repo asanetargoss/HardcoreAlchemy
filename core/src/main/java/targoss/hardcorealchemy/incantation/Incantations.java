@@ -22,17 +22,17 @@ package targoss.hardcorealchemy.incantation;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.IForgeRegistry;
 import net.minecraftforge.fml.common.registry.RegistryBuilder;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.coremod.HardcoreAlchemyPreInit;
 import targoss.hardcorealchemy.incantation.api.Incantation;
 import targoss.hardcorealchemy.registrar.Registrar;
 import targoss.hardcorealchemy.registrar.RegistrarForge;
 
 public class Incantations {
-    public static final Registrar<Incantation> INCANTATIONS = new RegistrarForge<Incantation>("incantations", HardcoreAlchemy.MOD_ID, HardcoreAlchemyPreInit.LOGGER);
+    public static final Registrar<Incantation> INCANTATIONS = new RegistrarForge<Incantation>("incantations", HardcoreAlchemyCore.MOD_ID, HardcoreAlchemyPreInit.LOGGER);
     
     public static final IForgeRegistry<Incantation> INCANTATION_REGISTRY = new RegistryBuilder<Incantation>()
-            .setName(new ResourceLocation(HardcoreAlchemy.MOD_ID, "incantations"))
+            .setName(new ResourceLocation(HardcoreAlchemyCore.MOD_ID, "incantations"))
             .setType(Incantation.class)
             .setIDRange(0, 1024)
             .create();

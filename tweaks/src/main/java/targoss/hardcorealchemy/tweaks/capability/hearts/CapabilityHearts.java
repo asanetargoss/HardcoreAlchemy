@@ -27,11 +27,11 @@ import java.util.Map;
 import java.util.Set;
 
 import net.minecraft.util.ResourceLocation;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.heart.Heart;
 
 public class CapabilityHearts implements ICapabilityHearts {
-    public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(HardcoreAlchemy.MOD_ID, "hearts");
+    public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(HardcoreAlchemyCore.MOD_ID, "hearts");
     
     protected Set<Heart> hearts = new HashSet<>();
     protected List<ResourceLocation> removedHearts = new ArrayList<>();

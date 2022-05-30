@@ -1,8 +1,8 @@
 [
 {
   "modid": "hardcorealchemy",
-  "name": "Hardcore Alchemy",
-  "description": "Hardcore Alchemy (Core): An arcane API of inhuman proportions",
+  "name": "Hardcore Alchemy Core",
+  "description": "An arcane API of inhuman proportions",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",

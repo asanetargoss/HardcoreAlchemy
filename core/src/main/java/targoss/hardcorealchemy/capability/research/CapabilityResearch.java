@@ -23,11 +23,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.minecraft.util.ResourceLocation;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.research.KnowledgeFact;
 
 public class CapabilityResearch implements ICapabilityResearch {
-    public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(HardcoreAlchemy.MOD_ID, "research");
+    public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(HardcoreAlchemyCore.MOD_ID, "research");
 
     protected Set<KnowledgeFact> knowledgeFacts = new HashSet<>();
 

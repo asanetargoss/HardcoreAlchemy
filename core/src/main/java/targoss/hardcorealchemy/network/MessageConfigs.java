@@ -23,10 +23,10 @@ import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.config.Configs;
 
-public class MessageConfigs extends MessageToClient<HardcoreAlchemy> {
+public class MessageConfigs extends MessageToClient<HardcoreAlchemyCore> {
     
     public MessageConfigs() {
         this.configs = new Configs();
@@ -63,10 +63,10 @@ public class MessageConfigs extends MessageToClient<HardcoreAlchemy> {
 
         @Override
         public void run() {
-            Configs clientConfigs = HardcoreAlchemy.proxy.configs;
+            Configs clientConfigs = HardcoreAlchemyCore.proxy.configs;
             // TODO: More robust config networking. This is okay for now.
             if (clientConfigs.base.version != configs.base.version) {
-                HardcoreAlchemy.LOGGER.warn("Server config version is " + configs.base.version +
+                HardcoreAlchemyCore.LOGGER.warn("Server config version is " + configs.base.version +
                         ", but client config version is " + clientConfigs.base.version +
                         ". Reading the config packet has been aborted. This could cause serious desyncs!");
                 return;
@@ -85,7 +85,7 @@ public class MessageConfigs extends MessageToClient<HardcoreAlchemy> {
     }
 
     @Override
-    public Class<? extends IMessageHandler<? extends MessageToClient<HardcoreAlchemy>, IMessage>> getHandlerClass() {
+    public Class<? extends IMessageHandler<? extends MessageToClient<HardcoreAlchemyCore>, IMessage>> getHandlerClass() {
         return Handler.class;
     }
 

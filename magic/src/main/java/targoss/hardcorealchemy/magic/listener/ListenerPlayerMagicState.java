@@ -44,7 +44,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.inactive.IInactiveCapabilities;
 import targoss.hardcorealchemy.coremod.CoremodHook;
@@ -220,11 +220,11 @@ public class ListenerPlayerMagicState extends HardcoreAlchemyListener {
         }
     }
     
-    public static final String INACTIVE_THAUMIC_KNOWLEDGE = HardcoreAlchemy.MOD_ID + ":inactive_thaumic_knowledge";
-    public static final String INACTIVE_WARP = HardcoreAlchemy.MOD_ID + ":inactive_warp";
-    public static final String PAST_LIFE_THAUMIC_KNOWLEDGE = HardcoreAlchemy.MOD_ID + ":past_life_thaumic_knowledge";
-    public static final String PAST_LIFE_WARP = HardcoreAlchemy.MOD_ID + ":past_life_warp";
-    public static final String INACTIVE_MANA_POOL = HardcoreAlchemy.MOD_ID + ":mana_pool";
+    public static final String INACTIVE_THAUMIC_KNOWLEDGE = HardcoreAlchemyCore.MOD_ID + ":inactive_thaumic_knowledge";
+    public static final String INACTIVE_WARP = HardcoreAlchemyCore.MOD_ID + ":inactive_warp";
+    public static final String PAST_LIFE_THAUMIC_KNOWLEDGE = HardcoreAlchemyCore.MOD_ID + ":past_life_thaumic_knowledge";
+    public static final String PAST_LIFE_WARP = HardcoreAlchemyCore.MOD_ID + ":past_life_warp";
+    public static final String INACTIVE_MANA_POOL = HardcoreAlchemyCore.MOD_ID + ":mana_pool";
     
     /**
      * Re-applies Thaumcraft research progress and warp that has been stored
@@ -560,7 +560,7 @@ public class ListenerPlayerMagicState extends HardcoreAlchemyListener {
         return false;
     }
     
-    public static final String INACTIVE_AFFINITIES = HardcoreAlchemy.MOD_ID + ":inactive_affinities";
+    public static final String INACTIVE_AFFINITIES = HardcoreAlchemyCore.MOD_ID + ":inactive_affinities";
     
     /**
      * Re-applies Ars Magica affinity state and level that has been stored

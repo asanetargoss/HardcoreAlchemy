@@ -21,7 +21,7 @@ package targoss.hardcorealchemy.capstone.test;
 import java.util.ArrayList;
 import java.util.List;
 
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.capstone.test.api.ITestSuite;
 import targoss.hardcorealchemy.capstone.test.api.TestSystem;
 import targoss.hardcorealchemy.capstone.test.suite.TestFoodRot;
@@ -39,7 +39,7 @@ public class HardcoreAlchemyTests extends TestSystem {
         HardcoreAlchemyTests tests = new HardcoreAlchemyTests();
         List<String> resultsToLog = tests.testAndLogAll();
         for (String logEntry : resultsToLog) {
-            HardcoreAlchemy.LOGGER.debug(logEntry);
+            HardcoreAlchemyCore.LOGGER.debug(logEntry);
         }
     }
     

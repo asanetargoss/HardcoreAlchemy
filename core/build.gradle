@@ -39,7 +39,7 @@ license {
 
 // Project settings
 archivesBaseName = jarLabel
-String coremodPath="targoss.hardcorealchemy.coremod.HardcoreAlchemyCoremod"
+String coremodPath="targoss.hardcorealchemy.coremod.HardcoreAlchemyCoreCoremod"
 
 sourceCompatibility = targetCompatibility = "1.8" // Need this here so Eclipse task generates correctly.
 compileJava {
@@ -52,8 +52,8 @@ minecraft {
     
     mappings = "stable_29"
     
-    replace "@HARDCORE_ALCHEMY_VERSION@", project.version
-    replaceIn "HardcoreAlchemy.java"
+    replace "@HARDCORE_ALCHEMY_CORE_VERSION@", project.version
+    replaceIn "HardcoreAlchemyCore.java"
 
     // These arguments let us load the coremod properly when testing in a dev environment
     clientJvmArgs = ["-Dfml.coreMods.load=" + coremodPath]

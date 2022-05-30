@@ -22,16 +22,16 @@ package targoss.hardcorealchemy.research;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.IForgeRegistry;
 import net.minecraftforge.fml.common.registry.RegistryBuilder;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.coremod.HardcoreAlchemyPreInit;
 import targoss.hardcorealchemy.registrar.Registrar;
 import targoss.hardcorealchemy.registrar.RegistrarKnowledgeFact;
 
 public class Studies {
-    public static final Registrar<KnowledgeFact> KNOWLEDGE_FACTS = new RegistrarKnowledgeFact("knowledge_facts", HardcoreAlchemy.MOD_ID, HardcoreAlchemyPreInit.LOGGER);
+    public static final Registrar<KnowledgeFact> KNOWLEDGE_FACTS = new RegistrarKnowledgeFact("knowledge_facts", HardcoreAlchemyCore.MOD_ID, HardcoreAlchemyPreInit.LOGGER);
     
     public static final IForgeRegistry<KnowledgeFact> KNOWLEDGE_FACT_REGISTRY = new RegistryBuilder<KnowledgeFact>()
-            .setName(new ResourceLocation(HardcoreAlchemy.MOD_ID, "knowledge_facts"))
+            .setName(new ResourceLocation(HardcoreAlchemyCore.MOD_ID, "knowledge_facts"))
             .setType(KnowledgeFact.class)
             .setIDRange(0, 2048)
             .create();

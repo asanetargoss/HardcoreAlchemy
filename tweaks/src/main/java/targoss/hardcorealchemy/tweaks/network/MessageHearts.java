@@ -26,7 +26,7 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.network.MessageToClient;
 import targoss.hardcorealchemy.tweaks.HardcoreAlchemyTweaks;
 import targoss.hardcorealchemy.tweaks.capability.hearts.ICapabilityHearts;
@@ -72,7 +72,7 @@ public class MessageHearts extends MessageToClient<HardcoreAlchemyTweaks> {
                 return;
             }
             ProviderHearts.HEARTS_CAPABILITY.getStorage().readNBT(ProviderHearts.HEARTS_CAPABILITY, hearts, null, heartsNBT);
-            ListenerHearts.updateHeartModifiers(HardcoreAlchemy.proxy.configs, player, hearts);
+            ListenerHearts.updateHeartModifiers(HardcoreAlchemyCore.proxy.configs, player, hearts);
         }
         
     }

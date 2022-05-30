@@ -24,7 +24,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import targoss.hardcorealchemy.entity.Entities;
 
 public class ClientProxy extends CommonProxy {
-    public static final ResourceLocation TILESET = new ResourceLocation(HardcoreAlchemy.MOD_ID, "textures/gui/icon_tileset.png");
+    public static final ResourceLocation TILESET = new ResourceLocation(HardcoreAlchemyCore.MOD_ID, "textures/gui/icon_tileset.png");
 
     public ClientProxy() {
         super();

@@ -50,7 +50,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.LoaderState;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.ModStateException;
 import targoss.hardcorealchemy.coremod.ObfuscatedName;
 
@@ -110,7 +110,7 @@ public class EntityUtil {
     public static @Nullable <T extends Entity> T createEntity(Class<T> entityClass) {
         World entityWorld = MiscVanilla.getWorld();
         if (entityWorld == null) {
-            HardcoreAlchemy.LOGGER.error("Attempted to create entity of type '" +
+            HardcoreAlchemyCore.LOGGER.error("Attempted to create entity of type '" +
                     entityClass.getName() + "', but there is no world to initialize in.");
             return null;
         }
@@ -120,7 +120,7 @@ public class EntityUtil {
              entity = entityClass.getConstructor(World.class).newInstance(entityWorld);
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                 | NoSuchMethodException | SecurityException e) {
-            HardcoreAlchemy.LOGGER.error("Attempted to create entity of type '" +
+            HardcoreAlchemyCore.LOGGER.error("Attempted to create entity of type '" +
                     entityClass.getName() + "', but could not initialize.");
             e.printStackTrace();
             return null;

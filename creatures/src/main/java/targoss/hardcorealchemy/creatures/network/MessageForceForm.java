@@ -30,7 +30,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.capability.humanity.LostMorphReason;
 import targoss.hardcorealchemy.creatures.HardcoreAlchemyCreatures;
 import targoss.hardcorealchemy.creatures.util.MorphState;
@@ -76,7 +76,7 @@ public class MessageForceForm extends MessageToClient<HardcoreAlchemyCreatures> 
         @Override
         public void run() {
             EntityPlayer player = MiscVanilla.getTheMinecraftPlayer();
-            MorphState.forceForm(HardcoreAlchemy.proxy.configs, player, reason, morph);
+            MorphState.forceForm(HardcoreAlchemyCore.proxy.configs, player, reason, morph);
         }
     }
     

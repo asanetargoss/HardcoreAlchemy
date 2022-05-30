@@ -18,12 +18,12 @@
 
 package targoss.hardcorealchemy.capstone.guide;
 
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.capstone.HardcoreAlchemyCapstone;
 import targoss.hardcorealchemy.capstone.registrar.RegistrarUpgradeGuide;
 
 public class HCAUpgradeGuides {
-    public static RegistrarUpgradeGuide UPGRADE_GUIDES = new RegistrarUpgradeGuide("upgrade_guides", HardcoreAlchemy.MOD_ID, HardcoreAlchemyCapstone.LOGGER);
+    public static RegistrarUpgradeGuide UPGRADE_GUIDES = new RegistrarUpgradeGuide("upgrade_guides", HardcoreAlchemyCore.MOD_ID, HardcoreAlchemyCapstone.LOGGER);
 
     static {
         UPGRADE_GUIDES.add("0.5.0", new UpgradeGuide(new BookBuilder()

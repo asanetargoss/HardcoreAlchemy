@@ -22,10 +22,10 @@ package targoss.hardcorealchemy.capability.tilehistory;
 import java.util.UUID;
 
 import net.minecraft.util.ResourceLocation;
-import targoss.hardcorealchemy.HardcoreAlchemy;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 
 public class CapabilityTileHistory implements ICapabilityTileHistory {
-    public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(HardcoreAlchemy.MOD_ID, "tile_history");
+    public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(HardcoreAlchemyCore.MOD_ID, "tile_history");
     
     protected UUID ownerLifetimeUUID;
 
