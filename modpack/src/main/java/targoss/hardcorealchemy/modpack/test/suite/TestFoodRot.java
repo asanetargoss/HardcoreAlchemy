@@ -36,7 +36,8 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import targoss.hardcorealchemy.ModState;
-import targoss.hardcorealchemy.magic.listener.ListenerInventoryExtension;
+import targoss.hardcorealchemy.modpack.CapstoneModState;
+import targoss.hardcorealchemy.modpack.listener.ListenerInventoryExtension;
 import targoss.hardcorealchemy.modpack.test.api.ITestList;
 import targoss.hardcorealchemy.modpack.test.api.ITestSuite;
 import targoss.hardcorealchemy.modpack.test.api.TestList;
@@ -49,7 +50,7 @@ public class TestFoodRot implements ITestSuite {
     public ITestList getTests() {
         ITestList tests = new TestList();
         boolean projecte = ModState.isProjectELoaded;
-        boolean backpacks = ModState.isIronBackpacksLoaded;
+        boolean backpacks = CapstoneModState.isIronBackpacksLoaded;
         
         tests.put("chest insertion check", this::checkInsertChest);
         tests.put("find chest inventory", this::hasInventoryChest);
@@ -176,7 +177,7 @@ public class TestFoodRot implements ITestSuite {
         if (ModState.isProjectELoaded) {
             numInventories += 16;
         }
-        if (ModState.isIronBackpacksLoaded) {
+        if (CapstoneModState.isIronBackpacksLoaded) {
             PlayerWearingBackpackCapabilities backpackCapability = IronBackpacksCapabilities.getWearingBackpackCapability(player);
             backpackCapability.setEquippedBackpack(createBackpackStack());
             numInventories += 1;
@@ -257,7 +258,7 @@ public class TestFoodRot implements ITestSuite {
     public boolean decayAlchemicalBags() {
         FakePlayer player = UniqueFakePlayer.create();
         List<IItemHandler> alchemicalBags = new ArrayList<>();
-        ListenerInventoryExtension.Wrapper.ProjectE.getInventories(alchemicalBags, player);
+        targoss.hardcorealchemy.magic.listener.ListenerInventoryExtension.Wrapper.ProjectE.getInventories(alchemicalBags, player);
         IItemHandler alchemicalBag = alchemicalBags.get(0);
         
         int initialFood = fillSlotsWithFood(alchemicalBag);

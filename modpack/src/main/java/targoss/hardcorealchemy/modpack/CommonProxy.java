@@ -8,12 +8,16 @@ import targoss.hardcorealchemy.capability.misc.CapabilityMisc;
 import targoss.hardcorealchemy.modpack.guide.AlchemicAshGuide;
 import targoss.hardcorealchemy.modpack.guide.HCAModpackGuide;
 import targoss.hardcorealchemy.modpack.guide.HCAUpgradeGuides;
+import targoss.hardcorealchemy.modpack.listener.ListenerInventoryExtension;
 import targoss.hardcorealchemy.modpack.listener.ListenerPlayerInventory;
+import targoss.hardcorealchemy.modpack.listener.ListenerPlayerMagicState;
 import targoss.hardcorealchemy.modpack.registrar.RegistrarUpgradeGuide;
 
 public class CommonProxy {
     public void preInit(FMLPreInitializationEvent event) {
         HardcoreAlchemy.proxy.addListener(new ListenerPlayerInventory());
+        HardcoreAlchemy.proxy.addListener(new ListenerInventoryExtension());
+        HardcoreAlchemy.proxy.addListener(new ListenerPlayerMagicState());
         
         if (ModState.isGuideapiLoaded) {
             HCAModpackGuide.preInit();

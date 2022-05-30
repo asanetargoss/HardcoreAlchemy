@@ -49,7 +49,9 @@ public class HardcoreAlchemyModpack
             "required-after:" + HardcoreAlchemyTweaks.MOD_ID + ";" +
             "required-after:" + HardcoreAlchemyCreatures.MOD_ID + ";" +
             "required-after:" + HardcoreAlchemyMagic.MOD_ID + ";" +
-            "required-after:" + HardcoreAlchemySurvival.MOD_ID + ";";
+            "required-after:" + HardcoreAlchemySurvival.MOD_ID + ";" +
+            "after:" + CapstoneModState.ASTRAL_SORCERY_ID + ";" +
+            "after:" + CapstoneModState.IRON_BACKPACKS_ID + ";";
     public static final String MC_VERSIONS = "[1.10.2]";
     public static final String CLIENT_PROXY = "targoss.hardcorealchemy.modpack.ClientProxy";
     public static final String COMMON_PROXY = "targoss.hardcorealchemy.modpack.CommonProxy";
@@ -67,10 +69,12 @@ public class HardcoreAlchemyModpack
         LOGGER = event.getModLog();
         LOGGER.info("All chakras GO!");
         
+        Map<String, ModContainer> modMap = Loader.instance().getIndexedModList();
         // Normally, core is responsible for keeping track of what mods are installed,
         // but this mod needs ModState values to decide if guidebooks should be registered.
-        Map<String, ModContainer> modMap = Loader.instance().getIndexedModList();
         ModState.registerModMap(modMap);
+        // In addition, also keep track of the capstone-specific dependencies.
+        CapstoneModState.registerModMap(modMap);
         
         proxy.preInit(event);
     }

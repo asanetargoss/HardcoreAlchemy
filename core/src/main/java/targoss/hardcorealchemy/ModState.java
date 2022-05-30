@@ -32,7 +32,6 @@ public final class ModState {
     public static final String BLOOD_MAGIC_ID = "BloodMagic";
     public static final String ARS_MAGICA_ID = "arsmagica2";
     public static final String PROJECT_E_ID = "ProjectE";
-    public static final String IRON_BACKPACKS_ID = "ironbackpacks";
     public static final String TAN_ID = "ToughAsNails";
     public static final String GUIDEAPI_ID = "guideapi";
     public static final String HARVESTCRAFT_ID = "harvestcraft";
@@ -43,7 +42,6 @@ public final class ModState {
     public static final String JEI_ID = "JEI";
     public static final String WAWLA_ID = "Waila";
     public static final String SPICE_OF_LIFE_ID = "SpiceOfLife";
-    public static final String ASTRAL_SORCERY_ID = "astralsorcery";
     public static final String MANTLE_ID = "mantle";
     public static boolean isMetamorphLoaded = false;
     public static boolean isDissolutionLoaded = false;
@@ -51,7 +49,6 @@ public final class ModState {
     public static boolean isBloodMagicLoaded = false;
     public static boolean isArsMagicaLoaded = false;
     public static boolean isProjectELoaded = false;
-    public static boolean isIronBackpacksLoaded = false;
     public static boolean isTanLoaded = false;
     public static boolean isGuideapiLoaded = false;
     public static boolean isHarvestCraftLoaded = false;
@@ -59,9 +56,9 @@ public final class ModState {
     public static boolean isAlchemicAshLoaded = false;
     public static boolean isJEILoaded = false;
     public static boolean isSpiceOfLifeLoaded = false;
-    public static boolean isAstralSorceryLoaded = false;
     public static boolean isMantleLoaded = false;
-    protected static  boolean modMapRegistered = false;
+    
+    protected static boolean modMapRegistered = false;
 
     private ModState() { }
 
@@ -77,7 +74,6 @@ public final class ModState {
         isBloodMagicLoaded = modMap.containsKey(BLOOD_MAGIC_ID);
         isArsMagicaLoaded = modMap.containsKey(ARS_MAGICA_ID);
         isProjectELoaded = modMap.containsKey(PROJECT_E_ID);
-        isIronBackpacksLoaded = modMap.containsKey(IRON_BACKPACKS_ID);
         isTanLoaded = modMap.containsKey(TAN_ID);
         isGuideapiLoaded = modMap.containsKey(GUIDEAPI_ID);
         isHarvestCraftLoaded = modMap.containsKey(HARVESTCRAFT_ID);
@@ -85,7 +81,6 @@ public final class ModState {
         isAlchemicAshLoaded = modMap.containsKey(ALCHEMIC_ASH_ID);
         isJEILoaded = modMap.containsKey(JEI_ID);
         isSpiceOfLifeLoaded = modMap.containsKey(SPICE_OF_LIFE_ID);
-        isAstralSorceryLoaded = modMap.containsKey(ASTRAL_SORCERY_ID);
         isMantleLoaded = modMap.containsKey(MANTLE_ID);
     }
 }
