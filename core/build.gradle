@@ -16,6 +16,8 @@ plugins {
 apply plugin: 'net.minecraftforge.gradle.forge'
 
 license {
+    include '**/*.java'
+    include '**/*_at.cfg'
     matching('**/*.java') {
         header = project.file('../HEADER_lgpl3_upgradeable.txt')
         ext {
@@ -23,17 +25,14 @@ license {
             year = 2022
         }
     }
-    tasks {
-        gradle {
-            files = project.files('**/*_at.cfg')
-            header = project.file('../HEADER_lgpl3_upgradeable.txt')
-            style {
-                cfg = 'HASH'
-            }
-            ext {
-                name = 'Hardcore Alchemy Core'
-                year = 2022
-            }
+    matching('**/*_at.cfg') {
+        header = project.file('../HEADER_lgpl3_upgradeable.txt')
+        style {
+            cfg = 'HASH'
+        }
+        ext {
+            name = 'Hardcore Alchemy Core'
+            year = 2022
         }
     }
 }

@@ -16,6 +16,8 @@ plugins {
 apply plugin: 'net.minecraftforge.gradle.forge'
 
 license {
+    // Ignore access transformers, which are in core only
+    include '**/*.java'
     matching('**/*.java') {
         header = project.file('../HEADER_gpl3.txt')
         ext {
@@ -96,8 +98,10 @@ processResources
     }
         
     // Copy everything else that's not the mcmod.info
+    // Also exclude the access transformers, which are a part of core
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
+        exclude 'hardcorealchemy_at.cfg'
     }
 }
 
