@@ -78,7 +78,7 @@ processResources
 }
 
 // Hack to inherit recompiled Minecraft files with access transformers applied from core, so the decompiled Minecraft jar that this subproject depends on is effectively the same as the one in core.
-task setupDecompWorkspace(type: Copy, overwrite: true, dependsOn: project(":core").setupDecompWorkspace) {
+task setupDecompWorkspace(type: Copy, overwrite: true, dependsOn: ":core:setupDecompWorkspace") {
     from "../core/.gradle/minecraft/"
     into ".gradle/minecraft/"
     rename { String fileName ->
