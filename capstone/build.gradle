@@ -79,6 +79,7 @@ dependencies {
     compileOnly fileTree(dir: "../compilelibs/creatures", include: "**/*.jar")
     compileOnly fileTree(dir: "../compilelibs/magic", include: "**/*.jar")
     compileOnly fileTree(dir: "../compilelibs/survival", include: "**/*.jar")
+    compileOnly fileTree(dir: "../compilelibs/capstone", include: "**/*.jar")
 }
 
 sourceSets.main.resources.srcDirs += ["../translations/capstone"]
