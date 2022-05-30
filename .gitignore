@@ -31,4 +31,9 @@ asset_sources
 */src/main/resources/META-INF/hardcorealchemy_at.cfg
 !core/src/main/resources/META-INF/hardcorealchemy_at.cfg
 compilelibs/*
+# The top-level gradle.properties is for private use. All other
+# gradle.properties are for public use such as mod names and versions. If we
+# need a public top-level gradle.properties, the private properties could be
+# moved somewhere else such as private/gradle.properties .
 gradle.properties
+!*/gradle.properties
