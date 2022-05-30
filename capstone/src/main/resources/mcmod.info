@@ -1,8 +1,8 @@
 [
 {
-  "modid": "hardcorealchemy_modpack",
-  "name": "Hardcore Alchemy Modpack",
-  "description": "Powering the Hardcore Alchemy Modpack",
+  "modid": "hardcorealchemy_capstone",
+  "name": "Hardcore Alchemy Capstone",
+  "description": "GPL-licensed magic/survival compat for the changeling mage. Also includes documentation for the Hardcore Alchemy modpack.",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",
