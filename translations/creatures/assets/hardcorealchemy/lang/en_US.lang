@@ -1,20 +1,21 @@
-#
-# Copyright 2022 asanetargoss
 # 
-# This file is part of Hardcore Alchemy translations.
+# Copyright 2017-2022 asanetargoss
 # 
-# Hardcore Alchemy translations is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Lesser General Public License as published by
-# the Free Software Foundation version 3 of the License.
+# This file is part of Hardcore Alchemy Creatures.
 # 
-# Hardcore Alchemy translations is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Lesser General Public License for more details.
+# Hardcore Alchemy Creatures is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License version 3 or, at
+# your option, any later version of the GNU Lesser General Public License as
+# published by the Free Software Foundation.
 # 
-# You should have received a copy of the GNU Lesser General Public License
-# along with Hardcore Alchemy translations.  If not, see <http://www.gnu.org/licenses/>.
-#
+# Hardcore Alchemy Creatures is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
+# for more details.
+# 
+# You should have received a copy of the GNU Lesser General Public License along
+# with Hardcore Alchemy Creatures. If not, see <http://www.gnu.org/licenses/>.
+# 
 
 language.name=English
 language.region=United States
