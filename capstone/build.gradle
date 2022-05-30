@@ -141,7 +141,7 @@ task buildCompileLibs(type: Zip) {
     }
 }
 
-// Creates a mod suite archive at capstone/build/distributions, bundling all the different mod jars (except for the capstone jar), for ease of distribution
+// Creates a mod suite archive at capstone/build/distributions, bundling all the different mod jars for ease of distribution
 // NOTE: I have learned that you MUST define project properties referenced by other projects in the referencee's gradle.properties file, not the build.gradle file. If you do not do this, you may run into issues where the project property you are trying to reference is undefined, because that project's build.gradle file has not been fully evaluated yet!
 task buildModSuite(type: Zip) {
     dependsOn ":core:build"
@@ -149,6 +149,7 @@ task buildModSuite(type: Zip) {
     dependsOn ":creatures:build"
     dependsOn ":magic:build"
     dependsOn ":survival:build"
+    dependsOn ":capstone:build"
 
     baseName = "hardcorealchemy_modsuite"
     version = project.version
@@ -158,6 +159,7 @@ task buildModSuite(type: Zip) {
     from ("../creatures/build/libs/${project(":creatures").jarLabel}-${project(":creatures").version}.jar")
     from ("../magic/build/libs/${project(":magic").jarLabel}-${project(":magic").version}.jar")
     from ("../survival/build/libs/${project(":survival").jarLabel}-${project(":survival").version}.jar")
+    from ("build/libs/${project(":capstone").jarLabel}-${project(":capstone").version}.jar")
     into("libs") {
     }
 }
