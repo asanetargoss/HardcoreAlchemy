@@ -1,4 +1,3 @@
-// Begin Minecraft Forge plugin setup
 buildscript {
     repositories {
         mavenCentral()
@@ -10,9 +9,21 @@ buildscript {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
     }
 }
-apply plugin: 'net.minecraftforge.gradle.forge'
-// End Minecraft Forge plugin setup
 
+plugins {
+    id 'org.cadixdev.licenser' version '0.5.0'
+}
+apply plugin: 'net.minecraftforge.gradle.forge'
+
+license {
+    matching('**/*.java') {
+        header = project.file('../HEADER_lgpl3_upgradeable.txt')
+        ext {
+            name = 'Hardcore Alchemy Magic'
+            year = 2022
+        }
+    }
+}
 
 // Project settings
 archivesBaseName = jarLabel
