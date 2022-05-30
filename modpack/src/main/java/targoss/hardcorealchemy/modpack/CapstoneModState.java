@@ -27,8 +27,10 @@ import net.minecraftforge.fml.common.ModContainer;
  */
 public final class CapstoneModState {
     public static final String ASTRAL_SORCERY_ID = "astralsorcery";
+    public static final String GUIDEAPI_ID = "guideapi";
     public static final String IRON_BACKPACKS_ID = "ironbackpacks";
     public static boolean isAstralSorceryLoaded = false;
+    public static boolean isGuideapiLoaded = false;
     public static boolean isIronBackpacksLoaded = false;
     
     protected static boolean modMapRegistered = false;
@@ -42,6 +44,7 @@ public final class CapstoneModState {
         modMapRegistered = true;
 
         isAstralSorceryLoaded = modMap.containsKey(ASTRAL_SORCERY_ID);
+        isGuideapiLoaded = modMap.containsKey(GUIDEAPI_ID);
         isIronBackpacksLoaded = modMap.containsKey(IRON_BACKPACKS_ID);
     }
 }

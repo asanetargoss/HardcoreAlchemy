@@ -33,7 +33,6 @@ public final class ModState {
     public static final String ARS_MAGICA_ID = "arsmagica2";
     public static final String PROJECT_E_ID = "ProjectE";
     public static final String TAN_ID = "ToughAsNails";
-    public static final String GUIDEAPI_ID = "guideapi";
     public static final String HARVESTCRAFT_ID = "harvestcraft";
     public static final String ADINFEROS_ID = "adinferos";
     public static final String THAUMCRAFT_ID = "thaumcraft";
@@ -50,7 +49,6 @@ public final class ModState {
     public static boolean isArsMagicaLoaded = false;
     public static boolean isProjectELoaded = false;
     public static boolean isTanLoaded = false;
-    public static boolean isGuideapiLoaded = false;
     public static boolean isHarvestCraftLoaded = false;
     public static boolean isThaumcraftLoaded = false;
     public static boolean isAlchemicAshLoaded = false;
@@ -75,7 +73,6 @@ public final class ModState {
         isArsMagicaLoaded = modMap.containsKey(ARS_MAGICA_ID);
         isProjectELoaded = modMap.containsKey(PROJECT_E_ID);
         isTanLoaded = modMap.containsKey(TAN_ID);
-        isGuideapiLoaded = modMap.containsKey(GUIDEAPI_ID);
         isHarvestCraftLoaded = modMap.containsKey(HARVESTCRAFT_ID);
         isThaumcraftLoaded = modMap.containsKey(THAUMCRAFT_ID);
         isAlchemicAshLoaded = modMap.containsKey(ALCHEMIC_ASH_ID);

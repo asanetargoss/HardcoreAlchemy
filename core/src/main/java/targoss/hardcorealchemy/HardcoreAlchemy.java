@@ -51,7 +51,6 @@ public class HardcoreAlchemy
              * bar is rendered first)
              */
             "before:potioncore;" +
-            "after:" + ModState.GUIDEAPI_ID + ";" +
             "after:" + ModState.JEI_ID + ";";
     public static final String MC_VERSIONS = "[1.10.2]";
     public static final String CLIENT_PROXY = "targoss.hardcorealchemy.ClientProxy";

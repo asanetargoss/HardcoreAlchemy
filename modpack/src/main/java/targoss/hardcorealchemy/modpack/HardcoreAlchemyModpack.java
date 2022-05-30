@@ -50,6 +50,7 @@ public class HardcoreAlchemyModpack
             "required-after:" + HardcoreAlchemyCreatures.MOD_ID + ";" +
             "required-after:" + HardcoreAlchemyMagic.MOD_ID + ";" +
             "required-after:" + HardcoreAlchemySurvival.MOD_ID + ";" +
+            "after:" + CapstoneModState.GUIDEAPI_ID + ";" +
             "after:" + CapstoneModState.ASTRAL_SORCERY_ID + ";" +
             "after:" + CapstoneModState.IRON_BACKPACKS_ID + ";";
     public static final String MC_VERSIONS = "[1.10.2]";
@@ -80,7 +81,7 @@ public class HardcoreAlchemyModpack
     }
     
     @EventHandler
-    public void preInit(FMLInitializationEvent event) {
+    public void init(FMLInitializationEvent event) {
         proxy.init(event);
     }
     

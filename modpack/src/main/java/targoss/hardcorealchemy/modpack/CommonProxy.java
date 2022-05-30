@@ -18,19 +18,19 @@ public class CommonProxy {
         HardcoreAlchemy.proxy.addListener(new ListenerPlayerInventory());
         HardcoreAlchemy.proxy.addListener(new ListenerInventoryExtension());
         HardcoreAlchemy.proxy.addListener(new ListenerPlayerMagicState());
-        
-        if (ModState.isGuideapiLoaded) {
+
+        if (CapstoneModState.isGuideapiLoaded) {
             HCAModpackGuide.preInit();
             HCAUpgradeGuides.UPGRADE_GUIDES.register(RegistrarUpgradeGuide.BOOK_AND_MODEL);
         }
         
-        if (ModState.isGuideapiLoaded && ModState.isAlchemicAshLoaded) {
+        if (CapstoneModState.isGuideapiLoaded && ModState.isAlchemicAshLoaded) {
             AlchemicAshGuide.preInit();
         }
     }
     
     public void init(FMLInitializationEvent event) {
-        if (ModState.isGuideapiLoaded) {
+        if (CapstoneModState.isGuideapiLoaded) {
             HCAModpackGuide.init();
             HCAUpgradeGuides.UPGRADE_GUIDES.register(RegistrarUpgradeGuide.RECIPES);
             HCAUpgradeGuides.UPGRADE_GUIDES.register(RegistrarUpgradeGuide.CATEGORIES);
@@ -41,7 +41,7 @@ public class CommonProxy {
             CapabilityMisc.DEFAULT_EXPECTED_PLAYER_VERSION = HCAUpgradeGuides.UPGRADE_GUIDES.getDefaultExpectedPlayerVersion();
         }
         
-        if (ModState.isGuideapiLoaded && ModState.isAlchemicAshLoaded) {
+        if (CapstoneModState.isGuideapiLoaded && ModState.isAlchemicAshLoaded) {
             AlchemicAshGuide.init();
         }
     }

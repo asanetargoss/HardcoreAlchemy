@@ -70,9 +70,9 @@ public class HCAModpackGuide {
                         .addEntry("dimensional_flux_crystals", DIMENSIONAL_FLUX_CRYSTAL.getRegistryName().toString(), "1", "2")
                         .build())
                 .build();
-            
-            guide = guideBuildResult.constructBook();
-            guideBuildResult.registerBookAndModel();
+
+        guide = guideBuildResult.constructBook();
+        guideBuildResult.registerBookAndModel();
     }
     
     public static void init() {
