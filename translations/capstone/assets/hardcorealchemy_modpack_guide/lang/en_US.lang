@@ -109,3 +109,19 @@ hardcorealchemy.upgradeguide.0.7.2.gameplay_tips.midgame.title=Mid game
 hardcorealchemy.upgradeguide.0.7.2.gameplay_tips.midgame.1=The Tough as Nails heart upgrade mechanic has been disabled and replaced with a new heart upgrade system, with similar rules for reduced starting health. If you have upgraded your health using lifeblood crystals, these upgrades are now lost. But fear not! Information about how to acquire a "broken heart" and craft into a heart upgrade is available in JEI. Please note that, unlike lifeblood crystals, these heart upgrades are temporary: there is a chance you will randomly lose one heart upgrade when you die. There are currently only three heart upgrades available, which should be achievable in early to mid-game. The hope with this new system is to have better pacing in health upgrades, so the player can acquire some hearts earlier on and some hearts later. More heart upgrades, likely more difficult ones, may be added in the future. This is a brand new mechanic and is subject to change. Gameplay feedback is welcome, especially with regard to the difficulty level, and ideas for additional heart upgrades.
 hardcorealchemy.upgradeguide.0.7.2.gameplay_tips.midgame.2=Is the Journal from Astral Sorcery slow to navigate? Try using the WASD keys or arrow keys.
 hardcorealchemy.upgradeguide.0.7.2.gameplay_tips.midgame.3=Players building wizard towers, especially for Astral Sorcery, should consider crafting elevator blocks for easier navigation. You can jump or sneak while on an Elevator block to go to the next higher/lower Elevator block at the same latitude and longitude.
+
+############
+# 0.8.1 Upgrade Guide
+############
+
+hardcorealchemy.upgradeguide.0.8.1.author=Hardcore Alchemy
+hardcorealchemy.upgradeguide.0.8.1.display=0.8.1 Upgrade Guide
+hardcorealchemy.upgradeguide.0.8.1.title=0.8.1 Upgrade Guide
+hardcorealchemy.upgradeguide.0.8.1.welcome=Hardcore Alchemy
+
+# 0.8.1 Upgrade Guide: Gameplay tips
+
+hardcorealchemy.upgradeguide.0.8.1.gameplay_tips.title=Gameplay tips
+
+hardcorealchemy.upgradeguide.0.8.1.gameplay_tips.earlygame.title=Early game
+hardcorealchemy.upgradeguide.0.8.1.gameplay_tips.earlygame.1=To keep earlygame inventories cleaner, gardens from Pam's Harvestcraft should no longer drop a bunch of seeds on the ground when you forget to hold the sneak key. They should now just drop themselves. To extract seeds from these more durable gardens, use a sieve from Ex Nihilo. Seed drop rates have been doubled to compensate for the new garden sifting process being more grindy.
