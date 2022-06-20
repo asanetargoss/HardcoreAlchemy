@@ -52,7 +52,7 @@ minecraft {
 
     clientJvmArgs += [
         "-Dfml.coreMods.load=" +
-        "targoss.hardcorealchemy.coremod.HardcoreAlchemyCoremod," +
+        "targoss.hardcorealchemy.coremod.HardcoreAlchemyCoreCoremod," +
         "targoss.hardcorealchemy.tweaks.coremod.HardcoreAlchemyTweaksCoremod," +
         "targoss.hardcorealchemy.creatures.coremod.HardcoreAlchemyCreaturesCoremod," +
         "targoss.hardcorealchemy.magic.coremod.HardcoreAlchemyMagicCoremod," +
@@ -60,7 +60,7 @@ minecraft {
     ]
     serverJvmArgs += [
         "-Dfml.coreMods.load=" +
-        "targoss.hardcorealchemy.coremod.HardcoreAlchemyCoremod," +
+        "targoss.hardcorealchemy.coremod.HardcoreAlchemyCoreCoremod," +
         "targoss.hardcorealchemy.tweaks.coremod.HardcoreAlchemyTweaksCoremod," +
         "targoss.hardcorealchemy.creatures.coremod.HardcoreAlchemyCreaturesCoremod," +
         "targoss.hardcorealchemy.magic.coremod.HardcoreAlchemyMagicCoremod," +
