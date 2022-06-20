@@ -89,8 +89,12 @@ public class ListenerHeartShards extends HardcoreAlchemyListener {
     }
     
     protected static class ShardProgressFlame implements INBTSerializable<NBTTagCompound> {
+        // Trial by fire only counts if it's for 3 seconds or longer
+        protected static final int MIN_FIRE_DURATION_TICKS = 60;
+        
         protected boolean hurtByFire;
         protected int fireTicks;
+        protected int fireTime;
         
         public ShardProgressFlame() {
             reset();
@@ -99,6 +103,7 @@ public class ListenerHeartShards extends HardcoreAlchemyListener {
         public void reset() {
             hurtByFire = false;
             fireTicks = -1;
+            fireTime = 0;
         }
 
         @Override
@@ -109,6 +114,7 @@ public class ListenerHeartShards extends HardcoreAlchemyListener {
             NBTTagCompound nbt = new NBTTagCompound();
             nbt.setBoolean("hurt", hurtByFire);
             nbt.setInteger("ticks", fireTicks);
+            nbt.setInteger("time", fireTime);
             return nbt;
         }
 
@@ -116,6 +122,7 @@ public class ListenerHeartShards extends HardcoreAlchemyListener {
         public void deserializeNBT(NBTTagCompound nbt) {
             hurtByFire = nbt.getBoolean("hurt");
             fireTicks = nbt.hasKey("ticks") ? nbt.getInteger("ticks") : -1;
+            fireTime = nbt.getInteger("time");
         }
         
         public void onPlayerBurned(EntityPlayer player) {
@@ -136,10 +143,11 @@ public class ListenerHeartShards extends HardcoreAlchemyListener {
                 return;
             }
             fireTicks = player.fire;
-            if (fireTicks <= 1) {
+            if (fireTicks <= 1 && fireTime > MIN_FIRE_DURATION_TICKS) {
                 acquireHeartShard(player, hearts, Items.HEART_FLAME);
                 reset();
             }
+            ++fireTime;
         }
         
     }
