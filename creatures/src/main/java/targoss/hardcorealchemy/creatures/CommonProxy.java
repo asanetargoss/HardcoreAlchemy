@@ -47,6 +47,7 @@ import targoss.hardcorealchemy.creatures.network.MessageInstinctNeedState;
 import targoss.hardcorealchemy.creatures.network.MessageKillCount;
 import targoss.hardcorealchemy.creatures.network.MessageMaxHumanity;
 import targoss.hardcorealchemy.creatures.network.MessageMorphState;
+import targoss.hardcorealchemy.creatures.research.Studies;
 import targoss.hardcorealchemy.network.NetMessenger;
 
 public class CommonProxy {
@@ -82,6 +83,7 @@ public class CommonProxy {
         new Items();
         new Entities();
         new Incantations();
+        new Studies();
         
         // asanetargoss @ 2021-10-03: Moved instinct registration from init to preInit
         // asanetargoss @ 2021-10-24: Moved instinct registration from core to creatures

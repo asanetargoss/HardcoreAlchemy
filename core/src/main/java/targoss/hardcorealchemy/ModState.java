@@ -43,6 +43,7 @@ public final class ModState {
     public static final String WAWLA_ID = "Waila";
     public static final String SPICE_OF_LIFE_ID = "SpiceOfLife";
     public static final String MANTLE_ID = "mantle";
+    public static final String ENDER_ZOO_ID = "EnderZoo";
     public static boolean isMetamorphLoaded = false;
     public static boolean isDissolutionLoaded = false;
     public static boolean isNutritionLoaded = false;

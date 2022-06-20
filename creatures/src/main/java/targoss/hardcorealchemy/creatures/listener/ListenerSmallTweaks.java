@@ -19,21 +19,31 @@
 
 package targoss.hardcorealchemy.creatures.listener;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.pathfinding.PathNavigateSwimmer;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.ZombieEvent;
+import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.misc.ICapabilityMisc;
 import targoss.hardcorealchemy.creatures.item.Items;
+import targoss.hardcorealchemy.creatures.research.Studies;
 import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
+import targoss.hardcorealchemy.listener.ListenerPlayerResearch;
+import targoss.hardcorealchemy.util.EntityUtil;
+import targoss.hardcorealchemy.util.InventoryUtil;
 
 /**
  * An event listener for miscellaneous changes that
@@ -68,5 +78,35 @@ public class ListenerSmallTweaks extends HardcoreAlchemyListener {
                 ) {
             entity.setAir(300);
         }
+    }
+
+    @Optional.Method(modid=ModState.ENDER_ZOO_ID)
+    @SubscribeEvent
+    public void onDigDirt(BlockEvent.BreakEvent event) {
+        IBlockState state = event.getState();
+        if (state == null) {
+            return;
+        }
+        if (state.getBlock() != Blocks.DIRT) {
+            return;
+        }
+        EntityPlayer player = event.getPlayer();
+        if (player == null) {
+            return;
+        }
+        if (EntityUtil.getLivingEntityClassFromString("DireSlime") == null) {
+            // Dire Slime is not enabled
+            return;
+        }
+        // Is this a proper tool to harvest dirt with?
+        ItemStack heldStack = player.getHeldItemMainhand();
+        if (!InventoryUtil.isEmptyItemStack(heldStack)) {
+            Item heldItem = heldStack.getItem();
+            if (heldItem.getStrVsBlock(heldStack, state) > 1.0F) {
+                return;
+            }
+        }
+        // If not, warn of digging dirt with the wrong tool
+        ListenerPlayerResearch.acquireFactAndSendChatMessage(player, Studies.FACT_DIG_DIRT_WARNING);
     }
 }
