@@ -27,6 +27,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
@@ -41,10 +42,15 @@ public class ListenerMorphExtension extends HardcoreAlchemyListener {
             this.delegate = delegate;
         }
         
+        @Optional.Method(modid=ModState.TAN_ID)
+        public static boolean isTANLowerStartingHealthEnabled() {
+            return toughasnails.api.config.SyncedConfig.getBooleanValue(
+                    toughasnails.api.config.GameplayOption.ENABLE_LOWERED_STARTING_HEALTH);
+        }
+        
         @Override
         public boolean shouldDrawHumanityDottedIcons() {
-            if (ModState.isTanLoaded && toughasnails.api.config.SyncedConfig.getBooleanValue(
-                    toughasnails.api.config.GameplayOption.ENABLE_LOWERED_STARTING_HEALTH)) {
+            if (ModState.isTanLoaded && isTANLowerStartingHealthEnabled()) {
                 return true;
             }
             return delegate.shouldDrawHumanityDottedIcons();
