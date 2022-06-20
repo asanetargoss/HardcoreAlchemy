@@ -35,7 +35,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
 import targoss.hardcorealchemy.listener.ListenerPlayerResearch;
-import targoss.hardcorealchemy.research.Studies;
+import targoss.hardcorealchemy.survival.research.Studies;
 import targoss.hardcorealchemy.util.MiscVanilla;
 import toughasnails.api.TANCapabilities;
 import toughasnails.api.TANPotions;

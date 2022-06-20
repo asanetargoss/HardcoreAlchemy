@@ -27,6 +27,7 @@ import targoss.hardcorealchemy.survival.listener.ListenerMorphExtension;
 import targoss.hardcorealchemy.survival.listener.ListenerNutritionExtension;
 import targoss.hardcorealchemy.survival.listener.ListenerPlayerDiet;
 import targoss.hardcorealchemy.survival.listener.ListenerPlayerNutritionThirst;
+import targoss.hardcorealchemy.survival.research.Studies;
 
 public class CommonProxy {
     public void preInit(FMLPreInitializationEvent event) {
@@ -36,5 +37,8 @@ public class CommonProxy {
         HardcoreAlchemyCore.proxy.addListener(new ListenerNutritionExtension());
         HardcoreAlchemyCore.proxy.addListener(new ListenerMorphExtension());
         HardcoreAlchemyCore.proxy.addListener(new ListenerPlayerNutritionThirst());
+        
+        // Initialize via classload
+        new Studies();
     }
 }

@@ -24,6 +24,7 @@ import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.magic.listener.ListenerInventoryExtension;
 import targoss.hardcorealchemy.magic.listener.ListenerPlayerMagic;
 import targoss.hardcorealchemy.magic.listener.ListenerPlayerMagicState;
+import targoss.hardcorealchemy.magic.research.Studies;
 
 public class CommonProxy {
     
@@ -31,5 +32,8 @@ public class CommonProxy {
         HardcoreAlchemyCore.proxy.addListener(new ListenerPlayerMagic());
         HardcoreAlchemyCore.proxy.addListener(new ListenerPlayerMagicState());
         HardcoreAlchemyCore.proxy.addListener(new ListenerInventoryExtension());
+        
+        // Initialize via classload
+        new Studies();
     }
 }
