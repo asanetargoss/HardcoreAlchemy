@@ -151,8 +151,6 @@ public class ListenerHearts extends HardcoreAlchemyListener {
                 // Chance to remove heart
                 if (random.nextInt(HEART_REMOVE_CHANCE) == 0) {
                     int heartIndexToRemove = random.nextInt(hearts.get().size());
-                    System.out.println("heart count: " + hearts.get().size());
-                    System.out.println("to remove: " + heartIndexToRemove);
                     int i = 0;
                     Heart heartToRemove = null;
                     for (Heart heart : hearts.get()) {
