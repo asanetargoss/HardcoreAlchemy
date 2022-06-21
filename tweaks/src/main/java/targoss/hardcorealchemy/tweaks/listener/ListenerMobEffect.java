@@ -24,8 +24,8 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import targoss.hardcorealchemy.event.EventLivingAttack;
 import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
-import targoss.hardcorealchemy.tweaks.event.EventLivingAttack;
 import targoss.hardcorealchemy.tweaks.item.Items;
 import targoss.hardcorealchemy.util.MobLists;
 

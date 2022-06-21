@@ -31,7 +31,6 @@ import targoss.hardcorealchemy.tweaks.HardcoreAlchemyTweaks;
 import targoss.hardcorealchemy.tweaks.coremod.transform.TContainer;
 import targoss.hardcorealchemy.tweaks.coremod.transform.TEntityAIAttackMelee;
 import targoss.hardcorealchemy.tweaks.coremod.transform.TEntityArrow;
-import targoss.hardcorealchemy.tweaks.coremod.transform.TEntityLivingBase;
 import targoss.hardcorealchemy.tweaks.coremod.transform.TGuiIngame;
 import targoss.hardcorealchemy.tweaks.coremod.transform.TInventoryPlayer;
 import targoss.hardcorealchemy.tweaks.coremod.transform.TNetHandlerPlayServer;
@@ -55,7 +54,6 @@ public class HardcoreAlchemyTweaksCoremod implements IFMLLoadingPlugin {
         return new String[]{
             TPlayerControllerMP.class.getName(),
             TInventoryPlayer.class.getName(),
-            TEntityLivingBase.class.getName(),
             TNetHandlerPlayServer.class.getName(),
             TPlayerInteractionManager.class.getName(),
             TEntityAIAttackMelee.class.getName(),

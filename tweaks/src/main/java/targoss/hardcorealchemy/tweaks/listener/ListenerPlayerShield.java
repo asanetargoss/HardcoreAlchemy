@@ -31,9 +31,9 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import targoss.hardcorealchemy.capability.misc.ICapabilityMisc;
 import targoss.hardcorealchemy.capability.misc.ProviderMisc;
+import targoss.hardcorealchemy.event.EventLivingAttack;
 import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
 import targoss.hardcorealchemy.tweaks.event.EventArrowHit;
-import targoss.hardcorealchemy.tweaks.event.EventLivingAttack;
 import targoss.hardcorealchemy.tweaks.event.EventMeleeAttack;
 
 /**
