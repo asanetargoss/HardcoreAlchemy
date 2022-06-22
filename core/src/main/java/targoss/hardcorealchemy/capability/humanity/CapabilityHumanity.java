@@ -33,6 +33,7 @@ public class CapabilityHumanity implements ICapabilityHumanity {
     // Humanity in the previous tick after humanity tick calculations; allows us to see if humanity was changed in other ways
     private double lastHumanity;
     private double magicInhibition;
+    private boolean hasForgottenHumanForm;
     private boolean hasLostHumanity;
     private boolean hasLostMorphAbility;
     
@@ -62,6 +63,17 @@ public class CapabilityHumanity implements ICapabilityHumanity {
     public double getMagicInhibition() {
         return this.magicInhibition;
     }
+
+    @Override
+    public void setHasForgottenHumanForm(boolean hasForgottenHumanForm) {
+        this.hasForgottenHumanForm = hasForgottenHumanForm;
+    }
+
+    @Override
+    public boolean getHasForgottenHumanForm() {
+        return hasForgottenHumanForm;
+    }
+
     
     @Override
     public void setHasLostHumanity(boolean hasLostHumanity) {
@@ -146,5 +158,4 @@ public class CapabilityHumanity implements ICapabilityHumanity {
     public double getLastHumanity() {
         return lastHumanity;
     }
-
 }

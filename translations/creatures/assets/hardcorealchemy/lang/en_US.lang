@@ -88,3 +88,4 @@ hardcorealchemy.instinct.unencumbered.action=You tear off the armor.
 
 hardcorealchemy.research.knowledge_fact.magic_inhibition_warning.acquire=You fear powerful magic will interfere with your ability to morph.
 hardcorealchemy.research.knowledge_fact.dig_dirt_warning.acquire=You suspect your current tool is not suitable for digging dirt.
+hardcorealchemy.research.knowledge_fact.kill_mastery_hint.acquire=With each creature you master, you will acquire their form, and can more easily exploit their weaknesses.

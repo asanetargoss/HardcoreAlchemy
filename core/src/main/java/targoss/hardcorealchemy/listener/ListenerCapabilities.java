@@ -21,9 +21,6 @@ package targoss.hardcorealchemy.listener;
 
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import targoss.hardcorealchemy.capability.VirtualCapabilityManager;
-import targoss.hardcorealchemy.capability.combatlevel.CapabilityCombatLevel;
-import targoss.hardcorealchemy.capability.combatlevel.ICapabilityCombatLevel;
-import targoss.hardcorealchemy.capability.combatlevel.StorageCombatLevel;
 import targoss.hardcorealchemy.capability.entitystate.CapabilityEntityState;
 import targoss.hardcorealchemy.capability.entitystate.ICapabilityEntityState;
 import targoss.hardcorealchemy.capability.entitystate.StorageEntityState;
@@ -51,7 +48,6 @@ public class ListenerCapabilities extends HardcoreAlchemyListener {
     @Override
     public void registerCapabilities(CapabilityManager manager, VirtualCapabilityManager virtualManager) {
         manager.register(ICapabilityHumanity.class, new StorageHumanity(), CapabilityHumanity.class);
-        manager.register(ICapabilityCombatLevel.class, new StorageCombatLevel(), CapabilityCombatLevel.class);
         manager.register(ICapabilityFood.class, new StorageFood(), CapabilityFood.class);
         virtualManager.registerVirtualCapability(CapabilityFood.RESOURCE_LOCATION, CapabilityFood.FOOD_CAPABILITY);
         manager.register(IInactiveCapabilities.class, new StorageInactiveCapabilities(), InactiveCapabilities.class);

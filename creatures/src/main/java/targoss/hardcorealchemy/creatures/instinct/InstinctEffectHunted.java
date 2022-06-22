@@ -29,17 +29,17 @@ import net.minecraft.entity.monster.EntityPolarBear;
 import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.MobEffects;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.SPacketSoundEffect;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
-import targoss.hardcorealchemy.capability.combatlevel.ICapabilityCombatLevel;
-import targoss.hardcorealchemy.capability.combatlevel.ProviderCombatLevel;
 import targoss.hardcorealchemy.capability.entitystate.ICapabilityEntityState;
 import targoss.hardcorealchemy.capability.entitystate.ProviderEntityState;
 import targoss.hardcorealchemy.capability.misc.ICapabilityMisc;
@@ -65,19 +65,16 @@ public class InstinctEffectHunted extends InstinctEffect {
     
     private Random random = new Random();
     
-    /** Predator *would* spawn at half player level here
-     * if it weren't for the fact that a predator doesn't always spawn */
-    public static final float MIN_AMPLIFIER = 0.0F;
-    /** Predator spawns at player level, and at higher levels will extrapolate */
-    public static final float PLAYER_MATCHING_THRESHOLD = 2.5F;
+    /** Amplifier for which the potion amplifier is 1. Higher levels will be extrapolated. */
+    public static final float POTION_AMPLIFIER_1_THRESHOLD = 2.5F;
     
-    protected float getLevelMultiplier(float amplifier) {
-        return 0.5F + (0.5F * (amplifier - MIN_AMPLIFIER) / (PLAYER_MATCHING_THRESHOLD - MIN_AMPLIFIER));
+    protected int getPotionEffectStrength(float amplifier) {
+        return (int)(0.5F + (0.5F * amplifier / POTION_AMPLIFIER_1_THRESHOLD));
     }
     
     public static enum EventType {
         NONE(-1.0F),
-        WARNING_MESSAGE(MIN_AMPLIFIER),
+        WARNING_MESSAGE(0.0F),
         PREDATOR_SOUND(1.0F),
         PREDATOR_APPEARS(2.0F);
         final float threshold;
@@ -239,17 +236,11 @@ public class InstinctEffectHunted extends InstinctEffect {
                             entityState.setLifetime(EVENT_TIME_MAX);
                         }
                         
-                        // Make predator stronger relative to the player depending on effect strength
-                        ICapabilityCombatLevel combatLevel = predator.getCapability(ProviderCombatLevel.COMBAT_LEVEL_CAPABILITY, null);
-                        if (combatLevel != null) {
-                            float multiplier = getLevelMultiplier(amplifier);
-                            int predatorLevel = (int)Math.ceil(multiplier * (float)player.experienceLevel);
-                            combatLevel.setValue(predatorLevel);
-                            combatLevel.setHasCombatLevel(true);
-                        }
-                        
                         // Predator will now hunt the player
-                        // TODO: Prevent the predator from dropping items/experience?
+                        // Apply potion effects to make the predator stronger, depending on the amplifier
+                        int potionStrength = getPotionEffectStrength(amplifier);
+                        predator.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, Integer.MAX_VALUE, potionStrength));
+                        predator.addPotionEffect(new PotionEffect(MobEffects.RESISTANCE, Integer.MAX_VALUE, potionStrength));
                         predator.world.spawnEntity(predator);
                     }
                     break;

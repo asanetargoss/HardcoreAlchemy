@@ -19,9 +19,10 @@
 
 package targoss.hardcorealchemy.creatures.capability.killcount;
 
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import net.minecraft.util.ResourceLocation;
 import targoss.hardcorealchemy.HardcoreAlchemyCore;
@@ -30,7 +31,8 @@ public class CapabilityKillCount implements ICapabilityKillCount {
     
     public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(HardcoreAlchemyCore.MOD_ID, "kill_count");
     
-    public Map<String, Integer> killCounts = Collections.synchronizedMap(new HashMap<String, Integer>());
+    public Map<String, Integer> killCounts = new HashMap<String, Integer>();
+    public Set<String> masteredKills = new HashSet<>();
     
     @Override
     public int getNumKills(String morphName) {
@@ -61,6 +63,26 @@ public class CapabilityKillCount implements ICapabilityKillCount {
     @Override
     public void setKillCounts(Map<String, Integer> killCounts) {
         this.killCounts = killCounts;
+    }
+
+    @Override
+    public Set<String> getMasteredKills() {
+        return masteredKills;
+    }
+
+    @Override
+    public void setMasteredKills(Set<String> masteredKills) {
+        this.masteredKills = masteredKills;
+    }
+
+    @Override
+    public boolean hasMasteredKill(String morphName) {
+        return masteredKills.contains(morphName);
+    }
+
+    @Override
+    public void addMasteredKill(String morphName) {
+        masteredKills.add(morphName);
     }
 
 }

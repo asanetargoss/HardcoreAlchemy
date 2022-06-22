@@ -60,7 +60,7 @@ public class TEntityLivingBase extends MethodPatcher {
                         hook.add(new VarInsnNode(Opcodes.ALOAD, 1));
                         hook.add(new VarInsnNode(Opcodes.FLOAD, 2));
                         hook.add(new MethodInsnNode(
-                                Opcodes.INVOKESTATIC, "targoss/hardcorealchemy/tweaks/event/EventLivingAttack",
+                                Opcodes.INVOKESTATIC, "targoss/hardcorealchemy/event/EventLivingAttack",
                                 "onLivingAttackEnd", "(ZLnet/minecraft/entity/EntityLivingBase;Lnet/minecraft/util/DamageSource;F)V", false
                                 ));
                         
@@ -74,7 +74,7 @@ public class TEntityLivingBase extends MethodPatcher {
                 hook.add(new VarInsnNode(Opcodes.ALOAD, 1));
                 hook.add(new VarInsnNode(Opcodes.FLOAD, 2));
                 hook.add(new MethodInsnNode(
-                        Opcodes.INVOKESTATIC, "targoss/hardcorealchemy/tweaks/event/EventLivingAttack",
+                        Opcodes.INVOKESTATIC, "targoss/hardcorealchemy/event/EventLivingAttack",
                         "onLivingAttackStart", "(Lnet/minecraft/entity/EntityLivingBase;Lnet/minecraft/util/DamageSource;F)F", false
                         ));
                 hook.add(new VarInsnNode(Opcodes.FSTORE, 2));

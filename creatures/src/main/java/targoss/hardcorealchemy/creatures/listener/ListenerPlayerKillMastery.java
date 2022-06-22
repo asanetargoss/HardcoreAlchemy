@@ -22,72 +22,105 @@ package targoss.hardcorealchemy.creatures.listener;
 import java.util.HashSet;
 import java.util.Set;
 
+import mchorse.metamorph.api.events.AcquireMorphEvent;
+import mchorse.metamorph.api.events.RegisterBlacklistEvent;
+import mchorse.metamorph.api.morphs.AbstractMorph;
+import mchorse.metamorph.api.morphs.EntityMorph;
+import mchorse.metamorph.capabilities.morphing.IMorphing;
+import mchorse.metamorph.capabilities.morphing.Morphing;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import targoss.hardcorealchemy.capability.combatlevel.CapabilityCombatLevel;
-import targoss.hardcorealchemy.capability.combatlevel.ICapabilityCombatLevel;
-import targoss.hardcorealchemy.capability.combatlevel.ProviderCombatLevel;
-import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
-import targoss.hardcorealchemy.creatures.util.MobLevelRange;
+import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
+import targoss.hardcorealchemy.creatures.capability.killcount.ICapabilityKillCount;
+import targoss.hardcorealchemy.creatures.research.Studies;
 import targoss.hardcorealchemy.event.EventLivingAttack;
-import targoss.hardcorealchemy.util.MobLists;
+import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
+import targoss.hardcorealchemy.listener.ListenerPlayerResearch;
+import targoss.hardcorealchemy.util.MorphExtension;
 
-public class ListenerMobLevel extends HardcoreAlchemyListener {
-    @CapabilityInject(ICapabilityCombatLevel.class)
-    public static Capability<ICapabilityCombatLevel> COMBAT_LEVEL_CAPABILITY = null;
-    public static final ResourceLocation COMBAT_LEVEL_RESOURCE_LOCATION = CapabilityCombatLevel.RESOURCE_LOCATION;
+public class ListenerPlayerKillMastery extends HardcoreAlchemyListener {
+    @CapabilityInject(ICapabilityKillCount.class)
+    public static Capability<ICapabilityKillCount> KILL_COUNT_CAPABILITY = null;
+    @CapabilityInject(ICapabilityHumanity.class)
+    public static Capability<ICapabilityHumanity> HUMANITY_CAPABILITY = null;
     
-    public static Set<String> levelBlacklist = new HashSet<>();
+    /**
+     * May hold a reference to the global morph blacklist. Don't modify this.
+     */
+    protected Set<String> damageReductionBlacklist = new HashSet<>();
     
-    static {
-        levelBlacklist.addAll(MobLists.getBosses());
-        levelBlacklist.addAll(MobLists.getNonMobs());
-        levelBlacklist.addAll(MobLists.getHumans());
+    /**
+     * Only reduce damage against creatures that the player can acquire a moprph for.
+     */
+    @SubscribeEvent(priority=EventPriority.LOWEST)
+    public void onRegisterMorphBlacklist(RegisterBlacklistEvent event) {
+        damageReductionBlacklist = event.blacklist;
     }
     
+    // TODO: Base max humanity off of mastered kills rather than acquired morphs
+    /** On player login, add mastered kills for all acquired morphs */
     @SubscribeEvent
-    public void onAttachCapability(AttachCapabilitiesEvent<Entity> event) {
-        Entity entity = event.getObject();
-        if (entity instanceof EntityLivingBase && !(entity instanceof EntityPlayer)) {
-            World world = entity.world;
-            if (world != null && world.isRemote) {
-                return;
-            }
-            if (!levelBlacklist.contains(EntityList.getEntityString(entity))) {
-                event.addCapability(COMBAT_LEVEL_RESOURCE_LOCATION, new ProviderCombatLevel());
-                }
-        }
-        
-    }
-    
-    @SubscribeEvent
-    public void onCheckMobHasLevel(EntityJoinWorldEvent event) {
+    public void onPlayerJoinWorld(EntityJoinWorldEvent event) {
         Entity entity = event.getEntity();
-        if (!(entity instanceof EntityLivingBase)) {
+        if (entity == null || entity.world.isRemote) {
             return;
         }
-        EntityLivingBase entityLiving = (EntityLivingBase)entity;
-        
-        ICapabilityCombatLevel combatLevel = entityLiving.getCapability(COMBAT_LEVEL_CAPABILITY, null);
-        if (combatLevel != null && !combatLevel.getHasCombatLevel()) {
-            combatLevel.setHasCombatLevel(true);
-            MobLevelRange levelRange = MobLevelRange.getRange(entityLiving.dimension, entityLiving.posY);
-            //TODO: better random level algorithm
-            int level = levelRange.getRandomLevel(entityLiving.posX, entityLiving.posZ, entityLiving.world.getSeed());
-            combatLevel.setValue(level);
+        if (!(entity instanceof EntityPlayer)) {
+            return;
+        }
+        EntityPlayer player = (EntityPlayer)entity;
+        IMorphing morphing = Morphing.get(player);
+        if (morphing == null) {
+            return;
+        }
+        ICapabilityKillCount killCount = player.getCapability(KILL_COUNT_CAPABILITY, null);
+        if (killCount == null) {
+            return;
+        }
+        for (AbstractMorph morph : morphing.getAcquiredMorphs()) {
+            if (!(morph instanceof EntityMorph)) {
+                continue;
+            }
+            killCount.addMasteredKill(morph.name);
         }
     }
     
+    @SubscribeEvent
+    public void onPlayerAcquireMorph(AcquireMorphEvent.Post event) {
+        AbstractMorph morph = event.morph;
+        if (!(morph instanceof EntityMorph)) {
+            return;
+        }
+        ICapabilityKillCount killCount = event.player.getCapability(KILL_COUNT_CAPABILITY, null);
+        if (killCount == null) {
+            return;
+        }
+        killCount.addMasteredKill(morph.name);
+        ListenerPlayerResearch.acquireFactAndSendChatMessage(event.player, Studies.FACT_KILL_MASTERY_HINT);
+    }
+    
+    protected float getUnmasteredKillDamageMultiplier(World world) {
+        switch (world.getDifficulty()) {
+        case PEACEFUL:
+            return 0.95F;
+        case EASY:
+            return 0.9F;
+        case NORMAL:
+            return 0.75F;
+        case HARD:
+        default:
+            return 0.5F;
+        }
+    }
     
     @SubscribeEvent
     public void onLivingHurt(EventLivingAttack.Start event) {
@@ -98,45 +131,47 @@ public class ListenerMobLevel extends HardcoreAlchemyListener {
             return;
         }
         World world = entity.world;
-        if (world != null && world.isRemote) {
+        if (world == null || world.isRemote) {
             return;
         }
-        if (entity == null || !(entity instanceof EntityLivingBase)) {
+        if (!(entity instanceof EntityLivingBase)) {
             return;
         }
         
         EntityLivingBase attacker = (EntityLivingBase)source.getEntity();
-        EntityLivingBase defender = event.entity;
-        
-        boolean attackerIsPlayer = attacker instanceof EntityPlayer;
-        boolean defenderIsPlayer = defender instanceof EntityPlayer;
-        if (attackerIsPlayer && defenderIsPlayer) {
+        if (!(attacker instanceof EntityPlayer)) {
             return;
         }
-        
-        int attackerLevel = 0;
-        int defenderLevel = 0;
-        
-        if (attackerIsPlayer) {
-            attackerLevel = ((EntityPlayer)attacker).experienceLevel;
+        EntityPlayer attackerPlayer = (EntityPlayer)attacker;
+        ICapabilityHumanity humanity = attackerPlayer.getCapability(HUMANITY_CAPABILITY, null);
+        if (humanity == null) {
+            return;
         }
-        else if (attacker.hasCapability(COMBAT_LEVEL_CAPABILITY, null)) {
-            attackerLevel = attacker.getCapability(COMBAT_LEVEL_CAPABILITY, null).getValue();
+        // Check what the player is attacking.
+        // If the defender is a morphed player, treat the player like the entity they are currently morphed as.
+        // If the entity is a morph the player can learn and the player doesn't have the morph yet, reduce damage dealth by the player.
+        // Otherwise, keep damage the same.
+        EntityLivingBase defenderEffectiveEntity = MorphExtension.INSTANCE.getEffectiveEntity(event.entity);
+        if ((defenderEffectiveEntity instanceof EntityPlayer)) {
+            if (!humanity.getHasForgottenHumanForm()) {
+                return;
+            }
         }
         else {
-            return;
-        }
-        if (defenderIsPlayer) {
-            defenderLevel = ((EntityPlayer)defender).experienceLevel;
-        }
-        else if (defender.hasCapability(COMBAT_LEVEL_CAPABILITY, null)) {
-            defenderLevel = defender.getCapability(COMBAT_LEVEL_CAPABILITY, null).getValue();
-        }
-        else {
-            return;
+            String defenderEffectiveEntityName = EntityList.CLASS_TO_NAME.get(defenderEffectiveEntity.getClass());
+            if (damageReductionBlacklist.contains(defenderEffectiveEntityName)) {
+                return;
+            }
+            ICapabilityKillCount killCount = attackerPlayer.getCapability(KILL_COUNT_CAPABILITY, null);
+            if (killCount == null) {
+                return;
+            }
+            if (killCount.hasMasteredKill(defenderEffectiveEntityName)) {
+                return;
+            }
         }
         
-        float hurtMultiplier = CapabilityCombatLevel.getDamageMultiplier(attackerLevel, defenderLevel);
+        float hurtMultiplier = getUnmasteredKillDamageMultiplier(attackerPlayer.world);
         event.amount = event.amount * hurtMultiplier;
     }
 }

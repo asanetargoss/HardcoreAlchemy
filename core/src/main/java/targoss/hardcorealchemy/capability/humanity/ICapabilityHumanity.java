@@ -28,25 +28,29 @@ public interface ICapabilityHumanity {
     public static final IAttribute MAX_HUMANITY = new RangedAttribute(null, HardcoreAlchemyCore.MOD_ID + ":max_humanity", 4.0D, 1e-45, Double.MAX_VALUE).setShouldWatch(true);
     public static final double DEFAULT_HUMANITY_VALUE = MAX_HUMANITY.getDefaultValue();
     
-    public abstract void setHumanity(double humanity);
-    public abstract void setLastHumanity(double lastHumanity);
-    public abstract void setMagicInhibition(double magicInhibition);
-    public abstract void setHasLostHumanity(boolean hasLostHumanity);
-    public abstract void setHasLostMorphAbility(boolean hasLostMorphAbility);
-    public abstract void loseMorphAbilityFor(LostMorphReason reason);
+    public void setHumanity(double humanity);
+    public void setLastHumanity(double lastHumanity);
+    public void setMagicInhibition(double magicInhibition);
+    public void setHasForgottenHumanForm(boolean hasForgottenHumanForm);
+    public void setHasLostHumanity(boolean hasLostHumanity);
+    public void setHasLostMorphAbility(boolean hasLostMorphAbility);
+    public void loseMorphAbilityFor(LostMorphReason reason);
     
-    public abstract double getHumanity();
-    public abstract double getLastHumanity();
-    public abstract double getMagicInhibition();
-    public abstract boolean getHasLostHumanity();
-    public abstract boolean getHasLostMorphAbility();
+    public double getHumanity();
+    public double getLastHumanity();
+    public double getMagicInhibition();
+    /** Whether the player can morph into a human, assuming the player
+        can still morph. */
+    public boolean getHasForgottenHumanForm();
+    public boolean getHasLostHumanity();
+    public boolean getHasLostMorphAbility();
     /** Returns false if the player is stuck as a morph */
-    public abstract boolean isHuman();
+    public boolean isHuman();
     /** Returns false if the player is temporarily unable to morph */
-    public abstract boolean canMorphRightNow();
+    public boolean canMorphRightNow();
     /** Returns false if the player is permanently unable to morph */
-    public abstract boolean canMorph();
+    public boolean canMorph();
     /** Returns temporary or permanent reason the player cannot morph */
-    public abstract ITextComponent explainWhyCantMorph();
-    public abstract boolean shouldDisplayHumanity();
+    public ITextComponent explainWhyCantMorph();
+    public boolean shouldDisplayHumanity();
 }

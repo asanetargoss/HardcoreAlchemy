@@ -26,4 +26,5 @@ import targoss.hardcorealchemy.research.KnowledgeFact;
 public class Studies {
     public static final KnowledgeFact FACT_MAGIC_INHIBITION_WARNING = KNOWLEDGE_FACTS.add("magic_inhibition_warning", new KnowledgeFact(false));
     public static final KnowledgeFact FACT_DIG_DIRT_WARNING = KNOWLEDGE_FACTS.add("dig_dirt_warning", new KnowledgeFact(false));
+    public static final KnowledgeFact FACT_KILL_MASTERY_HINT = KNOWLEDGE_FACTS.add("kill_mastery_hint", new KnowledgeFact(false));
 }
