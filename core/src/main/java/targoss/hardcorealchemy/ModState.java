@@ -57,6 +57,7 @@ public final class ModState {
     public static boolean isSpiceOfLifeLoaded = false;
     public static boolean isTanLoaded = false;
     public static boolean isThaumcraftLoaded = false;
+    public static boolean isWawlaLoaded = false;
     
     protected static boolean modMapRegistered = false;
 
@@ -81,5 +82,6 @@ public final class ModState {
         isSpiceOfLifeLoaded = modMap.containsKey(SPICE_OF_LIFE_ID);
         isTanLoaded = modMap.containsKey(TAN_ID);
         isThaumcraftLoaded = modMap.containsKey(THAUMCRAFT_ID);
+        isWawlaLoaded = modMap.containsKey(WAWLA_ID);
     }
 }

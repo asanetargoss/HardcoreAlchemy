@@ -27,6 +27,7 @@ import mchorse.metamorph.api.events.MorphEvent;
 import mchorse.metamorph.api.events.SpawnGhostEvent;
 import mchorse.metamorph.api.morphs.AbstractMorph;
 import mchorse.metamorph.capabilities.morphing.IMorphing;
+import mcp.mobius.waila.api.event.WailaRenderEvent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
@@ -49,6 +50,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.humanity.CapabilityHumanity;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
@@ -62,6 +65,7 @@ import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
 import targoss.hardcorealchemy.listener.ListenerPlayerResearch;
 import targoss.hardcorealchemy.util.Chat;
 import targoss.hardcorealchemy.util.InventoryUtil;
+import targoss.hardcorealchemy.util.MiscVanilla;
 import targoss.hardcorealchemy.util.MorphExtension;
 
 public class ListenerPlayerHumanity extends HardcoreAlchemyListener {
@@ -401,8 +405,9 @@ public class ListenerPlayerHumanity extends HardcoreAlchemyListener {
     }
     
     /**
-     * This event handler fixes state issues caused by the player becoming a ghost, which
-     * are normally cleared automatically when a player dies due to capabilities clearing.
+     * This event handler fixes state issues caused by the player becoming a ghost (ex: via
+     * the Dissolution mod), which are normally cleared automatically when a player dies
+     * due to capabilities clearing.
      * 
      * - The player is forced to human form because a player's "soul" is human (lore)
      * - Humanity value is reset
@@ -412,13 +417,25 @@ public class ListenerPlayerHumanity extends HardcoreAlchemyListener {
      * would be cleared and data would be manually cleared on a case-by-case basis according
      * to a well-defined player life/afterlife state.
      */
-    @Optional.Method(modid = ModState.DISSOLUTION_ID)
     @SubscribeEvent
     public void onPlayerEnterAfterlife(PlayerRespawnEvent event) {
         EntityPlayer player = event.player;
         if (MorphExtension.INSTANCE.isGhost(player)) {
             // You're a ghost, so being in a morph doesn't really make sense
             MorphState.resetForm(coreConfigs, player);
+        }
+    }
+
+    /**
+     * Don't display WAILA when the player is a ghost, because it
+     * covers the spawn compass from Dissolution.
+     */
+    @Optional.Method(modid=ModState.WAWLA_ID)
+    @SideOnly(Side.CLIENT)
+    @SubscribeEvent
+    public void onDisplayWawla(WailaRenderEvent.Pre event) {
+        if (MorphExtension.INSTANCE.isGhost(MiscVanilla.getTheMinecraftPlayer())) {
+            event.setCanceled(true);
         }
     }
 }
