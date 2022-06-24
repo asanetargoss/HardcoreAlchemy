@@ -36,7 +36,6 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
@@ -59,25 +58,14 @@ public class ListenerPlayerKillMastery extends HardcoreAlchemyListener {
     protected Set<String> damageReductionBlacklist = new HashSet<>();
     
     /**
-     * Only reduce damage against creatures that the player can acquire a moprph for.
+     * Only reduce damage against creatures that the player can acquire a morph for.
      */
     @SubscribeEvent(priority=EventPriority.LOWEST)
     public void onRegisterMorphBlacklist(RegisterBlacklistEvent event) {
         damageReductionBlacklist = event.blacklist;
     }
     
-    // TODO: Base max humanity off of mastered kills rather than acquired morphs
-    /** On player login, add mastered kills for all acquired morphs */
-    @SubscribeEvent
-    public void onPlayerJoinWorld(EntityJoinWorldEvent event) {
-        Entity entity = event.getEntity();
-        if (entity == null || entity.world.isRemote) {
-            return;
-        }
-        if (!(entity instanceof EntityPlayer)) {
-            return;
-        }
-        EntityPlayer player = (EntityPlayer)entity;
+    public static void recalculateMasteredKills(EntityPlayer player) {
         IMorphing morphing = Morphing.get(player);
         if (morphing == null) {
             return;
@@ -94,8 +82,7 @@ public class ListenerPlayerKillMastery extends HardcoreAlchemyListener {
         }
     }
     
-    @SubscribeEvent
-    public void onPlayerAcquireMorph(AcquireMorphEvent.Post event) {
+    public static void addMasteredKill(AcquireMorphEvent.Post event) {
         AbstractMorph morph = event.morph;
         if (!(morph instanceof EntityMorph)) {
             return;

@@ -21,7 +21,6 @@ package targoss.hardcorealchemy.creatures.listener;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -32,7 +31,6 @@ import mchorse.metamorph.api.events.SpawnGhostEvent;
 import mchorse.metamorph.api.morphs.AbstractMorph;
 import mchorse.metamorph.api.morphs.EntityMorph;
 import mchorse.metamorph.capabilities.morphing.IMorphing;
-import mchorse.metamorph.capabilities.morphing.Morphing;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
@@ -42,6 +40,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerChangedDimensionEvent;
 import targoss.hardcorealchemy.HardcoreAlchemyCore;
@@ -194,8 +193,24 @@ public class ListenerPlayerMorphs extends HardcoreAlchemyListener {
 	    }
 	}
     
+    /** On player join world, add mastered kills for all acquired morphs */
+    @SubscribeEvent
+    public void onPlayerJoinWorld(EntityJoinWorldEvent event) {
+        Entity entity = event.getEntity();
+        if (entity == null || entity.world.isRemote) {
+            return;
+        }
+        if (!(entity instanceof EntityPlayer)) {
+            return;
+        }
+        EntityPlayer player = (EntityPlayer)entity;
+        ListenerPlayerKillMastery.recalculateMasteredKills(player);
+        updateMaxHumanity(player, false);
+    }
+    
     @SubscribeEvent
     public void onPlayerAcquireMorph(AcquireMorphEvent.Post event) {
+        ListenerPlayerKillMastery.addMasteredKill(event);
         updateMaxHumanity(event.player, true);
     }
     
@@ -209,23 +224,18 @@ public class ListenerPlayerMorphs extends HardcoreAlchemyListener {
     
     public static void updateMaxHumanity(EntityPlayer player, boolean isUpgrade) {
         double bonusCap = 0.0D;
-        
-        IMorphing morphing = Morphing.get(player);
-        if (morphing != null) {
-            // Count all the player's acquired entity morphs (screen out variants and freebie mobs)
+
+        // Count all the player's acquired entity morphs (excluding variants and freebie mobs)
+        ICapabilityKillCount killCount = player.getCapability(KILL_COUNT_CAPABILITY, null);
+        if (killCount != null) {
+            Set<String> masteredKills = killCount.getMasteredKills();
             Set<String> freebieMobs = MobLists.getFreebieMobs();
-            Set<String> creatureNames = new HashSet<>();
-            for (AbstractMorph morph : morphing.getAcquiredMorphs()) {
-                if (freebieMobs.contains(morph.name)) {
-                    // Screen out freebie morphs. They are just for fun.
-                    continue;
-                }
-                if (morph instanceof EntityMorph) {
-                    creatureNames.add(morph.name);
+            int count = masteredKills.size();
+            for (String freebieMob : freebieMobs) {
+                if (masteredKills.contains(freebieMob)) {
+                    --count;
                 }
             }
-            
-            int count = creatureNames.size();
             for (int threshold : morphThresholds) {
                 if (threshold <= count) {
                     bonusCap += 2;
