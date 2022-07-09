@@ -56,6 +56,7 @@ public class Items {
             .create();
     
     public static final Item ESSENCE_MAGE = ITEMS.add("essence_mage", new Item());
+    public static final Item EMPTY_SLATE = ITEMS.add("empty_slate", new ItemEmptySlate());
     
     public static final Potion POTION_ALLOW_MAGIC = POTIONS.add("allow_magic", new HcAPotion(GOOD_EFFECT, new Color(113, 80, 182), 5, false));
 

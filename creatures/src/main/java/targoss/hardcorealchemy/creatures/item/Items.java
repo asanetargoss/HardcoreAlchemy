@@ -31,6 +31,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -48,6 +49,7 @@ import targoss.hardcorealchemy.util.Color;
 public class Items {
     public static final Item DROWNED_ENDER_PEARL = ITEMS.add("drowned_ender_pearl", new Item());
     public static final Item ASH = ITEMS.add("ash", new Item());
+    public static final Item SEAL_OF_FORM = ITEMS.add("seal_of_form", new ItemSealOfForm());
     
     public static final Potion POTION_AIR_BREATHING = POTIONS.add("air_breathing", new PotionAirBreathing(GOOD_EFFECT, new Color(205, 205, 205), 1, false));
     public static final Potion POTION_WATER_RESISTANCE = POTIONS.add("water_resistance", new HcAPotion(GOOD_EFFECT, new Color(47, 107, 58), 2, false));
@@ -111,5 +113,11 @@ public class Items {
                 POTION_TYPE_WATER_RESISTANCE_EXTENDED,
                 false
                 );
+    }
+    
+    public static class ClientSide {
+        public static void registerModels() {
+            Minecraft.getMinecraft().getItemColors().registerItemColorHandler(ItemSealOfForm.Colors.INSTANCE, SEAL_OF_FORM);
+        }
     }
 }

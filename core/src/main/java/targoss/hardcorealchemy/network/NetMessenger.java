@@ -64,6 +64,10 @@ public class NetMessenger<MOD> {
         messenger.sendTo(message, player);
     }
     
+    public void sendToAllAround(MessageToClient<MOD> message, NetworkRegistry.TargetPoint point) {
+        messenger.sendToAllAround(message, point);
+    }
+    
     public void sendToServer(RequestToServer<MOD> request) {
         messenger.sendToServer(request);
     }

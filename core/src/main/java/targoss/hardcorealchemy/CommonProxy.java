@@ -43,6 +43,7 @@ import targoss.hardcorealchemy.listener.ListenerEntityCapabilities;
 import targoss.hardcorealchemy.listener.ListenerPlayerIncantation;
 import targoss.hardcorealchemy.listener.ListenerPlayerResearch;
 import targoss.hardcorealchemy.network.MessageConfigs;
+import targoss.hardcorealchemy.network.MessageFakeBlockBreak;
 import targoss.hardcorealchemy.network.MessageInactiveCapabilities;
 import targoss.hardcorealchemy.network.NetMessenger;
 import targoss.hardcorealchemy.network.RequestIncantation;
@@ -72,7 +73,8 @@ public class CommonProxy {
         messenger = new NetMessenger<HardcoreAlchemyCore>(HardcoreAlchemyCore.SHORT_MOD_ID)
             .register(new MessageInactiveCapabilities())
             .register(new MessageConfigs())
-            .register(new RequestIncantation());
+            .register(new RequestIncantation())
+            .register(new MessageFakeBlockBreak());
     }
     
     public void preInit(FMLPreInitializationEvent event) {

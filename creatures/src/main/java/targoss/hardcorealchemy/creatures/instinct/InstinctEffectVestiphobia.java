@@ -27,6 +27,7 @@ import targoss.hardcorealchemy.creatures.instinct.api.InstinctEffect;
 import targoss.hardcorealchemy.util.Chat;
 import targoss.hardcorealchemy.util.InventoryUtil;
 
+// TODO: I thought this instinct was disabled?
 public class InstinctEffectVestiphobia extends InstinctEffect {
     @Override
     public void onActivate(EntityPlayer player, float amplifier) {}

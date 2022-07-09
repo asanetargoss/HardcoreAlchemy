@@ -22,20 +22,14 @@ language.code=en_US
 
 # Gameplay
 
-hardcorealchemy.morph.disabled.noability=You fail to comprehend other forms.
-hardcorealchemy.morph.disabled.nohumanity=Your humanity is gone. Your mind is confined to this body.
-hardcorealchemy.morph.disabled.marriage=Your humanity is strengthened by the power of love. You cannot find it in you to become a beast.
-hardcorealchemy.morph.disabled.magic_inhibition=A powerful magic interferes with your ability to change forms.
-hardcorealchemy.morph.disabled.dead=Your soul shall always be human.
-
-hardcorealchemy.instinct.effect.hunted.warn.variant1=What was that sound?
-hardcorealchemy.instinct.effect.hunted.cannot_attack=You are too afraid to attack the %s.
+hardcorealchemy.error_report_to_mod_dev=Report error to mod developer
 
 hardcorealchemy.incantation.too_fast=You are too out of breath to cast the spell
+hardcorealchemy.incantation.quoted="%1$s"
+hardcorealchemy.recipe.category.incantation=Incantation
 
-hardcorealchemy.incantation.change.name=Change
-hardcorealchemy.incantation.change.command=CHANGE
-hardcorealchemy.incantation.change.no_nearby_entities=The spell dissipates quickly, unable to find a compatible template.
+hardcorealchemy.incantation.create_slate.name=Remember
+hardcorealchemy.incantation.create_slate.command=REMEMBER
 
 hardcorealchemy.magic.disabled.item=Your inhuman form prevents you from comprehending this magical item.
 hardcorealchemy.magic.disabled.block=Your inhuman form prevents you from comprehending this magical object.
@@ -67,21 +61,12 @@ hardcorealchemy.dimension.the_end=The End
 entity.Creature.name=Creature
 entity.Animal.name=Animal
 entity.Player.name=Player
-
-entity.hardcorealchemy.fish_swarm.name=Fish Swarm
+entity.Unknown.name=Unknown
 
 # Items, Potions
 
 item.hardcorealchemy:essence_mage.name=Mage Essence
-item.hardcorealchemy:drowned_ender_pearl.name=Drowned Ender Pearl
-item.hardcorealchemy:ash.name=Ash
-
-item.hardcorealchemy:dimensional_flux_crystal.name=Dimensional Flux Crystal
-hardcorealchemy.dimensional_flux_crystal.description.origin=From: %s
-hardcorealchemy.dimensional_flux_crystal.description.fluxed_at=Transported to: %s
-hardcorealchemy.dimensional_flux_crystal.description.fluxed_unknown_one=Transported across dimensions
-hardcorealchemy.dimensional_flux_crystal.description.fluxed_unknown_multiple=Transported to multiple dimensions
-hardcorealchemy.dimensional_flux_crystal.description.fluxed_unknown_many=Warped by dimensional travel
+item.hardcorealchemy:empty_slate.name=Empty Slate
 
 potion.hardcorealchemy:allow_magic=Unhindered Magic
 potion.effect.hardcorealchemy:allow_magic=Potion of Unhindered Magic

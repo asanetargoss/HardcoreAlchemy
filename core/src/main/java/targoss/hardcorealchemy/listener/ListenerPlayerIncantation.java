@@ -211,7 +211,7 @@ public class ListenerPlayerIncantation extends HardcoreAlchemyListener {
     /**
      * A cooldown to prevent spamming.
      */
-    protected static final int INCANTATION_COOLDOWN_TICKS = 10;
+    protected static final int INCANTATION_COOLDOWN_TICKS = 10 * 20;
     /**
      * Max (top-level) castable spells.
      */

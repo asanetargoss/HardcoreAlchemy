@@ -26,6 +26,7 @@ import javax.annotation.Nullable;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagByte;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import targoss.hardcorealchemy.ModStateException;
@@ -95,5 +96,9 @@ public class Serialization {
         buf.writeInt(pos.getX());
         buf.writeInt(pos.getY());
         buf.writeInt(pos.getZ());
+    }
+    
+    public static NBTBase getBooleanTag(boolean flag) {
+        return new NBTTagByte(flag ? (byte)1 : (byte)0);
     }
 }

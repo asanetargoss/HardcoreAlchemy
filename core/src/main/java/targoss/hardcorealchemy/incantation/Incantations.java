@@ -19,12 +19,18 @@
 
 package targoss.hardcorealchemy.incantation;
 
+import static net.minecraft.init.Blocks.STONE;
+import static targoss.hardcorealchemy.item.Items.EMPTY_SLATE;
+import static targoss.hardcorealchemy.util.InventoryUtil.ITEM_STACK_EMPTY;
+
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.IForgeRegistry;
 import net.minecraftforge.fml.common.registry.RegistryBuilder;
 import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.coremod.HardcoreAlchemyPreInit;
 import targoss.hardcorealchemy.incantation.api.Incantation;
+import targoss.hardcorealchemy.jei.RecipeIncantation;
 import targoss.hardcorealchemy.registrar.Registrar;
 import targoss.hardcorealchemy.registrar.RegistrarForge;
 
@@ -36,4 +42,8 @@ public class Incantations {
             .setType(Incantation.class)
             .setIDRange(0, 1024)
             .create();
+    
+    public static final Incantation INCANTATION_CREATE_SLATE = INCANTATIONS.add("create_slate", new IncantationCreateSlate());
+    
+    public static final RecipeIncantation RECIPE_INCANTATION_CREATE_SLATE = new RecipeIncantation(Incantations.INCANTATION_CREATE_SLATE, ITEM_STACK_EMPTY, new ItemStack(EMPTY_SLATE), new ItemStack(STONE));
 }

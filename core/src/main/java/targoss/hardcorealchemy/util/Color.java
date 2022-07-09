@@ -25,6 +25,8 @@ public class Color {
     public int b;
     public int a;
     
+    public static final int WHITE_RGB = 0xFFFFFF;
+    
     public Color(int r, int g, int b) {
         this.r = r;
         this.g = g;

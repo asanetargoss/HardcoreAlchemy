@@ -74,6 +74,7 @@ public class ListenerPlayerKillMastery extends HardcoreAlchemyListener {
         if (killCount == null) {
             return;
         }
+        killCount.getMasteredKills().clear();
         for (AbstractMorph morph : morphing.getAcquiredMorphs()) {
             if (!(morph instanceof EntityMorph)) {
                 continue;

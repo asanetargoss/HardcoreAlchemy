@@ -17,29 +17,24 @@
  * with Hardcore Alchemy Core. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.capability.humanity;
+package targoss.hardcorealchemy.item;
 
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Map;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 
-public enum LostMorphReason {
-    REGAINED_MORPH_ABILITY,
-    NO_ABILITY,
-    LOST_HUMANITY,
-    FORGOT_FORM
-    ;
-    
-    private static Map<String, LostMorphReason> stringMap;
-    
-    static {
-        stringMap = new HashMap<String, LostMorphReason>();
-        for (LostMorphReason reason : EnumSet.allOf(LostMorphReason.class)) {
-            stringMap.put(reason.toString(), reason);
-        }
+public class ItemEmptySlate extends Item {
+    public static boolean enchantmentEnabled = false;
+
+    @Override
+    public boolean isEnchantable(ItemStack stack) {
+        return enchantmentEnabled;
     }
-    
-    public static LostMorphReason fromString(String reasonString) {
-        return stringMap.get(reasonString);
+
+    @Override
+    public int getItemEnchantability(ItemStack stack) {
+        if (!enchantmentEnabled) {
+            return 0;
+        }
+        return ToolMaterial.IRON.getEnchantability();
     }
 }

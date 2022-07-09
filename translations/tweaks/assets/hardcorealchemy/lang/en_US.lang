@@ -27,6 +27,13 @@ hardcorealchemy.research.knowledge_fact.dimensional_flux_crystal_accident.acquir
 
 # Items, Potions
 
+item.hardcorealchemy:dimensional_flux_crystal.name=Dimensional Flux Crystal
+hardcorealchemy.dimensional_flux_crystal.description.origin=From: %s
+hardcorealchemy.dimensional_flux_crystal.description.fluxed_at=Transported to: %s
+hardcorealchemy.dimensional_flux_crystal.description.fluxed_unknown_one=Transported across dimensions
+hardcorealchemy.dimensional_flux_crystal.description.fluxed_unknown_multiple=Transported to multiple dimensions
+hardcorealchemy.dimensional_flux_crystal.description.fluxed_unknown_many=Warped by dimensional travel
+
 item.hardcorealchemy:timefrozen.name=Timefrozen %s
 
 # Hearts

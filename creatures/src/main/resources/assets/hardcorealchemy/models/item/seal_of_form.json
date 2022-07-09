@@ -1,0 +1,12 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "hardcorealchemy:items/seal_of_form_layer_0_base",
+    "layer1": "hardcorealchemy:items/seal_of_form_layer_1_base_highlight",
+    "layer2": "hardcorealchemy:items/seal_of_form_layer_2_butterfly",
+    "layer3": "hardcorealchemy:items/seal_of_form_layer_3_butterfly_highlight"
+  },
+  "overrides": [
+    { "predicate": { "hardcorealchemy:human": 1.0 }, "model": "hardcorealchemy:item/seal_of_form_human" }
+  ]
+}

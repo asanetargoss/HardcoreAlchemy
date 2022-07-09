@@ -44,10 +44,13 @@ public final class ModState {
     public static final String TAN_ID = "ToughAsNails";
     public static final String THAUMCRAFT_ID = "thaumcraft";
     public static final String WAWLA_ID = "Waila";
+    public static boolean isAdInferosLoaded = false;
     public static boolean isAlchemicAshLoaded = false;
     public static boolean isArsMagicaLoaded = false;
     public static boolean isBloodMagicLoaded = false;
+    public static boolean isDeadlyMonstersLoaded = false;
     public static boolean isDissolutionLoaded = false;
+    public static boolean isEnderZooLoaded = false;
     public static boolean isHarvestCraftLoaded = false;
     public static boolean isJEILoaded = false;
     public static boolean isMantleLoaded = false;
@@ -69,10 +72,13 @@ public final class ModState {
         }
         modMapRegistered = true;
         
+        isAdInferosLoaded = modMap.containsKey(ADINFEROS_ID);
         isAlchemicAshLoaded = modMap.containsKey(ALCHEMIC_ASH_ID);
         isArsMagicaLoaded = modMap.containsKey(ARS_MAGICA_ID);
         isBloodMagicLoaded = modMap.containsKey(BLOOD_MAGIC_ID);
+        isDeadlyMonstersLoaded = modMap.containsKey(DEADLY_MONSTERS_ID);
         isDissolutionLoaded = modMap.containsKey(DISSOLUTION_ID);
+        isEnderZooLoaded = modMap.containsKey(ENDER_ZOO_ID);
         isHarvestCraftLoaded = modMap.containsKey(HARVESTCRAFT_ID);
         isJEILoaded = modMap.containsKey(JEI_ID);
         isMantleLoaded = modMap.containsKey(MANTLE_ID);

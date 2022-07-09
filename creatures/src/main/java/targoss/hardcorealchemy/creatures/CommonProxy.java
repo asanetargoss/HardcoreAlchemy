@@ -29,14 +29,15 @@ import targoss.hardcorealchemy.creatures.item.Items;
 import targoss.hardcorealchemy.creatures.listener.ListenerCapabilities;
 import targoss.hardcorealchemy.creatures.listener.ListenerInstinctOverheat;
 import targoss.hardcorealchemy.creatures.listener.ListenerMobAI;
-import targoss.hardcorealchemy.creatures.listener.ListenerPlayerKillMastery;
 import targoss.hardcorealchemy.creatures.listener.ListenerMorphExtension;
 import targoss.hardcorealchemy.creatures.listener.ListenerNutritionExtension;
 import targoss.hardcorealchemy.creatures.listener.ListenerPlayerHinderedMind;
 import targoss.hardcorealchemy.creatures.listener.ListenerPlayerHumanity;
 import targoss.hardcorealchemy.creatures.listener.ListenerPlayerInstinct;
+import targoss.hardcorealchemy.creatures.listener.ListenerPlayerKillMastery;
 import targoss.hardcorealchemy.creatures.listener.ListenerPlayerMorphState;
 import targoss.hardcorealchemy.creatures.listener.ListenerPlayerMorphs;
+import targoss.hardcorealchemy.creatures.listener.ListenerPlayerSealOfForm;
 import targoss.hardcorealchemy.creatures.listener.ListenerSmallTweaks;
 import targoss.hardcorealchemy.creatures.metamorph.HcAMetamorphPack;
 import targoss.hardcorealchemy.creatures.network.MessageForceForm;
@@ -80,6 +81,7 @@ public class CommonProxy {
         HardcoreAlchemyCore.proxy.addListener(new ListenerPlayerInstinct());
         HardcoreAlchemyCore.proxy.addListener(new ListenerPlayerHinderedMind());
         HardcoreAlchemyCore.proxy.addListener(new ListenerInstinctOverheat());
+        HardcoreAlchemyCore.proxy.addListener(new ListenerPlayerSealOfForm());
         
         // Initialize via classload
         new Items();

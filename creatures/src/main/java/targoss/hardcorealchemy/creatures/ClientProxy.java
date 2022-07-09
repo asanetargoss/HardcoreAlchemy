@@ -19,8 +19,10 @@
 
 package targoss.hardcorealchemy.creatures;
 
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import targoss.hardcorealchemy.HardcoreAlchemyCore;
+import targoss.hardcorealchemy.creatures.item.Items;
 import targoss.hardcorealchemy.creatures.listener.ListenerGuiHud;
 import targoss.hardcorealchemy.creatures.listener.ListenerRenderView;
 
@@ -30,5 +32,11 @@ public class ClientProxy extends CommonProxy {
         super.preInit(event);
         HardcoreAlchemyCore.proxy.addListener(new ListenerGuiHud());
         HardcoreAlchemyCore.proxy.addListener(new ListenerRenderView());
+    }
+    
+    @Override
+    public void init(FMLInitializationEvent event) {
+        super.init(event);
+        Items.ClientSide.registerModels();
     }
 }

@@ -19,24 +19,28 @@
 
 package targoss.hardcorealchemy.event;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
-/**
- * Fired by MorphState.forceForm on both the client and server side.
- * It is recommended to not send any packets and instead wait for
- * EventPlayerMorphStateChange to be fired on the client.
- */
-public class EventPlayerMorphStateChange extends Event {
-    public final EntityPlayer player;
-    
-    protected EventPlayerMorphStateChange(EntityPlayer player) {
-        this.player = player;
+// TODO: Use this event
+public class EventEnchant extends Event {
+    public static class Post extends EventEnchant {
+        public final EntityPlayer player;
+        public ItemStack enchantStack;
+
+        public Post(EntityPlayer player, ItemStack enchantStack) {
+            this.player = player;
+            this.enchantStack = enchantStack;
+        }
     }
     
-    public static class Post extends EventPlayerMorphStateChange {
-        public Post(EntityPlayer player) {
-            super(player);
-        }
+    public static @Nonnull ItemStack onEnchantPost(EntityPlayer player, @Nonnull ItemStack enchantStack) {
+        EventEnchant.Post event =  new EventEnchant.Post(player, enchantStack);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.enchantStack;
     }
 }

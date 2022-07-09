@@ -30,6 +30,8 @@ import mchorse.metamorph.api.morphs.AbstractMorph;
 import mchorse.metamorph.api.morphs.EntityMorph;
 import mchorse.metamorph.capabilities.morphing.IMorphing;
 import mchorse.metamorph.capabilities.morphing.Morphing;
+import mchorse.metamorph.network.Dispatcher;
+import mchorse.metamorph.network.common.survival.PacketRemoveMorph;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
@@ -47,6 +49,8 @@ import targoss.hardcorealchemy.creatures.capability.instinct.ICapabilityInstinct
 import targoss.hardcorealchemy.creatures.instinct.Instincts;
 import targoss.hardcorealchemy.creatures.instinct.api.Instinct;
 import targoss.hardcorealchemy.creatures.listener.ListenerPlayerHumanity;
+import targoss.hardcorealchemy.creatures.listener.ListenerPlayerKillMastery;
+import targoss.hardcorealchemy.creatures.listener.ListenerPlayerMorphs;
 import targoss.hardcorealchemy.creatures.network.MessageForceForm;
 import targoss.hardcorealchemy.event.EventPlayerMorphStateChange;
 
@@ -119,30 +123,28 @@ public class MorphState {
             return false;
         }
         
+        AbstractMorph previousMorph = morphing.getCurrentMorph();
+        
+        boolean wasPlayer = previousMorph == null;
         boolean success = player.world.isRemote || MorphAPI.morph(player, morph, true);
         
         if (success) {
-            capabilityHumanity.loseMorphAbilityFor(reason);
-            
-            double humanity;
-            if (morph == null) {
-                humanity = 20.0F;
+            if (reason != LostMorphReason.FORGOT_FORM || wasPlayer) {
+                capabilityHumanity.loseMorphAbilityFor(reason);
             }
-            else if (reason == LostMorphReason.REGAINED_MORPH_ABILITY) {
-                humanity = capabilityHumanity.getHumanity();
+            if (!player.world.isRemote && reason == LostMorphReason.FORGOT_FORM && !wasPlayer && previousMorph != null) {
+                int morphIndex = morphing.getAcquiredMorphs().indexOf(previousMorph);
+                if (morphIndex != -1) {
+                    morphing.remove(morphIndex);
+                    Dispatcher.sendTo(new PacketRemoveMorph(morphIndex), (EntityPlayerMP)player);
+                }
             }
-            else {
-                humanity = 0.0F;
+            if (reason == LostMorphReason.FORGOT_FORM) {
+                ListenerPlayerKillMastery.recalculateMasteredKills(player);
             }
-            capabilityHumanity.setHumanity(humanity);
+            ListenerPlayerMorphs.updateMaxHumanity(player, false);
             
-            if (reason != LostMorphReason.LOST_HUMANITY) {
-                // Prevent showing the player a message that their humanity has changed
-                capabilityHumanity.setLastHumanity(humanity);
-            }
-            
-            MinecraftForge.EVENT_BUS.post(new EventPlayerMorphStateChange.Post(player));
-            
+            // TODO: Why do players that still have humanity get instincts here?
             ICapabilityInstinct instincts = player.getCapability(INSTINCT_CAPABILITY, null);
             if (instincts != null) {
                 instincts.clearInstincts(player);
@@ -151,6 +153,9 @@ public class MorphState {
                     MorphState.buildInstincts(player, instincts, ((EntityMorph)morph).getEntity(player.world));
                 }
             }
+            
+            // TODO: Actually use this event for more things. Augment with the previous morph
+            MinecraftForge.EVENT_BUS.post(new EventPlayerMorphStateChange.Post(player));
             
             if (!player.world.isRemote) {
                 HardcoreAlchemyCreatures.proxy.messenger.sendTo(new MessageForceForm(reason, morph), (EntityPlayerMP)player);

@@ -84,16 +84,24 @@ public class CapabilityHumanity implements ICapabilityHumanity {
     public void loseMorphAbilityFor(LostMorphReason reason) {
         switch (reason) {
         case REGAINED_MORPH_ABILITY:
-            this.hasLostHumanity = false;
-            this.hasLostMorphAbility = false;
+            hasLostHumanity = false;
+            hasLostMorphAbility = false;
+            hasForgottenHumanForm = false;
             break;
         case LOST_HUMANITY:
-            this.hasLostHumanity = true;
-            this.hasLostMorphAbility = false;
+            hasLostHumanity = true;
+            hasLostMorphAbility = false;
+            humanity = 0.0F;
             break;
         case NO_ABILITY:
-            this.hasLostMorphAbility = true;
-            this.hasLostHumanity = false;
+            hasLostMorphAbility = true;
+            hasLostHumanity = false;
+            humanity = 0.0F;
+            // Prevent showing the player a message that their humanity has "faded away"
+            lastHumanity = 0.0F;
+            break;
+        case FORGOT_FORM:
+            hasForgottenHumanForm = true;
             break;
         default:
             break;
@@ -112,7 +120,7 @@ public class CapabilityHumanity implements ICapabilityHumanity {
     
     @Override
     public boolean canMorphRightNow() {
-        return !(hasLostHumanity || hasLostMorphAbility || magicInhibition >= humanity);
+        return !(hasLostHumanity || hasLostMorphAbility || hasForgottenHumanForm || magicInhibition >= humanity);
     }
     
     @Override
@@ -122,7 +130,7 @@ public class CapabilityHumanity implements ICapabilityHumanity {
     
     @Override
     public boolean shouldDisplayHumanity() {
-        return humanity > 0 && !(hasLostHumanity || hasLostMorphAbility);
+        return humanity > 0 && canMorph();
     }
     
     @Override
@@ -132,6 +140,9 @@ public class CapabilityHumanity implements ICapabilityHumanity {
         }
         if (hasLostHumanity) {
             return new TextComponentTranslation("hardcorealchemy.morph.disabled.nohumanity");
+        }
+        if (hasForgottenHumanForm) {
+            return new TextComponentTranslation("hardcorealchemy.morph.disabled.nohumanform"); // TODO: Add
         }
         if (magicInhibition >= humanity) {
             return new TextComponentTranslation("hardcorealchemy.morph.disabled.magic_inhibition");

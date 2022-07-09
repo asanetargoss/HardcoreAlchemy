@@ -96,7 +96,7 @@ public class EntityUtil {
         return (Class<? extends EntityLivingBase>)entityClass;
     }
     
-    public static ITextComponent getEntityName(Class<? extends EntityLivingBase> entityClass) {
+    public static ITextComponent getEntityName(Class<? extends Entity> entityClass) {
         if (customEntityStrings.containsKey(entityClass)) {
             return customEntityStrings.get(entityClass);
         }

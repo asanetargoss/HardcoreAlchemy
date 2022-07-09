@@ -28,6 +28,7 @@ import net.minecraftforge.fml.common.ModMetadata;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 import targoss.hardcorealchemy.creatures.HardcoreAlchemyCreatures;
+import targoss.hardcorealchemy.creatures.coremod.transform.TContainerEnchantment;
 import targoss.hardcorealchemy.creatures.coremod.transform.TEntity;
 import targoss.hardcorealchemy.creatures.coremod.transform.TEntityPlayerSP;
 import targoss.hardcorealchemy.creatures.coremod.transform.TWorld;
@@ -49,7 +50,8 @@ public class HardcoreAlchemyCreaturesCoremod implements IFMLLoadingPlugin {
         return new String[]{
                 TEntityPlayerSP.class.getName(),
                 TEntity.class.getName(),
-                TWorld.class.getName()
+                TWorld.class.getName(),
+                TContainerEnchantment.class.getName()
         };
     }
 

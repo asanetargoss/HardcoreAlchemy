@@ -23,6 +23,12 @@ language.code=en_US
 
 # Gameplay
 
+hardcorealchemy.morph.disabled.noability=You fail to comprehend other forms.
+hardcorealchemy.morph.disabled.nohumanity=Your humanity is gone. Your mind is confined to this body.
+hardcorealchemy.morph.disabled.nohumanform=You seem to have misplaced knowledge of your human form. Morphing is not possible without it.
+hardcorealchemy.morph.disabled.magic_inhibition=A powerful magic interferes with your ability to change forms.
+hardcorealchemy.morph.disabled.dead=Your soul shall always be human.
+
 # The Tragedy of the Changeling Mage who Got Stuck That Way, in four parts
 # Part 1: A Lapse of Judgement
 hardcorealchemy.humanity.warn1.variant1=You begin to tire of remembering your human form in the back of your mind.
@@ -60,6 +66,9 @@ hardcorealchemy.effect.tempered_flame.fulfilled=The heat restores you and drives
 
 hardcorealchemy.effect.overheat.exposed=Your form overflows with uncontrollable heat.
 
+hardcorealchemy.instinct.effect.hunted.warn.variant1=What was that sound?
+hardcorealchemy.instinct.effect.hunted.cannot_attack=You are too afraid to attack the %s.
+
 hardcorealchemy.instinct.attack_prey.need=You yearn to hunt %s.
 hardcorealchemy.instinct.attack_prey.need.generic=You yearn to hunt.
 hardcorealchemy.instinct.attack_prey.detect=You sense a %s.
@@ -84,8 +93,39 @@ hardcorealchemy.instinct.home.nether.fulfilled=Your inner flame stabilizes.
 hardcorealchemy.instinct.unencumbered.need=You despise having your movements constrained.
 hardcorealchemy.instinct.unencumbered.action=You tear off the armor.
 
+hardcorealchemy.incantation.change.name=Change
+hardcorealchemy.incantation.change.command=CHANGE
+hardcorealchemy.incantation.change.no_nearby_entities=The spell dissipates quickly, unable to find a compatible template.
+
+# Entities, Mobs
+
+entity.hardcorealchemy.fish_swarm.name=Fish Swarm
+
+# Fixes for entity names of other mods
+entity.dmonsters.mutantSteve.name=Mutant Steve
+entity.dmonsters.freezer.name=Freezer
+entity.dmonsters.climber.name=Climber
+entity.dmonsters.zombieChicken.name=Zombie Chicken
+entity.dmonsters.baby.name=Baby
+entity.dmonsters.wideman.name=Wideman
+entity.dmonsters.woman.name=Bloody Maiden
+entity.dmonsters.entrail.name=Entrail
+entity.dmonsters.present.name=Present
+entity.dmonsters.stranger.name=Stranger
+entity.dmonsters.hauntedcow.name=Haunted Cow
+entity.dmonsters.topielec.name=Topielec
+entity.dissolution.wandering_soul.name=Wandering Soul
+
 # Research
 
 hardcorealchemy.research.knowledge_fact.magic_inhibition_warning.acquire=You fear powerful magic will interfere with your ability to morph.
 hardcorealchemy.research.knowledge_fact.dig_dirt_warning.acquire=You suspect your current tool is not suitable for digging dirt.
 hardcorealchemy.research.knowledge_fact.kill_mastery_hint.acquire=With each creature you master, you will acquire their form, and can more easily exploit their weaknesses.
+
+# Items
+
+item.hardcorealchemy:drowned_ender_pearl.name=Drowned Ender Pearl
+item.hardcorealchemy:ash.name=Ash
+item.hardcorealchemy:seal_of_form.name=Seal of Form: %s
+item.hardcorealchemy:seal_of_form.name.unmorphed=Seal of True Form
+
