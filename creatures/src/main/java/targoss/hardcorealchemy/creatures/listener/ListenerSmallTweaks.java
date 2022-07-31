@@ -87,14 +87,14 @@ public class ListenerSmallTweaks extends HardcoreAlchemyListener {
         if (state == null) {
             return;
         }
-        if (state.getBlock() != Blocks.DIRT) {
+        if (state.getBlock() != Blocks.DIRT && state.getBlock() != Blocks.GRASS) {
             return;
         }
         EntityPlayer player = event.getPlayer();
         if (player == null) {
             return;
         }
-        if (EntityUtil.getLivingEntityClassFromString("DireSlime") == null) {
+        if (EntityUtil.getLivingEntityClassFromString(ModState.ENDER_ZOO_ID + ".DireSlime") == null) {
             // Dire Slime is not enabled
             return;
         }
