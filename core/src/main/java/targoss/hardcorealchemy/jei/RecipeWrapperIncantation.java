@@ -8,7 +8,6 @@ import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
-import targoss.hardcorealchemy.util.InventoryUtil;
 
 public class RecipeWrapperIncantation implements IRecipeWrapper {
     public final RecipeIncantation recipe;
@@ -18,10 +17,7 @@ public class RecipeWrapperIncantation implements IRecipeWrapper {
     }
 
     @Override
-    public void getIngredients(IIngredients paramIIngredients) {
-        // TODO Auto-generated method stub
-        
-    }
+    public void getIngredients(IIngredients paramIIngredients) {}
 
     @Override
     public List<ItemStack> getInputs() {
@@ -49,16 +45,10 @@ public class RecipeWrapperIncantation implements IRecipeWrapper {
     }
 
     @Override
-    public void drawInfo(Minecraft paramMinecraft, int backgroundWidth, int backgroundHeight, int mouseX, int mouseY) {
-        // TODO Auto-generated method stub
-        
-    }
+    public void drawInfo(Minecraft paramMinecraft, int backgroundWidth, int backgroundHeight, int mouseX, int mouseY) {}
 
     @Override
-    public void drawAnimations(Minecraft paramMinecraft, int backgroundWidth, int backgroundHeight) {
-        // TODO Auto-generated method stub
-        
-    }
+    public void drawAnimations(Minecraft paramMinecraft, int backgroundWidth, int backgroundHeight) {}
 
     @Override
     public List<String> getTooltipStrings(int mouseX, int mouseY) {
