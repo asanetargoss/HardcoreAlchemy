@@ -34,7 +34,8 @@ The Hardcore Alchemy mod suite is tested to work with specific mods. Below are t
   * The official version of the Nutrition mod will not work, and HcA assumes the default 5 nutrients
 * [Pam's Harvestcraft](https://www.curseforge.com/minecraft/mc-mods/pams-harvestcraft) - Right-click harvesting and food support
 * [Tough as Nails](https://www.curseforge.com/minecraft/mc-mods/tough-as-nails) - Thirst
-    - Note: Reduced starting health should be disabled in the config, to prevent feature overlap with the heart upgrade mechanic in the `tweaks` submod
+    - Reduced starting health should be disabled, to prevent feature overlap with the heart upgrade mechanic in the `tweaks` submod
+    - Temperature should be disabled, as it does not play well with the instinct system in the `creatures` submod
 * [Minecraft Comes Alive](https://www.minecraftforum.net/forums/mapping-and-modding-java-edition/minecraft-mods/1280154-mc-1-12-x-minecraft-comes-alive-v6-0-0-millions) and/or [Village Box](https://www.curseforge.com/minecraft/mc-mods/village-box) - Villager alternatives
 * Various magic mods according to one's personal tastes
 
