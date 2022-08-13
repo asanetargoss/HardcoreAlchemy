@@ -38,6 +38,7 @@ public class MessageHumanity extends MessageToClient<HardcoreAlchemyCreatures> {
     public boolean syncLastHumanity;
     public double lastHumanity;
     public double magicInhibition;
+    public boolean hasForgottenHumanForm;
     public boolean hasLostHumanity;
     public boolean hasLostMorphAbility;
     
@@ -46,6 +47,7 @@ public class MessageHumanity extends MessageToClient<HardcoreAlchemyCreatures> {
         this.syncLastHumanity = syncLastHumanity;
         this.lastHumanity = humanity.getLastHumanity();
         this.magicInhibition = humanity.getMagicInhibition();
+        this.hasForgottenHumanForm = humanity.getHasForgottenHumanForm();
         this.hasLostHumanity = humanity.getHasLostHumanity();
         this.hasLostMorphAbility = humanity.getHasLostMorphAbility();
     }
@@ -58,6 +60,7 @@ public class MessageHumanity extends MessageToClient<HardcoreAlchemyCreatures> {
             buf.writeDouble(lastHumanity);
         }
         buf.writeDouble(magicInhibition);
+        buf.writeBoolean(hasForgottenHumanForm);
         buf.writeBoolean(hasLostHumanity);
         buf.writeBoolean(hasLostMorphAbility);
     }
@@ -70,6 +73,7 @@ public class MessageHumanity extends MessageToClient<HardcoreAlchemyCreatures> {
             lastHumanity = buf.readDouble();
         }
         magicInhibition = buf.readDouble();
+        hasForgottenHumanForm = buf.readBoolean();
         hasLostHumanity = buf.readBoolean();
         hasLostMorphAbility = buf.readBoolean();
     }
@@ -82,15 +86,17 @@ public class MessageHumanity extends MessageToClient<HardcoreAlchemyCreatures> {
         private boolean syncLastHumanity;
         private double lastHumanity;
         private double magicInhibition;
+        private boolean hasForgottenHumanForm;
         private boolean hasLostHumanity;
         private boolean hasLostMorphAbility;
         
         public ReceiveAction(double humanity, boolean syncLastHumanity, double lastHumanity, double magicInhibition,
-                boolean hasLostHumanity, boolean hasLostMorphAbility) {
+                boolean hasForgottenHumanForm, boolean hasLostHumanity, boolean hasLostMorphAbility) {
             this.humanity = humanity;
             this.syncLastHumanity = syncLastHumanity;
             this.lastHumanity = lastHumanity;
             this.magicInhibition = magicInhibition;
+            this.hasForgottenHumanForm = hasForgottenHumanForm;
             this.hasLostHumanity = hasLostHumanity;
             this.hasLostMorphAbility = hasLostMorphAbility;
         }
@@ -104,6 +110,7 @@ public class MessageHumanity extends MessageToClient<HardcoreAlchemyCreatures> {
                     humanity.setLastHumanity(this.lastHumanity);
                 }
                 humanity.setMagicInhibition(this.magicInhibition);
+                humanity.setHasForgottenHumanForm(this.hasForgottenHumanForm);
                 humanity.setHasLostHumanity(this.hasLostHumanity);
                 humanity.setHasLostMorphAbility(this.hasLostMorphAbility);
             }
@@ -116,7 +123,7 @@ public class MessageHumanity extends MessageToClient<HardcoreAlchemyCreatures> {
             message.getThreadListener().addScheduledTask(
                     new ReceiveAction(
                             message.humanity, message.syncLastHumanity, message.lastHumanity, message.magicInhibition,
-                            message.hasLostHumanity, message.hasLostMorphAbility)
+                            message.hasForgottenHumanForm, message.hasLostHumanity, message.hasLostMorphAbility)
                     );
             return null;
         }

@@ -27,6 +27,11 @@ hardcorealchemy.error_report_to_mod_dev=Report error to mod developer
 hardcorealchemy.incantation.too_fast=You are too out of breath to cast the spell
 hardcorealchemy.incantation.quoted="%1$s"
 hardcorealchemy.recipe.category.incantation=Incantation
+hardcorealchemy.recipe.category.enchantment=Enchantment Crafting
+hardcorealchemy.recipe.category.enchantment.level.tooltip1.singular=%1$s Enchantment Level
+hardcorealchemy.recipe.category.enchantment.level.tooltip1.plural=%1$s Enchantment Levels
+hardcorealchemy.recipe.category.enchantment.level.tooltip2=Requires minimum level (random)
+hardcorealchemy.recipe.category.enchantment.level.tooltip3=Enchantability affects available enchantments
 
 hardcorealchemy.incantation.create_slate.name=Remember
 hardcorealchemy.incantation.create_slate.command=REMEMBER

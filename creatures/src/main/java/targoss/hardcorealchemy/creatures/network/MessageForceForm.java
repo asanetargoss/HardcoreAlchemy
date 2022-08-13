@@ -26,57 +26,68 @@ import mchorse.mclib.utils.NBTUtils;
 import mchorse.metamorph.api.MorphManager;
 import mchorse.metamorph.api.MorphUtils;
 import mchorse.metamorph.api.morphs.AbstractMorph;
+import mchorse.metamorph.capabilities.morphing.IMorphing;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import targoss.hardcorealchemy.HardcoreAlchemyCore;
-import targoss.hardcorealchemy.capability.humanity.LostMorphReason;
+import targoss.hardcorealchemy.capability.humanity.MorphAbilityChangeReason;
 import targoss.hardcorealchemy.creatures.HardcoreAlchemyCreatures;
+import targoss.hardcorealchemy.creatures.listener.ListenerPlayerHumanity;
 import targoss.hardcorealchemy.creatures.util.MorphState;
 import targoss.hardcorealchemy.network.MessageToClient;
 import targoss.hardcorealchemy.util.MiscVanilla;
 
 public class MessageForceForm extends MessageToClient<HardcoreAlchemyCreatures> {
-    public LostMorphReason reason;
+    public MorphAbilityChangeReason reason;
+    public AbstractMorph lastMorph;
     public AbstractMorph morph;
     
     public MessageForceForm() {}
     
-    public MessageForceForm(LostMorphReason reason, @Nullable AbstractMorph morph) {
+    public MessageForceForm(MorphAbilityChangeReason reason, @Nullable AbstractMorph lastMorph, @Nullable AbstractMorph morph) {
         this.reason = reason;
+        this.lastMorph = lastMorph;
         this.morph = morph;
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
         buf.writeByte(reason.ordinal());
+        MorphUtils.morphToBuf(buf, lastMorph);
         MorphUtils.morphToBuf(buf, morph);
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
         byte reasonNum = buf.readByte();
-        if (reasonNum > LostMorphReason.values().length) {
+        if (reasonNum > MorphAbilityChangeReason.values().length) {
             reasonNum = 0;
         }
-        reason = LostMorphReason.values()[reasonNum];
+        reason = MorphAbilityChangeReason.values()[reasonNum];
+        lastMorph = MorphManager.INSTANCE.morphFromNBT(NBTUtils.readInfiniteTag(buf));
         morph = MorphManager.INSTANCE.morphFromNBT(NBTUtils.readInfiniteTag(buf));
     }
 
     public static class ReceiveAction implements Runnable {
-        private LostMorphReason reason;
+        private MorphAbilityChangeReason reason;
+        private AbstractMorph lastMorph;
         private AbstractMorph morph;
         
-        public ReceiveAction(LostMorphReason reason, AbstractMorph morph) {
+        public ReceiveAction(MorphAbilityChangeReason reason, @Nullable AbstractMorph lastMorph, @Nullable AbstractMorph morph) {
             this.reason = reason;
+            this.lastMorph = lastMorph;
             this.morph = morph;
         }
         
         @Override
         public void run() {
             EntityPlayer player = MiscVanilla.getTheMinecraftPlayer();
-            MorphState.forceForm(HardcoreAlchemyCore.proxy.configs, player, reason, morph);
+            IMorphing morphing = player.getCapability(ListenerPlayerHumanity.MORPHING_CAPABILITY, null);
+            if (morphing != null) {
+                MorphState.forceForm(HardcoreAlchemyCore.proxy.configs, player, reason, morphing, lastMorph, morph);
+            }
         }
     }
     
@@ -84,7 +95,7 @@ public class MessageForceForm extends MessageToClient<HardcoreAlchemyCreatures> 
         @Override
         public IMessage onMessage(MessageForceForm message, MessageContext ctx) {
             message.getThreadListener().addScheduledTask(
-                    new ReceiveAction(message.reason, message.morph)
+                    new ReceiveAction(message.reason, message.lastMorph, message.morph)
                     );
             return null;
         }

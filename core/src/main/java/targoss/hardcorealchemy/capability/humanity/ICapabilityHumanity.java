@@ -31,26 +31,41 @@ public interface ICapabilityHumanity {
     public void setHumanity(double humanity);
     public void setLastHumanity(double lastHumanity);
     public void setMagicInhibition(double magicInhibition);
-    public void setHasForgottenHumanForm(boolean hasForgottenHumanForm);
-    public void setHasLostHumanity(boolean hasLostHumanity);
-    public void setHasLostMorphAbility(boolean hasLostMorphAbility);
-    public void loseMorphAbilityFor(LostMorphReason reason);
-    
     public double getHumanity();
     public double getLastHumanity();
     public double getMagicInhibition();
+    /** Returns false if the player is unable to morph using the
+     *  metamorph morphing interface.
+     *  Other methods of morphing may still be possible.
+     *  If this is false, don't call MorphAPI.morph with force=true;
+     *  call MorphState.forceForm instead. */
+    public boolean canMorphRightNow();
+    /** Returns false if the player is permanently or semi-permanently
+     * unable to morph.
+     * If false, the player can't morph, and may (or may not) be affected by various
+     * long-term effects like instincts and nutrition.
+     * See also shouldDisplayHumanity(), for other permamorph-related effects.
+     * If this is false, don't call MorphAPI.morph with force=true;
+     * call MorphState.forceForm instead. */
+    public boolean canMorph();
+    /** Returns the temporary or permanent reason the player cannot morph */
+    public ITextComponent explainWhyCantMorph();
+    /** Whether the humanity bar should display in HUD and update every tick.
+     *  This is also used to determine if a player can acquire morphs or
+     *  use high magic.
+     *  Mechanics that affect the humanity bar (humanity, max humanity,
+     *  magic inhibition) should not work if this is false. */
+    public boolean shouldDisplayHumanity();
+    
+    /** These usually should not be called directly. Use MorphState.forceForm instead. */
+    public void setHasForgottenHumanForm(boolean hasForgottenHumanForm);
+    public void setHasLostHumanity(boolean hasLostHumanity);
+    public void setHasLostMorphAbility(boolean hasLostMorphAbility);
+    public void changeMorphAbilityFor(MorphAbilityChangeReason reason);
+    
     /** Whether the player can morph into a human, assuming the player
         can still morph. */
     public boolean getHasForgottenHumanForm();
     public boolean getHasLostHumanity();
     public boolean getHasLostMorphAbility();
-    /** Returns false if the player is stuck as a morph */
-    public boolean isHuman();
-    /** Returns false if the player is temporarily unable to morph */
-    public boolean canMorphRightNow();
-    /** Returns false if the player is permanently unable to morph */
-    public boolean canMorph();
-    /** Returns temporary or permanent reason the player cannot morph */
-    public ITextComponent explainWhyCantMorph();
-    public boolean shouldDisplayHumanity();
 }

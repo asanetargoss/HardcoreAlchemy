@@ -55,7 +55,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import targoss.hardcorealchemy.ModState;
 import targoss.hardcorealchemy.capability.humanity.CapabilityHumanity;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
-import targoss.hardcorealchemy.capability.humanity.LostMorphReason;
+import targoss.hardcorealchemy.capability.humanity.MorphAbilityChangeReason;
 import targoss.hardcorealchemy.capability.misc.ICapabilityMisc;
 import targoss.hardcorealchemy.creatures.HardcoreAlchemyCreatures;
 import targoss.hardcorealchemy.creatures.network.MessageHumanity;
@@ -181,15 +181,15 @@ public class ListenerPlayerHumanity extends HardcoreAlchemyListener {
                         // If you are already in a morph, then congrats, you get to keep that morph!
                         if (morphing.getCurrentMorph() == null) {
                             // Uh oh, you're a zombie now!
-                            MorphState.forceForm(coreConfigs, player, LostMorphReason.LOST_HUMANITY, "Zombie");
+                            MorphState.forceForm(coreConfigs, player, MorphAbilityChangeReason.LOST_HUMANITY, "Zombie");
                         }
                         else {
-                            MorphState.forceForm(coreConfigs, player, LostMorphReason.LOST_HUMANITY, morphing.getCurrentMorph());
+                            MorphState.forceForm(coreConfigs, player, MorphAbilityChangeReason.LOST_HUMANITY, morphing.getCurrentMorph());
                         }
                     }
                     else if (item == CHORUS_FRUIT) {
                         // Uh oh, you're an enderman now!
-                        MorphState.forceForm(coreConfigs, player, LostMorphReason.LOST_HUMANITY, "Enderman");
+                        MorphState.forceForm(coreConfigs, player, MorphAbilityChangeReason.LOST_HUMANITY, "Enderman");
                     }
                     else if (item == WITHER_APPLE) {
                         // Uh oh, you're a wither skeleton now!
@@ -197,7 +197,7 @@ public class ListenerPlayerHumanity extends HardcoreAlchemyListener {
                         NBTTagCompound nbtEntityData = new NBTTagCompound();
                         nbt.setTag("EntityData", nbtEntityData);
                         nbtEntityData.setByte("SkeletonType", (byte)1);
-                        MorphState.forceForm(coreConfigs, player, LostMorphReason.LOST_HUMANITY, "Skeleton", nbt);
+                        MorphState.forceForm(coreConfigs, player, MorphAbilityChangeReason.LOST_HUMANITY, "Skeleton", nbt);
                         //TODO: clear the withering effect if and when I can figure out how to balance it
                     }
                 }
@@ -254,7 +254,7 @@ public class ListenerPlayerHumanity extends HardcoreAlchemyListener {
         if (capabilityHumanity == null) {
             return;
         }
-        if (!capabilityHumanity.canMorph()) {
+        if (!capabilityHumanity.shouldDisplayHumanity()) {
             event.setCanceled(true);
         }
     }
@@ -268,8 +268,8 @@ public class ListenerPlayerHumanity extends HardcoreAlchemyListener {
         if (capabilityHumanity == null) {
             return;
         }
-        // If the player has their morph ability, then their humanity and magicInhibition can change
-        if (capabilityHumanity.canMorph()) {
+        // If the player has a humanity bar, then their humanity and magicInhibition can change
+        if (capabilityHumanity.shouldDisplayHumanity()) {
             double oldHumanity = capabilityHumanity.getLastHumanity();
             double newHumanity = capabilityHumanity.getHumanity();
             // Always reduce magic inhibition at the rate of humanity loss
@@ -280,22 +280,19 @@ public class ListenerPlayerHumanity extends HardcoreAlchemyListener {
             // Are we in a morph? (check if the player's AbstractMorph is not null)
             IMorphing morphing = player.getCapability(MORPHING_CAPABILITY, null);
             if (morphing.isMorphed()) {
-                // No sense in reducing humanity if the player can't morph
-                if (capabilityHumanity.canMorph()) {
-                    // Drain humanity when the player is voluntarily in a morph
-                    newHumanity = MathHelper.clamp(newHumanity-HUMANITY_LOSS_RATE, 0.0D, maxHumanity.getAttributeValue());
-                    capabilityHumanity.setHumanity(newHumanity);
-                    // If humanity reaches zero, make player stuck in a morph
-                    if (newHumanity <= 0) {
-                        if (!player.world.isRemote) {
-                            AbstractMorph morph = morphing.getCurrentMorph();
-                            if (morph != null) {
-                                MorphState.forceForm(coreConfigs, player, LostMorphReason.LOST_HUMANITY, morph);
-                            }
-                            else {
-                                // If the player isn't in a morph, give a reasonable default
-                                MorphState.forceForm(coreConfigs, player, LostMorphReason.LOST_HUMANITY, "Zombie");
-                            }
+                // Drain humanity when the player is voluntarily in a morph
+                newHumanity = MathHelper.clamp(newHumanity-HUMANITY_LOSS_RATE, 0.0D, maxHumanity.getAttributeValue());
+                capabilityHumanity.setHumanity(newHumanity);
+                // If humanity reaches zero, make player stuck in a morph
+                if (newHumanity <= 0) {
+                    if (!player.world.isRemote) {
+                        AbstractMorph morph = morphing.getCurrentMorph();
+                        if (morph != null) {
+                            MorphState.forceForm(coreConfigs, player, MorphAbilityChangeReason.LOST_HUMANITY, morph);
+                        }
+                        else {
+                            // If the player isn't in a morph, give a reasonable default
+                            MorphState.forceForm(coreConfigs, player, MorphAbilityChangeReason.LOST_HUMANITY, "Zombie");
                         }
                     }
                 }
@@ -361,7 +358,7 @@ public class ListenerPlayerHumanity extends HardcoreAlchemyListener {
     public void onPlayerCastSpell(PlayerInteractEvent.RightClickItem event) {
         EntityPlayer player = event.getEntityPlayer();
         ICapabilityHumanity capabilityHumanity = player.getCapability(HUMANITY_CAPABILITY, null);
-        if (capabilityHumanity == null || !capabilityHumanity.canMorph()) {
+        if (capabilityHumanity == null || !capabilityHumanity.shouldDisplayHumanity()) {
             return;
         }
         IAttributeInstance maxHumanity = player.getEntityAttribute(MAX_HUMANITY);
@@ -386,7 +383,7 @@ public class ListenerPlayerHumanity extends HardcoreAlchemyListener {
         
         // Warn the player that using spells (or other select magic items) may interfere with their ability to morph
         IMorphing morphing = player.getCapability(MORPHING_CAPABILITY, null);
-        boolean hasAMorph = morphing != null && !morphing.getAcquiredMorphs().isEmpty() && capabilityHumanity.canMorph();
+        boolean hasAMorph = morphing != null && !morphing.getAcquiredMorphs().isEmpty();
         if (hasAMorph) {
             ListenerPlayerResearch.acquireFactAndSendChatMessage(player, Studies.FACT_MAGIC_INHIBITION_WARNING);
         }

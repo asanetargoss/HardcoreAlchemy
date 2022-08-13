@@ -30,11 +30,10 @@ import mchorse.metamorph.capabilities.morphing.Morphing;
 import net.minecraft.entity.monster.EntitySlime;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
-import targoss.hardcorealchemy.capability.humanity.LostMorphReason;
+import targoss.hardcorealchemy.capability.humanity.MorphAbilityChangeReason;
 import targoss.hardcorealchemy.capability.humanity.ProviderHumanity;
 import targoss.hardcorealchemy.creatures.item.ItemSealOfForm;
 import targoss.hardcorealchemy.creatures.item.Items;
@@ -68,13 +67,7 @@ public class ListenerPlayerSealOfForm extends HardcoreAlchemyListener {
         }
         AbstractMorph sealMorph = morphing.getCurrentMorph();
         ItemStack sealOfFormStack = new ItemStack(Items.SEAL_OF_FORM);
-        if (sealMorph == null) {
-            ItemSealOfForm.setHumanTag(sealOfFormStack);
-        }
-        else {
-            NBTTagCompound morphNBT = sealMorph.toNBT();
-            sealOfFormStack.setTagCompound(morphNBT);
-        }
+        ItemSealOfForm.setMorphOnItem(sealOfFormStack, sealMorph);
         
         // Morph the player into some other form, depending on what they are morphed as and
         // what morphs are available.
@@ -129,8 +122,9 @@ public class ListenerPlayerSealOfForm extends HardcoreAlchemyListener {
         else {
             newMorph = null;
         }
+        
         if (availableFormCount > 0) {
-            MorphState.forceForm(coreConfigs, player, LostMorphReason.FORGOT_FORM, newMorph);
+            MorphState.forceForm(coreConfigs, player, MorphAbilityChangeReason.FORGOT_LAST_FORM, newMorph);
         }
         
         // Bind the player's form to the seal

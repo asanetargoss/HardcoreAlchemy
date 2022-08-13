@@ -78,7 +78,7 @@ public class ListenerNutritionExtension extends HardcoreAlchemyListener {
             if (humanityCapability == null) {
                 return delegate.getNeeds(player);
             }
-            if (humanityCapability.isHuman()) {
+            if (humanityCapability.canMorph()) {
                 return delegate.getNeeds(player);
             }
             IMorphing morphing = player.getCapability(MORPHING_CAPABILITY, null);

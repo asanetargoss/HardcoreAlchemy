@@ -385,7 +385,7 @@ public class InstinctSystem {
         } else {
             if (!instinct.getEnabled()) {
                 // Need to re-initialize
-                MorphState.buildInstincts(player, instinct);
+                MorphState.buildInstincts(configs, player, instinct);
                 instinct.setEnabled(true);
             }
         }

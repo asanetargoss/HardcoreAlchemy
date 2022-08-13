@@ -128,4 +128,6 @@ item.hardcorealchemy:drowned_ender_pearl.name=Drowned Ender Pearl
 item.hardcorealchemy:ash.name=Ash
 item.hardcorealchemy:seal_of_form.name=Seal of Form: %s
 item.hardcorealchemy:seal_of_form.name.unmorphed=Seal of True Form
+hardcorealchemy.item.seal_of_form.use.alreadyhavehuman=You already know how to be human.
+hardcorealchemy.item.seal_of_form.use.alreadyhavemorph=You already have this morph.
 

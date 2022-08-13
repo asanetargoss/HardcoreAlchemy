@@ -79,7 +79,7 @@ public class ListenerMorphExtension extends HardcoreAlchemyListener {
             }
             
             ICapabilityHumanity humanity = player.getCapability(HUMANITY_CAPABILITY, null);
-            if (humanity == null || humanity.isHuman()) {
+            if (humanity == null || humanity.shouldDisplayHumanity()) {
                 return true;
             }
             

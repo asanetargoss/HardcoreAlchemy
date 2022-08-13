@@ -24,8 +24,13 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import mchorse.metamorph.api.EntityUtils;
+import mchorse.metamorph.api.MorphAPI;
 import mchorse.metamorph.api.MorphManager;
 import mchorse.metamorph.api.MorphUtils;
+import mchorse.metamorph.api.morphs.AbstractMorph;
+import mchorse.metamorph.capabilities.morphing.IMorphing;
+import mchorse.metamorph.capabilities.morphing.Morphing;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -37,6 +42,9 @@ import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -44,8 +52,13 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import targoss.hardcorealchemy.HardcoreAlchemyCore;
+import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
+import targoss.hardcorealchemy.capability.humanity.MorphAbilityChangeReason;
+import targoss.hardcorealchemy.capability.humanity.ProviderHumanity;
 import targoss.hardcorealchemy.creatures.HardcoreAlchemyCreatures;
 import targoss.hardcorealchemy.creatures.util.EntityEggUtil;
+import targoss.hardcorealchemy.creatures.util.MorphState;
+import targoss.hardcorealchemy.util.Chat;
 import targoss.hardcorealchemy.util.Color;
 import targoss.hardcorealchemy.util.EntityUtil;
 import targoss.hardcorealchemy.util.Serialization;
@@ -59,6 +72,63 @@ public class ItemSealOfForm extends Item {
                 return hasHumanTag(stack) ? 1.0F : 0.0F;
             }
         });
+    }
+    
+    @Override
+    public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
+        IMorphing morphing = Morphing.get(player);
+        if (morphing == null) {
+            return new ActionResult<ItemStack>(EnumActionResult.PASS, stack);
+        }
+        ICapabilityHumanity humanity = player.getCapability(ProviderHumanity.HUMANITY_CAPABILITY, null);
+        if (humanity != null && !humanity.shouldDisplayHumanity()) {
+            if (player.world.isRemote) {
+                Chat.messageSP(Chat.Type.NOTIFY, player, humanity.explainWhyCantMorph());
+            }
+            return new ActionResult<ItemStack>(EnumActionResult.PASS, stack);
+        }
+        
+        boolean used = false;
+        if (hasHumanTag(stack)) {
+            if (humanity.getHasForgottenHumanForm()) {
+                if (!world.isRemote) {
+                    MorphState.forceForm(HardcoreAlchemyCore.proxy.configs, player, MorphAbilityChangeReason.REMEMBERED_HUMAN_FORM, morphing.getCurrentMorph());
+                }
+                used = true;
+            }
+            else {
+                if (world.isRemote) {
+                    Chat.messageSP(Chat.Type.NOTIFY, player, new TextComponentTranslation("hardcorealchemy.item.seal_of_form.use.alreadyhavehuman"));
+                }
+            }
+        }
+        else {
+            AbstractMorph newMorph = MorphManager.INSTANCE.morphFromNBT(stack.getTagCompound());
+            if (newMorph != null) {
+                if (!morphing.acquiredMorph(newMorph)) {
+                    if (!world.isRemote) {
+                        MorphAPI.acquire(player, newMorph);
+                    }
+                    used = true;
+                }
+                else {
+                    if (world.isRemote) {
+                        Chat.messageSP(Chat.Type.NOTIFY, player, new TextComponentTranslation("hardcorealchemy.item.seal_of_form.use.alreadyhavemorph"));
+                    }
+                }
+            }
+        }
+
+        if (used) {
+            if (!player.capabilities.isCreativeMode)
+            {
+                --stack.stackSize;
+            }
+            return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, stack);
+        }
+        else {
+            return new ActionResult<ItemStack>(EnumActionResult.PASS, stack);
+        }
     }
     
     public static boolean hasHumanTag(ItemStack stack) {
@@ -88,14 +158,24 @@ public class ItemSealOfForm extends Item {
         return itemNBT.getString(NBT_MORPH_NAME);
     }
     
-    protected static void setEntityMorphOnItem(@Nonnull ItemStack stack, String entityID, @Nullable NBTTagCompound entityData) {
+    public static void setEntityMorphOnItem(@Nonnull ItemStack stack, String entityID, @Nullable NBTTagCompound entityData) {
         if (!stack.hasTagCompound()) {
             stack.setTagCompound(new NBTTagCompound());
         }
         NBTTagCompound itemNBT = stack.getTagCompound();
         itemNBT.setString(NBT_MORPH_NAME, entityID);
         if (entityData != null) {
-            itemNBT.setTag(NBT_ENTITY_DATA, entityData);
+            itemNBT.setTag(NBT_ENTITY_DATA, EntityUtils.stripEntityNBT(entityData));
+        }
+    }
+    
+    public static void setMorphOnItem(@Nonnull ItemStack stack, @Nullable AbstractMorph morph) {
+        if (morph == null) {
+            ItemSealOfForm.setHumanTag(stack);
+        }
+        else {
+            NBTTagCompound morphNBT = morph.toNBT();
+            stack.setTagCompound(morphNBT);
         }
     }
     
@@ -148,7 +228,7 @@ public class ItemSealOfForm extends Item {
     
     @SideOnly(Side.CLIENT)
     @Override
-    public void getSubItems(Item itemIn, CreativeTabs tab, List<ItemStack> subItems) {
+    public void getSubItems(Item item, CreativeTabs tab, List<ItemStack> subItems) {
         // Special case: Human
         subItems.add(getSealHuman());
         
@@ -159,7 +239,7 @@ public class ItemSealOfForm extends Item {
             if (MorphManager.isBlacklisted(eggInfo.spawnedID)) {
                 continue;
             }
-            ItemStack itemstack = new ItemStack(itemIn, 1);
+            ItemStack itemstack = new ItemStack(item, 1);
             setEntityMorphOnItem(itemstack, eggInfo.spawnedID, null);
             subItems.add(itemstack);
         }
@@ -199,8 +279,5 @@ public class ItemSealOfForm extends Item {
         return stackName.getFormattedText();
     }
 
-    // TODO: Implement JEI recipe lookup for empty slate
-    // TODO: Implement JEI recipe lookup for seal of form
-    // TODO: Implement morph acquire use, with NBT capability (maybe morph the player. Also, don't consume the token if the player already has the morph and display an error message instead.)
-    // TODO: Dungeon loot
+    // TODO: Dungeon loot (add blank slate to dungeon loot maybe also?)
 }

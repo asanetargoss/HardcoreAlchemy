@@ -208,6 +208,8 @@ public class ListenerPlayerMorphs extends HardcoreAlchemyListener {
         updateMaxHumanity(player, false);
     }
     
+    // TODO: Recalculate kills and max humanity when the player loses a morph via the "Remove" button in the survival morph menu
+    
     @SubscribeEvent
     public void onPlayerAcquireMorph(AcquireMorphEvent.Post event) {
         ListenerPlayerKillMastery.addMasteredKill(event);

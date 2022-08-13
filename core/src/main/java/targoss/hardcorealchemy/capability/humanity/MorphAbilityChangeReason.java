@@ -23,23 +23,25 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum LostMorphReason {
+public enum MorphAbilityChangeReason {
     REGAINED_MORPH_ABILITY,
     NO_ABILITY,
     LOST_HUMANITY,
-    FORGOT_FORM
+    FORGOT_LAST_FORM,
+    FORGOT_HUMAN_FORM,
+    REMEMBERED_HUMAN_FORM
     ;
     
-    private static Map<String, LostMorphReason> stringMap;
+    private static Map<String, MorphAbilityChangeReason> stringMap;
     
     static {
-        stringMap = new HashMap<String, LostMorphReason>();
-        for (LostMorphReason reason : EnumSet.allOf(LostMorphReason.class)) {
+        stringMap = new HashMap<String, MorphAbilityChangeReason>();
+        for (MorphAbilityChangeReason reason : EnumSet.allOf(MorphAbilityChangeReason.class)) {
             stringMap.put(reason.toString(), reason);
         }
     }
     
-    public static LostMorphReason fromString(String reasonString) {
+    public static MorphAbilityChangeReason fromString(String reasonString) {
         return stringMap.get(reasonString);
     }
 }

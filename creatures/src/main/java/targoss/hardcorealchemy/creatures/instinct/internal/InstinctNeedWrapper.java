@@ -28,6 +28,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import targoss.hardcorealchemy.HardcoreAlchemyCore;
+import targoss.hardcorealchemy.coremod.HardcoreAlchemyCoreCoremod;
 import targoss.hardcorealchemy.creatures.instinct.api.IInstinctNeed;
 import targoss.hardcorealchemy.creatures.instinct.api.InstinctNeedFactory;
 import targoss.hardcorealchemy.creatures.instinct.api.InvalidNeed;
@@ -69,11 +70,21 @@ public class InstinctNeedWrapper {
                     morphEntity = ((EntityMorph)morph).getEntity(player.world);
                 }
             }
+            
+            // Detect invalid state
+            // If in a dev environment, crash so the issue can be fixed
             if (morphEntity == null) {
-                throw new IllegalStateException("Cannot define an instinct need unless the player is an entity morph");
+                String errs = "Cannot define an instinct need unless the player is an entity morph";
+                if (!HardcoreAlchemyCoreCoremod.obfuscated) {
+                    throw new IllegalStateException(errs);
+                }
+                else {
+                    HardcoreAlchemyCore.LOGGER.error(errs);
+                }
             }
             
             need = factory.createNeed(morphEntity);
+            
             if (need == null) {
                 HardcoreAlchemyCore.LOGGER.error("Failed to create instinct need for factory: '" +
                         factory.getRegistryName().toString() +
@@ -83,6 +94,7 @@ public class InstinctNeedWrapper {
                 need = InvalidNeed.INSTANCE;
             }
             
+            @SuppressWarnings("rawtypes")
             INeedMessenger messenger = need.getCustomMessenger();
             if (messenger != null) {
                 state.messenger = messenger;

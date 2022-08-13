@@ -15,6 +15,7 @@ public class HardcoreAlchemyJEI extends BlankModPlugin {
         RecipeHandlerIncantation handlerIncantation = new RecipeHandlerIncantation();
         registry.addRecipeHandlers(handlerIncantation);
         registry.addRecipeCategories(handlerIncantation.category);
+        
         List<Object> recipes = new ArrayList<>();
         recipes.add(Incantations.RECIPE_INCANTATION_CREATE_SLATE);
         registry.addRecipes(recipes);

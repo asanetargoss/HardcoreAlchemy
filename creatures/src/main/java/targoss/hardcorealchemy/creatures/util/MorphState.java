@@ -30,8 +30,6 @@ import mchorse.metamorph.api.morphs.AbstractMorph;
 import mchorse.metamorph.api.morphs.EntityMorph;
 import mchorse.metamorph.capabilities.morphing.IMorphing;
 import mchorse.metamorph.capabilities.morphing.Morphing;
-import mchorse.metamorph.network.Dispatcher;
-import mchorse.metamorph.network.common.survival.PacketRemoveMorph;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
@@ -42,7 +40,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
-import targoss.hardcorealchemy.capability.humanity.LostMorphReason;
+import targoss.hardcorealchemy.capability.humanity.MorphAbilityChangeReason;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.creatures.HardcoreAlchemyCreatures;
 import targoss.hardcorealchemy.creatures.capability.instinct.ICapabilityInstinct;
@@ -87,24 +85,38 @@ public class MorphState {
      * Returns true if successful
      */
     public static boolean resetForm(Configs configs, EntityPlayer player) {
-        return forceForm(configs, player, LostMorphReason.REGAINED_MORPH_ABILITY, (AbstractMorph)null);
+        return forceForm(configs, player, MorphAbilityChangeReason.REGAINED_MORPH_ABILITY, (AbstractMorph)null);
     }
     
-    public static boolean forceForm(Configs configs, EntityPlayer player, LostMorphReason reason,
+    public static boolean forceForm(Configs configs, EntityPlayer player, MorphAbilityChangeReason reason,
             String morphName) {
         return forceForm(configs, player, reason, createMorph(morphName));
     }
     
-    public static boolean forceForm(Configs configs, EntityPlayer player, LostMorphReason reason,
+    public static boolean forceForm(Configs configs, EntityPlayer player, MorphAbilityChangeReason reason,
             Entity entity) {
         return forceForm(configs, player, reason, createMorph(entity));
     }
 
-    public static boolean forceForm(Configs configs, EntityPlayer player, LostMorphReason reason,
+    public static boolean forceForm(Configs configs, EntityPlayer player, MorphAbilityChangeReason reason,
             String morphName, NBTTagCompound morphProperties) {
         return forceForm(configs, player, reason, createMorph(morphName, morphProperties));
     }
     
+
+    public static boolean forceForm(Configs configs, EntityPlayer player, MorphAbilityChangeReason reason,
+            @Nullable AbstractMorph morph) {
+        if (player.world.isRemote) {
+            throw new IllegalStateException("forceForm should only be called on the server to prevent desyncs");
+        }
+        IMorphing morphing = player.getCapability(ListenerPlayerHumanity.MORPHING_CAPABILITY, null);
+        if (morphing == null) {
+            return false;
+        }
+        AbstractMorph lastMorph = morphing.getCurrentMorph();
+        return forceForm(configs, player, reason, morphing, lastMorph, morph);
+    }
+
     /**
      * Forces the player into the given AbstractMorph.
      * with the given reason, and updates the player's needs and instincts.
@@ -112,53 +124,54 @@ public class MorphState {
      * Note that like MorphAPI.morph, this function should generally only be called
      * on the server side, or you will get desyncs.
      */
-    public static boolean forceForm(Configs configs, EntityPlayer player, LostMorphReason reason,
-            @Nullable AbstractMorph morph) {
-        IMorphing morphing = player.getCapability(ListenerPlayerHumanity.MORPHING_CAPABILITY, null);
-        if (morphing == null) {
+    public static boolean forceForm(Configs configs, EntityPlayer player, MorphAbilityChangeReason reason,
+            IMorphing morphing, @Nullable AbstractMorph lastMorph, @Nullable AbstractMorph morph) {
+        ICapabilityHumanity humanity = player.getCapability(HUMANITY_CAPABILITY, null);
+        if (humanity == null) {
             return false;
         }
-        ICapabilityHumanity capabilityHumanity = player.getCapability(HUMANITY_CAPABILITY, null);
-        if (capabilityHumanity == null) {
-            return false;
+        if (reason == MorphAbilityChangeReason.FORGOT_LAST_FORM && lastMorph == null) {
+            reason = MorphAbilityChangeReason.FORGOT_HUMAN_FORM;
         }
-        
-        AbstractMorph previousMorph = morphing.getCurrentMorph();
-        
-        boolean wasPlayer = previousMorph == null;
-        boolean success = player.world.isRemote || MorphAPI.morph(player, morph, true);
+        if (!player.world.isRemote) {
+            if (morph == null &&
+                    (reason == MorphAbilityChangeReason.LOST_HUMANITY ||
+                     reason == MorphAbilityChangeReason.FORGOT_HUMAN_FORM)) {
+                throw new IllegalStateException("The player is not a perma-morph");
+            }
+        }
+
+        // NOTE: On the client side, the player is already morphed because MorphAPI.morph sent a packet first.
+        boolean sameMorph = (lastMorph == null && morph == null) ||
+                            (lastMorph != null && lastMorph.equals(morph));
+        boolean success = player.world.isRemote ||
+                          sameMorph ||
+                          MorphAPI.morph(player, morph, true);
         
         if (success) {
-            if (reason != LostMorphReason.FORGOT_FORM || wasPlayer) {
-                capabilityHumanity.loseMorphAbilityFor(reason);
-            }
-            if (!player.world.isRemote && reason == LostMorphReason.FORGOT_FORM && !wasPlayer && previousMorph != null) {
-                int morphIndex = morphing.getAcquiredMorphs().indexOf(previousMorph);
-                if (morphIndex != -1) {
-                    morphing.remove(morphIndex);
-                    Dispatcher.sendTo(new PacketRemoveMorph(morphIndex), (EntityPlayerMP)player);
+            boolean couldMorph = humanity.canMorph();
+            humanity.changeMorphAbilityFor(reason);
+            if (reason == MorphAbilityChangeReason.FORGOT_LAST_FORM) {
+                if (lastMorph != null) {
+                    int morphIndex = morphing.getAcquiredMorphs().indexOf(lastMorph);
+                    if (morphIndex != -1) {
+                        morphing.remove(morphIndex);
+                    }
                 }
-            }
-            if (reason == LostMorphReason.FORGOT_FORM) {
                 ListenerPlayerKillMastery.recalculateMasteredKills(player);
             }
             ListenerPlayerMorphs.updateMaxHumanity(player, false);
             
-            // TODO: Why do players that still have humanity get instincts here?
-            ICapabilityInstinct instincts = player.getCapability(INSTINCT_CAPABILITY, null);
-            if (instincts != null) {
-                instincts.clearInstincts(player);
-                instincts.setInstinct(ICapabilityInstinct.DEFAULT_INSTINCT_VALUE);
-                if (configs.base.enableInstincts && morph instanceof EntityMorph) {
-                    MorphState.buildInstincts(player, instincts, ((EntityMorph)morph).getEntity(player.world));
-                }
+            if (!sameMorph || (couldMorph != humanity.canMorph())) {
+                ICapabilityInstinct instincts = player.getCapability(INSTINCT_CAPABILITY, null);
+                MorphState.buildInstincts(configs, player, instincts, humanity, morph);
             }
             
-            // TODO: Actually use this event for more things. Augment with the previous morph
+            // TODO: Actually use this event for more things. Include the previous morph and humanity state in the event constructor
             MinecraftForge.EVENT_BUS.post(new EventPlayerMorphStateChange.Post(player));
             
             if (!player.world.isRemote) {
-                HardcoreAlchemyCreatures.proxy.messenger.sendTo(new MessageForceForm(reason, morph), (EntityPlayerMP)player);
+                HardcoreAlchemyCreatures.proxy.messenger.sendTo(new MessageForceForm(reason, lastMorph, morph), (EntityPlayerMP)player);
             }
         }
         
@@ -188,23 +201,38 @@ public class MorphState {
         return false;
     }
 
-    public static void buildInstincts(EntityPlayer player, ICapabilityInstinct instincts, EntityLivingBase morphEntity) {
+    public static void buildInstincts(Configs configs, EntityPlayer player, ICapabilityInstinct instincts, ICapabilityHumanity humanity, AbstractMorph morph) {
         instincts.clearInstincts(player);
         instincts.setInstinct(ICapabilityInstinct.DEFAULT_INSTINCT_VALUE);
         
-        if (morphEntity == null || !(morphEntity instanceof EntityLiving)) {
+        if (!configs.base.enableInstincts) {
+            return;
+        }
+        if (humanity == null || humanity.canMorph()) {
             return;
         }
         
+        if (!(morph instanceof EntityMorph)) {
+            return;
+        }
+        Entity morphEntity = ((EntityMorph)morph).getEntity(player.world);
+        if (!(morphEntity instanceof EntityLiving)) {
+            return;
+        }
+        EntityLiving morphEntityLiving = (EntityLiving)morphEntity;
+        
         for (Instinct instinct : Instincts.REGISTRY.getValues()) {
             // No caching (for now); just go through the list of registered instincts and figure out which are applicable
-            if (instinct.doesMorphEntityHaveInstinct(morphEntity)) {
+            if (instinct.doesMorphEntityHaveInstinct(morphEntityLiving)) {
                 instincts.addInstinct(instinct);
             }
         }
     }
     
-    public static void buildInstincts(EntityPlayer player, ICapabilityInstinct instincts) {
+    public static void buildInstincts(Configs configs, EntityPlayer player, ICapabilityInstinct instincts, ICapabilityHumanity humanity) {
+        if (instincts == null) {
+            return;
+        }
         instincts.clearInstincts(player);
         instincts.setInstinct(ICapabilityInstinct.DEFAULT_INSTINCT_VALUE);
         
@@ -220,6 +248,11 @@ public class MorphState {
         if (morphEntity == null) {
             return;
         }
-        buildInstincts(player, instincts, morphEntity);
+        buildInstincts(configs, player, instincts, humanity, morph);
+    }
+    
+    public static void buildInstincts(Configs configs, EntityPlayer player, ICapabilityInstinct instincts) {
+        ICapabilityHumanity humanity = player.getCapability(HUMANITY_CAPABILITY, null);
+        buildInstincts(configs, player, instincts, humanity);
     }
 }

@@ -45,5 +45,6 @@ public class Incantations {
     
     public static final Incantation INCANTATION_CREATE_SLATE = INCANTATIONS.add("create_slate", new IncantationCreateSlate());
     
+    /** Not a real recipe. Used by JEI lookup only. */
     public static final RecipeIncantation RECIPE_INCANTATION_CREATE_SLATE = new RecipeIncantation(Incantations.INCANTATION_CREATE_SLATE, ITEM_STACK_EMPTY, new ItemStack(EMPTY_SLATE), new ItemStack(STONE));
 }

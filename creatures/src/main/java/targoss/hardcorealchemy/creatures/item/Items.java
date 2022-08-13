@@ -22,6 +22,7 @@ package targoss.hardcorealchemy.creatures.item;
 import static net.minecraft.init.Items.FERMENTED_SPIDER_EYE;
 import static net.minecraft.init.Items.REDSTONE;
 import static targoss.hardcorealchemy.item.HcAPotion.GOOD_EFFECT;
+import static targoss.hardcorealchemy.item.Items.EMPTY_SLATE;
 import static targoss.hardcorealchemy.item.Items.ITEMS;
 import static targoss.hardcorealchemy.item.Items.POTIONS;
 import static targoss.hardcorealchemy.item.Items.POTION_TYPES;
@@ -58,6 +59,9 @@ public class Items {
     public static final PotionType POTION_TYPE_AIR_BREATHING_EXTENDED = POTION_TYPES.add("air_breathing_extended", RegistrarPotionType.potionTypeFromPotion(POTION_AIR_BREATHING, 8*60*20));
     public static final PotionType POTION_TYPE_WATER_RESISTANCE = POTION_TYPES.add("water_resistance", RegistrarPotionType.potionTypeFromPotion(POTION_WATER_RESISTANCE, 3*60*20));
     public static final PotionType POTION_TYPE_WATER_RESISTANCE_EXTENDED = POTION_TYPES.add("water_resistance_extended", RegistrarPotionType.potionTypeFromPotion(POTION_WATER_RESISTANCE, 8*60*20));
+
+    /** Not a real recipe. Used by JEI lookup only. */
+    public static final RecipeEnchantment RECIPE_ENCHANTMENT_CREATE_SEAL_OF_FORM = new RecipeEnchantment(EMPTY_SLATE, SEAL_OF_FORM);
 
     public static void registerRecipes() {
         {
