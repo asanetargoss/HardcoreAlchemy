@@ -29,6 +29,7 @@ import mchorse.metamorph.capabilities.morphing.IMorphing;
 import mchorse.metamorph.capabilities.morphing.Morphing;
 import net.minecraft.entity.monster.EntitySlime;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -41,6 +42,8 @@ import targoss.hardcorealchemy.creatures.util.MorphState;
 import targoss.hardcorealchemy.event.EventEnchant;
 import targoss.hardcorealchemy.item.ItemEmptySlate;
 import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
+import targoss.hardcorealchemy.util.Chat;
+import targoss.hardcorealchemy.util.Chat.Type;
 import targoss.hardcorealchemy.util.InventoryUtil;
 
 public class ListenerPlayerSealOfForm extends HardcoreAlchemyListener {
@@ -59,6 +62,11 @@ public class ListenerPlayerSealOfForm extends HardcoreAlchemyListener {
             return;
         }
         EntityPlayer player = event.player;
+        ICapabilityHumanity humanity = player.getCapability(ProviderHumanity.HUMANITY_CAPABILITY, null);
+        if (humanity != null && !humanity.shouldDisplayHumanity()) {
+            Chat.message(Type.NOTIFY, (EntityPlayerMP)player, humanity.explainWhyCantMorph());
+            return;
+        }
         
         // Get the player's current form
         IMorphing morphing = Morphing.get(player);
@@ -73,7 +81,6 @@ public class ListenerPlayerSealOfForm extends HardcoreAlchemyListener {
         // what morphs are available.
         List<AbstractMorph> acquiredMorphs = morphing.getAcquiredMorphs();
         int availableFormCount = acquiredMorphs.size();
-        ICapabilityHumanity humanity = player.getCapability(ProviderHumanity.HUMANITY_CAPABILITY, null);
         if (humanity == null || !humanity.getHasForgottenHumanForm()) {
             ++availableFormCount;
         }
