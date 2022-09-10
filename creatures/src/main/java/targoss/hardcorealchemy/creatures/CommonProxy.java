@@ -26,6 +26,7 @@ import targoss.hardcorealchemy.creatures.entity.Entities;
 import targoss.hardcorealchemy.creatures.incantation.Incantations;
 import targoss.hardcorealchemy.creatures.instinct.Instincts;
 import targoss.hardcorealchemy.creatures.item.Items;
+import targoss.hardcorealchemy.creatures.listener.ListenerBlockHeartOfForm;
 import targoss.hardcorealchemy.creatures.listener.ListenerCapabilities;
 import targoss.hardcorealchemy.creatures.listener.ListenerInstinctOverheat;
 import targoss.hardcorealchemy.creatures.listener.ListenerMobAI;
@@ -82,6 +83,7 @@ public class CommonProxy {
         HardcoreAlchemyCore.proxy.addListener(new ListenerPlayerHinderedMind());
         HardcoreAlchemyCore.proxy.addListener(new ListenerInstinctOverheat());
         HardcoreAlchemyCore.proxy.addListener(new ListenerPlayerSealOfForm());
+        HardcoreAlchemyCore.proxy.addListener(new ListenerBlockHeartOfForm());
         
         // Initialize via classload
         new Items();
@@ -89,8 +91,6 @@ public class CommonProxy {
         new Incantations();
         new Studies();
         
-        // asanetargoss @ 2021-10-03: Moved instinct registration from init to preInit
-        // asanetargoss @ 2021-10-24: Moved instinct registration from core to creatures
         Instincts.INSTINCTS.register();
         Instincts.INSTINCT_NEED_FACTORIES.register();
         Instincts.INSTINCT_EFFECTS.register();
