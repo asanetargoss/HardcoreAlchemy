@@ -33,6 +33,7 @@ import net.minecraft.init.MobEffects;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.DamageSource;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -143,8 +144,10 @@ public class ListenerHeartShards extends HardcoreAlchemyListener {
                 return;
             }
             fireTicks = player.fire;
-            if (fireTicks <= 1 && fireTime > MIN_FIRE_DURATION_TICKS) {
-                acquireHeartShard(player, hearts, Items.HEART_FLAME);
+            if (fireTicks <= 1) {
+                if (fireTime > MIN_FIRE_DURATION_TICKS) {
+                    acquireHeartShard(player, hearts, Items.HEART_FLAME);
+                }
                 reset();
             }
             ++fireTime;
@@ -297,6 +300,9 @@ public class ListenerHeartShards extends HardcoreAlchemyListener {
         }
         EntityPlayer player = (EntityPlayer)event.getEntityLiving();
         if (player.world.isRemote) {
+            return;
+        }
+        if (!event.getSource().damageType.equals(DamageSource.onFire.damageType)) {
             return;
         }
         ICapabilityHearts hearts = player.getCapability(HEARTS_CAPABILITY, null);
