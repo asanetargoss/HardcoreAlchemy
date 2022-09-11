@@ -20,10 +20,12 @@
 package targoss.hardcorealchemy.creatures.network;
 
 import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import targoss.hardcorealchemy.creatures.HardcoreAlchemyCreatures;
+import targoss.hardcorealchemy.creatures.listener.ListenerPlayerKillMastery;
 import targoss.hardcorealchemy.creatures.listener.ListenerPlayerMorphs;
 import targoss.hardcorealchemy.network.MessageToClient;
 import targoss.hardcorealchemy.util.MiscVanilla;
@@ -41,7 +43,9 @@ public class MessageMaxHumanity extends MessageToClient<HardcoreAlchemyCreatures
         public static final ReceiveAction INSTANCE = new ReceiveAction();
         @Override
         public void run() {
-            ListenerPlayerMorphs.updateMaxHumanity(MiscVanilla.getTheMinecraftPlayer(), false);
+            EntityPlayer player = MiscVanilla.getTheMinecraftPlayer();
+            ListenerPlayerKillMastery.recalculateMasteredKills(player);
+            ListenerPlayerMorphs.updateMaxHumanity(player, false);
         }
     }
     
