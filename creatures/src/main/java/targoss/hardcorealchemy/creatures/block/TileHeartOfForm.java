@@ -39,10 +39,11 @@ public class TileHeartOfForm extends TileEntity {
     public static final int SLOT_TRUE_FORM    = 1;
     public static final int SLOT_COUNT        = 2;
     
-    // TODO: If the heart becomes inactive for some reason and the player is not present, then we need to update a world capability. What should happen if a different player other than the owner puts out the flame? I think the owner player should die.
-    // TODO: The above implies that attempting to remove either seal from the heart causes the seal to be re-applied instantly. Is that really what we want?
+    // TODO: If the heart becomes inactive for some reason and the owner is not present (owner dies, loses their humanity, uses a seal of true form), then we need to update a world capability to set the heart to no longer active.
+    // TODO: An active spark detects a seal missing/deactivation event (seal is missing from a slot, form seal is changed, spark extinguished, block broken) and then checks if the owner is nearby. If the owner is nearby, nothing bad happens. If not, the spark attempts to take the knowledge of seals lost from players within interaction range, morphing them into other forms as needed. The player that loses their humanity gets the extended humanity decay time as if bound to a heart of form. If the heart is unable to erase forms from suitable players, it kills the nearest player. If no player is nearby, the owner is killed. In most cases, this gives the interacting player the choice to sacrifice their humanity to save the humanity of another, or a way to sabotage the other player. Ideally, a player that forgot the respective form (doesn't have to be the same player, but can't be the owner) could place the correct seal in the correct empty slot to get their form back
     // TODO: How to check if the inventory has changed?
-    // TODO: Another capability for storing state indicating that the heart is active (or we might just use a BlockState for that)
+    // TODO: Capability to store the owner and bound morph (seals remain in the slots)
+    // TODO: Capability to check if the heart is active (or we might just use a BlockState for that)
     // TODO: Syncing?
     
     public static class ItemHandlerProvider implements ICapabilitySerializable<NBTBase> {
