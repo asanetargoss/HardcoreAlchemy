@@ -43,7 +43,7 @@ minecraft {
     
     replace "@HARDCORE_ALCHEMY_CAPSTONE_VERSION@", project.version
     replaceIn "HardcoreAlchemyCapstone.java"
-    replace "\"required-before:\" + HardcoreAlchemy.MOD_ID", "\"required-before:\" + HardcoreAlchemy.MOD_ID + \"@[\" + HardcoreAlchemy.VERSION + \",)\""
+    replace "\"required-before:\" + HardcoreAlchemyCore.MOD_ID", "\"required-before:\" + HardcoreAlchemyCore.MOD_ID + \"@[\" + HardcoreAlchemyCore.VERSION + \",)\""
     replace "\"required-after:\" + HardcoreAlchemyTweaks.MOD_ID", "\"required-after:\" + HardcoreAlchemyTweaks.MOD_ID + \"@[\" + HardcoreAlchemyTweaks.VERSION + \",)\""
     replace "\"required-after:\" + HardcoreAlchemyCreatures.MOD_ID", "\"required-after:\" + HardcoreAlchemyCreatures.MOD_ID + \"@[\" + HardcoreAlchemyCreatures.VERSION + \",)\""
     replace "\"required-after:\" + HardcoreAlchemyMagic.MOD_ID", "\"required-after:\" + HardcoreAlchemyMagic.MOD_ID + \"@[\" + HardcoreAlchemyMagic.VERSION + \",)\""
