@@ -26,7 +26,6 @@ import targoss.hardcorealchemy.creatures.entity.Entities;
 import targoss.hardcorealchemy.creatures.incantation.Incantations;
 import targoss.hardcorealchemy.creatures.instinct.Instincts;
 import targoss.hardcorealchemy.creatures.item.Items;
-import targoss.hardcorealchemy.creatures.listener.ListenerBlockHeartOfForm;
 import targoss.hardcorealchemy.creatures.listener.ListenerCapabilities;
 import targoss.hardcorealchemy.creatures.listener.ListenerInstinctOverheat;
 import targoss.hardcorealchemy.creatures.listener.ListenerMobAI;
@@ -40,6 +39,7 @@ import targoss.hardcorealchemy.creatures.listener.ListenerPlayerMorphState;
 import targoss.hardcorealchemy.creatures.listener.ListenerPlayerMorphs;
 import targoss.hardcorealchemy.creatures.listener.ListenerPlayerSealOfForm;
 import targoss.hardcorealchemy.creatures.listener.ListenerSmallTweaks;
+import targoss.hardcorealchemy.creatures.listener.ListenerWorldHumanity;
 import targoss.hardcorealchemy.creatures.metamorph.HcAMetamorphPack;
 import targoss.hardcorealchemy.creatures.network.MessageForceForm;
 import targoss.hardcorealchemy.creatures.network.MessageHumanity;
@@ -83,7 +83,7 @@ public class CommonProxy {
         HardcoreAlchemyCore.proxy.addListener(new ListenerPlayerHinderedMind());
         HardcoreAlchemyCore.proxy.addListener(new ListenerInstinctOverheat());
         HardcoreAlchemyCore.proxy.addListener(new ListenerPlayerSealOfForm());
-        HardcoreAlchemyCore.proxy.addListener(new ListenerBlockHeartOfForm());
+        HardcoreAlchemyCore.proxy.addListener(new ListenerWorldHumanity());
         
         // Initialize via classload
         new Items();

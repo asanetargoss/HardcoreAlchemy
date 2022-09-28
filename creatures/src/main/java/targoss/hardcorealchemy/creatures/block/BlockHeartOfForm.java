@@ -22,8 +22,11 @@ package targoss.hardcorealchemy.creatures.block;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 // TODO: See TileEntityEnderChestRenderer
@@ -43,5 +46,25 @@ public class BlockHeartOfForm extends Block implements ITileEntityProvider {
         public boolean canInteractWith(EntityPlayer player) {
             return true;
         }
+    }
+    
+    @Override
+    public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor) {
+        // TODO: Check for fire on each side
+        
+        super.onNeighborChange(world, pos, neighbor);
+    }
+
+    /**
+     * Called serverside after this block is replaced with another in Chunk, but before the Tile Entity is updated
+     */
+    @Override
+    public void breakBlock(World world, BlockPos pos, IBlockState blockState) {
+        TileEntity te = world.getTileEntity(pos);
+        if (te instanceof TileHeartOfForm) {
+            ((TileHeartOfForm)te).breakBlock(world, pos);
+        }
+        
+        super.breakBlock(world, pos, blockState);
     }
 }
