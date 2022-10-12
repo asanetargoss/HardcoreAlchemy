@@ -50,9 +50,12 @@ public class BlockHeartOfForm extends Block implements ITileEntityProvider {
     
     @Override
     public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor) {
-        // TODO: Check for fire on each side
-        
         super.onNeighborChange(world, pos, neighbor);
+        
+        TileEntity te = world.getTileEntity(pos);
+        if (te instanceof TileHeartOfForm) {
+            ((TileHeartOfForm)te).onNeighborChange(pos, neighbor);
+        }
     }
 
     /**

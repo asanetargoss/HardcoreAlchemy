@@ -29,6 +29,7 @@ import mchorse.metamorph.api.MorphAPI;
 import mchorse.metamorph.api.MorphManager;
 import mchorse.metamorph.api.MorphUtils;
 import mchorse.metamorph.api.morphs.AbstractMorph;
+import mchorse.metamorph.api.morphs.EntityMorph;
 import mchorse.metamorph.capabilities.morphing.IMorphing;
 import mchorse.metamorph.capabilities.morphing.Morphing;
 import net.minecraft.client.renderer.color.IItemColor;
@@ -137,6 +138,18 @@ public class ItemSealOfForm extends Item {
             return false;
         }
         return nbt.hasKey(HUMAN) && nbt.getBoolean(HUMAN);
+    }
+    
+    public static @Nullable EntityMorph getEntityMorph(ItemStack stack) {
+        String morphID = getMorphIDFromItem(stack);
+        if (morphID == null) {
+            return null;
+        }
+        AbstractMorph morph = MorphManager.INSTANCE.morphFromNBT(stack.getTagCompound());
+        if (!(morph instanceof EntityMorph)) {
+            return null;
+        }
+        return (EntityMorph)morph;
     }
     
     public static void setHumanTag(ItemStack stack) {

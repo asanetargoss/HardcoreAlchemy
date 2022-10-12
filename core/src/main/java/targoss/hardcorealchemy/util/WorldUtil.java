@@ -239,4 +239,8 @@ public class WorldUtil {
         }
         return null;
     }
+    
+    public static void sendFireExtinguishSound(World world, BlockPos pos) {
+        world.playEvent(null, 1009, pos, 0);
+    }
 }

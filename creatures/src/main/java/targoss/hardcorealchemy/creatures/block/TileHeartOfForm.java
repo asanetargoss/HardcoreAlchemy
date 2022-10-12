@@ -19,37 +19,97 @@
 
 package targoss.hardcorealchemy.creatures.block;
 
+import static targoss.hardcorealchemy.creatures.item.Items.SEAL_OF_FORM;
+
 import java.util.List;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
 
+import mchorse.metamorph.api.morphs.AbstractMorph;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockFire;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.InventoryHelper;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
+import targoss.hardcorealchemy.creatures.item.ItemSealOfForm;
 import targoss.hardcorealchemy.creatures.listener.ListenerWorldHumanity;
 import targoss.hardcorealchemy.util.InventoryUtil;
 import targoss.hardcorealchemy.util.Serialization;
+import targoss.hardcorealchemy.util.WorldUtil;
 
 public class TileHeartOfForm extends TileEntity {
     @CapabilityInject(IItemHandler.class)
     public static final Capability<IItemHandler> ITEM_HANDLER_CAPABILITY = null;
     public static final int SLOT_MORPH_TARGET = 0;
     public static final int SLOT_TRUE_FORM    = 1;
-    public static final int SLOT_COUNT        = 2;
-    protected static final float MIN_ACTIVATION_DISTANCE = 1.0F; 
+    public static final int SLOT_FUEL         = 2;
+    public static final int SLOT_COUNT        = 3;
+    protected static final int MIN_FUEL_QUALITY = TileEntityFurnace.getItemBurnTime(new ItemStack(Items.COAL, 1, 0)); // 0 = regular coal (although burn time should be the same for charcoal)
+    /** Distance from the surface of the block */
+    protected static final int MIN_ACTIVATION_DISTANCE = 3;
+    protected static final float FUEL_QUALITY_FACTOR = 4.0F;
+    protected static final float DISTANCE_MAGNITUDE = (float)Math.log(2.0);
+    protected static final int MAX_ACTIVATION_DISTANCE = 48;
+
+    // TODO: Prevent side-effects from setting block state inside of block state update functions
+    protected boolean sideEffects = true;
     
-    public final ItemStackHandler inventory = new ItemStackHandler(SLOT_COUNT);
+    protected class Inventory extends ItemStackHandler {
+        protected boolean sideEffects = true;
+        
+        public Inventory(int slotCount) {
+            super(slotCount);
+        }
+
+        @Override
+        protected void onContentsChanged(int slot) {
+            super.onContentsChanged(slot);
+            if (!sideEffects) {
+                sideEffects = true;
+                return;
+            }
+            if (tryDisassemble()) {
+                return;
+            }
+            for (EnumFacing facing : EnumFacing.VALUES) {
+                if (tryDouse(world, pos, pos.offset(facing))) {
+                    return;
+                }
+            }
+            for (EnumFacing facing : EnumFacing.VALUES) {
+                if (tryIgnite(world, pos, pos.offset(facing))) {
+                    return;
+                }
+            }
+        }
+        
+        protected Inventory withoutSideEffects() {
+            this.sideEffects = false;
+            return this;
+        }
+    }
+    
+    public final Inventory inventory = new Inventory(SLOT_COUNT);
     public UUID owner = null;
     
     @Override
@@ -69,24 +129,148 @@ public class TileHeartOfForm extends TileEntity {
         return super.getCapability(capability, facing);
     }
 
-    // TODO: A spark is activated with flint and steel
     // TODO: A spark is deactivated with water, or by breaking it
     // TODO: Removing the Seal of True Form from the spark will also deactivate it
-    // TODO: Removing the non-human seal of form from the spark does nothing
     // TODO: If the heart becomes inactive for some reason (is deactivated, owner dies, loses their humanity, uses a seal of true form), then we need to update a world capability to set the heart to no longer active, and/or store a queued message to update the player capability
     // TODO: If the heart becomes inactive, and the owner is still alive, update their humanity to no longer be affected by the spark
-    // TODO: How to check if the inventory has changed?
-    // TODO: Capability to check if the heart is active (or we might just use a BlockState for that)
     // TODO: Syncing?
 
     public TileHeartOfForm(World world) {
         setWorld(world);
     }
     
-    // TODO: Reference from BlockHeartOfForm (on neighbor change?)
-    public void onIgnite(World world, BlockPos pos) {
-        // TODO: The better the fuel source, the larger the activation distance (up to some reasonable max). Coal should give a reasonable default
-        AxisAlignedBB bb = new AxisAlignedBB(pos).expandXyz(MIN_ACTIVATION_DISTANCE);
+    public boolean isActive() {
+        return owner != null;
+    }
+    
+    public @Nullable UUID getOwner() {
+        return this.owner;
+    }
+    
+    protected void activate(UUID owner) {
+        this.owner = owner;
+    }
+    
+    protected void deactivate() {
+        if (this.owner != null) {
+            ListenerWorldHumanity.onPlayerSparkBroken(this.owner);
+            this.owner = null;
+        }
+    }
+    
+    public boolean hasSufficientFuel() {
+        ItemStack itemStack = inventory.getStackInSlot(SLOT_FUEL);
+        if (InventoryUtil.isEmptyItemStack(itemStack)) {
+            return false;
+        }
+        int burnTime = TileEntityFurnace.getItemBurnTime(itemStack);
+        return burnTime >= MIN_FUEL_QUALITY;
+    }
+    
+    public AbstractMorph getMorphTarget() {
+        ItemStack itemStack = inventory.getStackInSlot(SLOT_MORPH_TARGET);
+        if (InventoryUtil.isEmptyItemStack(itemStack)) {
+            return null;
+        }
+        Item item = itemStack.getItem();
+        if (item != SEAL_OF_FORM) {
+            return null;
+        }
+        AbstractMorph morph = ItemSealOfForm.getEntityMorph(itemStack);
+        return morph;
+    }
+    
+    protected int getActivationDistance() {
+        assert(hasSufficientFuel());
+        ItemStack itemStack = inventory.getStackInSlot(SLOT_FUEL);
+        int burnTime = TileEntityFurnace.getItemBurnTime(itemStack);
+        if (burnTime == MIN_FUEL_QUALITY) {
+            return MIN_ACTIVATION_DISTANCE;
+        }
+        int calcDistance = (int)(MIN_ACTIVATION_DISTANCE + (FUEL_QUALITY_FACTOR * Math.log(burnTime - MIN_FUEL_QUALITY) / DISTANCE_MAGNITUDE ));
+        return Math.min(calcDistance, MAX_ACTIVATION_DISTANCE);
+    }
+
+    /** Check for missing item. Deactivate the heart if conditions are met.
+     * Return true if the caller should stop checking neighboring blocks. **/
+    protected boolean tryDisassemble() {
+        if (!this.sideEffects) {
+            return true;
+        }
+        if (!isActive()) {
+            return false;
+        }
+        ItemStack trueFormStack = inventory.getStackInSlot(SLOT_TRUE_FORM);
+        if (InventoryUtil.isEmptyItemStack(trueFormStack) ||
+                trueFormStack.getItem() != SEAL_OF_FORM ||
+                !ItemSealOfForm.hasHumanTag(trueFormStack)) {
+            deactivate();
+            return true;
+        }
+        return false;
+    }
+
+    /** Check for nearby water (or other liquid satisfying Fluid.doesVaporize()). Put out all nearby fire and
+     * deactivate the heart if conditions are met. Return true if the
+     * caller should stop checking neighboring blocks. **/
+    protected boolean tryDouse(World world, BlockPos pos, BlockPos waterTestPos) {
+        if (!this.sideEffects) {
+            return true;
+        }
+        IFluidHandler fluidHandler = FluidUtil.getFluidHandler(world, pos, null);
+        if (fluidHandler == null) {
+            return false;
+        }
+        FluidStack testFluidStack = fluidHandler.drain(Integer.MAX_VALUE, false);
+        Fluid fluid = testFluidStack.getFluid();
+        if (!fluid.doesVaporize(testFluidStack)) {
+            return false;
+        }
+        
+        deactivate();
+        // Put out all neighboring fire blocks to prevent an edge case where the tile doesn't activate when fire is nearby
+        for (EnumFacing facing : EnumFacing.VALUES) {
+            BlockPos fireTestPos = pos.offset(facing);
+            if (fireTestPos.equals(waterTestPos)) {
+                continue;
+            }
+            IBlockState fireTestBlockState = world.getBlockState(fireTestPos);
+            Block fireTestBlock = fireTestBlockState.getBlock();
+            if (fireTestBlock instanceof BlockFire) {
+                this.sideEffects = false;
+                world.setBlockState(fireTestPos, Blocks.AIR.getDefaultState());
+                this.sideEffects = true;
+            }
+        }
+        return true;
+    }
+
+    /** Check for nearby fire. Extinguish fire and activate the heart
+     *  if conditions are met. Return true if the caller should stop
+     *  checking neighboring blocks. **/
+    protected boolean tryIgnite(World world, BlockPos pos, BlockPos testPos) {
+        if (!this.sideEffects) {
+            return true;
+        }
+        if (isActive()) {
+            return true;
+        }
+        IBlockState testBlockState = world.getBlockState(testPos);
+        Block testBlock = testBlockState.getBlock();
+        if (!(testBlock instanceof BlockFire)) {
+            return false;
+        }
+        if (!hasSufficientFuel()) {
+            return true;
+        }
+        AbstractMorph morphTarget = getMorphTarget();
+        if (morphTarget == null) {
+            return true;
+        }
+        // The better the fuel source, the larger the activation distance (up to some reasonable max). Coal should give a reasonable default.
+        final int activationDistance = getActivationDistance();
+        AxisAlignedBB bb = new AxisAlignedBB(pos).expandXyz(activationDistance);
+        // TODO: Change predicate depending on if this tile's inventory has a seal of true form in it 
         List<EntityPlayer> nearbyPlayers = world.getEntitiesWithinAABB(EntityPlayer.class, bb, ListenerWorldHumanity.NoSparkPredicate.INSTANCE);
         if (!nearbyPlayers.isEmpty()) {
             EntityPlayer nearestPlayer = nearbyPlayers.get(0);
@@ -99,16 +283,40 @@ public class TileHeartOfForm extends TileEntity {
                     nearestDistanceSq = distanceSq;
                 }
             }
+            // Consume fuel
+            inventory.withoutSideEffects().extractItem(SLOT_FUEL, 1, false);
+            // Extinguish flame and play sound
+            this.sideEffects = false;
+            world.setBlockState(testPos, Blocks.AIR.getDefaultState());
+            this.sideEffects = true;
+            WorldUtil.sendFireExtinguishSound(world, testPos);
+            // Give effect to player in range
             ListenerWorldHumanity.onPlayerSparkCreated(nearestPlayer);
+            return true;
         }
-        // TODO: Extinguish flame and play sound (maybe do this in BlockHeartOfForm)
+        return false;
+    }
+    
+    /** Given the neigboring block change, check if the tile
+     *  needs to be activated/deactivated. **/
+    public void onNeighborChange(BlockPos pos, BlockPos neighborPos) {
+        if (this.world.isRemote) {
+            return;
+        }
+        for (EnumFacing facing : EnumFacing.VALUES) {
+            BlockPos testPos = pos.offset(facing);
+            if (testPos.equals(neighborPos)) {
+                continue;
+            }
+            if (tryDouse(this.world, pos, testPos)) {
+                return;
+            }
+        }
+        tryIgnite(this.world, pos, neighborPos);
     }
     
     public void breakBlock(World world, BlockPos pos) {
-        if (owner != null) {
-            ListenerWorldHumanity.onPlayerSparkBroken(owner);
-            owner = null;
-        }
+        deactivate();
         final int n = inventory.getSlots();
         for (int i = 0; i < n; ++i) {
             ItemStack itemStack = inventory.getStackInSlot(i);
