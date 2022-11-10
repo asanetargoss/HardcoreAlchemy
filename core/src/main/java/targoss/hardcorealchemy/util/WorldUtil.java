@@ -31,6 +31,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -42,6 +43,12 @@ public class WorldUtil {
         FULL,
         FIRE,
         LAVA
+    }
+    
+    public static World getOverworld(World dummyWorld) {
+        MinecraftServer server = MiscVanilla.getServer(dummyWorld);
+        World overworld = server.worlds[0];
+        return overworld;
     }
     
     public static class CollisionPredicate {

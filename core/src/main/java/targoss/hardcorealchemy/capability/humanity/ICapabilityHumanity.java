@@ -60,12 +60,12 @@ public interface ICapabilityHumanity {
     /** These usually should not be called directly. Use MorphState.forceForm instead. */
     public void setHasForgottenHumanForm(boolean hasForgottenHumanForm);
     public void setHasLostHumanity(boolean hasLostHumanity);
-    public void setHasLostMorphAbility(boolean hasLostMorphAbility);
+    public void setHasForgottenMorphAbility(boolean hasForgottenMorphAbility);
     public void changeMorphAbilityFor(MorphAbilityChangeReason reason);
     
     /** Whether the player can morph into a human, assuming the player
         can still morph. */
     public boolean getHasForgottenHumanForm();
     public boolean getHasLostHumanity();
-    public boolean getHasLostMorphAbility();
+    public boolean getHasForgottenMorphAbility();
 }

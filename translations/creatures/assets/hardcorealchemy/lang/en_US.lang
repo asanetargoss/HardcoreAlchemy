@@ -23,7 +23,7 @@ language.code=en_US
 
 # Gameplay
 
-hardcorealchemy.morph.disabled.noability=You fail to comprehend other forms.
+hardcorealchemy.morph.disabled.noability=You seem to have misplaced knowledge of how to morph.
 hardcorealchemy.morph.disabled.nohumanity=Your humanity is gone. Your mind is confined to this body.
 hardcorealchemy.morph.disabled.nohumanform=You seem to have misplaced knowledge of your human form. Morphing is not possible without it.
 hardcorealchemy.morph.disabled.magic_inhibition=A powerful magic interferes with your ability to change forms.

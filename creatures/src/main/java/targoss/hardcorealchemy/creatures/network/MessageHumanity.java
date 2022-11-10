@@ -49,7 +49,7 @@ public class MessageHumanity extends MessageToClient<HardcoreAlchemyCreatures> {
         this.magicInhibition = humanity.getMagicInhibition();
         this.hasForgottenHumanForm = humanity.getHasForgottenHumanForm();
         this.hasLostHumanity = humanity.getHasLostHumanity();
-        this.hasLostMorphAbility = humanity.getHasLostMorphAbility();
+        this.hasLostMorphAbility = humanity.getHasForgottenMorphAbility();
     }
 
     @Override
@@ -112,7 +112,7 @@ public class MessageHumanity extends MessageToClient<HardcoreAlchemyCreatures> {
                 humanity.setMagicInhibition(this.magicInhibition);
                 humanity.setHasForgottenHumanForm(this.hasForgottenHumanForm);
                 humanity.setHasLostHumanity(this.hasLostHumanity);
-                humanity.setHasLostMorphAbility(this.hasLostMorphAbility);
+                humanity.setHasForgottenMorphAbility(this.hasLostMorphAbility);
             }
         }
     }

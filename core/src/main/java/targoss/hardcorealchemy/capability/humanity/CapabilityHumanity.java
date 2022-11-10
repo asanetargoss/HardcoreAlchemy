@@ -35,13 +35,13 @@ public class CapabilityHumanity implements ICapabilityHumanity {
     private double magicInhibition;
     private boolean hasForgottenHumanForm;
     private boolean hasLostHumanity;
-    private boolean hasLostMorphAbility;
+    private boolean hasForgottenMorphAbility;
     
     public CapabilityHumanity() {
         humanity = DEFAULT_HUMANITY_VALUE;
         lastHumanity = DEFAULT_HUMANITY_VALUE;
         hasLostHumanity = false;
-        hasLostMorphAbility = false;
+        hasForgottenMorphAbility = false;
     }
     
     @Override
@@ -85,26 +85,25 @@ public class CapabilityHumanity implements ICapabilityHumanity {
         switch (reason) {
         case REGAINED_MORPH_ABILITY:
             hasLostHumanity = false;
-            hasLostMorphAbility = false;
+            hasForgottenMorphAbility = false;
             hasForgottenHumanForm = false;
             break;
         case LOST_HUMANITY:
             hasLostHumanity = true;
-            hasLostMorphAbility = false;
+            hasForgottenMorphAbility = false;
             humanity = 0.0F;
-            break;
-        case NO_ABILITY:
-            hasLostMorphAbility = true;
-            hasLostHumanity = false;
-            humanity = 0.0F;
-            // Prevent showing the player a message that their humanity has "faded away"
-            lastHumanity = 0.0F;
             break;
         case FORGOT_HUMAN_FORM:
             hasForgottenHumanForm = true;
             break;
         case REMEMBERED_HUMAN_FORM:
             hasForgottenHumanForm = false;
+            break;
+        case FORGOT_ABILITY:
+            hasForgottenMorphAbility = true;
+            break;
+        case REMEMBERED_ABILITY:
+            hasForgottenMorphAbility = false;
             break;
         default:
             break;
@@ -118,26 +117,26 @@ public class CapabilityHumanity implements ICapabilityHumanity {
     
     @Override
     public boolean canMorphRightNow() {
-        return !(hasLostHumanity || hasLostMorphAbility || hasForgottenHumanForm || magicInhibition >= humanity);
+        return !(hasLostHumanity || hasForgottenMorphAbility || hasForgottenHumanForm || magicInhibition >= humanity);
     }
     
     @Override
     public boolean canMorph() {
-        return !(hasLostHumanity || hasLostMorphAbility || hasForgottenHumanForm);
+        return !(hasLostHumanity || hasForgottenMorphAbility || hasForgottenHumanForm);
     }
     
     @Override
     public boolean shouldDisplayHumanity() {
-        return humanity > 0 && !(hasLostHumanity || hasLostMorphAbility);
+        return humanity > 0 && !hasLostHumanity;
     }
     
     @Override
     public ITextComponent explainWhyCantMorph() {
-        if (hasLostMorphAbility) {
-            return new TextComponentTranslation("hardcorealchemy.morph.disabled.noability");
-        }
         if (hasLostHumanity) {
             return new TextComponentTranslation("hardcorealchemy.morph.disabled.nohumanity");
+        }
+        if (hasForgottenMorphAbility) {
+            return new TextComponentTranslation("hardcorealchemy.morph.disabled.noability");
         }
         if (hasForgottenHumanForm) {
             return new TextComponentTranslation("hardcorealchemy.morph.disabled.nohumanform");
@@ -149,13 +148,13 @@ public class CapabilityHumanity implements ICapabilityHumanity {
     }
 
     @Override
-    public void setHasLostMorphAbility(boolean hasLostMorphAbility) {
-        this.hasLostMorphAbility = hasLostMorphAbility;
+    public void setHasForgottenMorphAbility(boolean hasLostMorphAbility) {
+        this.hasForgottenMorphAbility = hasLostMorphAbility;
     }
 
     @Override
-    public boolean getHasLostMorphAbility() {
-        return hasLostMorphAbility;
+    public boolean getHasForgottenMorphAbility() {
+        return hasForgottenMorphAbility;
     }
 
     @Override

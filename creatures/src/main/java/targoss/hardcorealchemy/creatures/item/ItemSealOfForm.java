@@ -63,6 +63,7 @@ import targoss.hardcorealchemy.util.Chat;
 import targoss.hardcorealchemy.util.Color;
 import targoss.hardcorealchemy.util.EntityUtil;
 import targoss.hardcorealchemy.util.Serialization;
+import targoss.hardcorealchemy.util.Chat.Type;
 
 public class ItemSealOfForm extends Item {
     public static final String HUMAN = HardcoreAlchemyCore.MOD_ID + ":" + "human";
@@ -91,7 +92,12 @@ public class ItemSealOfForm extends Item {
         
         boolean used = false;
         if (hasHumanTag(stack)) {
-            if (humanity.getHasForgottenHumanForm()) {
+            if (humanity.getHasForgottenMorphAbility()) {
+                if (!world.isRemote) {
+                    Chat.messageSP(Type.NOTIFY, player, humanity.explainWhyCantMorph());
+                }
+            }
+            else if (humanity.getHasForgottenHumanForm()) {
                 if (!world.isRemote) {
                     MorphState.forceForm(HardcoreAlchemyCore.proxy.configs, player, MorphAbilityChangeReason.REMEMBERED_HUMAN_FORM, morphing.getCurrentMorph());
                 }

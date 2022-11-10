@@ -25,11 +25,12 @@ import java.util.Map;
 
 public enum MorphAbilityChangeReason {
     REGAINED_MORPH_ABILITY,
-    NO_ABILITY,
     LOST_HUMANITY,
     FORGOT_LAST_FORM,
     FORGOT_HUMAN_FORM,
-    REMEMBERED_HUMAN_FORM
+    REMEMBERED_HUMAN_FORM,
+    FORGOT_ABILITY,
+    REMEMBERED_ABILITY
     ;
     
     private static Map<String, MorphAbilityChangeReason> stringMap;

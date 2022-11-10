@@ -26,6 +26,8 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
+import com.google.common.base.Predicate;
+
 import mchorse.metamorph.api.morphs.AbstractMorph;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFire;
@@ -51,6 +53,8 @@ import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
+import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
+import targoss.hardcorealchemy.capability.humanity.ProviderHumanity;
 import targoss.hardcorealchemy.creatures.item.ItemSealOfForm;
 import targoss.hardcorealchemy.creatures.listener.ListenerWorldHumanity;
 import targoss.hardcorealchemy.util.InventoryUtil;
@@ -74,6 +78,7 @@ public class TileHeartOfForm extends TileEntity {
     // TODO: Prevent side-effects from setting block state inside of block state update functions
     protected boolean sideEffects = true;
     
+    // TODO: Prevent inserting invalid items
     protected class Inventory extends ItemStackHandler {
         protected boolean sideEffects = true;
         
@@ -109,6 +114,38 @@ public class TileHeartOfForm extends TileEntity {
         }
     }
     
+    public static class NoForgotMorphPredicate implements Predicate<EntityPlayer> {
+        public static final NoForgotMorphPredicate INSTANCE = new NoForgotMorphPredicate();
+        
+        @Override
+        public boolean apply(EntityPlayer player) {
+            ICapabilityHumanity humanity = player.getCapability(ProviderHumanity.HUMANITY_CAPABILITY, null);
+            if (humanity == null) {
+                return false;
+            }
+            if (!humanity.shouldDisplayHumanity()) {
+                return false;
+            }
+            return !humanity.getHasForgottenMorphAbility();
+        }
+    }
+
+    public static class ForgotMorphPredicate implements Predicate<EntityPlayer> {
+        public static final ForgotMorphPredicate INSTANCE = new ForgotMorphPredicate();
+        
+        @Override
+        public boolean apply(EntityPlayer player) {
+            ICapabilityHumanity humanity = player.getCapability(ProviderHumanity.HUMANITY_CAPABILITY, null);
+            if (humanity == null) {
+                return false;
+            }
+            if (!humanity.shouldDisplayHumanity()) {
+                return false;
+            }
+            return humanity.getHasForgottenMorphAbility();
+        }
+    }
+
     public final Inventory inventory = new Inventory(SLOT_COUNT);
     public UUID owner = null;
     
@@ -190,6 +227,18 @@ public class TileHeartOfForm extends TileEntity {
         int calcDistance = (int)(MIN_ACTIVATION_DISTANCE + (FUEL_QUALITY_FACTOR * Math.log(burnTime - MIN_FUEL_QUALITY) / DISTANCE_MAGNITUDE ));
         return Math.min(calcDistance, MAX_ACTIVATION_DISTANCE);
     }
+    
+    protected boolean hasTrueFormSeal() {
+        ItemStack itemStack = inventory.getStackInSlot(SLOT_TRUE_FORM);
+        if (InventoryUtil.isEmptyItemStack(itemStack)) {
+            return false;
+        }
+        Item item = itemStack.getItem();
+        if (item != SEAL_OF_FORM) {
+            return false;
+        }
+        return ItemSealOfForm.hasHumanTag(itemStack);
+    }
 
     /** Check for missing item. Deactivate the heart if conditions are met.
      * Return true if the caller should stop checking neighboring blocks. **/
@@ -270,8 +319,10 @@ public class TileHeartOfForm extends TileEntity {
         // The better the fuel source, the larger the activation distance (up to some reasonable max). Coal should give a reasonable default.
         final int activationDistance = getActivationDistance();
         AxisAlignedBB bb = new AxisAlignedBB(pos).expandXyz(activationDistance);
-        // TODO: Change predicate depending on if this tile's inventory has a seal of true form in it 
-        List<EntityPlayer> nearbyPlayers = world.getEntitiesWithinAABB(EntityPlayer.class, bb, ListenerWorldHumanity.NoSparkPredicate.INSTANCE);
+        boolean needTrueFormSeal = hasTrueFormSeal();
+        // Target different player depending on if this tile's inventory has a seal of true form in it
+        Predicate<EntityPlayer> predicate = needTrueFormSeal ? NoForgotMorphPredicate.INSTANCE : ForgotMorphPredicate.INSTANCE;
+        List<EntityPlayer> nearbyPlayers = world.getEntitiesWithinAABB(EntityPlayer.class, bb, predicate);
         if (!nearbyPlayers.isEmpty()) {
             EntityPlayer nearestPlayer = nearbyPlayers.get(0);
             double nearestDistanceSq = pos.distanceSq(nearestPlayer.posX, nearestPlayer.posY, nearestPlayer.posZ);
@@ -291,7 +342,7 @@ public class TileHeartOfForm extends TileEntity {
             this.sideEffects = true;
             WorldUtil.sendFireExtinguishSound(world, testPos);
             // Give effect to player in range
-            ListenerWorldHumanity.onPlayerSparkCreated(nearestPlayer);
+            ListenerWorldHumanity.onPlayerSparkCreated(nearestPlayer, morphTarget);
             return true;
         }
         return false;

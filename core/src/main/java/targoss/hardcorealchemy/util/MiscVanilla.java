@@ -89,6 +89,23 @@ public class MiscVanilla {
         }
         return player.world;
     }
+    
+    @SideOnly(Side.CLIENT)
+    public static MinecraftServer getIntegratedServer() {
+        Minecraft mc = Minecraft.getMinecraft();
+        return mc.getIntegratedServer();
+    }
+    
+    public static MinecraftServer getServer(World dummyWorld) {
+        FMLCommonHandler fmlCommonHandler = FMLCommonHandler.instance();
+        if (fmlCommonHandler.getSide() == Side.SERVER ||
+                fmlCommonHandler.getEffectiveSide() == Side.SERVER) {
+            return dummyWorld.getMinecraftServer();
+        }
+        else {
+            return getIntegratedServer();
+        }
+    }
 
     @SideOnly(Side.CLIENT)
     public static String getCurrentLocale() {
