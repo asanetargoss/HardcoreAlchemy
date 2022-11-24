@@ -40,10 +40,9 @@ public class ListenerGuides extends HardcoreAlchemyListener {
         HCAModpackGuide.preInit();
         HCAUpgradeGuides.UPGRADE_GUIDES.register(RegistrarUpgradeGuide.BOOK_AND_MODEL);
 
-        // TODO: RAT
-        //if (ModState.isAlchemicAshLoaded) {
+        if (ModState.isAlchemicAshLoaded) {
             AlchemicAshGuide.preInit();
-        //}
+        }
     }
     @Override
     public void init(FMLInitializationEvent event) {
@@ -60,9 +59,8 @@ public class ListenerGuides extends HardcoreAlchemyListener {
         // This behavior may change in the future.
         CapabilityMisc.DEFAULT_EXPECTED_PLAYER_VERSION = HCAUpgradeGuides.UPGRADE_GUIDES.getDefaultExpectedPlayerVersion();
         
-        // TODO: RAT
-        //if (ModState.isAlchemicAshLoaded) {
+        if (ModState.isAlchemicAshLoaded) {
             AlchemicAshGuide.init();
-        //}
+        }
     }
 }
