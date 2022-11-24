@@ -17,29 +17,22 @@
  * with Hardcore Alchemy Core. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.event;
+package targoss.hardcorealchemy.capability;
 
-import javax.annotation.Nonnull;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
-public class EventEnchant extends Event {
-    public static class Post extends EventEnchant {
-        public final EntityPlayer player;
-        public ItemStack enchantStack;
-
-        public Post(EntityPlayer player, ItemStack enchantStack) {
-            this.player = player;
-            this.enchantStack = enchantStack;
-        }
+public class EventUniverseCapabilities extends Event {
+    protected final AttachCapabilitiesEvent<World> delegate;
+    
+    public EventUniverseCapabilities(AttachCapabilitiesEvent<World> delegate) {
+        this.delegate = delegate;
     }
     
-    public static @Nonnull ItemStack onEnchantPost(EntityPlayer player, @Nonnull ItemStack enchantStack) {
-        EventEnchant.Post event =  new EventEnchant.Post(player, enchantStack);
-        MinecraftForge.EVENT_BUS.post(event);
-        return event.enchantStack;
+    public void addCapability(ResourceLocation key, ICapabilityProvider cap) {
+        delegate.addCapability(key, cap);
     }
 }

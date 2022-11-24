@@ -45,6 +45,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.fluids.Fluid;
@@ -55,6 +56,8 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.capability.humanity.ProviderHumanity;
+import targoss.hardcorealchemy.capability.misc.ICapabilityMisc;
+import targoss.hardcorealchemy.creatures.event.EventHumanityPhylactery;
 import targoss.hardcorealchemy.creatures.item.ItemSealOfForm;
 import targoss.hardcorealchemy.creatures.listener.ListenerWorldHumanity;
 import targoss.hardcorealchemy.util.InventoryUtil;
@@ -75,15 +78,40 @@ public class TileHeartOfForm extends TileEntity {
     protected static final float DISTANCE_MAGNITUDE = (float)Math.log(2.0);
     protected static final int MAX_ACTIVATION_DISTANCE = 48;
 
-    // TODO: Prevent side-effects from setting block state inside of block state update functions
     protected boolean sideEffects = true;
     
-    // TODO: Prevent inserting invalid items
+    @CapabilityInject(ICapabilityMisc.class)
+    public static final Capability<ICapabilityMisc> MISC_CAPABILITY = null;
+    
     protected class Inventory extends ItemStackHandler {
         protected boolean sideEffects = true;
         
         public Inventory(int slotCount) {
             super(slotCount);
+        }
+        
+        @Override
+        public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
+            switch (slot) {
+            case SLOT_MORPH_TARGET:
+                if (getMorphTarget(stack) == null) {
+                    return stack;
+                }
+                break;
+            case SLOT_TRUE_FORM:
+                if (!isTrueFormSeal(stack)) {
+                    return stack;
+                }
+                break;
+            case SLOT_FUEL:
+                if (!isSufficientFuel(stack)) {
+                    return stack;
+                }
+                break;
+            default:
+                return stack;
+            }
+            return super.insertItem(slot, stack, simulate);
         }
 
         @Override
@@ -147,7 +175,8 @@ public class TileHeartOfForm extends TileEntity {
     }
 
     public final Inventory inventory = new Inventory(SLOT_COUNT);
-    public UUID owner = null;
+    public UUID playerUUID = null;
+    public UUID lifetimeUUID = null;
     
     @Override
     public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
@@ -166,10 +195,6 @@ public class TileHeartOfForm extends TileEntity {
         return super.getCapability(capability, facing);
     }
 
-    // TODO: A spark is deactivated with water, or by breaking it
-    // TODO: Removing the Seal of True Form from the spark will also deactivate it
-    // TODO: If the heart becomes inactive for some reason (is deactivated, owner dies, loses their humanity, uses a seal of true form), then we need to update a world capability to set the heart to no longer active, and/or store a queued message to update the player capability
-    // TODO: If the heart becomes inactive, and the owner is still alive, update their humanity to no longer be affected by the spark
     // TODO: Syncing?
 
     public TileHeartOfForm(World world) {
@@ -177,22 +202,27 @@ public class TileHeartOfForm extends TileEntity {
     }
     
     public boolean isActive() {
-        return owner != null;
+        return playerUUID != null;
     }
     
-    public @Nullable UUID getOwner() {
-        return this.owner;
+    protected void activate(EntityPlayer player, ICapabilityMisc misc, AbstractMorph morphTarget, BlockPos pos) {
+        MinecraftForge.EVENT_BUS.post(new EventHumanityPhylactery.Create(player, misc, morphTarget, pos));
+        // TODO: Is this the unique ID we really want? Maybe the per-life UUID is more relevant
+        this.playerUUID = player.getUniqueID();
+        this.lifetimeUUID = misc.getLifetimeUUID();
     }
     
-    protected void activate(UUID owner) {
-        this.owner = owner;
-    }
-    
-    protected void deactivate() {
-        if (this.owner != null) {
-            ListenerWorldHumanity.onPlayerSparkBroken(this.owner);
-            this.owner = null;
+    public void deactivate() {
+        if (this.playerUUID != null) {
+            MinecraftForge.EVENT_BUS.post(new EventHumanityPhylactery.Destroy(this.getWorld(), this.lifetimeUUID, this.playerUUID, this.getPos()));
+            this.playerUUID = null;
+            this.lifetimeUUID = null;
         }
+    }
+    
+    protected static boolean isSufficientFuel(ItemStack itemStack) {
+        int burnTime = TileEntityFurnace.getItemBurnTime(itemStack);
+        return burnTime >= MIN_FUEL_QUALITY;
     }
     
     public boolean hasSufficientFuel() {
@@ -200,8 +230,16 @@ public class TileHeartOfForm extends TileEntity {
         if (InventoryUtil.isEmptyItemStack(itemStack)) {
             return false;
         }
-        int burnTime = TileEntityFurnace.getItemBurnTime(itemStack);
-        return burnTime >= MIN_FUEL_QUALITY;
+        return isSufficientFuel(itemStack);
+    }
+    
+    protected static AbstractMorph getMorphTarget(ItemStack itemStack) {
+        Item item = itemStack.getItem();
+        if (item != SEAL_OF_FORM) {
+            return null;
+        }
+        AbstractMorph morph = ItemSealOfForm.getEntityMorph(itemStack);
+        return morph;
     }
     
     public AbstractMorph getMorphTarget() {
@@ -209,12 +247,7 @@ public class TileHeartOfForm extends TileEntity {
         if (InventoryUtil.isEmptyItemStack(itemStack)) {
             return null;
         }
-        Item item = itemStack.getItem();
-        if (item != SEAL_OF_FORM) {
-            return null;
-        }
-        AbstractMorph morph = ItemSealOfForm.getEntityMorph(itemStack);
-        return morph;
+        return getMorphTarget(itemStack);
     }
     
     protected int getActivationDistance() {
@@ -228,16 +261,20 @@ public class TileHeartOfForm extends TileEntity {
         return Math.min(calcDistance, MAX_ACTIVATION_DISTANCE);
     }
     
-    protected boolean hasTrueFormSeal() {
-        ItemStack itemStack = inventory.getStackInSlot(SLOT_TRUE_FORM);
-        if (InventoryUtil.isEmptyItemStack(itemStack)) {
-            return false;
-        }
+    protected static boolean isTrueFormSeal(ItemStack itemStack) {
         Item item = itemStack.getItem();
         if (item != SEAL_OF_FORM) {
             return false;
         }
         return ItemSealOfForm.hasHumanTag(itemStack);
+    }
+    
+    protected boolean hasTrueFormSeal() {
+        ItemStack itemStack = inventory.getStackInSlot(SLOT_TRUE_FORM);
+        if (InventoryUtil.isEmptyItemStack(itemStack)) {
+            return false;
+        }
+        return isTrueFormSeal(itemStack);
     }
 
     /** Check for missing item. Deactivate the heart if conditions are met.
@@ -334,6 +371,10 @@ public class TileHeartOfForm extends TileEntity {
                     nearestDistanceSq = distanceSq;
                 }
             }
+            ICapabilityMisc misc = nearestPlayer.getCapability(MISC_CAPABILITY, null);
+            if (misc == null) {
+                return true;
+            }
             // Consume fuel
             inventory.withoutSideEffects().extractItem(SLOT_FUEL, 1, false);
             // Extinguish flame and play sound
@@ -342,7 +383,7 @@ public class TileHeartOfForm extends TileEntity {
             this.sideEffects = true;
             WorldUtil.sendFireExtinguishSound(world, testPos);
             // Give effect to player in range
-            ListenerWorldHumanity.onPlayerSparkCreated(nearestPlayer, morphTarget);
+            activate(nearestPlayer, misc, morphTarget, pos);
             return true;
         }
         return false;
@@ -377,7 +418,8 @@ public class TileHeartOfForm extends TileEntity {
         }
     }
     
-    protected static final String NBT_OWNER = "owner";
+    protected static final String NBT_PLAYER_UUID = "player_uuid";
+    protected static final String NBT_LIFETIME_UUID = "lifetime_uuid";
     protected static final String NBT_INVENTORY = "inventory";
     
     @Override
@@ -385,8 +427,11 @@ public class TileHeartOfForm extends TileEntity {
         NBTTagCompound nbtOut = super.writeToNBT(compound);
         
         nbtOut.setTag(NBT_INVENTORY, inventory.serializeNBT());
-        if (owner != null) {
-            nbtOut.setString(NBT_OWNER, owner.toString());
+        if (playerUUID != null) {
+            nbtOut.setString(NBT_PLAYER_UUID, playerUUID.toString());
+        }
+        if (lifetimeUUID != null) {
+            nbtOut.setString(NBT_LIFETIME_UUID, lifetimeUUID.toString());
         }
         
         return nbtOut;
@@ -400,8 +445,17 @@ public class TileHeartOfForm extends TileEntity {
             NBTTagCompound inventoryNBT = compound.getCompoundTag(NBT_INVENTORY);
             inventory.deserializeNBT(inventoryNBT);
         }
-        if (compound.hasKey(NBT_OWNER, Serialization.NBT_STRING_ID)) {
-            owner = UUID.fromString(compound.getString(NBT_OWNER));
+        if (compound.hasKey(NBT_PLAYER_UUID, Serialization.NBT_STRING_ID)) {
+            playerUUID = UUID.fromString(compound.getString(NBT_PLAYER_UUID));
+        }
+        if (compound.hasKey(NBT_LIFETIME_UUID, Serialization.NBT_STRING_ID)) {
+            lifetimeUUID = UUID.fromString(compound.getString(NBT_LIFETIME_UUID));
+        }
+        
+        if (isActive()) {
+            if (!ListenerWorldHumanity.doesPhylacteryStillExist(this.getWorld(), lifetimeUUID, playerUUID)) {
+                deactivate();
+            }
         }
     }
 }

@@ -48,8 +48,7 @@ public class ListenerGuiHud extends HardcoreAlchemyListener {
     private RandomWithPublicSeed rand = new RandomWithPublicSeed();
     private long randSeed = rand.getSeed();
     
-    public static final int HUMANITY_ICONS = 10;
-    private static double HUMANITY_3MIN_LEFT = ListenerPlayerHumanity.HUMANITY_3MIN_LEFT;
+    public static final int HUMANITY_ICONS = 10;;
 
     @SubscribeEvent(priority=EventPriority.HIGHEST,receiveCanceled=true)
     public void onRenderHumanity(RenderGameOverlayEvent.Pre event) {
@@ -104,7 +103,7 @@ public class ListenerGuiHud extends HardcoreAlchemyListener {
         for (int i = 1; i <= HUMANITY_ICONS; i++) {
             int y = top;
             
-            if (humanity <= HUMANITY_3MIN_LEFT && magicInhibition < humanity) {
+            if (humanity <= humanityCap.getHumanityNMinutesLeft(3) && magicInhibition < humanity) {
                 y += rand.nextInt(2);
             }
             

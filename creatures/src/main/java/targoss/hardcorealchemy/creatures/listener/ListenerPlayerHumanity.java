@@ -73,18 +73,9 @@ public class ListenerPlayerHumanity extends HardcoreAlchemyListener {
     public static final Capability<ICapabilityHumanity> HUMANITY_CAPABILITY = null;
     public static final ResourceLocation HUMANITY_RESOURCE_LOCATION = CapabilityHumanity.RESOURCE_LOCATION;
     public static final IAttribute MAX_HUMANITY = ICapabilityHumanity.MAX_HUMANITY;
-    // A freshly spawned player can only be in a morph for half a day
-    public static final double HUMANITY_LOSS_RATE = 2.0D/24000.0D*6.0D; // Per tick
-    // Humanity is gained back 12x more slowly
-    public static final double HUMANITY_GAIN_RATE = HUMANITY_LOSS_RATE/12.0D;
-    // Thresholds for displaying warnings when your humanity gets critically low
-    public static final double HUMANITY_1MIN_LEFT = HUMANITY_LOSS_RATE*20.0D*60.0D;
-    public static final double HUMANITY_2MIN_LEFT = HUMANITY_1MIN_LEFT*2.0D;
-    public static final double HUMANITY_3MIN_LEFT = HUMANITY_1MIN_LEFT*3.0D;
     // Time in ticks between sending humanity value updates over the network
     public static final int HUMANITY_UPDATE_TICKS = 7;
-    public static final double INHIBITION_PER_SPELL = HUMANITY_1MIN_LEFT;
-    
+
     private Random random = new Random();
     
     // The capability from Metamorph itself
@@ -158,12 +149,12 @@ public class ListenerPlayerHumanity extends HardcoreAlchemyListener {
             double newMagicInhibition = capabilityHumanity.getMagicInhibition();
             if (item == GOLDEN_APPLE) {
                 // A testing item, but I guess it's balanced enough for regular gameplay
-                newHumanity = MathHelper.clamp(newHumanity+HUMANITY_3MIN_LEFT, 0.0D, maxHumanity.getAttributeValue());
+                newHumanity = MathHelper.clamp(newHumanity+capabilityHumanity.getHumanityNMinutesLeft(3), 0.0D, maxHumanity.getAttributeValue());
                 newMagicInhibition = MathHelper.clamp(newMagicInhibition-0.25D, 0.0D, 1.0D+maxHumanity.getAttributeValue());
             }
             else if (item == CHORUS_FRUIT) {
                 newHumanity = MathHelper.clamp(newHumanity-1.0D, 0.0D, maxHumanity.getAttributeValue());
-                newMagicInhibition = MathHelper.clamp(newMagicInhibition+HUMANITY_2MIN_LEFT, 0.0D, 1.0D+maxHumanity.getAttributeValue());
+                newMagicInhibition = MathHelper.clamp(newMagicInhibition+capabilityHumanity.getHumanityNMinutesLeft(2), 0.0D, 1.0D+maxHumanity.getAttributeValue());
             }
             else {
                 newHumanity = MathHelper.clamp(newHumanity-1.0D, 0.0D, maxHumanity.getAttributeValue());
@@ -198,7 +189,6 @@ public class ListenerPlayerHumanity extends HardcoreAlchemyListener {
                         nbt.setTag("EntityData", nbtEntityData);
                         nbtEntityData.setByte("SkeletonType", (byte)1);
                         MorphState.forceForm(coreConfigs, player, MorphAbilityChangeReason.LOST_HUMANITY, "Skeleton", nbt);
-                        //TODO: clear the withering effect if and when I can figure out how to balance it
                     }
                 }
             }
@@ -236,7 +226,7 @@ public class ListenerPlayerHumanity extends HardcoreAlchemyListener {
             if (capabilityHumanity == null) {
                 return;
             }
-            double humanityLost = random.nextDouble() * HUMANITY_1MIN_LEFT;
+            double humanityLost = random.nextDouble() * capabilityHumanity.getHumanityNMinutesLeft(1);
             double morphReducedHumanity = capabilityHumanity.getHumanity() - humanityLost;
             if (morphReducedHumanity < 0) morphReducedHumanity = 0;
             capabilityHumanity.setHumanity(morphReducedHumanity);
@@ -274,14 +264,14 @@ public class ListenerPlayerHumanity extends HardcoreAlchemyListener {
             double newHumanity = capabilityHumanity.getHumanity();
             // Always reduce magic inhibition at the rate of humanity loss
             double newMagicInhibition = capabilityHumanity.getMagicInhibition();
-            newMagicInhibition -= HUMANITY_LOSS_RATE;
+            newMagicInhibition -= capabilityHumanity.getHumanityLossRate();
             newMagicInhibition = MathHelper.clamp(newMagicInhibition, 0.0D, 1.0D+maxHumanity.getAttributeValue());
             capabilityHumanity.setMagicInhibition(newMagicInhibition);
             // Are we in a morph? (check if the player's AbstractMorph is not null)
             IMorphing morphing = player.getCapability(MORPHING_CAPABILITY, null);
             if (morphing.isMorphed()) {
                 // Drain humanity when the player is voluntarily in a morph
-                newHumanity = MathHelper.clamp(newHumanity-HUMANITY_LOSS_RATE, 0.0D, maxHumanity.getAttributeValue());
+                newHumanity = MathHelper.clamp(newHumanity-capabilityHumanity.getHumanityLossRate(), 0.0D, maxHumanity.getAttributeValue());
                 capabilityHumanity.setHumanity(newHumanity);
                 // If humanity reaches zero, make player stuck in a morph
                 if (newHumanity <= 0) {
@@ -299,7 +289,7 @@ public class ListenerPlayerHumanity extends HardcoreAlchemyListener {
             }
             else {
                 // Restore humanity
-                newHumanity = newHumanity + HUMANITY_GAIN_RATE;
+                newHumanity = newHumanity + capabilityHumanity.getHumanityGainRate();
                 newHumanity = MathHelper.clamp(newHumanity, 0.0D, maxHumanity.getAttributeValue());
             }
             // On client, notify player via chat if humanity reaches a certain threshold or is lost entirely
@@ -322,9 +312,12 @@ public class ListenerPlayerHumanity extends HardcoreAlchemyListener {
             // Display lost humanity message
             Chat.messageSP(Chat.Type.NOTIFY, player, new TextComponentTranslation("hardcorealchemy.humanity.lost"));
         }
-        else if (newHumanity <= HUMANITY_3MIN_LEFT) {
+        else if (newHumanity <= capabilityHumanity.getHumanityNMinutesLeft(3)) {
             int humanityWarnVariant = 1 + random.nextInt(HUMANITY_WARN_VARIANT_COUNT);
-            if (newHumanity <= HUMANITY_1MIN_LEFT && oldHumanity > HUMANITY_1MIN_LEFT) {
+            final double MINUTES_LEFT_1 = capabilityHumanity.getHumanityNMinutesLeft(1);
+            final double MINUTES_LEFT_2 = capabilityHumanity.getHumanityNMinutesLeft(2);
+            final double MINUTES_LEFT_3 = capabilityHumanity.getHumanityNMinutesLeft(3);
+            if (newHumanity <= MINUTES_LEFT_1 && oldHumanity > MINUTES_LEFT_1) {
                 // Display 1 minute left message
                 if (player.world.isRemote) {
                     Chat.messageSP(Chat.Type.WARN, player, new TextComponentTranslation("hardcorealchemy.humanity.warn3.variant" + humanityWarnVariant));
@@ -333,7 +326,7 @@ public class ListenerPlayerHumanity extends HardcoreAlchemyListener {
                     HardcoreAlchemyCreatures.proxy.messenger.sendTo(new MessageHumanity(capabilityHumanity, false), (EntityPlayerMP)player);
                 }
             }
-            else if (newHumanity <= HUMANITY_2MIN_LEFT && oldHumanity > HUMANITY_2MIN_LEFT) {
+            else if (newHumanity <= MINUTES_LEFT_2 && oldHumanity > MINUTES_LEFT_2) {
                 // Display 2 minutes left message
                 if (player.world.isRemote) {
                     Chat.messageSP(Chat.Type.NOTIFY, player, new TextComponentTranslation("hardcorealchemy.humanity.warn2.variant" + humanityWarnVariant));
@@ -342,7 +335,7 @@ public class ListenerPlayerHumanity extends HardcoreAlchemyListener {
                     HardcoreAlchemyCreatures.proxy.messenger.sendTo(new MessageHumanity(capabilityHumanity, false), (EntityPlayerMP)player);
                 }
             }
-            else if (oldHumanity > HUMANITY_3MIN_LEFT) {
+            else if (oldHumanity > MINUTES_LEFT_3) {
                 // Display 3 minutes left message
                 if (player.world.isRemote) {
                     Chat.messageSP(Chat.Type.NOTIFY, player, new TextComponentTranslation("hardcorealchemy.humanity.warn1.variant" + humanityWarnVariant));
@@ -374,7 +367,7 @@ public class ListenerPlayerHumanity extends HardcoreAlchemyListener {
         }
         
         double newMagicInhibition = capabilityHumanity.getMagicInhibition();
-        newMagicInhibition += INHIBITION_PER_SPELL;
+        newMagicInhibition += capabilityHumanity.getHumanityNMinutesLeft(1);
         newMagicInhibition = MathHelper.clamp(newMagicInhibition, 0.0D, 1.0D+maxHumanity.getAttributeValue());
         capabilityHumanity.setMagicInhibition(newMagicInhibition);
         if (!player.world.isRemote) {

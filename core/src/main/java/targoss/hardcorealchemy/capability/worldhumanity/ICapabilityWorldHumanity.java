@@ -23,7 +23,7 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.util.math.Vec3i;
+import net.minecraft.util.math.BlockPos;
 
 public interface ICapabilityWorldHumanity {
     /** If a location is already registered for the given lifetimeUUID
@@ -31,20 +31,20 @@ public interface ICapabilityWorldHumanity {
      * As long as player data is in a consistent state, there is a unique
      * (and possibly null) position for the given lifetimeUUID/playerID pair.
      * */
-    void registerMorphAbilityLocation(UUID lifetimeUUID, UUID playerUUID, Vec3i pos);
+    void registerMorphAbilityLocation(UUID lifetimeUUID, UUID playerUUID, BlockPos pos);
     /** Returns true if there actually was a registered morph ability at the given location */
-    boolean unregisterMorphAbilityLocation(UUID lifetimeUUID, UUID playerUUID, Vec3i pos);
-    @Nullable Vec3i getMorphAbilityLocation(UUID lifetimeUUID, UUID playerUUID);
+    boolean unregisterMorphAbilityLocation(UUID lifetimeUUID, UUID playerUUID, BlockPos pos);
+    @Nullable BlockPos getMorphAbilityLocation(UUID lifetimeUUID, UUID playerUUID);
     
     public static class MorphAbilityLocation {
-        public MorphAbilityLocation(UUID lifetimeUUID, UUID playerUUID, Vec3i pos) {
+        public MorphAbilityLocation(UUID lifetimeUUID, UUID playerUUID, BlockPos pos) {
             this.lifetimeUUID = lifetimeUUID;
             this.playerUUID = playerUUID;
             this.pos = pos;
         }
         public UUID lifetimeUUID;
         public UUID playerUUID;
-        public Vec3i pos;
+        public BlockPos pos;
     }
     MorphAbilityLocation[] dumpMorphAbilityLocations();
     void clearAndPutMorphAbilityLocations(MorphAbilityLocation[] morphAbilityLocations);

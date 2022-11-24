@@ -83,9 +83,16 @@ public class MorphState {
     /**
      * Forces the player into human form, and clears the player's needs and instincts.
      * Returns true if successful
+     * TODO: This function is too specialized. It should be removed
      */
     public static boolean resetForm(Configs configs, EntityPlayer player) {
         return forceForm(configs, player, MorphAbilityChangeReason.REGAINED_MORPH_ABILITY, (AbstractMorph)null);
+    }
+    
+    public static boolean forceForm(Configs configs, EntityPlayer player, MorphAbilityChangeReason reason) {
+        IMorphing morphing = player.getCapability(ListenerPlayerHumanity.MORPHING_CAPABILITY, null);
+        AbstractMorph currentMorph = morphing == null ? null : morphing.getCurrentMorph();
+        return forceForm(configs, player, reason, currentMorph);
     }
     
     public static boolean forceForm(Configs configs, EntityPlayer player, MorphAbilityChangeReason reason,
@@ -118,7 +125,8 @@ public class MorphState {
     }
 
     /**
-     * Forces the player into the given AbstractMorph.
+     * Updates the player's morph abilities.
+     * If the morph is different than the current one, the player into the given AbstractMorph.
      * with the given reason, and updates the player's needs and instincts.
      * Returns true if successful
      * Note that like MorphAPI.morph, this function should generally only be called
@@ -132,13 +140,6 @@ public class MorphState {
         }
         if (reason == MorphAbilityChangeReason.FORGOT_LAST_FORM && lastMorph == null) {
             reason = MorphAbilityChangeReason.FORGOT_HUMAN_FORM;
-        }
-        if (!player.world.isRemote) {
-            if (morph == null &&
-                    (reason == MorphAbilityChangeReason.LOST_HUMANITY ||
-                     reason == MorphAbilityChangeReason.FORGOT_HUMAN_FORM)) {
-                throw new IllegalStateException("The player is not a perma-morph");
-            }
         }
 
         // NOTE: On the client side, the player is already morphed because MorphAPI.morph sent a packet first.

@@ -29,10 +29,19 @@ public class CapabilityHumanity implements ICapabilityHumanity {
     
     public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(HardcoreAlchemyCore.MOD_ID, "humanity");
     
+    // A freshly spawned player can only be in a morph for half a day
+    protected static final double BASE_HUMANITY_LOSS_RATE = 2.0D/24000.0D*6.0D; // Per tick
+    // Humanity is gained back 12x more slowly
+    protected static final double BASE_HUMANITY_GAIN_RATE = BASE_HUMANITY_LOSS_RATE/12.0D;
+    // Humanity is lost more slowly when morphed due to heart of form
+    protected static final double HUMANITY_LOSS_MULTIPLIER_FORGOTTEN_MORPH = 1 / 10.0;
+    
     private double humanity;
     // Humanity in the previous tick after humanity tick calculations; allows us to see if humanity was changed in other ways
     private double lastHumanity;
     private double magicInhibition;
+    // TODO: Serialize this
+    private boolean isHumanFormInPhylactery;
     private boolean hasForgottenHumanForm;
     private boolean hasLostHumanity;
     private boolean hasForgottenMorphAbility;
@@ -62,6 +71,11 @@ public class CapabilityHumanity implements ICapabilityHumanity {
     @Override
     public double getMagicInhibition() {
         return this.magicInhibition;
+    }
+
+    @Override
+    public boolean getIsHumanFormInPhylactery() {
+        return this.isHumanFormInPhylactery;
     }
 
     @Override
@@ -95,6 +109,13 @@ public class CapabilityHumanity implements ICapabilityHumanity {
             break;
         case FORGOT_HUMAN_FORM:
             hasForgottenHumanForm = true;
+            break;
+        case CREATED_HUMAN_FORM_PHYLACTERY:
+            hasForgottenHumanForm = true;
+            isHumanFormInPhylactery = true;
+            break;
+        case DESTROYED_HUMAN_FORM_PHYLACTERY:
+            isHumanFormInPhylactery = false;
             break;
         case REMEMBERED_HUMAN_FORM:
             hasForgottenHumanForm = false;
@@ -130,6 +151,24 @@ public class CapabilityHumanity implements ICapabilityHumanity {
         return humanity > 0 && !hasLostHumanity;
     }
     
+    @Override
+    public double getHumanityGainRate() {
+        return BASE_HUMANITY_GAIN_RATE;
+    }
+
+    @Override
+    public double getHumanityLossRate() {
+        if (isHumanFormInPhylactery) {
+            return BASE_HUMANITY_LOSS_RATE * HUMANITY_LOSS_MULTIPLIER_FORGOTTEN_MORPH;
+        }
+        return BASE_HUMANITY_LOSS_RATE;
+    }
+
+    @Override
+    public double getHumanityNMinutesLeft(int minutesLeft) {
+        return getHumanityLossRate() * 20.0D * 60.0D * minutesLeft;
+    }
+
     @Override
     public ITextComponent explainWhyCantMorph() {
         if (hasLostHumanity) {

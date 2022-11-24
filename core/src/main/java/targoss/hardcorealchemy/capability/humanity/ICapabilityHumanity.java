@@ -28,12 +28,9 @@ public interface ICapabilityHumanity {
     public static final IAttribute MAX_HUMANITY = new RangedAttribute(null, HardcoreAlchemyCore.MOD_ID + ":max_humanity", 4.0D, 1e-45, Double.MAX_VALUE).setShouldWatch(true);
     public static final double DEFAULT_HUMANITY_VALUE = MAX_HUMANITY.getDefaultValue();
     
-    public void setHumanity(double humanity);
-    public void setLastHumanity(double lastHumanity);
-    public void setMagicInhibition(double magicInhibition);
     public double getHumanity();
-    public double getLastHumanity();
     public double getMagicInhibition();
+    public boolean getIsHumanFormInPhylactery();
     /** Returns false if the player is unable to morph using the
      *  metamorph morphing interface.
      *  Other methods of morphing may still be possible.
@@ -57,7 +54,17 @@ public interface ICapabilityHumanity {
      *  magic inhibition) should not work if this is false. */
     public boolean shouldDisplayHumanity();
     
-    /** These usually should not be called directly. Use MorphState.forceForm instead. */
+    /* Internal */
+    public double getLastHumanity();
+    public void setHumanity(double humanity);
+    public void setLastHumanity(double lastHumanity);
+    public void setMagicInhibition(double magicInhibition);
+    public double getHumanityGainRate();
+    public double getHumanityLossRate();
+    /** Calculates threshold for displaying warnings when humanity gets critically low */
+    public double getHumanityNMinutesLeft(int minutesLeft);
+    
+    /* These usually should not be called directly. Use MorphState.forceForm instead. */
     public void setHasForgottenHumanForm(boolean hasForgottenHumanForm);
     public void setHasLostHumanity(boolean hasLostHumanity);
     public void setHasForgottenMorphAbility(boolean hasForgottenMorphAbility);

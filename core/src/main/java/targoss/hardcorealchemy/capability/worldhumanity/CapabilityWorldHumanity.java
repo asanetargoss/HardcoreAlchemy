@@ -23,9 +23,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
-import net.minecraft.util.math.Vec3i;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 
 public class CapabilityWorldHumanity implements ICapabilityWorldHumanity {
+    public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(HardcoreAlchemyCore.MOD_ID, "world_humanity");
+    
     protected int entryCount = 0;
     protected static final int MAX_LOCATIONS_PER_PLAYER = 5;
     protected HashMap<UUID, ArrayList<MorphAbilityLocation>> playerUUIDToLocation = new HashMap<>();
@@ -59,12 +63,12 @@ public class CapabilityWorldHumanity implements ICapabilityWorldHumanity {
     }
 
     @Override
-    public void registerMorphAbilityLocation(UUID lifetimeUUID, UUID playerUUID, Vec3i pos) {
+    public void registerMorphAbilityLocation(UUID lifetimeUUID, UUID playerUUID, BlockPos pos) {
         registerMorphAbilityLocation(new MorphAbilityLocation(lifetimeUUID, playerUUID, pos));
     }
 
     @Override
-    public boolean unregisterMorphAbilityLocation(UUID lifetimeUUID, UUID playerUUID, Vec3i pos) {
+    public boolean unregisterMorphAbilityLocation(UUID lifetimeUUID, UUID playerUUID, BlockPos pos) {
         ArrayList<MorphAbilityLocation> locations = playerUUIDToLocation.get(playerUUID);
         if (locations == null) {
             return false;
@@ -83,7 +87,7 @@ public class CapabilityWorldHumanity implements ICapabilityWorldHumanity {
     }
 
     @Override
-    public Vec3i getMorphAbilityLocation(UUID lifetimeUUID, UUID playerUUID) {
+    public BlockPos getMorphAbilityLocation(UUID lifetimeUUID, UUID playerUUID) {
         ArrayList<MorphAbilityLocation> locations = playerUUIDToLocation.get(playerUUID);
         if (locations == null) {
             return null;
