@@ -38,6 +38,7 @@ public class MessageHumanity extends MessageToClient<HardcoreAlchemyCreatures> {
     public boolean syncLastHumanity;
     public double lastHumanity;
     public double magicInhibition;
+    public boolean isHumanFormInPhylactery;
     public boolean hasForgottenHumanForm;
     public boolean hasLostHumanity;
     public boolean hasLostMorphAbility;
@@ -47,6 +48,7 @@ public class MessageHumanity extends MessageToClient<HardcoreAlchemyCreatures> {
         this.syncLastHumanity = syncLastHumanity;
         this.lastHumanity = humanity.getLastHumanity();
         this.magicInhibition = humanity.getMagicInhibition();
+        this.isHumanFormInPhylactery = humanity.getIsHumanFormInPhylactery();
         this.hasForgottenHumanForm = humanity.getHasForgottenHumanForm();
         this.hasLostHumanity = humanity.getHasLostHumanity();
         this.hasLostMorphAbility = humanity.getHasForgottenMorphAbility();
@@ -60,6 +62,7 @@ public class MessageHumanity extends MessageToClient<HardcoreAlchemyCreatures> {
             buf.writeDouble(lastHumanity);
         }
         buf.writeDouble(magicInhibition);
+        buf.writeBoolean(isHumanFormInPhylactery);
         buf.writeBoolean(hasForgottenHumanForm);
         buf.writeBoolean(hasLostHumanity);
         buf.writeBoolean(hasLostMorphAbility);
@@ -73,6 +76,7 @@ public class MessageHumanity extends MessageToClient<HardcoreAlchemyCreatures> {
             lastHumanity = buf.readDouble();
         }
         magicInhibition = buf.readDouble();
+        isHumanFormInPhylactery = buf.readBoolean();
         hasForgottenHumanForm = buf.readBoolean();
         hasLostHumanity = buf.readBoolean();
         hasLostMorphAbility = buf.readBoolean();
@@ -82,20 +86,22 @@ public class MessageHumanity extends MessageToClient<HardcoreAlchemyCreatures> {
         @CapabilityInject(ICapabilityHumanity.class)
         public static final Capability<ICapabilityHumanity> HUMANITY_CAPABILITY = null;
         
-        private double humanity;
-        private boolean syncLastHumanity;
-        private double lastHumanity;
-        private double magicInhibition;
-        private boolean hasForgottenHumanForm;
-        private boolean hasLostHumanity;
-        private boolean hasLostMorphAbility;
+        private final double humanity;
+        private final boolean syncLastHumanity;
+        private final double lastHumanity;
+        private final double magicInhibition;
+        private final boolean isHumanFormInPhylactery;
+        private final boolean hasForgottenHumanForm;
+        private final boolean hasLostHumanity;
+        private final boolean hasLostMorphAbility;
         
         public ReceiveAction(double humanity, boolean syncLastHumanity, double lastHumanity, double magicInhibition,
-                boolean hasForgottenHumanForm, boolean hasLostHumanity, boolean hasLostMorphAbility) {
+                boolean isHumanFormInPhylactery, boolean hasForgottenHumanForm, boolean hasLostHumanity, boolean hasLostMorphAbility) {
             this.humanity = humanity;
             this.syncLastHumanity = syncLastHumanity;
             this.lastHumanity = lastHumanity;
             this.magicInhibition = magicInhibition;
+            this.isHumanFormInPhylactery = isHumanFormInPhylactery;
             this.hasForgottenHumanForm = hasForgottenHumanForm;
             this.hasLostHumanity = hasLostHumanity;
             this.hasLostMorphAbility = hasLostMorphAbility;
@@ -110,6 +116,7 @@ public class MessageHumanity extends MessageToClient<HardcoreAlchemyCreatures> {
                     humanity.setLastHumanity(this.lastHumanity);
                 }
                 humanity.setMagicInhibition(this.magicInhibition);
+                humanity.setIsHumanFormInPhylactery(this.isHumanFormInPhylactery);
                 humanity.setHasForgottenHumanForm(this.hasForgottenHumanForm);
                 humanity.setHasLostHumanity(this.hasLostHumanity);
                 humanity.setHasForgottenMorphAbility(this.hasLostMorphAbility);
@@ -123,7 +130,7 @@ public class MessageHumanity extends MessageToClient<HardcoreAlchemyCreatures> {
             message.getThreadListener().addScheduledTask(
                     new ReceiveAction(
                             message.humanity, message.syncLastHumanity, message.lastHumanity, message.magicInhibition,
-                            message.hasForgottenHumanForm, message.hasLostHumanity, message.hasLostMorphAbility)
+                            message.isHumanFormInPhylactery, message.hasForgottenHumanForm, message.hasLostHumanity, message.hasLostMorphAbility)
                     );
             return null;
         }

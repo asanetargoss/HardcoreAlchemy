@@ -64,7 +64,7 @@ import targoss.hardcorealchemy.util.InventoryUtil;
 import targoss.hardcorealchemy.util.Serialization;
 import targoss.hardcorealchemy.util.WorldUtil;
 
-public class TileHeartOfForm extends TileEntity {
+public class TileHumanityPhylactery extends TileEntity {
     @CapabilityInject(IItemHandler.class)
     public static final Capability<IItemHandler> ITEM_HANDLER_CAPABILITY = null;
     public static final int SLOT_MORPH_TARGET = 0;
@@ -197,7 +197,7 @@ public class TileHeartOfForm extends TileEntity {
 
     // TODO: Syncing?
 
-    public TileHeartOfForm(World world) {
+    public TileHumanityPhylactery(World world) {
         setWorld(world);
     }
     
@@ -207,7 +207,6 @@ public class TileHeartOfForm extends TileEntity {
     
     protected void activate(EntityPlayer player, ICapabilityMisc misc, AbstractMorph morphTarget, BlockPos pos) {
         MinecraftForge.EVENT_BUS.post(new EventHumanityPhylactery.Create(player, misc, morphTarget, pos));
-        // TODO: Is this the unique ID we really want? Maybe the per-life UUID is more relevant
         this.playerUUID = player.getUniqueID();
         this.lifetimeUUID = misc.getLifetimeUUID();
     }
@@ -277,7 +276,7 @@ public class TileHeartOfForm extends TileEntity {
         return isTrueFormSeal(itemStack);
     }
 
-    /** Check for missing item. Deactivate the heart if conditions are met.
+    /** Check for missing item. Deactivate the phylactery if conditions are met.
      * Return true if the caller should stop checking neighboring blocks. **/
     protected boolean tryDisassemble() {
         if (!this.sideEffects) {
@@ -297,7 +296,7 @@ public class TileHeartOfForm extends TileEntity {
     }
 
     /** Check for nearby water (or other liquid satisfying Fluid.doesVaporize()). Put out all nearby fire and
-     * deactivate the heart if conditions are met. Return true if the
+     * deactivate the phylactery if conditions are met. Return true if the
      * caller should stop checking neighboring blocks. **/
     protected boolean tryDouse(World world, BlockPos pos, BlockPos waterTestPos) {
         if (!this.sideEffects) {
@@ -331,7 +330,7 @@ public class TileHeartOfForm extends TileEntity {
         return true;
     }
 
-    /** Check for nearby fire. Extinguish fire and activate the heart
+    /** Check for nearby fire. Extinguish fire and activate the phylactery
      *  if conditions are met. Return true if the caller should stop
      *  checking neighboring blocks. **/
     protected boolean tryIgnite(World world, BlockPos pos, BlockPos testPos) {

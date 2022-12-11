@@ -31,14 +31,14 @@ import net.minecraft.world.World;
 
 // TODO: See TileEntityEnderChestRenderer
 // TODO: See https://wiki.mcjty.eu/modding/index.php?title=Render_Block_TESR_/_OBJ-1.9
-public class BlockHeartOfForm extends Block implements ITileEntityProvider {
-    public BlockHeartOfForm() {
+public class BlockHumanityPhylactery extends Block implements ITileEntityProvider {
+    public BlockHumanityPhylactery() {
         super(Material.IRON);
     }
 
     @Override
     public TileEntity createNewTileEntity(World world, int meta) {
-        return new TileHeartOfForm(world);
+        return new TileHumanityPhylactery(world);
     }
     
     public static class Container extends net.minecraft.inventory.Container {
@@ -53,8 +53,8 @@ public class BlockHeartOfForm extends Block implements ITileEntityProvider {
         super.onNeighborChange(world, pos, neighbor);
         
         TileEntity te = world.getTileEntity(pos);
-        if (te instanceof TileHeartOfForm) {
-            ((TileHeartOfForm)te).onNeighborChange(pos, neighbor);
+        if (te instanceof TileHumanityPhylactery) {
+            ((TileHumanityPhylactery)te).onNeighborChange(pos, neighbor);
         }
     }
 
@@ -64,8 +64,8 @@ public class BlockHeartOfForm extends Block implements ITileEntityProvider {
     @Override
     public void breakBlock(World world, BlockPos pos, IBlockState blockState) {
         TileEntity te = world.getTileEntity(pos);
-        if (te instanceof TileHeartOfForm) {
-            ((TileHeartOfForm)te).breakBlock(world, pos);
+        if (te instanceof TileHumanityPhylactery) {
+            ((TileHumanityPhylactery)te).breakBlock(world, pos);
         }
         
         super.breakBlock(world, pos, blockState);

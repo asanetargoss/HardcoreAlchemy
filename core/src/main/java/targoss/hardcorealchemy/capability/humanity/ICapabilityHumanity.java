@@ -59,6 +59,7 @@ public interface ICapabilityHumanity {
     public void setHumanity(double humanity);
     public void setLastHumanity(double lastHumanity);
     public void setMagicInhibition(double magicInhibition);
+    public void setIsHumanFormInPhylactery(boolean isHumanFormInPhylactery);
     public double getHumanityGainRate();
     public double getHumanityLossRate();
     /** Calculates threshold for displaying warnings when humanity gets critically low */

@@ -32,6 +32,7 @@ public class StorageHumanity implements Capability.IStorage<ICapabilityHumanity>
         nbt.setDouble("humanity", instance.getHumanity());
         nbt.setDouble("lastHumanity", instance.getLastHumanity());
         nbt.setDouble("magicInhibition", instance.getMagicInhibition());
+        nbt.setBoolean("isHumanFormInPhylactery", instance.getIsHumanFormInPhylactery());
         nbt.setBoolean("hasForgottenHumanForm", instance.getHasForgottenHumanForm());
         nbt.setBoolean("hasLostHumanity", instance.getHasLostHumanity());
         nbt.setBoolean("hasForgottenMorphAbility", instance.getHasForgottenMorphAbility());
@@ -48,6 +49,7 @@ public class StorageHumanity implements Capability.IStorage<ICapabilityHumanity>
         instance.setHumanity(nbtCompound.getDouble("humanity"));
         instance.setLastHumanity(nbtCompound.getDouble("lastHumanity"));
         instance.setMagicInhibition(nbtCompound.getDouble("magicInhibition"));
+        instance.setIsHumanFormInPhylactery(nbtCompound.getBoolean("isHumanFormInPhylactery"));
         instance.setHasForgottenHumanForm(nbtCompound.getBoolean("hasForgottenHumanForm"));
         instance.setHasLostHumanity(nbtCompound.getBoolean("hasLostHumanity"));
         instance.setHasForgottenMorphAbility(nbtCompound.getBoolean("hasForgottenMorphAbility"));

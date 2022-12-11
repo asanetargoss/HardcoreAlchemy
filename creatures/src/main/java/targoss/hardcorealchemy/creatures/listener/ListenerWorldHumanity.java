@@ -27,6 +27,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import targoss.hardcorealchemy.HardcoreAlchemyCore;
@@ -131,7 +132,31 @@ public class ListenerWorldHumanity extends HardcoreAlchemyListener {
         MorphState.forceForm(coreConfigs, player, MorphAbilityChangeReason.DESTROYED_HUMAN_FORM_PHYLACTERY);
     }
     
-    public void onPlayerDeath() {
-        // TODO: Implement (probably as event listener). Remove the morph ability location. If the heart of form is loaded and active, deactivate it.
+    // TODO: If the player is perma-morphed, their phylactery should deactivate:
+    //       [ ] Add per-entry enum PhylacteryState, with choices of active (default), dormant, and deactivated
+    //       [ ] Add function to set the PhylacteryState, in the universe cap and also the tile if it is loaded
+    //       [ ] When the tile is loaded, check PhylacteryState in the universe cap
+    //       [ ] Change phylactery behavior based on PhylacteryState
+    
+    public static void onPlayerDeath(EntityPlayer oldPlayer, EntityPlayer newPlayer, boolean keepPhylactery) {
+        ICapabilityHumanity oldHumanity = oldPlayer.getCapability(HUMANITY_CAPABILITY, null);
+        if (oldHumanity == null) { return; }
+        ICapabilityHumanity newHumanity = newPlayer.getCapability(HUMANITY_CAPABILITY, null);
+        if (newHumanity == null) { return; }
+        
+        boolean hadPhylactery = oldHumanity.getIsHumanFormInPhylactery();
+        
+        if (keepPhylactery) {
+            // TODO
+        }
+        else {
+            newHumanity.setIsHumanFormInPhylactery(false);
+            // TODO: Mark the entry as "dormant", but don't remove it
+            // TODO: If the chunk is loaded, mark any affected phylactery as dormant, which means the phylactery is technically still active, but it has no flame and can't be doused with water.
+            // TODO: When a phylactery is loaded, load dormancy state from the world capability
+        }
+        // TODO: Implement (probably as event listener, PlayerEvent.Clone? PlayerRespawnEvent?). Remove the morph ability location. If the phylactery is loaded and active, deactivate it.
+        
+        // TODO: What to do about keepPhylactery (i.e. keepMorphs)? It seems we may need a new "unique ID" to preserve morphs across lives. OR... need to transfer the phylactery ownership to the new ID. Maybe create a duplicate entry?
     }
 }

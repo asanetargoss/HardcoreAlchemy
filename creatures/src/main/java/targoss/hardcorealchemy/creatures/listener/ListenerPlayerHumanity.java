@@ -239,7 +239,7 @@ public class ListenerPlayerHumanity extends HardcoreAlchemyListener {
     }
     
     @SubscribeEvent
-    public void onSpawnGhost(SpawnGhostEvent.Pre event) {
+    public void onSpawnMorphPickup(SpawnGhostEvent.Pre event) {
         ICapabilityHumanity capabilityHumanity = event.player.getCapability(HUMANITY_CAPABILITY, null);
         if (capabilityHumanity == null) {
             return;

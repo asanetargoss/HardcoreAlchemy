@@ -33,14 +33,13 @@ public class CapabilityHumanity implements ICapabilityHumanity {
     protected static final double BASE_HUMANITY_LOSS_RATE = 2.0D/24000.0D*6.0D; // Per tick
     // Humanity is gained back 12x more slowly
     protected static final double BASE_HUMANITY_GAIN_RATE = BASE_HUMANITY_LOSS_RATE/12.0D;
-    // Humanity is lost more slowly when morphed due to heart of form
+    // Humanity is lost more slowly when morphed due to humanity phylactery
     protected static final double HUMANITY_LOSS_MULTIPLIER_FORGOTTEN_MORPH = 1 / 10.0;
     
     private double humanity;
     // Humanity in the previous tick after humanity tick calculations; allows us to see if humanity was changed in other ways
     private double lastHumanity;
     private double magicInhibition;
-    // TODO: Serialize this
     private boolean isHumanFormInPhylactery;
     private boolean hasForgottenHumanForm;
     private boolean hasLostHumanity;
@@ -66,6 +65,11 @@ public class CapabilityHumanity implements ICapabilityHumanity {
     @Override
     public void setMagicInhibition(double magicInhibition) {
         this.magicInhibition = magicInhibition;
+    }
+    
+    @Override
+    public void setIsHumanFormInPhylactery(boolean isHumanFormInPhylactery) {
+        this.isHumanFormInPhylactery = isHumanFormInPhylactery;
     }
     
     @Override
