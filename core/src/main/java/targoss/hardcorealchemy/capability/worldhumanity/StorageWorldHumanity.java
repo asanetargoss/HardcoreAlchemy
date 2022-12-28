@@ -29,14 +29,46 @@ import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
-import targoss.hardcorealchemy.capability.worldhumanity.ICapabilityWorldHumanity.MorphAbilityLocation;
+import targoss.hardcorealchemy.capability.worldhumanity.ICapabilityWorldHumanity.Phylactery;
 import targoss.hardcorealchemy.util.Serialization;
 
 public class StorageWorldHumanity implements Capability.IStorage<ICapabilityWorldHumanity> {
-    protected static final String MORPH_ABILITY_LOCATIONS = "morph_ability_locations";
-    protected static final String MORPH_ABILITY_LOCATION_LIFETIME_UUID = "lifetime_uuid";
-    protected static final String MORPH_ABILITY_LOCATION_PLAYER_UUID = "player_uuid";
-    protected static final String MORPH_ABILITY_LOCATION_POS = "pos";
+    protected static final String PHYLACTERIES = "morph_abilities";
+    protected static final String PHYLACTERY_LIFETIME_UUID = "lifetime_uuid";
+    protected static final String PHYLACTERY_PLAYER_UUID = "player_uuid";
+    protected static final String PHYLACTERY_POS = "pos";
+    protected static final String PHYLACTERY_DIMENSION = "dimension";
+    protected static final String PHYLACTERY_STATE = "state";
+    
+    protected static byte stateFromEnum(ICapabilityWorldHumanity.State en) {
+        switch (en) {
+        case ACTIVE:
+            return 0;
+        case DORMANT:
+            return 1;
+        case DEACTIVATED:
+            return 2;
+        case REINCARNATED:
+            return 3;
+        default:
+            return -1;
+        }
+    }
+    
+    protected static ICapabilityWorldHumanity.State enumFromState(byte st) {
+        switch (st) {
+        case 0:
+            return ICapabilityWorldHumanity.State.ACTIVE;
+        case 1:
+            return ICapabilityWorldHumanity.State.DORMANT;
+        case 2:
+            return ICapabilityWorldHumanity.State.DEACTIVATED;
+        case 3:
+            return ICapabilityWorldHumanity.State.REINCARNATED;
+        default:
+            return ICapabilityWorldHumanity.State.DEACTIVATED;
+        }
+    }
 
     @Override
     public NBTBase writeNBT(Capability<ICapabilityWorldHumanity> capability, ICapabilityWorldHumanity instance,
@@ -45,15 +77,17 @@ public class StorageWorldHumanity implements Capability.IStorage<ICapabilityWorl
         
         {
             NBTTagList nbtMorphAbilityLocations = new NBTTagList();
-            MorphAbilityLocation[] morphAbilityLocations = instance.dumpMorphAbilityLocations();
-            for (MorphAbilityLocation morphAbilityLocation : morphAbilityLocations) {
+            Phylactery[] morphAbilityLocations = instance.dumpPhylacteries();
+            for (Phylactery morphAbilityLocation : morphAbilityLocations) {
                 NBTTagCompound nbtMorphAbilityLocation = new NBTTagCompound();
-                nbtMorphAbilityLocation.setTag(MORPH_ABILITY_LOCATION_LIFETIME_UUID, NBTUtil.createUUIDTag(morphAbilityLocation.lifetimeUUID));
-                nbtMorphAbilityLocation.setTag(MORPH_ABILITY_LOCATION_PLAYER_UUID, NBTUtil.createUUIDTag(morphAbilityLocation.playerUUID));
-                nbtMorphAbilityLocation.setTag(MORPH_ABILITY_LOCATION_POS, NBTUtil.createPosTag(morphAbilityLocation.pos));
+                nbtMorphAbilityLocation.setTag(PHYLACTERY_LIFETIME_UUID, NBTUtil.createUUIDTag(morphAbilityLocation.lifetimeUUID));
+                nbtMorphAbilityLocation.setTag(PHYLACTERY_PLAYER_UUID, NBTUtil.createUUIDTag(morphAbilityLocation.playerUUID));
+                nbtMorphAbilityLocation.setTag(PHYLACTERY_POS, NBTUtil.createPosTag(morphAbilityLocation.data.pos));
+                nbtMorphAbilityLocation.setInteger(PHYLACTERY_DIMENSION, morphAbilityLocation.data.dimension);
+                nbtMorphAbilityLocation.setByte(PHYLACTERY_STATE, stateFromEnum(morphAbilityLocation.data.state));                
                 nbtMorphAbilityLocations.appendTag(nbtMorphAbilityLocation);
             }
-            nbt.setTag(MORPH_ABILITY_LOCATIONS, nbtMorphAbilityLocations);
+            nbt.setTag(PHYLACTERIES, nbtMorphAbilityLocations);
         }
         
         return nbt;
@@ -67,31 +101,34 @@ public class StorageWorldHumanity implements Capability.IStorage<ICapabilityWorl
         }
         NBTTagCompound nbtCompound = (NBTTagCompound)nbt;
         
-        if (nbtCompound.hasKey(MORPH_ABILITY_LOCATIONS, Serialization.NBT_LIST_ID)) {
-            NBTTagList nbtMorphAbilityLocations = (NBTTagList)nbtCompound.getTag(MORPH_ABILITY_LOCATIONS);
-            final int n = nbtMorphAbilityLocations.tagCount();
+        if (nbtCompound.hasKey(PHYLACTERIES, Serialization.NBT_LIST_ID)) {
+            NBTTagList nbtPhylacteries = (NBTTagList)nbtCompound.getTag(PHYLACTERIES);
+            final int n = nbtPhylacteries.tagCount();
             
-            ArrayList<MorphAbilityLocation> morphAbilityLocations = new ArrayList<>(n);
+            ArrayList<Phylactery> phylacteries = new ArrayList<>(n);
             for (int i = 0; i < n; ++i) {
-                NBTTagCompound nbtMorphAbilityLocation = nbtMorphAbilityLocations.getCompoundTagAt(i);
-                if (!nbtMorphAbilityLocation.hasKey(MORPH_ABILITY_LOCATION_LIFETIME_UUID, Serialization.NBT_COMPOUND_ID)) {
+                NBTTagCompound nbtPhylactery = nbtPhylacteries.getCompoundTagAt(i);
+                if (!nbtPhylactery.hasKey(PHYLACTERY_LIFETIME_UUID, Serialization.NBT_COMPOUND_ID)) {
                     continue;
                 }
-                UUID lifetimeUUID = NBTUtil.getUUIDFromTag(nbtMorphAbilityLocation.getCompoundTag(MORPH_ABILITY_LOCATION_LIFETIME_UUID));
-                if (!nbtMorphAbilityLocation.hasKey(MORPH_ABILITY_LOCATION_PLAYER_UUID, Serialization.NBT_COMPOUND_ID)) {
+                UUID lifetimeUUID = NBTUtil.getUUIDFromTag(nbtPhylactery.getCompoundTag(PHYLACTERY_LIFETIME_UUID));
+                if (!nbtPhylactery.hasKey(PHYLACTERY_PLAYER_UUID, Serialization.NBT_COMPOUND_ID)) {
                     continue;
                 }
-                UUID playerUUID = NBTUtil.getUUIDFromTag(nbtMorphAbilityLocation.getCompoundTag(MORPH_ABILITY_LOCATION_PLAYER_UUID));
-                if (!nbtMorphAbilityLocation.hasKey(MORPH_ABILITY_LOCATION_POS, Serialization.NBT_COMPOUND_ID)) {
+                UUID playerUUID = NBTUtil.getUUIDFromTag(nbtPhylactery.getCompoundTag(PHYLACTERY_PLAYER_UUID));
+                if (!nbtPhylactery.hasKey(PHYLACTERY_POS, Serialization.NBT_COMPOUND_ID)) {
                     continue;
                 }
-                BlockPos pos = NBTUtil.getPosFromTag(nbtMorphAbilityLocation.getCompoundTag(MORPH_ABILITY_LOCATION_POS));
+                BlockPos pos = NBTUtil.getPosFromTag(nbtPhylactery.getCompoundTag(PHYLACTERY_POS));
+                int dimension = nbtPhylactery.getInteger(PHYLACTERY_DIMENSION);
+                byte stateByte = nbtPhylactery.getByte(PHYLACTERY_STATE);
+                ICapabilityWorldHumanity.State state = enumFromState(stateByte);
                 
-                MorphAbilityLocation morphAbilityLocation = new MorphAbilityLocation(lifetimeUUID, playerUUID, pos);
-                morphAbilityLocations.add(morphAbilityLocation);
+                Phylactery phylactery = new Phylactery(lifetimeUUID, playerUUID, new ICapabilityWorldHumanity.Data(pos, dimension, state));
+                phylacteries.add(phylactery);
             }
             
-            instance.clearAndPutMorphAbilityLocations((MorphAbilityLocation[])morphAbilityLocations.toArray());
+            instance.clearAndPutPhylacteries((Phylactery[])phylacteries.toArray());
         }
     }
 }

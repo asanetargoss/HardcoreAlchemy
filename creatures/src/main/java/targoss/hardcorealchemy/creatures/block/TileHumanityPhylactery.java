@@ -201,19 +201,28 @@ public class TileHumanityPhylactery extends TileEntity {
         setWorld(world);
     }
     
+    // TODO: Call this after setting world state
+    public void checkActive() {
+        if (isActive()) {
+            if (!ListenerWorldHumanity.doesPlayerPhylacteryStillExist(this.getWorld(), lifetimeUUID, playerUUID)) {
+                deactivate();
+            }
+        }
+    }
+    
     public boolean isActive() {
         return playerUUID != null;
     }
     
-    protected void activate(EntityPlayer player, ICapabilityMisc misc, AbstractMorph morphTarget, BlockPos pos) {
-        MinecraftForge.EVENT_BUS.post(new EventHumanityPhylactery.Create(player, misc, morphTarget, pos));
+    protected void activate(EntityPlayer player, ICapabilityMisc misc, AbstractMorph morphTarget, BlockPos pos, int dimension) {
+        MinecraftForge.EVENT_BUS.post(new EventHumanityPhylactery.Create(player, misc, morphTarget, pos, dimension));
         this.playerUUID = player.getUniqueID();
         this.lifetimeUUID = misc.getLifetimeUUID();
     }
     
     public void deactivate() {
         if (this.playerUUID != null) {
-            MinecraftForge.EVENT_BUS.post(new EventHumanityPhylactery.Destroy(this.getWorld(), this.lifetimeUUID, this.playerUUID, this.getPos()));
+            MinecraftForge.EVENT_BUS.post(new EventHumanityPhylactery.Destroy(this.getWorld(), this.lifetimeUUID, this.playerUUID, this.getPos(), this.getWorld().provider.getDimension()));
             this.playerUUID = null;
             this.lifetimeUUID = null;
         }
@@ -382,7 +391,7 @@ public class TileHumanityPhylactery extends TileEntity {
             this.sideEffects = true;
             WorldUtil.sendFireExtinguishSound(world, testPos);
             // Give effect to player in range
-            activate(nearestPlayer, misc, morphTarget, pos);
+            activate(nearestPlayer, misc, morphTarget, pos, world.provider.getDimension());
             return true;
         }
         return false;
@@ -451,10 +460,6 @@ public class TileHumanityPhylactery extends TileEntity {
             lifetimeUUID = UUID.fromString(compound.getString(NBT_LIFETIME_UUID));
         }
         
-        if (isActive()) {
-            if (!ListenerWorldHumanity.doesPhylacteryStillExist(this.getWorld(), lifetimeUUID, playerUUID)) {
-                deactivate();
-            }
-        }
+        checkActive();
     }
 }
