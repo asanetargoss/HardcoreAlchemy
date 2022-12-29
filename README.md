@@ -29,7 +29,6 @@ The Hardcore Alchemy mod suite is tested to work with specific mods. Below are t
 
 #### Optional mods
 
-* [Hwyla](htjps://www.curseforge.com/minecraft/mc-mods/hwyla) - In-game overlays.
 * [Nutrition HcA Edition](https://github.com/asanetargoss/Nutrition/releases) and/or [Spice of Life](https://www.curseforge.com/minecraft/mc-mods/the-spice-of-life) - For nutrition.
   * The official version of the Nutrition mod will not work, and HcA assumes the default 5 nutrients
 * [Pam's Harvestcraft](https://www.curseforge.com/minecraft/mc-mods/pams-harvestcraft) - Right-click harvesting and food support
