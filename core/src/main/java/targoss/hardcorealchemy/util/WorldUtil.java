@@ -31,7 +31,6 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -45,10 +44,13 @@ public class WorldUtil {
         LAVA
     }
     
-    public static World getOverworld(World dummyWorld) {
-        MinecraftServer server = MiscVanilla.getServer(dummyWorld);
-        World overworld = server.worlds[0];
-        return overworld;
+    public static World getOverworld() {
+        // The overworld should always exist
+        return maybeGetDimWorld(0);
+    }
+    
+    public static @Nullable World maybeGetDimWorld(int dimension) {
+        return net.minecraftforge.common.DimensionManager.getWorld(dimension);
     }
     
     public static class CollisionPredicate {

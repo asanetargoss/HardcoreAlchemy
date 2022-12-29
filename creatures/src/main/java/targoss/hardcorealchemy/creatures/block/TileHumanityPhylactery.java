@@ -54,9 +54,12 @@ import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
+import targoss.hardcorealchemy.capability.UniverseCapabilityManager;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.capability.humanity.ProviderHumanity;
 import targoss.hardcorealchemy.capability.misc.ICapabilityMisc;
+import targoss.hardcorealchemy.capability.worldhumanity.ICapabilityWorldHumanity;
+import targoss.hardcorealchemy.creatures.HardcoreAlchemyCreatures;
 import targoss.hardcorealchemy.creatures.event.EventHumanityPhylactery;
 import targoss.hardcorealchemy.creatures.item.ItemSealOfForm;
 import targoss.hardcorealchemy.creatures.listener.ListenerWorldHumanity;
@@ -82,6 +85,8 @@ public class TileHumanityPhylactery extends TileEntity {
     
     @CapabilityInject(ICapabilityMisc.class)
     public static final Capability<ICapabilityMisc> MISC_CAPABILITY = null;
+    @CapabilityInject(ICapabilityWorldHumanity.class)
+    public static final Capability<ICapabilityWorldHumanity> HUMANITY_WORLD_CAPABILITY = null;
     
     protected class Inventory extends ItemStackHandler {
         protected boolean sideEffects = true;
@@ -177,6 +182,8 @@ public class TileHumanityPhylactery extends TileEntity {
     public final Inventory inventory = new Inventory(SLOT_COUNT);
     public UUID playerUUID = null;
     public UUID lifetimeUUID = null;
+    // TODO: Dormant phylacteries are technically still active, but don't have a flame, and cannot be doused with water
+    public boolean dormant = false;
     
     @Override
     public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
@@ -201,12 +208,73 @@ public class TileHumanityPhylactery extends TileEntity {
         setWorld(world);
     }
     
-    // TODO: Call this after setting world state
-    public void checkActive() {
-        if (isActive()) {
-            if (!ListenerWorldHumanity.doesPlayerPhylacteryStillExist(this.getWorld(), lifetimeUUID, playerUUID)) {
-                deactivate();
+    public static void checkWorldState(@Nullable ICapabilityWorldHumanity.Phylactery oldPhylactery, UUID newPlayerLifetimeUUID, UUID newPlayerUUID) {
+        if (oldPhylactery != null) {
+            World phyWorld = WorldUtil.maybeGetDimWorld(oldPhylactery.dimension);
+            if (phyWorld != null && phyWorld.isBlockLoaded(oldPhylactery.pos)) {
+                TileEntity te = phyWorld.getTileEntity(oldPhylactery.pos);
+                if (te instanceof TileHumanityPhylactery) {
+                    TileHumanityPhylactery phyTE = (TileHumanityPhylactery)te;
+                    phyTE.checkWorldState(false);
+                }
+                else {
+                    HardcoreAlchemyCreatures.LOGGER.warn("Expected tile entity at pos: " + oldPhylactery.pos + ", dim: " + oldPhylactery.dimension);
+                }
             }
+            else {
+                // TODO: Fire events that would be fired if this tile entity was loaded
+            }
+        } 
+        else {
+            // TODO: Assume the phylactery was previously inactive
+        }
+    }
+    
+    protected void checkWorldState(boolean isWorldLoad) {
+        ICapabilityWorldHumanity.Phylactery phy = ListenerWorldHumanity.getBlockPhylactery(lifetimeUUID, playerUUID, getPos(), getWorld().provider.getDimension());
+        boolean shouldUpdate;
+        boolean worldStateActive;
+        boolean worldStateDormant;
+        if (phy != null) {
+            switch (phy.state) {
+            case ACTIVE:
+                shouldUpdate = true;
+                worldStateActive = true;
+                worldStateDormant = false;
+                break;
+            case DEACTIVATED:
+                shouldUpdate = true;
+                worldStateActive = false;
+                worldStateDormant = false;
+                break;
+            case DORMANT:
+                shouldUpdate = true;
+                worldStateActive = true;
+                worldStateDormant = true;
+                break;
+            default:
+                // This state is invalid/not handled, so don't do anything
+                shouldUpdate = false;
+                worldStateActive = false;
+                worldStateDormant = false;
+                break;
+            }
+        }
+        else {
+            // Assume the phylactery is deactivated
+            shouldUpdate = true;
+            worldStateActive = false;
+            worldStateDormant = false;
+        }
+        if (shouldUpdate) {
+            // Note the asymmetry here. EventHumanityPhylactery.Destroy could be called, but EventHumanityPhylactery.Create will not, because that event requires information we don't have.
+            if (worldStateActive) {
+                activate(isWorldLoad, phy.playerUUID, phy.lifetimeUUID);
+            }
+            else {
+                deactivate(isWorldLoad);
+            }
+            setDormant(worldStateDormant);
         }
     }
     
@@ -214,18 +282,62 @@ public class TileHumanityPhylactery extends TileEntity {
         return playerUUID != null;
     }
     
-    protected void activate(EntityPlayer player, ICapabilityMisc misc, AbstractMorph morphTarget, BlockPos pos, int dimension) {
-        MinecraftForge.EVENT_BUS.post(new EventHumanityPhylactery.Create(player, misc, morphTarget, pos, dimension));
-        this.playerUUID = player.getUniqueID();
-        this.lifetimeUUID = misc.getLifetimeUUID();
+    public boolean isDormant() {
+        return dormant;
     }
     
-    public void deactivate() {
-        if (this.playerUUID != null) {
-            MinecraftForge.EVENT_BUS.post(new EventHumanityPhylactery.Destroy(this.getWorld(), this.lifetimeUUID, this.playerUUID, this.getPos(), this.getWorld().provider.getDimension()));
-            this.playerUUID = null;
-            this.lifetimeUUID = null;
+    protected void activate(boolean isWorldLoad, UUID playerUUID, UUID lifetimeUUID) {
+        if (this.playerUUID == playerUUID && this.lifetimeUUID == lifetimeUUID) {
+            return;
         }
+        AbstractMorph morphTarget = this.getMorphTarget();
+        if (morphTarget == null) {
+            return;
+        }
+        
+        this.playerUUID = playerUUID;
+        this.lifetimeUUID = lifetimeUUID;
+        if (!isWorldLoad) {
+            MinecraftForge.EVENT_BUS.post(new EventHumanityPhylactery.Recreate(playerUUID, lifetimeUUID, morphTarget, this.getWorld(), this.getPos(), this.getWorld().provider.getDimension()));
+        }
+    }
+    
+    protected void activate(EntityPlayer player, ICapabilityMisc misc, AbstractMorph morphTarget, BlockPos pos, int dimension) {
+        if (playerUUID == player.getUniqueID() && lifetimeUUID == misc.getLifetimeUUID()) {
+            return;
+        }
+        
+        ICapabilityWorldHumanity worldHumanity = UniverseCapabilityManager.INSTANCE.getCapability(HUMANITY_WORLD_CAPABILITY);
+        if (worldHumanity != null) {
+            worldHumanity.registerPhylactery(misc.getLifetimeUUID(), player.getUniqueID(), getPos(), getWorld().provider.getDimension());
+        }
+        this.playerUUID = player.getUniqueID();
+        this.lifetimeUUID = misc.getLifetimeUUID();
+        MinecraftForge.EVENT_BUS.post(new EventHumanityPhylactery.Create(player, misc, morphTarget, this.getWorld(), pos, dimension));
+    }
+    
+    protected void setDeactivated() {
+        this.playerUUID = null;
+        this.lifetimeUUID = null;
+        this.dormant = false;
+    }
+    
+    public void deactivate(boolean isWorldLoad) {
+        if (!isWorldLoad && this.playerUUID != null && !dormant) {
+            ICapabilityWorldHumanity worldHumanity = UniverseCapabilityManager.INSTANCE.getCapability(HUMANITY_WORLD_CAPABILITY);
+            if (worldHumanity == null) {
+                return;
+            }
+            boolean wasRegistered = worldHumanity.unregisterPhylactery(lifetimeUUID, playerUUID, getPos(), getWorld().provider.getDimension());
+            if (wasRegistered) {
+                MinecraftForge.EVENT_BUS.post(new EventHumanityPhylactery.Destroy(this.lifetimeUUID, this.playerUUID, this.getWorld(), this.getPos(), getWorld().provider.getDimension()));
+            }
+        }
+        setDeactivated();
+    }
+    
+    public void setDormant(boolean dormant) {
+        this.dormant = dormant;
     }
     
     protected static boolean isSufficientFuel(ItemStack itemStack) {
@@ -298,7 +410,7 @@ public class TileHumanityPhylactery extends TileEntity {
         if (InventoryUtil.isEmptyItemStack(trueFormStack) ||
                 trueFormStack.getItem() != SEAL_OF_FORM ||
                 !ItemSealOfForm.hasHumanTag(trueFormStack)) {
-            deactivate();
+            deactivate(false);
             return true;
         }
         return false;
@@ -311,6 +423,9 @@ public class TileHumanityPhylactery extends TileEntity {
         if (!this.sideEffects) {
             return true;
         }
+        if (isDormant()) {
+            return true;
+        }
         IFluidHandler fluidHandler = FluidUtil.getFluidHandler(world, pos, null);
         if (fluidHandler == null) {
             return false;
@@ -321,7 +436,7 @@ public class TileHumanityPhylactery extends TileEntity {
             return false;
         }
         
-        deactivate();
+        deactivate(false);
         // Put out all neighboring fire blocks to prevent an edge case where the tile doesn't activate when fire is nearby
         for (EnumFacing facing : EnumFacing.VALUES) {
             BlockPos fireTestPos = pos.offset(facing);
@@ -416,7 +531,7 @@ public class TileHumanityPhylactery extends TileEntity {
     }
     
     public void breakBlock(World world, BlockPos pos) {
-        deactivate();
+        deactivate(false);
         final int n = inventory.getSlots();
         for (int i = 0; i < n; ++i) {
             ItemStack itemStack = inventory.getStackInSlot(i);
@@ -460,6 +575,6 @@ public class TileHumanityPhylactery extends TileEntity {
             lifetimeUUID = UUID.fromString(compound.getString(NBT_LIFETIME_UUID));
         }
         
-        checkActive();
+        checkWorldState(true);
     }
 }

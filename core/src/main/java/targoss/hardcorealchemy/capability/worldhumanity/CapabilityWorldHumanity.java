@@ -66,7 +66,7 @@ public class CapabilityWorldHumanity implements ICapabilityWorldHumanity {
 
     @Override
     public void registerPhylactery(UUID lifetimeUUID, UUID playerUUID, BlockPos pos, int dimension) {
-        registerPhylactery(new Phylactery(lifetimeUUID, playerUUID, new Data(pos, dimension, ICapabilityWorldHumanity.State.ACTIVE)));
+        registerPhylactery(new Phylactery(lifetimeUUID, playerUUID, pos, dimension, ICapabilityWorldHumanity.State.ACTIVE));
     }
 
     public @Nullable Phylactery getPhylacteryInternal(UUID lifetimeUUID, UUID playerUUID, @Nullable BlockPos pos, int dimension) {
@@ -74,19 +74,31 @@ public class CapabilityWorldHumanity implements ICapabilityWorldHumanity {
         if (phylacteries == null) {
             return null;
         }
+        boolean foundMatchingPosition = false;
         
         int reincarnate_index = -1;
-        for (int i = 0; i < phylacteries.size(); ++i) {
+        for (int i = phylacteries.size()-1; i >= 0; --i) {
             Phylactery phylactery = phylacteries.get(i);
             // Should always be true: phylactery.playerUUID.equals(playerUUID))
             if (phylactery.lifetimeUUID.equals(lifetimeUUID)) {
                 return phylactery;
             }
-            if (reincarnate_index == -1) {
-                if (phylactery.data.state == ICapabilityWorldHumanity.State.REINCARNATED &&
-                        (pos == null || (phylactery.data.pos.equals(pos) && phylactery.data.dimension == dimension))) {
+            if (pos == null) {
+                if (phylactery.state == ICapabilityWorldHumanity.State.REINCARNATED) {
                     reincarnate_index = i;
                     break;
+                }
+            }
+            else {
+                if (phylactery.pos.equals(pos) && phylactery.dimension == dimension) {
+                    foundMatchingPosition = true;
+                    if (phylactery.state != ICapabilityWorldHumanity.State.REINCARNATED) {
+                        return phylactery;
+                    }
+                    else {
+                        reincarnate_index = i;
+                        break;
+                    }
                 }
             }
         }
@@ -95,7 +107,7 @@ public class CapabilityWorldHumanity implements ICapabilityWorldHumanity {
             if (pos == null) {
                 for (int i = phylacteries.size() - 1; i > reincarnate_index; --i) {
                     Phylactery phylactery = phylacteries.get(i);
-                    if (phylactery.data.state == ICapabilityWorldHumanity.State.ACTIVE) {
+                    if (phylactery.state == ICapabilityWorldHumanity.State.ACTIVE) {
                         return phylactery;
                     }
                 }
@@ -103,26 +115,37 @@ public class CapabilityWorldHumanity implements ICapabilityWorldHumanity {
             else {
                 for (int i = reincarnate_index + 1; i < phylacteries.size(); ++i) {
                     Phylactery phylactery = phylacteries.get(i);
-                    if (phylactery.data.state == ICapabilityWorldHumanity.State.ACTIVE &&
-                            (phylactery.data.pos.equals(pos) && phylactery.data.dimension == dimension)) {
+                    if (phylactery.state == ICapabilityWorldHumanity.State.ACTIVE &&
+                            (phylactery.pos.equals(pos) && phylactery.dimension == dimension)) {
                         return phylactery;
                     }
                 }
             }
         }
         
+        if (pos != null && !foundMatchingPosition) {
+            // One of several possibilities:
+            // - Caller is trying to get the tile entity data at a position that does not have the data (likely a bug)
+            // - Old phylacteries have been wiped for performance reasons (see registerPhylactery) (nothing we can do)
+            // - Some sort of state bug
+            HardcoreAlchemyCore.LOGGER.warn("Tile entity bookeeping not found for position: " + pos + ", dimension: " + dimension + ".");
+        }
         return null;
     }
     
     @Override
     public @Nullable Phylactery getPlayerPhylactery(UUID lifetimeUUID, UUID playerUUID) {
-        return getPhylacteryInternal(lifetimeUUID, playerUUID, null, 0);
+        Phylactery phy = getPhylacteryInternal(lifetimeUUID, playerUUID, null, 0);
+        assert(phy == null || phy.state == ICapabilityWorldHumanity.State.ACTIVE);
+        return phy;
     }
     
     @Override
     public @Nullable Phylactery getBlockPhylactery(UUID lifetimeUUID, UUID playerUUID, BlockPos pos, int dimension) {
         assert(pos != null);
-        return getPhylacteryInternal(lifetimeUUID, playerUUID, pos, dimension);
+        Phylactery phy = getPhylacteryInternal(lifetimeUUID, playerUUID, pos, dimension);
+        assert(phy.state != ICapabilityWorldHumanity.State.REINCARNATED);
+        return phy;
     }
 
     @Override
@@ -131,7 +154,9 @@ public class CapabilityWorldHumanity implements ICapabilityWorldHumanity {
         if (phylactery == null) {
             return ICapabilityWorldHumanity.State.DEACTIVATED;
         }
-        return phylactery.data.state;
+        assert(phylactery.state != ICapabilityWorldHumanity.State.REINCARNATED);
+        assert(phylactery.state != ICapabilityWorldHumanity.State.DEACTIVATED);
+        return phylactery.state;
     }
 
     @Override
@@ -140,12 +165,18 @@ public class CapabilityWorldHumanity implements ICapabilityWorldHumanity {
         if (phylactery == null) {
             return;
         }
-        phylactery.data.state = state;
+        phylactery.state = state;
     }
 
     @Override
     public boolean hasPlayerPhylactery(UUID lifetimeUUID, UUID playerUUID) {
         Phylactery phylactery = getPhylacteryInternal(lifetimeUUID, playerUUID, null, 0);
+        return phylactery != null;
+    }
+
+    @Override
+    public boolean hasBlockPhylactery(UUID lifetimeUUID, UUID playerUUID, BlockPos pos, int dimension) {
+        Phylactery phylactery = getPhylacteryInternal(lifetimeUUID, playerUUID, pos, dimension);
         return phylactery != null;
     }
 
@@ -159,7 +190,7 @@ public class CapabilityWorldHumanity implements ICapabilityWorldHumanity {
         for (int i = 0; i < phylacteries.size(); ++i) {
             Phylactery phy = phylacteries.get(i);
             if (phy.lifetimeUUID.equals(lifetimeUUID) && phy.playerUUID.equals(playerUUID) &&
-                    phy.data.pos.equals(pos) && phy.data.dimension == dimension) {
+                    phy.pos.equals(pos) && phy.dimension == dimension) {
                 phylacteries.remove(i);
                 --entryCount;
                 removed = true;

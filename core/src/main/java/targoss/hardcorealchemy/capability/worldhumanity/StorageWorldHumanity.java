@@ -82,9 +82,9 @@ public class StorageWorldHumanity implements Capability.IStorage<ICapabilityWorl
                 NBTTagCompound nbtMorphAbilityLocation = new NBTTagCompound();
                 nbtMorphAbilityLocation.setTag(PHYLACTERY_LIFETIME_UUID, NBTUtil.createUUIDTag(morphAbilityLocation.lifetimeUUID));
                 nbtMorphAbilityLocation.setTag(PHYLACTERY_PLAYER_UUID, NBTUtil.createUUIDTag(morphAbilityLocation.playerUUID));
-                nbtMorphAbilityLocation.setTag(PHYLACTERY_POS, NBTUtil.createPosTag(morphAbilityLocation.data.pos));
-                nbtMorphAbilityLocation.setInteger(PHYLACTERY_DIMENSION, morphAbilityLocation.data.dimension);
-                nbtMorphAbilityLocation.setByte(PHYLACTERY_STATE, stateFromEnum(morphAbilityLocation.data.state));                
+                nbtMorphAbilityLocation.setTag(PHYLACTERY_POS, NBTUtil.createPosTag(morphAbilityLocation.pos));
+                nbtMorphAbilityLocation.setInteger(PHYLACTERY_DIMENSION, morphAbilityLocation.dimension);
+                nbtMorphAbilityLocation.setByte(PHYLACTERY_STATE, stateFromEnum(morphAbilityLocation.state));                
                 nbtMorphAbilityLocations.appendTag(nbtMorphAbilityLocation);
             }
             nbt.setTag(PHYLACTERIES, nbtMorphAbilityLocations);
@@ -124,7 +124,7 @@ public class StorageWorldHumanity implements Capability.IStorage<ICapabilityWorl
                 byte stateByte = nbtPhylactery.getByte(PHYLACTERY_STATE);
                 ICapabilityWorldHumanity.State state = enumFromState(stateByte);
                 
-                Phylactery phylactery = new Phylactery(lifetimeUUID, playerUUID, new ICapabilityWorldHumanity.Data(pos, dimension, state));
+                Phylactery phylactery = new Phylactery(lifetimeUUID, playerUUID, pos, dimension, state);
                 phylacteries.add(phylactery);
             }
             

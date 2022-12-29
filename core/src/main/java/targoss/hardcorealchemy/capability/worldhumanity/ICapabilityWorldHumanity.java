@@ -25,7 +25,6 @@ import javax.annotation.Nullable;
 
 import net.minecraft.util.math.BlockPos;
 
-// TODO: Need to specify the dimension *facepalm*
 public interface ICapabilityWorldHumanity {
     public enum State {
         ACTIVE,
@@ -33,17 +32,6 @@ public interface ICapabilityWorldHumanity {
         DORMANT,
         DEACTIVATED
     }
-    
-    public static class Data {
-        public Data(BlockPos pos, int dimension, State state) {
-            this.pos = pos;
-            this.dimension = dimension;
-            this.state = state;
-        }
-        public BlockPos pos;
-        public int dimension;
-        public State state;
-    };
     
     /** If a location is already registered for the given lifetimeUUID
      * or playerID, it may be cleared, but this is not guaranteed.
@@ -55,6 +43,8 @@ public interface ICapabilityWorldHumanity {
     void setPhylacteryState(UUID lifetimeUUID, UUID playerUUID, BlockPos pos, int dimension, State state);
     /** Returns true if there is a registered morph ability with the given player */
     boolean hasPlayerPhylactery(UUID lifetimeUUID, UUID playerUUID);
+    /** Returns true if there is a registered morph ability with the given keys */
+    boolean hasBlockPhylactery(UUID lifetimeUUID, UUID playerUUID, BlockPos pos, int dimension);
     /** Returns true if there was a registered morph ability with the given keys */
     boolean unregisterPhylactery(UUID lifetimeUUID, UUID playerUUID, BlockPos pos, int dimension);
     /** Gets the phylactery associated with the player. The received keys may be
@@ -65,14 +55,18 @@ public interface ICapabilityWorldHumanity {
     public @Nullable Phylactery getBlockPhylactery(UUID lifetimeUUID, UUID playerUUID, BlockPos pos, int dimension);
     
     public static class Phylactery {
-        public Phylactery(UUID lifetimeUUID, UUID playerUUID, Data data) {
+        public Phylactery(UUID lifetimeUUID, UUID playerUUID, BlockPos pos, int dimension, ICapabilityWorldHumanity.State state) {
             this.lifetimeUUID = lifetimeUUID;
             this.playerUUID = playerUUID;
-            this.data = data;
+            this.pos = pos;
+            this.dimension = dimension;
+            this.state = state;
         }
         public UUID lifetimeUUID;
         public UUID playerUUID;
-        public Data data;
+        public BlockPos pos;
+        public int dimension;
+        public ICapabilityWorldHumanity.State state;
     }
     Phylactery[] dumpPhylacteries();
     void clearAndPutPhylacteries(Phylactery[] phylacteries);

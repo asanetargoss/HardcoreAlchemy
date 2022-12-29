@@ -35,29 +35,49 @@ public class EventHumanityPhylactery extends Event {
         public final EntityPlayer player;
         public final ICapabilityMisc misc;
         public final AbstractMorph morphTarget;
+        public final World world;
         public final BlockPos pos;
         public final int dimension;
 
-        public Create(EntityPlayer player, ICapabilityMisc misc, AbstractMorph morphTarget, BlockPos pos, int dimension) {
+        public Create(EntityPlayer player, ICapabilityMisc misc, AbstractMorph morphTarget, World world, BlockPos pos, int dimension) {
             this.player = player;
             this.misc = misc;
             this.morphTarget = morphTarget;
+            this.world = world;
+            this.pos = pos;
+            this.dimension = dimension;
+        }
+    }
+    
+    public static class Recreate extends EventHumanityPhylactery {
+        public final UUID playerUUID;
+        public final UUID lifetimeUUID;
+        public final AbstractMorph morphTarget;
+        public final World world;
+        public final BlockPos pos;
+        public final int dimension;
+        
+        public Recreate(UUID playerUUID, UUID lifetimeUUID, AbstractMorph morphTarget, World world, BlockPos pos, int dimension) {
+            this.playerUUID = playerUUID;
+            this.lifetimeUUID = lifetimeUUID;
+            this.morphTarget = morphTarget;
+            this.world = world;
             this.pos = pos;
             this.dimension = dimension;
         }
     }
     
     public static class Destroy extends EventHumanityPhylactery {
-        public final World world;
         public final UUID lifetimeUUID;
         public final UUID playerUUID;
+        public final World world;
         public final BlockPos pos;
         public final int dimension;
 
-        public Destroy(World world, UUID lifetimeUUID, UUID playerUUID, BlockPos pos, int dimension) {
-            this.world = world;
+        public Destroy(UUID lifetimeUUID, UUID playerUUID, World world, BlockPos pos, int dimension) {
             this.lifetimeUUID = lifetimeUUID;
             this.playerUUID = playerUUID;
+            this.world = world;
             this.pos = pos;
             this.dimension = dimension;
         }

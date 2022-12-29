@@ -40,15 +40,15 @@ public class UniverseCapabilityManager {
         this.forgeCaps = forgeCaps;
     }
     
-    public <T> T getCapability(World dummyWorld, Capability<T> capability) {
-        World overworld = WorldUtil.getOverworld(dummyWorld);
+    public <T> T getCapability(Capability<T> capability) {
+        World overworld = WorldUtil.getOverworld();
         T instance = overworld.getCapability(capability, null);
         return instance;
     }
     
     public void maybeAttachCapabilities(AttachCapabilitiesEvent<World> event) {
         World eventWorld = event.getObject();
-        World overworld = WorldUtil.getOverworld(eventWorld);
+        World overworld = WorldUtil.getOverworld();
         if (eventWorld != overworld) {
             return;
         }
