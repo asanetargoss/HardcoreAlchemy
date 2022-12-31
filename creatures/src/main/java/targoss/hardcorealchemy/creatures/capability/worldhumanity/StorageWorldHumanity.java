@@ -17,11 +17,13 @@
  * with Hardcore Alchemy Core. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.capability.worldhumanity;
+package targoss.hardcorealchemy.creatures.capability.worldhumanity;
 
 import java.util.ArrayList;
 import java.util.UUID;
 
+import mchorse.metamorph.api.MorphManager;
+import mchorse.metamorph.api.morphs.AbstractMorph;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -29,7 +31,7 @@ import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
-import targoss.hardcorealchemy.capability.worldhumanity.ICapabilityWorldHumanity.Phylactery;
+import targoss.hardcorealchemy.creatures.capability.worldhumanity.ICapabilityWorldHumanity.Phylactery;
 import targoss.hardcorealchemy.util.Serialization;
 
 public class StorageWorldHumanity implements Capability.IStorage<ICapabilityWorldHumanity> {
@@ -39,6 +41,7 @@ public class StorageWorldHumanity implements Capability.IStorage<ICapabilityWorl
     protected static final String PHYLACTERY_POS = "pos";
     protected static final String PHYLACTERY_DIMENSION = "dimension";
     protected static final String PHYLACTERY_STATE = "state";
+    protected static final String PHYLACTERY_MORPH_TARGET = "morph_target";
     
     protected static byte stateFromEnum(ICapabilityWorldHumanity.State en) {
         switch (en) {
@@ -76,18 +79,19 @@ public class StorageWorldHumanity implements Capability.IStorage<ICapabilityWorl
         NBTTagCompound nbt = new NBTTagCompound();
         
         {
-            NBTTagList nbtMorphAbilityLocations = new NBTTagList();
-            Phylactery[] morphAbilityLocations = instance.dumpPhylacteries();
-            for (Phylactery morphAbilityLocation : morphAbilityLocations) {
-                NBTTagCompound nbtMorphAbilityLocation = new NBTTagCompound();
-                nbtMorphAbilityLocation.setTag(PHYLACTERY_LIFETIME_UUID, NBTUtil.createUUIDTag(morphAbilityLocation.lifetimeUUID));
-                nbtMorphAbilityLocation.setTag(PHYLACTERY_PLAYER_UUID, NBTUtil.createUUIDTag(morphAbilityLocation.playerUUID));
-                nbtMorphAbilityLocation.setTag(PHYLACTERY_POS, NBTUtil.createPosTag(morphAbilityLocation.pos));
-                nbtMorphAbilityLocation.setInteger(PHYLACTERY_DIMENSION, morphAbilityLocation.dimension);
-                nbtMorphAbilityLocation.setByte(PHYLACTERY_STATE, stateFromEnum(morphAbilityLocation.state));                
-                nbtMorphAbilityLocations.appendTag(nbtMorphAbilityLocation);
+            NBTTagList nbtPhylacteries = new NBTTagList();
+            Phylactery[] phylacteries = instance.dumpPhylacteries();
+            for (Phylactery phylactery : phylacteries) {
+                NBTTagCompound nbtPhylactery = new NBTTagCompound();
+                nbtPhylactery.setTag(PHYLACTERY_LIFETIME_UUID, NBTUtil.createUUIDTag(phylactery.lifetimeUUID));
+                nbtPhylactery.setTag(PHYLACTERY_PLAYER_UUID, NBTUtil.createUUIDTag(phylactery.playerUUID));
+                nbtPhylactery.setTag(PHYLACTERY_POS, NBTUtil.createPosTag(phylactery.pos));
+                nbtPhylactery.setInteger(PHYLACTERY_DIMENSION, phylactery.dimension);
+                nbtPhylactery.setByte(PHYLACTERY_STATE, stateFromEnum(phylactery.state));      
+                nbtPhylactery.setTag(PHYLACTERY_MORPH_TARGET, phylactery.morphTarget.toNBT());
+                nbtPhylacteries.appendTag(nbtPhylactery);
             }
-            nbt.setTag(PHYLACTERIES, nbtMorphAbilityLocations);
+            nbt.setTag(PHYLACTERIES, nbtPhylacteries);
         }
         
         return nbt;
@@ -123,8 +127,12 @@ public class StorageWorldHumanity implements Capability.IStorage<ICapabilityWorl
                 int dimension = nbtPhylactery.getInteger(PHYLACTERY_DIMENSION);
                 byte stateByte = nbtPhylactery.getByte(PHYLACTERY_STATE);
                 ICapabilityWorldHumanity.State state = enumFromState(stateByte);
+                if (!nbtPhylactery.hasKey(PHYLACTERY_MORPH_TARGET, Serialization.NBT_COMPOUND_ID)) {
+                    continue;
+                }
+                AbstractMorph morphTarget = MorphManager.INSTANCE.morphFromNBT(nbtPhylactery.getCompoundTag(PHYLACTERY_MORPH_TARGET));
                 
-                Phylactery phylactery = new Phylactery(lifetimeUUID, playerUUID, pos, dimension, state);
+                Phylactery phylactery = new Phylactery(lifetimeUUID, playerUUID, pos, dimension, state, morphTarget);
                 phylacteries.add(phylactery);
             }
             

@@ -53,15 +53,13 @@ public class EventHumanityPhylactery extends Event {
         public final UUID playerUUID;
         public final UUID lifetimeUUID;
         public final AbstractMorph morphTarget;
-        public final World world;
         public final BlockPos pos;
         public final int dimension;
         
-        public Recreate(UUID playerUUID, UUID lifetimeUUID, AbstractMorph morphTarget, World world, BlockPos pos, int dimension) {
+        public Recreate(UUID playerUUID, UUID lifetimeUUID, AbstractMorph morphTarget, BlockPos pos, int dimension) {
             this.playerUUID = playerUUID;
             this.lifetimeUUID = lifetimeUUID;
             this.morphTarget = morphTarget;
-            this.world = world;
             this.pos = pos;
             this.dimension = dimension;
         }
@@ -70,14 +68,12 @@ public class EventHumanityPhylactery extends Event {
     public static class Destroy extends EventHumanityPhylactery {
         public final UUID lifetimeUUID;
         public final UUID playerUUID;
-        public final World world;
         public final BlockPos pos;
         public final int dimension;
 
-        public Destroy(UUID lifetimeUUID, UUID playerUUID, World world, BlockPos pos, int dimension) {
+        public Destroy(UUID lifetimeUUID, UUID playerUUID, BlockPos pos, int dimension) {
             this.lifetimeUUID = lifetimeUUID;
             this.playerUUID = playerUUID;
-            this.world = world;
             this.pos = pos;
             this.dimension = dimension;
         }

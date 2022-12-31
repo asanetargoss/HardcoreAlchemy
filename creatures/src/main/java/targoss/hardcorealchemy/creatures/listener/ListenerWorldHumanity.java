@@ -38,11 +38,10 @@ import targoss.hardcorealchemy.capability.UniverseCapabilityManager;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.capability.humanity.MorphAbilityChangeReason;
 import targoss.hardcorealchemy.capability.misc.ICapabilityMisc;
-import targoss.hardcorealchemy.capability.worldhumanity.CapabilityWorldHumanity;
-import targoss.hardcorealchemy.capability.worldhumanity.ICapabilityWorldHumanity;
-import targoss.hardcorealchemy.capability.worldhumanity.ProviderWorldHumanity;
-import targoss.hardcorealchemy.creatures.HardcoreAlchemyCreatures;
 import targoss.hardcorealchemy.creatures.block.TileHumanityPhylactery;
+import targoss.hardcorealchemy.creatures.capability.worldhumanity.CapabilityWorldHumanity;
+import targoss.hardcorealchemy.creatures.capability.worldhumanity.ICapabilityWorldHumanity;
+import targoss.hardcorealchemy.creatures.capability.worldhumanity.ProviderWorldHumanity;
 import targoss.hardcorealchemy.creatures.event.EventHumanityPhylactery;
 import targoss.hardcorealchemy.creatures.util.MorphState;
 import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
@@ -84,7 +83,8 @@ public class ListenerWorldHumanity extends HardcoreAlchemyListener {
         if (worldHumanity == null) {
             return;
         }
-        MinecraftServer server = MiscVanilla.getServer(event.world);
+        World world = WorldUtil.getOverworld();
+        MinecraftServer server = MiscVanilla.getServer(world);
         if (server == null) {
             return;
         }
@@ -128,15 +128,8 @@ public class ListenerWorldHumanity extends HardcoreAlchemyListener {
     
     @SubscribeEvent
     public void onPlayerPhylacteryDestroyed(EventHumanityPhylactery.Destroy event) {
-        ICapabilityWorldHumanity worldHumanity = UniverseCapabilityManager.INSTANCE.getCapability(HUMANITY_WORLD_CAPABILITY);
-        if (worldHumanity == null) {
-            return;
-        }
-        boolean wasRegistered = worldHumanity.unregisterPhylactery(event.lifetimeUUID, event.playerUUID, event.pos, event.dimension);
-        if (!wasRegistered) {
-            return;
-        }
-        MinecraftServer server = MiscVanilla.getServer(event.world);
+        World world = WorldUtil.getOverworld();
+        MinecraftServer server = MiscVanilla.getServer(world);
         if (server == null) {
             return;
         }
@@ -187,47 +180,29 @@ public class ListenerWorldHumanity extends HardcoreAlchemyListener {
         ICapabilityWorldHumanity worldHumanity = UniverseCapabilityManager.INSTANCE.getCapability(HUMANITY_WORLD_CAPABILITY);
         if (worldHumanity == null) { return; }
         
+        ICapabilityWorldHumanity.Phylactery oldPhylactery = worldHumanity.getPlayerPhylactery(oldMisc.getLifetimeUUID(), oldPlayer.getUniqueID());
+        
         // Update the world bookkeeping of the phylactery
         if (keepPhylactery) {
             // If available, mark previous phylactery as REINCARNATED
             // Then add a duplicate entry. Same position but different IDs
-            ICapabilityWorldHumanity.Phylactery oldPhylactery = worldHumanity.getPlayerPhylactery(oldMisc.getLifetimeUUID(), oldPlayer.getUniqueID());
             if (oldPhylactery != null) {
                 oldPhylactery.state = ICapabilityWorldHumanity.State.REINCARNATED;
             }
-            worldHumanity.registerPhylactery(newMisc.getLifetimeUUID(), newPlayer.getUniqueID(), oldPhylactery.pos, oldPhylactery.dimension);
+            worldHumanity.registerPhylactery(newMisc.getLifetimeUUID(), newPlayer.getUniqueID(), oldPhylactery.pos, oldPhylactery.dimension, oldPhylactery.morphTarget);
         }
         else {
             // Mark the entry as "dormant", but don't remove it
             // Make the corresponding tile dormant, if it exists
             newHumanity.setIsHumanFormInPhylactery(false);
-            ICapabilityWorldHumanity.Phylactery oldPhylactery = worldHumanity.getPlayerPhylactery(oldMisc.getLifetimeUUID(), oldPlayer.getUniqueID());
             if (oldPhylactery != null) {
                 oldPhylactery.state = ICapabilityWorldHumanity.State.DORMANT;
-            }
-            World phyWorld = WorldUtil.maybeGetDimWorld(oldPhylactery.dimension);
-            if (phyWorld != null && phyWorld.isBlockLoaded(oldPhylactery.pos)) {
-                TileEntity te = phyWorld.getTileEntity(oldPhylactery.pos);
-                if (te instanceof TileHumanityPhylactery) {
-                    TileHumanityPhylactery phyTE = (TileHumanityPhylactery)te;
-                    phyTE.setDormant(true);
-                }
             }
         }
 
         // Update the phylactery's associated tile entity to match the new bookkeeping state, if it is currently loaded.
-        ICapabilityWorldHumanity.Phylactery oldPhylactery = worldHumanity.getPlayerPhylactery(oldMisc.getLifetimeUUID(), oldPlayer.getUniqueID());
-        World phyWorld = WorldUtil.maybeGetDimWorld(oldPhylactery.dimension);
-        if (phyWorld != null && phyWorld.isBlockLoaded(oldPhylactery.pos)) {
-            TileEntity te = phyWorld.getTileEntity(oldPhylactery.pos);
-            if (te instanceof TileHumanityPhylactery) {
-                TileHumanityPhylactery phyTE = (TileHumanityPhylactery)te;
-                phyTE.checkWorldState();
-            }
-            else {
-                HardcoreAlchemyCreatures.LOGGER.warn("Expected tile entity at pos: " + oldPhylactery.pos + ", dim: " + oldPhylactery.dimension);
-            }
-        }
-        // TODO: Implement (probably as event listener, PlayerEvent.Clone? PlayerRespawnEvent?). Remove the morph ability location. If the phylactery is loaded and active, deactivate it. NOTE: I will try to implement this via a callback to this listener
+        // This function may then fire events, which may then change the player's morph state
+        TileHumanityPhylactery.checkWorldState(oldPhylactery, newMisc.getLifetimeUUID(), newPlayer.getUniqueID());
+        // TODO: Implement (probably as event listener, PlayerEvent.Clone? PlayerRespawnEvent?). Remove the phylactery
     }
 }

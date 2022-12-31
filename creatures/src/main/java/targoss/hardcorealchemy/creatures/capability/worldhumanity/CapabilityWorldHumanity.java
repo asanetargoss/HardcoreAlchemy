@@ -17,7 +17,7 @@
  * with Hardcore Alchemy Core. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.capability.worldhumanity;
+package targoss.hardcorealchemy.creatures.capability.worldhumanity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,6 +25,7 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
+import mchorse.metamorph.api.morphs.AbstractMorph;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import targoss.hardcorealchemy.HardcoreAlchemyCore;
@@ -36,7 +37,8 @@ public class CapabilityWorldHumanity implements ICapabilityWorldHumanity {
     protected static final int MAX_LOCATIONS_PER_PLAYER = 5;
     protected HashMap<UUID, ArrayList<Phylactery>> playerUUIDToPhylactery = new HashMap<>();
 
-    protected void registerPhylactery(Phylactery location) {
+    @Override
+    public void registerPhylactery(Phylactery location) {
         ArrayList<Phylactery> phylacteries = playerUUIDToPhylactery.get(location.playerUUID);
         if (phylacteries == null) {
             phylacteries = new ArrayList<>(1);
@@ -65,8 +67,8 @@ public class CapabilityWorldHumanity implements ICapabilityWorldHumanity {
     }
 
     @Override
-    public void registerPhylactery(UUID lifetimeUUID, UUID playerUUID, BlockPos pos, int dimension) {
-        registerPhylactery(new Phylactery(lifetimeUUID, playerUUID, pos, dimension, ICapabilityWorldHumanity.State.ACTIVE));
+    public void registerPhylactery(UUID lifetimeUUID, UUID playerUUID, BlockPos pos, int dimension, AbstractMorph morphTarget) {
+        registerPhylactery(new Phylactery(lifetimeUUID, playerUUID, pos, dimension, ICapabilityWorldHumanity.State.ACTIVE, morphTarget));
     }
 
     public @Nullable Phylactery getPhylacteryInternal(UUID lifetimeUUID, UUID playerUUID, @Nullable BlockPos pos, int dimension) {

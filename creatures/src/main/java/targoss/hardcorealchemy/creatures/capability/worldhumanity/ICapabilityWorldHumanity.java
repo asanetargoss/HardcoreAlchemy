@@ -17,13 +17,15 @@
  * with Hardcore Alchemy Core. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.capability.worldhumanity;
+package targoss.hardcorealchemy.creatures.capability.worldhumanity;
 
 import java.util.UUID;
 
 import javax.annotation.Nullable;
 
+import mchorse.metamorph.api.morphs.AbstractMorph;
 import net.minecraft.util.math.BlockPos;
+import targoss.hardcorealchemy.creatures.capability.worldhumanity.ICapabilityWorldHumanity.Phylactery;
 
 public interface ICapabilityWorldHumanity {
     public enum State {
@@ -38,7 +40,8 @@ public interface ICapabilityWorldHumanity {
      * As long as player data is in a consistent state, there is a unique
      * (and possibly null) position for the given lifetimeUUID/playerID pair.
      * */
-    void registerPhylactery(UUID lifetimeUUID, UUID playerUUID, BlockPos pos, int dimension);
+    void registerPhylactery(Phylactery location);
+    void registerPhylactery(UUID lifetimeUUID, UUID playerUUID, BlockPos pos, int dimension, AbstractMorph morphTarget);
     State getPhylacteryState(UUID lifetimeUUID, UUID playerUUID, BlockPos pos, int dimension);
     void setPhylacteryState(UUID lifetimeUUID, UUID playerUUID, BlockPos pos, int dimension, State state);
     /** Returns true if there is a registered morph ability with the given player */
@@ -55,18 +58,20 @@ public interface ICapabilityWorldHumanity {
     public @Nullable Phylactery getBlockPhylactery(UUID lifetimeUUID, UUID playerUUID, BlockPos pos, int dimension);
     
     public static class Phylactery {
-        public Phylactery(UUID lifetimeUUID, UUID playerUUID, BlockPos pos, int dimension, ICapabilityWorldHumanity.State state) {
+        public Phylactery(UUID lifetimeUUID, UUID playerUUID, BlockPos pos, int dimension, ICapabilityWorldHumanity.State state, AbstractMorph morphTarget) {
             this.lifetimeUUID = lifetimeUUID;
             this.playerUUID = playerUUID;
             this.pos = pos;
             this.dimension = dimension;
             this.state = state;
+            this.morphTarget = morphTarget;
         }
         public UUID lifetimeUUID;
         public UUID playerUUID;
         public BlockPos pos;
         public int dimension;
         public ICapabilityWorldHumanity.State state;
+        public AbstractMorph morphTarget;
     }
     Phylactery[] dumpPhylacteries();
     void clearAndPutPhylacteries(Phylactery[] phylacteries);

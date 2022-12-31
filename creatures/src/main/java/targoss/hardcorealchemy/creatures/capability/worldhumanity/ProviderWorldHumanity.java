@@ -17,7 +17,7 @@
  * with Hardcore Alchemy Core. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.capability.worldhumanity;
+package targoss.hardcorealchemy.creatures.capability.worldhumanity;
 
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.EnumFacing;

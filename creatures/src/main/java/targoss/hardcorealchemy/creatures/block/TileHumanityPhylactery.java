@@ -58,8 +58,9 @@ import targoss.hardcorealchemy.capability.UniverseCapabilityManager;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.capability.humanity.ProviderHumanity;
 import targoss.hardcorealchemy.capability.misc.ICapabilityMisc;
-import targoss.hardcorealchemy.capability.worldhumanity.ICapabilityWorldHumanity;
 import targoss.hardcorealchemy.creatures.HardcoreAlchemyCreatures;
+import targoss.hardcorealchemy.creatures.capability.worldhumanity.ICapabilityWorldHumanity;
+import targoss.hardcorealchemy.creatures.capability.worldhumanity.ICapabilityWorldHumanity.State;
 import targoss.hardcorealchemy.creatures.event.EventHumanityPhylactery;
 import targoss.hardcorealchemy.creatures.item.ItemSealOfForm;
 import targoss.hardcorealchemy.creatures.listener.ListenerWorldHumanity;
@@ -222,7 +223,7 @@ public class TileHumanityPhylactery extends TileEntity {
                 }
             }
             else {
-                // TODO: Fire events that would be fired if this tile entity was loaded
+                // TODO: Fire events that would be fired if this tile entity's location was already loaded
             }
         } 
         else {
@@ -231,12 +232,13 @@ public class TileHumanityPhylactery extends TileEntity {
     }
     
     protected void checkWorldState(boolean isWorldLoad) {
-        ICapabilityWorldHumanity.Phylactery phy = ListenerWorldHumanity.getBlockPhylactery(lifetimeUUID, playerUUID, getPos(), getWorld().provider.getDimension());
+        ICapabilityWorldHumanity.Phylactery oldPhy = new ICapabilityWorldHumanity.Phylactery(lifetimeUUID, lifetimeUUID, getPos(), getWorld().provider.getDimension(), getPhylacteryState(), getMorphTarget());
+        ICapabilityWorldHumanity.Phylactery newPhy = ListenerWorldHumanity.getBlockPhylactery(lifetimeUUID, playerUUID, getPos(), getWorld().provider.getDimension());
         boolean shouldUpdate;
         boolean worldStateActive;
         boolean worldStateDormant;
-        if (phy != null) {
-            switch (phy.state) {
+        if (newPhy != null) {
+            switch (newPhy.state) {
             case ACTIVE:
                 shouldUpdate = true;
                 worldStateActive = true;
@@ -267,9 +269,8 @@ public class TileHumanityPhylactery extends TileEntity {
             worldStateDormant = false;
         }
         if (shouldUpdate) {
-            // Note the asymmetry here. EventHumanityPhylactery.Destroy could be called, but EventHumanityPhylactery.Create will not, because that event requires information we don't have.
             if (worldStateActive) {
-                activate(isWorldLoad, phy.playerUUID, phy.lifetimeUUID);
+                create(this, null, null, newPhy.morphTarget, oldPhy, newPhy, isWorldLoad);
             }
             else {
                 deactivate(isWorldLoad);
@@ -286,34 +287,40 @@ public class TileHumanityPhylactery extends TileEntity {
         return dormant;
     }
     
-    protected void activate(boolean isWorldLoad, UUID playerUUID, UUID lifetimeUUID) {
-        if (this.playerUUID == playerUUID && this.lifetimeUUID == lifetimeUUID) {
-            return;
+    protected static void create(@Nullable TileHumanityPhylactery phyTE, @Nullable EntityPlayer player, @Nullable ICapabilityMisc misc, AbstractMorph morphTarget, @Nullable ICapabilityWorldHumanity.Phylactery oldPhy, ICapabilityWorldHumanity.Phylactery newPhy, boolean isWorldLoad) {
+        // TODO: If oldPhy is null and so is phyTE, extrapolate from the default value
+        if (phyTE != null) {
+            phyTE.playerUUID = newPhy.playerUUID;
+            phyTE.lifetimeUUID = newPhy.lifetimeUUID;
+            if (!isWorldLoad) {
+                assert(player != null);
+                assert(misc != null);
+                assert(morphTarget != null);
+                MinecraftForge.EVENT_BUS.post(new EventHumanityPhylactery.Create(player, misc, morphTarget, phyTE.getWorld(), phyTE.getPos(), phyTE.getWorld().provider.getDimension()));
+            }
         }
-        AbstractMorph morphTarget = this.getMorphTarget();
-        if (morphTarget == null) {
-            return;
-        }
-        
-        this.playerUUID = playerUUID;
-        this.lifetimeUUID = lifetimeUUID;
-        if (!isWorldLoad) {
-            MinecraftForge.EVENT_BUS.post(new EventHumanityPhylactery.Recreate(playerUUID, lifetimeUUID, morphTarget, this.getWorld(), this.getPos(), this.getWorld().provider.getDimension()));
+        else {
+            // TODO: Do something intelligent based on the difference between oldPhy and newPhy
+            // TODO: If the player IDs differ, first fire a destroy event
+            // TODO: If either the player IDs or the state/morph target differ, fire a recreate event
+            if (!isWorldLoad) {
+                MinecraftForge.EVENT_BUS.post(new EventHumanityPhylactery.Recreate(newPhy.playerUUID, newPhy.lifetimeUUID, newPhy.morphTarget, newPhy.pos, newPhy.dimension));
+            }
         }
     }
     
     protected void activate(EntityPlayer player, ICapabilityMisc misc, AbstractMorph morphTarget, BlockPos pos, int dimension) {
-        if (playerUUID == player.getUniqueID() && lifetimeUUID == misc.getLifetimeUUID()) {
+        assert(!isActive());
+        
+        ICapabilityWorldHumanity worldHumanity = UniverseCapabilityManager.INSTANCE.getCapability(HUMANITY_WORLD_CAPABILITY);
+        if (worldHumanity == null) {
             return;
         }
         
-        ICapabilityWorldHumanity worldHumanity = UniverseCapabilityManager.INSTANCE.getCapability(HUMANITY_WORLD_CAPABILITY);
-        if (worldHumanity != null) {
-            worldHumanity.registerPhylactery(misc.getLifetimeUUID(), player.getUniqueID(), getPos(), getWorld().provider.getDimension());
-        }
-        this.playerUUID = player.getUniqueID();
-        this.lifetimeUUID = misc.getLifetimeUUID();
-        MinecraftForge.EVENT_BUS.post(new EventHumanityPhylactery.Create(player, misc, morphTarget, this.getWorld(), pos, dimension));
+        ICapabilityWorldHumanity.Phylactery oldPhy = new ICapabilityWorldHumanity.Phylactery(this.lifetimeUUID, this.playerUUID, getPos(), getWorld().provider.getDimension(), ICapabilityWorldHumanity.State.DEACTIVATED, null);
+        ICapabilityWorldHumanity.Phylactery newPhy = new ICapabilityWorldHumanity.Phylactery(misc.getLifetimeUUID(), player.getUniqueID(), getPos(), getWorld().provider.getDimension(), ICapabilityWorldHumanity.State.ACTIVE, morphTarget);
+        worldHumanity.registerPhylactery(newPhy);
+        create(this, player, misc, morphTarget, oldPhy, newPhy, false);
     }
     
     protected void setDeactivated() {
@@ -322,20 +329,44 @@ public class TileHumanityPhylactery extends TileEntity {
         this.dormant = false;
     }
     
-    public void deactivate(boolean isWorldLoad) {
-        if (!isWorldLoad && this.playerUUID != null && !dormant) {
-            ICapabilityWorldHumanity worldHumanity = UniverseCapabilityManager.INSTANCE.getCapability(HUMANITY_WORLD_CAPABILITY);
-            if (worldHumanity == null) {
-                return;
-            }
-            boolean wasRegistered = worldHumanity.unregisterPhylactery(lifetimeUUID, playerUUID, getPos(), getWorld().provider.getDimension());
-            if (wasRegistered) {
-                MinecraftForge.EVENT_BUS.post(new EventHumanityPhylactery.Destroy(this.lifetimeUUID, this.playerUUID, this.getWorld(), this.getPos(), getWorld().provider.getDimension()));
-            }
+    protected static void deactivate(@Nullable TileHumanityPhylactery phyTE, @Nullable ICapabilityWorldHumanity.Phylactery oldPhy, boolean isWorldLoad) {
+        if (phyTE != null) {
+            assert(oldPhy != null);
         }
-        setDeactivated();
+        
+        // TODO: If oldPhy is null, there is probably missing data. Extrapolate from an ACTIVE value so the event fires anyway.
+        if (!isWorldLoad && oldPhy.state != State.DEACTIVATED && oldPhy.state != State.DORMANT) {
+            ICapabilityWorldHumanity worldHumanity = UniverseCapabilityManager.INSTANCE.getCapability(HUMANITY_WORLD_CAPABILITY);
+            if (worldHumanity != null) {
+                boolean wasRegistered = worldHumanity.unregisterPhylactery(oldPhy.lifetimeUUID, oldPhy.playerUUID, oldPhy.pos, oldPhy.dimension);
+                if (wasRegistered) {
+                    MinecraftForge.EVENT_BUS.post(new EventHumanityPhylactery.Destroy(oldPhy.lifetimeUUID, oldPhy.playerUUID, oldPhy.pos, oldPhy.dimension));
+                }
+            }
+            
+        }
+        if (phyTE != null) {
+            phyTE.setDeactivated();
+        }
     }
     
+    public void deactivate(boolean isWorldLoad) {
+        ICapabilityWorldHumanity.Phylactery oldPhy = new ICapabilityWorldHumanity.Phylactery(lifetimeUUID, lifetimeUUID, this.getPos(), getWorld().provider.getDimension(), this.getPhylacteryState(), this.getMorphTarget());
+        deactivate(this, oldPhy, isWorldLoad);
+    }
+    
+    private State getPhylacteryState() {
+        if (!isActive()) {
+            return State.DEACTIVATED;
+        }
+        else if (isDormant()) {
+            return State.DORMANT;
+        }
+        else {
+            return State.ACTIVE;
+        }
+    }
+
     public void setDormant(boolean dormant) {
         this.dormant = dormant;
     }
