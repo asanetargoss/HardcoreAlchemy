@@ -25,7 +25,6 @@ import javax.annotation.Nullable;
 
 import mchorse.metamorph.api.morphs.AbstractMorph;
 import net.minecraft.util.math.BlockPos;
-import targoss.hardcorealchemy.creatures.capability.worldhumanity.ICapabilityWorldHumanity.Phylactery;
 
 public interface ICapabilityWorldHumanity {
     public enum State {

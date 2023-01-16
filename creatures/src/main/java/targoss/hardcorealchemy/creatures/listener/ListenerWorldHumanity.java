@@ -25,7 +25,6 @@ import javax.annotation.Nullable;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -200,9 +199,10 @@ public class ListenerWorldHumanity extends HardcoreAlchemyListener {
             }
         }
 
-        // Update the phylactery's associated tile entity to match the new bookkeeping state, if it is currently loaded.
-        // This function may then fire events, which may then change the player's morph state
-        TileHumanityPhylactery.checkWorldState(oldPhylactery, newMisc.getLifetimeUUID(), newPlayer.getUniqueID());
-        // TODO: Implement (probably as event listener, PlayerEvent.Clone? PlayerRespawnEvent?). Remove the phylactery
+        if (oldPhylactery != null) {
+            // Update the phylactery's associated tile entity to match the new bookkeeping state, if it is currently loaded.
+            // This function may then fire events, which may then change the player's morph state
+            TileHumanityPhylactery.checkWorldState(null, oldPhylactery, newMisc.getLifetimeUUID(), newPlayer.getUniqueID());
+        }
     }
 }

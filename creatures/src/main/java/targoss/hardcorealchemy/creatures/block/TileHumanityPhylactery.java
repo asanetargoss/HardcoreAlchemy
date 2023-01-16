@@ -22,6 +22,7 @@ package targoss.hardcorealchemy.creatures.block;
 import static targoss.hardcorealchemy.creatures.item.Items.SEAL_OF_FORM;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
@@ -209,31 +210,37 @@ public class TileHumanityPhylactery extends TileEntity {
         setWorld(world);
     }
     
-    public static void checkWorldState(@Nullable ICapabilityWorldHumanity.Phylactery oldPhylactery, UUID newPlayerLifetimeUUID, UUID newPlayerUUID) {
-        if (oldPhylactery != null) {
-            World phyWorld = WorldUtil.maybeGetDimWorld(oldPhylactery.dimension);
-            if (phyWorld != null && phyWorld.isBlockLoaded(oldPhylactery.pos)) {
-                TileEntity te = phyWorld.getTileEntity(oldPhylactery.pos);
-                if (te instanceof TileHumanityPhylactery) {
-                    TileHumanityPhylactery phyTE = (TileHumanityPhylactery)te;
-                    phyTE.checkWorldState(false);
-                }
-                else {
-                    HardcoreAlchemyCreatures.LOGGER.warn("Expected tile entity at pos: " + oldPhylactery.pos + ", dim: " + oldPhylactery.dimension);
-                }
-            }
-            else {
-                // TODO: Fire events that would be fired if this tile entity's location was already loaded
-            }
-        } 
-        else {
-            // TODO: Assume the phylactery was previously inactive
-        }
+    public static void checkWorldState(@Nullable TileHumanityPhylactery phyTE, ICapabilityWorldHumanity.Phylactery oldPhy, UUID newPlayerLifetimeUUID, UUID newPlayerUUID) {
+        checkWorldState(phyTE, oldPhy, newPlayerLifetimeUUID, newPlayerUUID, false);
     }
     
-    protected void checkWorldState(boolean isWorldLoad) {
-        ICapabilityWorldHumanity.Phylactery oldPhy = new ICapabilityWorldHumanity.Phylactery(lifetimeUUID, lifetimeUUID, getPos(), getWorld().provider.getDimension(), getPhylacteryState(), getMorphTarget());
-        ICapabilityWorldHumanity.Phylactery newPhy = ListenerWorldHumanity.getBlockPhylactery(lifetimeUUID, playerUUID, getPos(), getWorld().provider.getDimension());
+    protected static void checkWorldState(@Nullable TileHumanityPhylactery phyTE, ICapabilityWorldHumanity.Phylactery oldPhy, UUID newPlayerLifetimeUUID, UUID newPlayerUUID, boolean isWorldLoad) {
+        assert(oldPhy != null);
+        
+        if (phyTE == null) {
+            assert(newPlayerLifetimeUUID != null);
+            assert(newPlayerUUID != null);
+            
+            World phyWorld = WorldUtil.maybeGetDimWorld(oldPhy.dimension);
+            if (phyWorld != null && phyWorld.isBlockLoaded(oldPhy.pos)) {
+                TileEntity te = phyWorld.getTileEntity(oldPhy.pos);
+                if (te instanceof TileHumanityPhylactery) {
+                    phyTE = (TileHumanityPhylactery)te;
+                }
+                else {
+                    HardcoreAlchemyCreatures.LOGGER.warn("Expected tile entity at pos: " + oldPhy.pos + ", dim: " + oldPhy.dimension);
+                    return;
+                }
+            }
+        }
+        else {
+            if (newPlayerLifetimeUUID == null) {
+                // It's not possible to activate a humanity phylactery unless it is loaded, so it's safe to assume nothing will happen
+                return;
+            }
+        }
+        
+        ICapabilityWorldHumanity.Phylactery newPhy = ListenerWorldHumanity.getBlockPhylactery(newPlayerLifetimeUUID, newPlayerUUID, oldPhy.pos, oldPhy.dimension);
         boolean shouldUpdate;
         boolean worldStateActive;
         boolean worldStateDormant;
@@ -270,12 +277,14 @@ public class TileHumanityPhylactery extends TileEntity {
         }
         if (shouldUpdate) {
             if (worldStateActive) {
-                create(this, null, null, newPhy.morphTarget, oldPhy, newPhy, isWorldLoad);
+                create(phyTE, null, null, newPhy.morphTarget, oldPhy, newPhy, isWorldLoad);
             }
             else {
-                deactivate(isWorldLoad);
+                deactivate(phyTE, oldPhy, isWorldLoad);
             }
-            setDormant(worldStateDormant);
+            if (phyTE != null) {
+                phyTE.setDormant(worldStateDormant);
+            }
         }
     }
     
@@ -288,7 +297,6 @@ public class TileHumanityPhylactery extends TileEntity {
     }
     
     protected static void create(@Nullable TileHumanityPhylactery phyTE, @Nullable EntityPlayer player, @Nullable ICapabilityMisc misc, AbstractMorph morphTarget, @Nullable ICapabilityWorldHumanity.Phylactery oldPhy, ICapabilityWorldHumanity.Phylactery newPhy, boolean isWorldLoad) {
-        // TODO: If oldPhy is null and so is phyTE, extrapolate from the default value
         if (phyTE != null) {
             phyTE.playerUUID = newPhy.playerUUID;
             phyTE.lifetimeUUID = newPhy.lifetimeUUID;
@@ -300,11 +308,19 @@ public class TileHumanityPhylactery extends TileEntity {
             }
         }
         else {
-            // TODO: Do something intelligent based on the difference between oldPhy and newPhy
-            // TODO: If the player IDs differ, first fire a destroy event
-            // TODO: If either the player IDs or the state/morph target differ, fire a recreate event
+            if (oldPhy == null) {
+                // Extrapolate the default value
+                oldPhy = new ICapabilityWorldHumanity.Phylactery(null, null, newPhy.pos, newPhy.dimension, ICapabilityWorldHumanity.State.DEACTIVATED, null);
+            }
             if (!isWorldLoad) {
-                MinecraftForge.EVENT_BUS.post(new EventHumanityPhylactery.Recreate(newPhy.playerUUID, newPhy.lifetimeUUID, newPhy.morphTarget, newPhy.pos, newPhy.dimension));
+                boolean ownerChanged = !Objects.equals(newPhy.playerUUID, oldPhy.playerUUID) || !Objects.equals(oldPhy.lifetimeUUID, newPhy.lifetimeUUID);
+                boolean stateChanged = newPhy.state != oldPhy.state || !Objects.equals(newPhy.morphTarget, oldPhy.morphTarget);
+                if (ownerChanged) {
+                    MinecraftForge.EVENT_BUS.post(new EventHumanityPhylactery.Destroy(oldPhy.lifetimeUUID, oldPhy.playerUUID, oldPhy.pos, oldPhy.dimension));
+                }
+                if (ownerChanged || stateChanged) {
+                    MinecraftForge.EVENT_BUS.post(new EventHumanityPhylactery.Recreate(newPhy.playerUUID, newPhy.lifetimeUUID, newPhy.morphTarget, newPhy.pos, newPhy.dimension));
+                }
             }
         }
     }
@@ -329,12 +345,9 @@ public class TileHumanityPhylactery extends TileEntity {
         this.dormant = false;
     }
     
-    protected static void deactivate(@Nullable TileHumanityPhylactery phyTE, @Nullable ICapabilityWorldHumanity.Phylactery oldPhy, boolean isWorldLoad) {
-        if (phyTE != null) {
-            assert(oldPhy != null);
-        }
+    protected static void deactivate(@Nullable TileHumanityPhylactery phyTE, ICapabilityWorldHumanity.Phylactery oldPhy, boolean isWorldLoad) {
+        assert(oldPhy != null);
         
-        // TODO: If oldPhy is null, there is probably missing data. Extrapolate from an ACTIVE value so the event fires anyway.
         if (!isWorldLoad && oldPhy.state != State.DEACTIVATED && oldPhy.state != State.DORMANT) {
             ICapabilityWorldHumanity worldHumanity = UniverseCapabilityManager.INSTANCE.getCapability(HUMANITY_WORLD_CAPABILITY);
             if (worldHumanity != null) {
@@ -605,7 +618,8 @@ public class TileHumanityPhylactery extends TileEntity {
         if (compound.hasKey(NBT_LIFETIME_UUID, Serialization.NBT_STRING_ID)) {
             lifetimeUUID = UUID.fromString(compound.getString(NBT_LIFETIME_UUID));
         }
-        
-        checkWorldState(true);
+
+        ICapabilityWorldHumanity.Phylactery oldPhy = new ICapabilityWorldHumanity.Phylactery(lifetimeUUID, lifetimeUUID, getPos(), getWorld().provider.getDimension(), getPhylacteryState(), getMorphTarget());
+        checkWorldState(this, oldPhy, lifetimeUUID, playerUUID, true);
     }
 }
