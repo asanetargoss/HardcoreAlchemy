@@ -22,6 +22,7 @@ package targoss.hardcorealchemy.creatures;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import targoss.hardcorealchemy.HardcoreAlchemyCore;
+import targoss.hardcorealchemy.creatures.block.Blocks;
 import targoss.hardcorealchemy.creatures.entity.Entities;
 import targoss.hardcorealchemy.creatures.incantation.Incantations;
 import targoss.hardcorealchemy.creatures.instinct.Instincts;
@@ -87,6 +88,7 @@ public class CommonProxy {
         
         // Initialize via classload
         new Items();
+        new Blocks();
         new Entities();
         new Incantations();
         new Studies();

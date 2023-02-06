@@ -21,9 +21,9 @@ package targoss.hardcorealchemy.creatures.entity;
 
 import static targoss.hardcorealchemy.entity.Entities.ENTITIES;
 
+import targoss.hardcorealchemy.entity.EntityInfo;
 import targoss.hardcorealchemy.render.RenderNothing;
 import targoss.hardcorealchemy.util.Color;
-import targoss.hardcorealchemy.util.EntityInfo;
 
 public class Entities {
     public static final EntityInfo FISH_SWARM_ENTRY = ENTITIES.add("fish_swarm", new EntityInfo(0, EntityFishSwarm.class, new Color(0,0,0), new Color(0,0,0)));

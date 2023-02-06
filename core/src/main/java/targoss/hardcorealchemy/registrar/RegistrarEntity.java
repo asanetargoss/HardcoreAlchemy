@@ -24,7 +24,7 @@ import org.apache.logging.log4j.Logger;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import targoss.hardcorealchemy.HardcoreAlchemyCore;
-import targoss.hardcorealchemy.util.EntityInfo;
+import targoss.hardcorealchemy.entity.EntityInfo;
 
 public class RegistrarEntity extends Registrar<EntityInfo> {
 

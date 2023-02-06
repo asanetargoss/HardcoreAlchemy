@@ -23,7 +23,6 @@ import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.coremod.HardcoreAlchemyPreInit;
 import targoss.hardcorealchemy.registrar.Registrar;
 import targoss.hardcorealchemy.registrar.RegistrarEntity;
-import targoss.hardcorealchemy.util.EntityInfo;
 
 public class Entities {
     public static final Registrar<EntityInfo> ENTITIES = new RegistrarEntity("entities", HardcoreAlchemyCore.MOD_ID, HardcoreAlchemyPreInit.LOGGER);

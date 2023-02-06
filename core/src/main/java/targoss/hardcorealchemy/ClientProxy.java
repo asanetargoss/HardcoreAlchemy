@@ -20,8 +20,11 @@
 package targoss.hardcorealchemy;
 
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import targoss.hardcorealchemy.block.Blocks;
 import targoss.hardcorealchemy.entity.Entities;
+import targoss.hardcorealchemy.registrar.RegistrarBlockModel;
 
 public class ClientProxy extends CommonProxy {
     public static final ResourceLocation TILESET = new ResourceLocation(HardcoreAlchemyCore.MOD_ID, "textures/gui/icon_tileset.png");
@@ -34,5 +37,10 @@ public class ClientProxy extends CommonProxy {
     public void preInit(FMLPreInitializationEvent event) {
         super.preInit(event);
         Entities.ClientSide.ENTITIES.register();
+    }
+    
+    public void init(FMLInitializationEvent event) {
+        super.init(event);
+        Blocks.Client.CLIENT_BLOCK_MODELS.register(RegistrarBlockModel.Client.TESR);
     }
 }

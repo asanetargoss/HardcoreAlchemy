@@ -31,6 +31,7 @@ import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
+import targoss.hardcorealchemy.block.Blocks;
 import targoss.hardcorealchemy.capability.VirtualCapabilityManager;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.entity.Entities;
@@ -47,6 +48,7 @@ import targoss.hardcorealchemy.network.MessageFakeBlockBreak;
 import targoss.hardcorealchemy.network.MessageInactiveCapabilities;
 import targoss.hardcorealchemy.network.NetMessenger;
 import targoss.hardcorealchemy.network.RequestIncantation;
+import targoss.hardcorealchemy.registrar.RegistrarBlockModel;
 import targoss.hardcorealchemy.research.Studies;
 
 public class CommonProxy {
@@ -85,6 +87,10 @@ public class CommonProxy {
         Items.ITEMS.register();
         Items.POTIONS.register();
         Items.POTION_TYPES.register();
+        Blocks.BLOCKS.register();
+        Blocks.TILE_ENTITIES.register();
+        Blocks.BLOCK_MODELS.register(RegistrarBlockModel.DOMAIN);
+        Blocks.BLOCK_MODELS.register(RegistrarBlockModel.RESOURCE);
         Entities.ENTITIES.register();
         Studies.KNOWLEDGE_FACTS.register();
         // asanetargoss @ 2021-10-03: Moved incantation registration from init to preInit

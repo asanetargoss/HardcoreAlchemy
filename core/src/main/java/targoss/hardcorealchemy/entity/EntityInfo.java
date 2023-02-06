@@ -17,10 +17,11 @@
  * with Hardcore Alchemy Core. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.util;
+package targoss.hardcorealchemy.entity;
 
 import net.minecraft.entity.Entity;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
+import targoss.hardcorealchemy.util.Color;
 
 public class EntityInfo {
     public final int id;
