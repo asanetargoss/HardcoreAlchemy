@@ -64,7 +64,7 @@ public class BlockModelInfo<T extends TileEntity> {
                 // This is DefaultVertexFormats.ITEM, but I wonder if DefaultVertexFormats.BLOCK would work here...
                 bakedModel = model.bake(TRSRTransformation.identity(), DefaultVertexFormats.ITEM, SimpleTextureGetter.INSTANCE);
             } catch (Exception e) {
-                HardcoreAlchemyCore.LOGGER.error(e);
+                HardcoreAlchemyCore.LOGGER.error("Failed to get baked model '" + id + "'. Substituting a dummy one.", e);
                 bakedModel = getDummyBakedModel();
             }
         }

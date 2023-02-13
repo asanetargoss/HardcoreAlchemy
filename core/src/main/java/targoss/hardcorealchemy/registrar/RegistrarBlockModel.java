@@ -20,7 +20,7 @@ public class RegistrarBlockModel extends Registrar<BlockModelInfo<?>> {
     @Override
     public <V extends BlockModelInfo<?>> V add(String entryName, V entry) {
         super.add(entryName, entry);
-        entry.id = new ResourceLocation(namespace, "block/" + name + ".obj");
+        entry.id = new ResourceLocation(namespace, "block/" + entryName + ".obj");
         return entry;
     }
     
