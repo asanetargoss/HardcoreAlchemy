@@ -57,6 +57,9 @@ public class BlockModelInfo<T extends TileEntity> {
         return dummyBakedModel;
     }
     
+    // TODO: Don't load OBJ models on the render thread
+    // TODO: I think this baked model doesn't use the texcoords from the OBJ file. Might have to fix that
+    // TODO: Is the correct vertex format ITEM, or something else?
     public IBakedModel getBakedModel() {
         if (bakedModel == null) {
             try {
@@ -74,6 +77,9 @@ public class BlockModelInfo<T extends TileEntity> {
     public static class Client<T extends TileEntity> {
         public final BlockModelInfo<T> info;
         public final @Nullable TileEntitySpecialRenderer<? super T> tesr;
+        protected static int LIST_NULL = -2;
+        protected static int LIST_ERROR = -1;
+        protected int displayList = LIST_NULL;
         
         public Client(BlockModelInfo<T> info, @Nullable TileEntitySpecialRenderer<? super T> tesr) {
             this.info = info;

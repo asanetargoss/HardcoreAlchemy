@@ -34,6 +34,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 // TODO: See TileEntityEnderChestRenderer
 // TODO: See https://wiki.mcjty.eu/modding/index.php?title=Render_Block_TESR_/_OBJ-1.9
+// TODO: Figure out why this block is dropping village box coins in dev
 public class BlockHumanityPhylactery extends Block implements ITileEntityProvider {
     public BlockHumanityPhylactery() {
         super(Material.IRON);

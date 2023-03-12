@@ -23,8 +23,10 @@ import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.world.World;
@@ -35,7 +37,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class TESRHumanityPhylactery extends TileEntitySpecialRenderer<TileHumanityPhylactery> {
     
     protected double tickTime = 0;
-    // TODO
+    protected static final double ROTATION_FREQUENCY = 0.5;
     private IBakedModel bakedModel;
 
     private IBakedModel getBakedModel() {
@@ -44,15 +46,21 @@ public class TESRHumanityPhylactery extends TileEntitySpecialRenderer<TileHumani
         }
         return bakedModel;
     }
+    
+    protected void setupCoordFrame(double x, double y, double z) {
+        GlStateManager.translate(x, y, z);
+        GlStateManager.disableRescaleNormal();
+        GlStateManager.translate(0.5F, 0.5F, 0.5F);
+    }
 
     @Override
     public void renderTileEntityAt(TileHumanityPhylactery te, double x, double y, double z, float partialTicks, int destroyStage) {
         // Translate to block edge
         GlStateManager.pushAttrib();
+        GlStateManager.matrixMode(GL11.GL_MODELVIEW); // TODO: RAT
         GlStateManager.pushMatrix();
-        GlStateManager.translate(x, y, z);
-        GlStateManager.disableRescaleNormal();
 
+        setupCoordFrame(x, y, z);
         renderFrame(te, x, y, z, tickTime);
         tickTime += partialTicks;
 
@@ -69,16 +77,28 @@ public class TESRHumanityPhylactery extends TileEntitySpecialRenderer<TileHumani
         
         // TODO: Split the frame into two parts
         // TODO: Use te data to determine if the frame should rotate
-        GlStateManager.pushMatrix();
-
-        GlStateManager.translate(.5, 0, .5);
-        double angle = (Math.PI * 2 * tickTime / 20 / 10) % 360;
+        double angle = (ROTATION_FREQUENCY * (Math.PI * 2 * tickTime / 20)) % 360;
         GlStateManager.rotate((float)angle, 0, 1, 0);
 
+        RenderHelper.disableStandardItemLighting();
+        bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
         if (Minecraft.isAmbientOcclusionEnabled()) {
             GlStateManager.shadeModel(GL11.GL_SMOOTH);
         } else {
             GlStateManager.shadeModel(GL11.GL_FLAT);
+        }
+        
+        // TODO: Remove debug triangle
+        {
+            GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
+            GL11.glBegin(GL11.GL_TRIANGLES);
+            GL11.glVertex3d(-0.5, -0.5, -0.5);
+            GL11.glVertex3d( 0.5, -0.5, -0.5);
+            GL11.glVertex3d( 0.5,  0.5,  0.5);
+            GL11.glVertex3d( 0.5,  0.5,  0.5);
+            GL11.glVertex3d( 0.5, -0.5, -0.5);
+            GL11.glVertex3d(-0.5, -0.5, -0.5);
+            GL11.glEnd();
         }
 
         World world = te.getWorld();
@@ -86,12 +106,10 @@ public class TESRHumanityPhylactery extends TileEntitySpecialRenderer<TileHumani
         // ¯\_(ツ)_/¯
         GlStateManager.translate(-x, -y, -z);
 
-        // TODO: Figure out why this code seems to have no effect, even though this function is being called. It seems Forge is falling back to some other rendering code to render the OBJ statically? This function doesn't get any quads from the OBJ model, and is therefore a no-op
-        // TODO: Further research shows that this is rendering with the empty dummy model. Check the logs for errors
-        // TODO: Also, check the logs later on to prune the OBJ file for unsupported features
-        // TODO: OK I fixed the error in the log, but looking at the code, I think this does nothing, lol
         Tessellator tessellator = Tessellator.getInstance();
+        // TODO: Why is this BLOCK and not ITEM like the model being rendered?
         tessellator.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+        // TODO: Figure out what's preventing this model from rendering
         Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(
                 world,
                 bakedModel,
@@ -101,6 +119,6 @@ public class TESRHumanityPhylactery extends TileEntitySpecialRenderer<TileHumani
                 false);
         tessellator.draw();
 
-        GlStateManager.popMatrix();
+        RenderHelper.enableStandardItemLighting();
     }
 }
