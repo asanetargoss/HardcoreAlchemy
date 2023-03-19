@@ -29,6 +29,7 @@ import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -104,11 +105,13 @@ public class TESRHumanityPhylactery extends TileEntitySpecialRenderer<TileHumani
         World world = te.getWorld();
         // Translate back to world coordinates for Minecraft rendering, but keep block center offset
         // ¯\_(ツ)_/¯
-        GlStateManager.translate(-x, -y, -z);
+        GlStateManager.translate(-x, -y, -z); // TODO: RAT
 
         Tessellator tessellator = Tessellator.getInstance();
         // TODO: Why is this BLOCK and not ITEM like the model being rendered?
         tessellator.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+        BlockPos blockPos = te.getPos();
+        tessellator.getBuffer().setTranslation(x - blockPos.getX(), y - blockPos.getY(), z - blockPos.getZ()); // TODO: RAT
         // TODO: Figure out what's preventing this model from rendering
         Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(
                 world,
@@ -118,6 +121,7 @@ public class TESRHumanityPhylactery extends TileEntitySpecialRenderer<TileHumani
                 Tessellator.getInstance().getBuffer(),
                 false);
         tessellator.draw();
+        tessellator.getBuffer().setTranslation(0, 0, 0); // TODO: RAT
 
         RenderHelper.enableStandardItemLighting();
     }
