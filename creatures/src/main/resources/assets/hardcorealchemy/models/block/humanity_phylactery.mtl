@@ -1,4 +1,4 @@
-# Blender MTL File: 'humanit_phylactery.blend'
+# Blender MTL File: 'humanity_phylactery.blend'
 # Material Count: 1
 
 newmtl Material
@@ -10,3 +10,4 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 1
+map_Ka humanity_phylactery.png

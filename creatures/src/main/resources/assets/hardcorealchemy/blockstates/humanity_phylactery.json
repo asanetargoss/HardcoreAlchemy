@@ -1,8 +1,7 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "custom": { "flip-v": true },
-    "model": "hardcorealchemy:humanity_phylactery.obj"
+    "custom": { "flip-v": true }
   },
   "variants": {
     "normal": [{}],

@@ -14,7 +14,6 @@ public class Blocks {
     
     public static final TileEntityInfo<TileHumanityPhylactery> TILE_HUMANITY_PHYLACTERY = TILE_ENTITIES.add("humanity_phlactery", new TileEntityInfo<TileHumanityPhylactery>(TileHumanityPhylactery.class));
     
-    // TODO: Use this (as a start, call getBakedModel(), try looking for the error, and see if adding the OBJ model makes the error go away)
     public static final BlockModelInfo<TileHumanityPhylactery> MODEL_HUMANITY_PHYLACTERY = BLOCK_MODELS.add("humanity_phylactery", new BlockModelInfo<TileHumanityPhylactery>(BLOCK_HUMANITY_PHYLACTERY, TILE_HUMANITY_PHYLACTERY.clazz));
     
     public static class Client {

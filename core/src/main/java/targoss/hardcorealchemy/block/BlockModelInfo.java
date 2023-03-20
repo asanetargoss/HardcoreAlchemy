@@ -40,11 +40,43 @@ public class BlockModelInfo<T extends TileEntity> {
         this.teClass = teClass;
     }
     
+    protected static class SimpleTextureAtlasSprite extends TextureAtlasSprite {
+        public SimpleTextureAtlasSprite(TextureAtlasSprite vanillaSprite) {
+            super(vanillaSprite.getIconName());
+            this.copyFrom(vanillaSprite);
+        }
+        
+        @Override
+        public float getInterpolatedU(double u)
+        {
+            return (float)u / 16.0f;
+        }
+
+        @Override
+        public float getUnInterpolatedU(float u)
+        {
+            return u * 16.0f;
+        }
+        
+        @Override
+        public float getInterpolatedV(double v)
+        {
+            return (float)v / -16.0f;
+        }
+
+        @Override
+        public float getUnInterpolatedV(float v)
+        {
+            return v * -16.0f;
+        }
+    }
+    
     protected static class SimpleTextureGetter implements Function<ResourceLocation, TextureAtlasSprite> {
         public static final SimpleTextureGetter INSTANCE = new SimpleTextureGetter();
         @Override
         public TextureAtlasSprite apply(ResourceLocation location) {
-            return Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());
+            TextureAtlasSprite vanillaSprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());
+            return new SimpleTextureAtlasSprite(vanillaSprite);
         }
     }
     
@@ -57,14 +89,11 @@ public class BlockModelInfo<T extends TileEntity> {
         return dummyBakedModel;
     }
     
-    // TODO: Don't load OBJ models on the render thread
-    // TODO: I think this baked model doesn't use the texcoords from the OBJ file. Might have to fix that
     // TODO: Is the correct vertex format ITEM, or something else?
     public IBakedModel getBakedModel() {
         if (bakedModel == null) {
             try {
                 net.minecraftforge.client.model.IModel model = ModelLoaderRegistry.getModel(id);
-                // This is DefaultVertexFormats.ITEM, but I wonder if DefaultVertexFormats.BLOCK would work here...
                 bakedModel = model.bake(TRSRTransformation.identity(), DefaultVertexFormats.ITEM, SimpleTextureGetter.INSTANCE);
             } catch (Exception e) {
                 HardcoreAlchemyCore.LOGGER.error("Failed to get baked model '" + id + "'. Substituting a dummy one.", e);
