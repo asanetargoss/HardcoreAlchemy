@@ -70,6 +70,8 @@ import targoss.hardcorealchemy.util.Serialization;
 import targoss.hardcorealchemy.util.WorldUtil;
 
 public class TileHumanityPhylactery extends TileEntity {
+    // TODO: Add a default constructor to appease net.minecraft.tileentity.TileEntity.create
+    
     @CapabilityInject(IItemHandler.class)
     public static final Capability<IItemHandler> ITEM_HANDLER_CAPABILITY = null;
     public static final int SLOT_MORPH_TARGET = 0;

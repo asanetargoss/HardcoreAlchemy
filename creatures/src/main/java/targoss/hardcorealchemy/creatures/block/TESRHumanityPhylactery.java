@@ -19,6 +19,8 @@
 
 package targoss.hardcorealchemy.creatures.block;
 
+import java.util.Random;
+
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
@@ -28,6 +30,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -40,70 +43,135 @@ public class TESRHumanityPhylactery extends TileEntitySpecialRenderer<TileHumani
     
     protected double tickTime = 0;
     protected static final double ROTATION_FREQUENCY = 0.5;
-    private IBakedModel bakedModel;
+    private IBakedModel outerFrame;
+    private IBakedModel innerFrame;
 
-    private IBakedModel getBakedModel() {
-        if (bakedModel == null) {
-            bakedModel = Blocks.MODEL_HUMANITY_PHYLACTERY.getBakedModel();
+    private IBakedModel getOuterFrame() {
+        if (outerFrame == null) {
+            outerFrame = Blocks.MODEL_HUMANITY_PHYLACTERY_OUTER_FRAME.getBakedModel();
         }
-        return bakedModel;
+        return outerFrame;
+    }
+
+    private IBakedModel getInnerFrame() {
+        if (innerFrame == null) {
+            innerFrame = Blocks.MODEL_HUMANITY_PHYLACTERY_INNER_FRAME.getBakedModel();
+        }
+        return innerFrame;
     }
     
     @Override
     public void renderTileEntityAt(TileHumanityPhylactery te, double playerToBlockX, double playerToBlockY, double playerToBlockZ, float partialTicks, int destroyStage) {
-        // Translate to block edge
+        // TODO: Do we need pushAttrib?
         GlStateManager.pushAttrib();
-        GlStateManager.pushMatrix();
 
         renderFrame(te, playerToBlockX, playerToBlockY, playerToBlockZ, tickTime);
         tickTime += partialTicks;
 
         // Done
-        GlStateManager.popMatrix();
         GlStateManager.popAttrib();
     }
     
     protected void renderFrame(TileHumanityPhylactery te, double playerToBlockX, double playerToBlockY, double playerToBlockZ, double tickTime) {
-        IBakedModel bakedModel = getBakedModel();
-        if (bakedModel == null) {
+        IBakedModel outerFrame = getOuterFrame();
+        if (outerFrame == null) {
             return;
         }
-
+        IBakedModel innerFrame = getInnerFrame();
+        if (innerFrame == null) {
+            return;
+        }
+        
         RenderHelper.disableStandardItemLighting();
         if (Minecraft.isAmbientOcclusionEnabled()) {
             GlStateManager.shadeModel(GL11.GL_SMOOTH);
         } else {
             GlStateManager.shadeModel(GL11.GL_FLAT);
         }
-
-        // Translate from camera to block center
-        GlStateManager.translate(playerToBlockX, playerToBlockY, playerToBlockZ);
-        GlStateManager.translate(0.5F, 0.5F, 0.5F);
-        // Rotate the block about its center
-        // TODO: Split the frame into two parts
+        
         // TODO: Use te data to determine if the frame should rotate
-        double angle = (ROTATION_FREQUENCY * (Math.PI * 2 * tickTime / 20)) % 360;
-        GlStateManager.rotate((float)angle, 0, 1, 0);
-        // Translate back to world coordinates for Minecraft rendering, but keep block center offset
-        // ¯\_(ツ)_/¯
-        BlockPos blockPos = te.getPos();
-        GlStateManager.translate(-blockPos.getX(), -blockPos.getY(), -blockPos.getZ());
+        // TODO: Rotational offset depending on the placement of the block
+        double angleOuter = (ROTATION_FREQUENCY * (Math.PI * 2 * tickTime / 20)) % 360;
+        double angleInner = (-1.0 * ROTATION_FREQUENCY * (Math.PI * 2 * tickTime / 20)) % 360;
 
-        // TODO: Figure out if there is a way to put this in the baked model
+        World world = te.getWorld();
+        BlockPos blockPos = te.getPos();
+        
+        // Spherically random particles
+        // TODO: Custom particles
+        Random rand = new Random();
+        if (rand.nextFloat() < 0.3F)
+        {
+            float radius = rand.nextFloat();
+            radius *= radius;
+            radius = 0.2F * (1.0F - radius);
+            // Not sure if these are actual Euler angles
+            float angleYaw = (float)Math.PI * 2.0F * rand.nextFloat();
+            float anglePitch = (float)Math.PI * 2.0F * rand.nextFloat();
+            float cosYaw = (float)Math.cos(angleYaw);
+            float cosPitch = (float)Math.cos(anglePitch);
+            float sinYaw = (float)Math.sin(angleYaw);
+            float sinPitch = (float)Math.sin(anglePitch);
+            float ax = cosYaw * cosPitch;
+            float ay = sinYaw;
+            float az = sinPitch;
+            world.spawnParticle(EnumParticleTypes.FLAME, 0.5 + blockPos.getX() + (radius * ax), 0.5 + blockPos.getY() + (radius * ay), 0.5 + blockPos.getZ() + (radius * az), 0, 0, 0, 0);
+        }
+        
+        // TODO: Different texture when on?
         bindTexture(new ResourceLocation(HardcoreAlchemyCore.MOD_ID, "models/block/humanity_phylactery.png"));
         
-        Tessellator tessellator = Tessellator.getInstance();
-        // NOTE: Switching the vertex format to ITEM here causes the backside of the model to appear dark
-        tessellator.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-        World world = te.getWorld();
-        Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(
-                world,
-                bakedModel,
-                world.getBlockState(te.getPos()),
-                te.getPos(),
-                Tessellator.getInstance().getBuffer(),
-                false);
-        tessellator.draw();
+        // Render outer frame
+        GlStateManager.pushMatrix();
+        {
+            // Translate from camera to block center
+            GlStateManager.translate(playerToBlockX, playerToBlockY, playerToBlockZ);
+            GlStateManager.translate(0.5F, 0.5F, 0.5F);
+            // Rotate about the block center
+            GlStateManager.rotate((float)angleOuter, 0, 1, 0);
+            // Translate back to world coordinates for Minecraft rendering, but keep block center offset
+            // ¯\_(ツ)_/¯
+            GlStateManager.translate(-blockPos.getX(), -blockPos.getY(), -blockPos.getZ());
+            
+            Tessellator tessellator = Tessellator.getInstance();
+            // NOTE: Switching the vertex format to ITEM here causes the backside of the model to appear dark
+            tessellator.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+            Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(
+                    world,
+                    outerFrame,
+                    world.getBlockState(te.getPos()),
+                    te.getPos(),
+                    Tessellator.getInstance().getBuffer(),
+                    false);
+            tessellator.draw();
+        }
+        GlStateManager.popMatrix();
+        
+        // Render inner frame
+        GlStateManager.pushMatrix();
+        {
+            // Translate from camera to block center
+            GlStateManager.translate(playerToBlockX, playerToBlockY, playerToBlockZ);
+            GlStateManager.translate(0.5F, 0.5F, 0.5F);
+            // Rotate about the block center
+            GlStateManager.rotate((float)angleInner, 0, 1, 0);
+            // Translate back to world coordinates for Minecraft rendering, but keep block center offset
+            // ¯\_(ツ)_/¯
+            GlStateManager.translate(-blockPos.getX(), -blockPos.getY(), -blockPos.getZ());
+    
+            Tessellator tessellator = Tessellator.getInstance();
+            // NOTE: Switching the vertex format to ITEM here causes the backside of the model to appear dark
+            tessellator.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+            Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(
+                    world,
+                    innerFrame,
+                    world.getBlockState(te.getPos()),
+                    te.getPos(),
+                    Tessellator.getInstance().getBuffer(),
+                    false);
+            tessellator.draw();
+        }
+        GlStateManager.popMatrix();
 
         RenderHelper.enableStandardItemLighting();
     }

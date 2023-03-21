@@ -116,6 +116,7 @@ public class BlockModelInfo<T extends TileEntity> {
         }
         
         public void bindTileEntitySpecialRenderer() {
+            // TODO: Is this really needed?
             ClientRegistry.bindTileEntitySpecialRenderer(info.teClass, tesr);
         }
     }
