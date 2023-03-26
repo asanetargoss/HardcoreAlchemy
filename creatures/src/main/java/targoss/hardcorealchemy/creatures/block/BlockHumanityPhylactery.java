@@ -19,23 +19,27 @@
 
 package targoss.hardcorealchemy.creatures.block;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import targoss.hardcorealchemy.creatures.gui.Guis;
 
-// TODO: See TileEntityEnderChestRenderer
-// TODO: See https://wiki.mcjty.eu/modding/index.php?title=Render_Block_TESR_/_OBJ-1.9
 // TODO: Figure out why this block has the wrong drops (is dropping village box coins in dev, not dropping itself, and presumably not dropping its inventory)
-// TODO: Block should light up when active
+// TODO: Allow lighting the block directly with flint and steel
+// TODO: isFlammable = true when the phylactery is inactive and not near water
 public class BlockHumanityPhylactery extends Block implements ITileEntityProvider {
     public BlockHumanityPhylactery() {
         super(Material.IRON);
@@ -62,20 +66,23 @@ public class BlockHumanityPhylactery extends Block implements ITileEntityProvide
         return false;
     }
     
-    public static class Container extends net.minecraft.inventory.Container {
-        @Override
-        public boolean canInteractWith(EntityPlayer player) {
-            return true;
+    @Override
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+        if (!world.isRemote) {
+            Guis.GUI_HANDLER_HUMANITY_PHYLACTERY.open(player, world, pos.getX(), pos.getY(), pos.getZ());
         }
+        
+        return true;
     }
     
     @Override
-    public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor) {
-        super.onNeighborChange(world, pos, neighbor);
+    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block)
+    {
+        super.neighborChanged(state, world, pos, block);
         
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof TileHumanityPhylactery) {
-            ((TileHumanityPhylactery)te).onNeighborChange(pos, neighbor);
+            ((TileHumanityPhylactery)te).neighborChanged(pos);
         }
     }
 
@@ -84,11 +91,21 @@ public class BlockHumanityPhylactery extends Block implements ITileEntityProvide
      */
     @Override
     public void breakBlock(World world, BlockPos pos, IBlockState blockState) {
+        System.out.println("breakBlock"); // TODO: RAT
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof TileHumanityPhylactery) {
             ((TileHumanityPhylactery)te).breakBlock(world, pos);
         }
         
         super.breakBlock(world, pos, blockState);
+    }
+    
+    @Override
+    public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) {
+        TileEntity te = world.getTileEntity(pos);
+        if (te instanceof TileHumanityPhylactery) {
+            return ((TileHumanityPhylactery) te).isActive() ? 15 : 0;
+        }
+        return super.getLightValue(state, world, pos);
     }
 }

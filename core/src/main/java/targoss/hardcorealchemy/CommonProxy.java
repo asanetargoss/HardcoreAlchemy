@@ -35,6 +35,7 @@ import targoss.hardcorealchemy.block.Blocks;
 import targoss.hardcorealchemy.capability.VirtualCapabilityManager;
 import targoss.hardcorealchemy.config.Configs;
 import targoss.hardcorealchemy.entity.Entities;
+import targoss.hardcorealchemy.gui.Guis;
 import targoss.hardcorealchemy.incantation.Incantations;
 import targoss.hardcorealchemy.item.Items;
 import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
@@ -43,6 +44,7 @@ import targoss.hardcorealchemy.listener.ListenerConfigs;
 import targoss.hardcorealchemy.listener.ListenerEntityCapabilities;
 import targoss.hardcorealchemy.listener.ListenerPlayerIncantation;
 import targoss.hardcorealchemy.listener.ListenerPlayerResearch;
+import targoss.hardcorealchemy.listener.ListenerUniverseCapabilities;
 import targoss.hardcorealchemy.network.MessageConfigs;
 import targoss.hardcorealchemy.network.MessageFakeBlockBreak;
 import targoss.hardcorealchemy.network.MessageInactiveCapabilities;
@@ -65,6 +67,7 @@ public class CommonProxy {
     
     public CommonProxy() {
         addListener(new ListenerCapabilities());
+        addListener(new ListenerUniverseCapabilities());
         addListener(new ListenerEntityCapabilities());
         addListener(new ListenerPlayerIncantation());
         addListener(new ListenerPlayerResearch());
@@ -91,6 +94,7 @@ public class CommonProxy {
         Blocks.TILE_ENTITIES.register();
         Blocks.BLOCK_MODELS.register(RegistrarBlockModel.DOMAIN);
         Blocks.BLOCK_MODELS.register(RegistrarBlockModel.RESOURCE);
+        Guis.GUI_HANDLERS.register();
         Entities.ENTITIES.register();
         Studies.KNOWLEDGE_FACTS.register();
         // asanetargoss @ 2021-10-03: Moved incantation registration from init to preInit

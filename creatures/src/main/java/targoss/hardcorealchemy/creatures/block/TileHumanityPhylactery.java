@@ -36,6 +36,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -55,6 +56,7 @@ import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.items.SlotItemHandler;
 import targoss.hardcorealchemy.capability.UniverseCapabilityManager;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.capability.humanity.ProviderHumanity;
@@ -65,19 +67,19 @@ import targoss.hardcorealchemy.creatures.capability.worldhumanity.ICapabilityWor
 import targoss.hardcorealchemy.creatures.event.EventHumanityPhylactery;
 import targoss.hardcorealchemy.creatures.item.ItemSealOfForm;
 import targoss.hardcorealchemy.creatures.listener.ListenerWorldHumanity;
+import targoss.hardcorealchemy.item.ConditionalItemHandler;
 import targoss.hardcorealchemy.util.InventoryUtil;
 import targoss.hardcorealchemy.util.Serialization;
 import targoss.hardcorealchemy.util.WorldUtil;
 
 public class TileHumanityPhylactery extends TileEntity {
-    // TODO: Add a default constructor to appease net.minecraft.tileentity.TileEntity.create
     
     @CapabilityInject(IItemHandler.class)
     public static final Capability<IItemHandler> ITEM_HANDLER_CAPABILITY = null;
-    public static final int SLOT_MORPH_TARGET = 0;
-    public static final int SLOT_TRUE_FORM    = 1;
-    public static final int SLOT_FUEL         = 2;
-    public static final int SLOT_COUNT        = 3;
+    protected static final int SLOT_MORPH_TARGET = 0;
+    protected static final int SLOT_TRUE_FORM    = 1;
+    protected static final int SLOT_FUEL         = 2;
+    protected static final int SLOT_COUNT        = 3;
     protected static final int MIN_FUEL_QUALITY = TileEntityFurnace.getItemBurnTime(new ItemStack(Items.COAL, 1, 0)); // 0 = regular coal (although burn time should be the same for charcoal)
     /** Distance from the surface of the block */
     protected static final int MIN_ACTIVATION_DISTANCE = 3;
@@ -92,35 +94,57 @@ public class TileHumanityPhylactery extends TileEntity {
     @CapabilityInject(ICapabilityWorldHumanity.class)
     public static final Capability<ICapabilityWorldHumanity> HUMANITY_WORLD_CAPABILITY = null;
     
-    protected class Inventory extends ItemStackHandler {
-        protected boolean sideEffects = true;
-        
-        public Inventory(int slotCount) {
-            super(slotCount);
+    public TileHumanityPhylactery() {} // Called by Forge via reflection
+    
+    protected static class Slot extends SlotItemHandler {
+
+        public Slot(ItemStackHandler handler, int index, int xPosition, int yPosition) {
+            super(handler, index, xPosition, yPosition);
         }
         
         @Override
-        public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
-            switch (slot) {
+        public boolean isItemValid(@Nullable ItemStack stack) {
+            switch (getSlotIndex()) {
             case SLOT_MORPH_TARGET:
                 if (getMorphTarget(stack) == null) {
-                    return stack;
+                    return false;
                 }
                 break;
             case SLOT_TRUE_FORM:
                 if (!isTrueFormSeal(stack)) {
-                    return stack;
+                    return false;
                 }
                 break;
             case SLOT_FUEL:
                 if (!isSufficientFuel(stack)) {
-                    return stack;
+                    return false;
                 }
                 break;
             default:
-                return stack;
+                return false;
             }
-            return super.insertItem(slot, stack, simulate);
+            
+            return super.isItemValid(stack);
+        }
+    }
+    
+    // TODO: Inventory syncing?
+    protected class Inventory extends ConditionalItemHandler {
+        protected boolean sideEffects = true;
+        
+        public Inventory() {
+            super(SLOT_COUNT);
+        }
+
+        @Override
+        protected int getStackLimit(int slot, ItemStack stack)
+        {
+            return slot == SLOT_FUEL ? 64 : 1;
+        }
+
+        @Override
+        public SlotItemHandler createSlot(IInventory inventory, int index, int xPosition, int yPosition) {
+            return new Slot(this, index, xPosition, yPosition);
         }
 
         @Override
@@ -183,10 +207,9 @@ public class TileHumanityPhylactery extends TileEntity {
         }
     }
 
-    public final Inventory inventory = new Inventory(SLOT_COUNT);
+    public final Inventory inventory = new Inventory();
     public UUID playerUUID = null;
     public UUID lifetimeUUID = null;
-    // TODO: Dormant phylacteries are technically still active, but don't have a flame, and cannot be doused with water
     public boolean dormant = false;
     
     @Override
@@ -298,6 +321,11 @@ public class TileHumanityPhylactery extends TileEntity {
         return dormant;
     }
     
+    public boolean isVisiblyActive() {
+        return isActive() && !isDormant();
+    }
+    
+    // TODO: If the block is loaded, trigger a block update so the lighting changes
     protected static void create(@Nullable TileHumanityPhylactery phyTE, @Nullable EntityPlayer player, @Nullable ICapabilityMisc misc, AbstractMorph morphTarget, @Nullable ICapabilityWorldHumanity.Phylactery oldPhy, ICapabilityWorldHumanity.Phylactery newPhy, boolean isWorldLoad) {
         if (phyTE != null) {
             phyTE.playerUUID = newPhy.playerUUID;
@@ -306,6 +334,7 @@ public class TileHumanityPhylactery extends TileEntity {
                 assert(player != null);
                 assert(misc != null);
                 assert(morphTarget != null);
+                // TODO: Why isn't this event getting picked up by ListenerWorldHumanity?
                 MinecraftForge.EVENT_BUS.post(new EventHumanityPhylactery.Create(player, misc, morphTarget, phyTE.getWorld(), phyTE.getPos(), phyTE.getWorld().provider.getDimension()));
             }
         }
@@ -525,6 +554,7 @@ public class TileHumanityPhylactery extends TileEntity {
         // The better the fuel source, the larger the activation distance (up to some reasonable max). Coal should give a reasonable default.
         final int activationDistance = getActivationDistance();
         AxisAlignedBB bb = new AxisAlignedBB(pos).expandXyz(activationDistance);
+        // TODO: Shouldn't this be negated?
         boolean needTrueFormSeal = hasTrueFormSeal();
         // Target different player depending on if this tile's inventory has a seal of true form in it
         Predicate<EntityPlayer> predicate = needTrueFormSeal ? NoForgotMorphPredicate.INSTANCE : ForgotMorphPredicate.INSTANCE;
@@ -558,22 +588,24 @@ public class TileHumanityPhylactery extends TileEntity {
         return false;
     }
     
-    /** Given the neigboring block change, check if the tile
-     *  needs to be activated/deactivated. **/
-    public void onNeighborChange(BlockPos pos, BlockPos neighborPos) {
+    /** Given a neigboring block change, check if the tile
+     *  at the given pos needs to be activated/deactivated. **/
+    public void neighborChanged(BlockPos pos) {
         if (this.world.isRemote) {
             return;
         }
         for (EnumFacing facing : EnumFacing.VALUES) {
             BlockPos testPos = pos.offset(facing);
-            if (testPos.equals(neighborPos)) {
-                continue;
-            }
             if (tryDouse(this.world, pos, testPos)) {
                 return;
             }
         }
-        tryIgnite(this.world, pos, neighborPos);
+        for (EnumFacing facing : EnumFacing.VALUES) {
+            BlockPos testPos = pos.offset(facing);
+            if (tryIgnite(this.world, pos, testPos)) {
+                return;
+            }
+        }
     }
     
     public void breakBlock(World world, BlockPos pos) {
@@ -605,10 +637,17 @@ public class TileHumanityPhylactery extends TileEntity {
         
         return nbtOut;
     }
+    
+    @Override
+    public void setWorldCreate(World world) {
+        this.world = world;
+    }
 
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
+        
+        assert(this.world != null);
         
         if (compound.hasKey(NBT_INVENTORY, Serialization.NBT_COMPOUND_ID)) {
             NBTTagCompound inventoryNBT = compound.getCompoundTag(NBT_INVENTORY);

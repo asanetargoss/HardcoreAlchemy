@@ -24,6 +24,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.creatures.block.Blocks;
 import targoss.hardcorealchemy.creatures.entity.Entities;
+import targoss.hardcorealchemy.creatures.gui.Guis;
 import targoss.hardcorealchemy.creatures.incantation.Incantations;
 import targoss.hardcorealchemy.creatures.instinct.Instincts;
 import targoss.hardcorealchemy.creatures.item.Items;
@@ -90,6 +91,7 @@ public class CommonProxy {
         new Items();
         new Blocks();
         new Entities();
+        new Guis();
         new Incantations();
         new Studies();
         

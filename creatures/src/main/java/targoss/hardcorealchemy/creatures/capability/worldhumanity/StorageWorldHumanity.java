@@ -20,6 +20,7 @@
 package targoss.hardcorealchemy.creatures.capability.worldhumanity;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.UUID;
 
 import mchorse.metamorph.api.MorphManager;
@@ -80,7 +81,7 @@ public class StorageWorldHumanity implements Capability.IStorage<ICapabilityWorl
         
         {
             NBTTagList nbtPhylacteries = new NBTTagList();
-            Phylactery[] phylacteries = instance.dumpPhylacteries();
+            Collection<Phylactery> phylacteries = instance.dumpPhylacteries();
             for (Phylactery phylactery : phylacteries) {
                 NBTTagCompound nbtPhylactery = new NBTTagCompound();
                 nbtPhylactery.setTag(PHYLACTERY_LIFETIME_UUID, NBTUtil.createUUIDTag(phylactery.lifetimeUUID));
@@ -136,7 +137,7 @@ public class StorageWorldHumanity implements Capability.IStorage<ICapabilityWorl
                 phylacteries.add(phylactery);
             }
             
-            instance.clearAndPutPhylacteries((Phylactery[])phylacteries.toArray());
+            instance.clearAndPutPhylacteries(phylacteries);
         }
     }
 }

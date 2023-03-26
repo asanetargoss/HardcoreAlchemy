@@ -19,7 +19,9 @@
 
 package targoss.hardcorealchemy.util;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nullable;
@@ -98,6 +100,15 @@ public class InventoryUtil {
     
     public static boolean isHotbarSlotIndex(int index) {
         return InventoryPlayer.isHotbar(index);
+    }
+    
+    public static List<Slot> getPlayerHotbarSlots(InventoryPlayer inv) {
+        List<Slot> slots = new ArrayList<>();
+        final int n = InventoryPlayer.getHotbarSize();
+        for (int i = 0; i < n; ++i) {
+            slots.add(new Slot(inv, i, 0, 0));
+        }
+        return slots;
     }
     
     public static int getInsertionSlot(InventoryPlayer inventoryPlayer, ItemStack itemStack) {

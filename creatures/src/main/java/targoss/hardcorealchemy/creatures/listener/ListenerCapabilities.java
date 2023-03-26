@@ -47,6 +47,9 @@ import targoss.hardcorealchemy.creatures.capability.killcount.StorageKillCount;
 import targoss.hardcorealchemy.creatures.capability.morphstate.CapabilityMorphState;
 import targoss.hardcorealchemy.creatures.capability.morphstate.ICapabilityMorphState;
 import targoss.hardcorealchemy.creatures.capability.morphstate.StorageMorphState;
+import targoss.hardcorealchemy.creatures.capability.worldhumanity.CapabilityWorldHumanity;
+import targoss.hardcorealchemy.creatures.capability.worldhumanity.ICapabilityWorldHumanity;
+import targoss.hardcorealchemy.creatures.capability.worldhumanity.StorageWorldHumanity;
 import targoss.hardcorealchemy.creatures.network.MessageHumanity;
 import targoss.hardcorealchemy.creatures.network.MessageInstinct;
 import targoss.hardcorealchemy.creatures.network.MessageKillCount;
@@ -68,6 +71,7 @@ public class ListenerCapabilities extends HardcoreAlchemyListener {
         manager.register(ICapabilityKillCount.class, new StorageKillCount(), CapabilityKillCount.class);
         manager.register(ICapabilityInstinct.class, new StorageInstinct(), CapabilityInstinct.class);
         manager.register(ICapabilityMorphState.class, new StorageMorphState(), CapabilityMorphState.class);
+        manager.register(ICapabilityWorldHumanity.class, new StorageWorldHumanity(), CapabilityWorldHumanity.class);
     }
 
     @SubscribeEvent

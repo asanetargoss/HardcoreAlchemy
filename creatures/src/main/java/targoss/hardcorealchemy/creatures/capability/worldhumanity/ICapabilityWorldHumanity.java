@@ -19,6 +19,7 @@
 
 package targoss.hardcorealchemy.creatures.capability.worldhumanity;
 
+import java.util.Collection;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
@@ -72,6 +73,6 @@ public interface ICapabilityWorldHumanity {
         public ICapabilityWorldHumanity.State state;
         public AbstractMorph morphTarget;
     }
-    Phylactery[] dumpPhylacteries();
-    void clearAndPutPhylacteries(Phylactery[] phylacteries);
+    Collection<Phylactery> dumpPhylacteries();
+    void clearAndPutPhylacteries(Collection<Phylactery> phylacteries);
 }

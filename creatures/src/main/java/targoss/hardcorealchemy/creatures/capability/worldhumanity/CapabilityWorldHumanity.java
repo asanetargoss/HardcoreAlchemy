@@ -20,6 +20,7 @@
 package targoss.hardcorealchemy.creatures.capability.worldhumanity;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -203,19 +204,18 @@ public class CapabilityWorldHumanity implements ICapabilityWorldHumanity {
     }
 
     @Override
-    public Phylactery[] dumpPhylacteries() {
-        Phylactery[] locations = new Phylactery[entryCount];
-        int i = 0;
+    public Collection<Phylactery> dumpPhylacteries() {
+        ArrayList<Phylactery> locations = new ArrayList<>(entryCount);
         for (ArrayList<Phylactery> locs : playerUUIDToPhylactery.values()) {
             for (Phylactery loc : locs) {
-                locations[i++] = loc;
+                locations.add(loc);
             }
         }
         return locations;
     }
 
     @Override
-    public void clearAndPutPhylacteries(Phylactery[] phylacteries) {
+    public void clearAndPutPhylacteries(Collection<Phylactery> phylacteries) {
         playerUUIDToPhylactery.clear();
         entryCount = 0;
         for (Phylactery phy : phylacteries) {

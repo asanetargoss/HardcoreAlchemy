@@ -42,18 +42,21 @@ import targoss.hardcorealchemy.HardcoreAlchemyCore;
 public class TESRHumanityPhylactery extends TileEntitySpecialRenderer<TileHumanityPhylactery> {
     
     protected double tickTime = 0;
-    protected static final double ROTATION_FREQUENCY = 0.5;
-    private IBakedModel outerFrame;
-    private IBakedModel innerFrame;
+    protected double particleTime = 0;
+    protected Random rand = new Random();
+    protected static final float ROTATION_FREQUENCY = 0.5F;
+    protected static final float PARTICLE_INTERVAL = 1.5F;
+    protected static IBakedModel outerFrame;
+    protected static IBakedModel innerFrame;
 
-    private IBakedModel getOuterFrame() {
+    protected static IBakedModel getOuterFrame() {
         if (outerFrame == null) {
             outerFrame = Blocks.MODEL_HUMANITY_PHYLACTERY_OUTER_FRAME.getBakedModel();
         }
         return outerFrame;
     }
 
-    private IBakedModel getInnerFrame() {
+    protected static IBakedModel getInnerFrame() {
         if (innerFrame == null) {
             innerFrame = Blocks.MODEL_HUMANITY_PHYLACTERY_INNER_FRAME.getBakedModel();
         }
@@ -62,17 +65,20 @@ public class TESRHumanityPhylactery extends TileEntitySpecialRenderer<TileHumani
     
     @Override
     public void renderTileEntityAt(TileHumanityPhylactery te, double playerToBlockX, double playerToBlockY, double playerToBlockZ, float partialTicks, int destroyStage) {
-        // TODO: Do we need pushAttrib?
-        GlStateManager.pushAttrib();
-
-        renderFrame(te, playerToBlockX, playerToBlockY, playerToBlockZ, tickTime);
-        tickTime += partialTicks;
-
-        // Done
-        GlStateManager.popAttrib();
+        boolean active = te.isVisiblyActive();
+        if (!active)
+        {
+            particleTime = 0;
+        }
+        renderFrame(te, playerToBlockX, playerToBlockY, playerToBlockZ);
+        if (active)
+        {
+            tickTime += partialTicks;
+            particleTime += partialTicks;
+        }
     }
     
-    protected void renderFrame(TileHumanityPhylactery te, double playerToBlockX, double playerToBlockY, double playerToBlockZ, double tickTime) {
+    protected void renderFrame(TileHumanityPhylactery te, double playerToBlockX, double playerToBlockY, double playerToBlockZ) {
         IBakedModel outerFrame = getOuterFrame();
         if (outerFrame == null) {
             return;
@@ -91,31 +97,35 @@ public class TESRHumanityPhylactery extends TileEntitySpecialRenderer<TileHumani
         
         // TODO: Use te data to determine if the frame should rotate
         // TODO: Rotational offset depending on the placement of the block
+        // TODO: Smoothly enable rotation on activation, and randomize using some seed
         double angleOuter = (ROTATION_FREQUENCY * (Math.PI * 2 * tickTime / 20)) % 360;
         double angleInner = (-1.0 * ROTATION_FREQUENCY * (Math.PI * 2 * tickTime / 20)) % 360;
 
         World world = te.getWorld();
         BlockPos blockPos = te.getPos();
         
-        // Spherically random particles
-        // TODO: Custom particles
-        Random rand = new Random();
-        if (rand.nextFloat() < 0.3F)
+        if (particleTime > 0)
         {
-            float radius = rand.nextFloat();
-            radius *= radius;
-            radius = 0.2F * (1.0F - radius);
-            // Not sure if these are actual Euler angles
-            float angleYaw = (float)Math.PI * 2.0F * rand.nextFloat();
-            float anglePitch = (float)Math.PI * 2.0F * rand.nextFloat();
-            float cosYaw = (float)Math.cos(angleYaw);
-            float cosPitch = (float)Math.cos(anglePitch);
-            float sinYaw = (float)Math.sin(angleYaw);
-            float sinPitch = (float)Math.sin(anglePitch);
-            float ax = cosYaw * cosPitch;
-            float ay = sinYaw;
-            float az = sinPitch;
-            world.spawnParticle(EnumParticleTypes.FLAME, 0.5 + blockPos.getX() + (radius * ax), 0.5 + blockPos.getY() + (radius * ay), 0.5 + blockPos.getZ() + (radius * az), 0, 0, 0, 0);
+            // Spherically random particles
+            // TODO: Custom particles
+            if ((rand.nextFloat())*particleTime > (PARTICLE_INTERVAL / 2))
+            {
+                particleTime -= PARTICLE_INTERVAL;
+                float radius = rand.nextFloat();
+                radius *= radius;
+                radius = 0.2F * (1.0F - radius);
+                // Not sure if these are actual Euler angles
+                float angleYaw = (float)Math.PI * 2.0F * rand.nextFloat();
+                float anglePitch = (float)Math.PI * 2.0F * rand.nextFloat();
+                float cosYaw = (float)Math.cos(angleYaw);
+                float cosPitch = (float)Math.cos(anglePitch);
+                float sinYaw = (float)Math.sin(angleYaw);
+                float sinPitch = (float)Math.sin(anglePitch);
+                float ax = cosYaw * cosPitch;
+                float ay = sinYaw;
+                float az = sinPitch;
+                world.spawnParticle(EnumParticleTypes.FLAME, 0.5 + blockPos.getX() + (radius * ax), 0.5 + blockPos.getY() + (radius * ay), 0.5 + blockPos.getZ() + (radius * az), 0, 0, 0, 0);
+            }
         }
         
         // TODO: Different texture when on?
