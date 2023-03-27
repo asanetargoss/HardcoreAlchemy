@@ -29,6 +29,7 @@ import net.minecraftforge.common.capabilities.Capability.IStorage;
 
 public class StorageMisc implements IStorage<ICapabilityMisc> {
     private static final String LIFETIME_UUID = "lifetimeUUID";
+    private static final String PERMANENT_UUID = "permanentUUID";
     private static final String LAST_LOGIN_VERSION = "lastLoginVersion";
     @Override
     public NBTBase writeNBT(Capability<ICapabilityMisc> capability, ICapabilityMisc instance, EnumFacing side) {
@@ -38,6 +39,13 @@ public class StorageMisc implements IStorage<ICapabilityMisc> {
             UUID uuid = instance.getLifetimeUUID();
             if (uuid != null) {
                 nbt.setString(LIFETIME_UUID, uuid.toString());
+            }
+        }
+        
+        {
+            UUID uuid = instance.getPermanentUUID();
+            if (uuid != null) {
+                nbt.setString(PERMANENT_UUID, uuid.toString());
             }
         }
         
@@ -59,6 +67,13 @@ public class StorageMisc implements IStorage<ICapabilityMisc> {
             try {
                 UUID uuid = UUID.fromString(nbt.getString(LIFETIME_UUID));
                 instance.setLifetimeUUID(uuid);
+            } catch (IllegalArgumentException e) {}
+        }
+        
+        if (nbt.hasKey(PERMANENT_UUID)) {
+            try {
+                UUID uuid = UUID.fromString(nbt.getString(PERMANENT_UUID));
+                instance.setPermanentUUID(uuid);
             } catch (IllegalArgumentException e) {}
         }
         

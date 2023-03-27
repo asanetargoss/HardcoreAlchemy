@@ -29,7 +29,6 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 import targoss.hardcorealchemy.capability.misc.ICapabilityMisc;
 
 public class EventHumanityPhylactery extends Event {
-    private EventHumanityPhylactery() {}
     
     public static class Create extends EventHumanityPhylactery {
         public final EntityPlayer player;
@@ -50,14 +49,14 @@ public class EventHumanityPhylactery extends Event {
     }
     
     public static class Recreate extends EventHumanityPhylactery {
-        public final UUID playerUUID;
+        public final UUID permanentUUID;
         public final UUID lifetimeUUID;
         public final AbstractMorph morphTarget;
         public final BlockPos pos;
         public final int dimension;
         
-        public Recreate(UUID playerUUID, UUID lifetimeUUID, AbstractMorph morphTarget, BlockPos pos, int dimension) {
-            this.playerUUID = playerUUID;
+        public Recreate(UUID permanentUUID, UUID lifetimeUUID, AbstractMorph morphTarget, BlockPos pos, int dimension) {
+            this.permanentUUID = permanentUUID;
             this.lifetimeUUID = lifetimeUUID;
             this.morphTarget = morphTarget;
             this.pos = pos;
@@ -67,13 +66,13 @@ public class EventHumanityPhylactery extends Event {
     
     public static class Destroy extends EventHumanityPhylactery {
         public final UUID lifetimeUUID;
-        public final UUID playerUUID;
+        public final UUID permanentUUID;
         public final BlockPos pos;
         public final int dimension;
 
-        public Destroy(UUID lifetimeUUID, UUID playerUUID, BlockPos pos, int dimension) {
+        public Destroy(UUID lifetimeUUID, UUID permanentUUID, BlockPos pos, int dimension) {
             this.lifetimeUUID = lifetimeUUID;
-            this.playerUUID = playerUUID;
+            this.permanentUUID = permanentUUID;
             this.pos = pos;
             this.dimension = dimension;
         }

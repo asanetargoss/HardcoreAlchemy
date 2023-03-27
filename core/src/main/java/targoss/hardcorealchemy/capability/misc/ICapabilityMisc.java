@@ -32,12 +32,15 @@ import net.minecraft.util.DamageSource;
 
 /**
  * For information too small to warrant a separate capability
- * Currently does not sync over the network or persist on death, since that's not needed at the moment.
+ * Currently does not sync over the network, since that's not needed at the moment.
  */
 public interface ICapabilityMisc {
     /** Get the player's UUID for their current life. */
     UUID getLifetimeUUID();
     void setLifetimeUUID(UUID uuid);
+    /** Get the player's cross-life UUID - not to be confused with the player's account UUID. */
+    UUID getPermanentUUID();
+    void setPermanentUUID(UUID uuid);
     int getLastIncantationTick();
     void setLastIncantationTick(int lastIncantationTick);
     boolean getHasChangedDimensionWhileAlive();

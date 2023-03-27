@@ -72,6 +72,7 @@ import targoss.hardcorealchemy.util.InventoryUtil;
 import targoss.hardcorealchemy.util.Serialization;
 import targoss.hardcorealchemy.util.WorldUtil;
 
+// TODO: Figure out why removing items from the internal inventory does not make the player's humanity calculation change. Looks like the phylactery might be deactivated, so probably the phylactery flag isn't being unset?
 public class TileHumanityPhylactery extends TileEntity {
     
     @CapabilityInject(IItemHandler.class)
@@ -128,7 +129,6 @@ public class TileHumanityPhylactery extends TileEntity {
         }
     }
     
-    // TODO: Inventory syncing?
     protected class Inventory extends ConditionalItemHandler {
         protected boolean sideEffects = true;
         
@@ -152,6 +152,9 @@ public class TileHumanityPhylactery extends TileEntity {
             super.onContentsChanged(slot);
             if (!sideEffects) {
                 sideEffects = true;
+                return;
+            }
+            if (getWorld().isRemote) {
                 return;
             }
             if (tryDisassemble()) {
@@ -208,7 +211,7 @@ public class TileHumanityPhylactery extends TileEntity {
     }
 
     public final Inventory inventory = new Inventory();
-    public UUID playerUUID = null;
+    public UUID permanentUUID = null;
     public UUID lifetimeUUID = null;
     public boolean dormant = false;
     
@@ -314,7 +317,7 @@ public class TileHumanityPhylactery extends TileEntity {
     }
     
     public boolean isActive() {
-        return playerUUID != null;
+        return permanentUUID != null;
     }
     
     public boolean isDormant() {
@@ -328,7 +331,7 @@ public class TileHumanityPhylactery extends TileEntity {
     // TODO: If the block is loaded, trigger a block update so the lighting changes
     protected static void create(@Nullable TileHumanityPhylactery phyTE, @Nullable EntityPlayer player, @Nullable ICapabilityMisc misc, AbstractMorph morphTarget, @Nullable ICapabilityWorldHumanity.Phylactery oldPhy, ICapabilityWorldHumanity.Phylactery newPhy, boolean isWorldLoad) {
         if (phyTE != null) {
-            phyTE.playerUUID = newPhy.playerUUID;
+            phyTE.permanentUUID = newPhy.permanentUUID;
             phyTE.lifetimeUUID = newPhy.lifetimeUUID;
             if (!isWorldLoad) {
                 assert(player != null);
@@ -344,13 +347,13 @@ public class TileHumanityPhylactery extends TileEntity {
                 oldPhy = new ICapabilityWorldHumanity.Phylactery(null, null, newPhy.pos, newPhy.dimension, ICapabilityWorldHumanity.State.DEACTIVATED, null);
             }
             if (!isWorldLoad) {
-                boolean ownerChanged = !Objects.equals(newPhy.playerUUID, oldPhy.playerUUID) || !Objects.equals(oldPhy.lifetimeUUID, newPhy.lifetimeUUID);
+                boolean ownerChanged = !Objects.equals(newPhy.permanentUUID, oldPhy.permanentUUID) || !Objects.equals(oldPhy.lifetimeUUID, newPhy.lifetimeUUID);
                 boolean stateChanged = newPhy.state != oldPhy.state || !Objects.equals(newPhy.morphTarget, oldPhy.morphTarget);
                 if (ownerChanged) {
-                    MinecraftForge.EVENT_BUS.post(new EventHumanityPhylactery.Destroy(oldPhy.lifetimeUUID, oldPhy.playerUUID, oldPhy.pos, oldPhy.dimension));
+                    MinecraftForge.EVENT_BUS.post(new EventHumanityPhylactery.Destroy(oldPhy.lifetimeUUID, oldPhy.permanentUUID, oldPhy.pos, oldPhy.dimension));
                 }
                 if (ownerChanged || stateChanged) {
-                    MinecraftForge.EVENT_BUS.post(new EventHumanityPhylactery.Recreate(newPhy.playerUUID, newPhy.lifetimeUUID, newPhy.morphTarget, newPhy.pos, newPhy.dimension));
+                    MinecraftForge.EVENT_BUS.post(new EventHumanityPhylactery.Recreate(newPhy.permanentUUID, newPhy.lifetimeUUID, newPhy.morphTarget, newPhy.pos, newPhy.dimension));
                 }
             }
         }
@@ -364,14 +367,14 @@ public class TileHumanityPhylactery extends TileEntity {
             return;
         }
         
-        ICapabilityWorldHumanity.Phylactery oldPhy = new ICapabilityWorldHumanity.Phylactery(this.lifetimeUUID, this.playerUUID, getPos(), getWorld().provider.getDimension(), ICapabilityWorldHumanity.State.DEACTIVATED, null);
-        ICapabilityWorldHumanity.Phylactery newPhy = new ICapabilityWorldHumanity.Phylactery(misc.getLifetimeUUID(), player.getUniqueID(), getPos(), getWorld().provider.getDimension(), ICapabilityWorldHumanity.State.ACTIVE, morphTarget);
+        ICapabilityWorldHumanity.Phylactery oldPhy = new ICapabilityWorldHumanity.Phylactery(this.lifetimeUUID, this.permanentUUID, getPos(), getWorld().provider.getDimension(), ICapabilityWorldHumanity.State.DEACTIVATED, null);
+        ICapabilityWorldHumanity.Phylactery newPhy = new ICapabilityWorldHumanity.Phylactery(misc.getLifetimeUUID(), misc.getPermanentUUID(), getPos(), getWorld().provider.getDimension(), ICapabilityWorldHumanity.State.ACTIVE, morphTarget);
         worldHumanity.registerPhylactery(newPhy);
         create(this, player, misc, morphTarget, oldPhy, newPhy, false);
     }
     
     protected void setDeactivated() {
-        this.playerUUID = null;
+        this.permanentUUID = null;
         this.lifetimeUUID = null;
         this.dormant = false;
     }
@@ -382,9 +385,9 @@ public class TileHumanityPhylactery extends TileEntity {
         if (!isWorldLoad && oldPhy.state != State.DEACTIVATED && oldPhy.state != State.DORMANT) {
             ICapabilityWorldHumanity worldHumanity = UniverseCapabilityManager.INSTANCE.getCapability(HUMANITY_WORLD_CAPABILITY);
             if (worldHumanity != null) {
-                boolean wasRegistered = worldHumanity.unregisterPhylactery(oldPhy.lifetimeUUID, oldPhy.playerUUID, oldPhy.pos, oldPhy.dimension);
+                boolean wasRegistered = worldHumanity.unregisterPhylactery(oldPhy.lifetimeUUID, oldPhy.permanentUUID, oldPhy.pos, oldPhy.dimension);
                 if (wasRegistered) {
-                    MinecraftForge.EVENT_BUS.post(new EventHumanityPhylactery.Destroy(oldPhy.lifetimeUUID, oldPhy.playerUUID, oldPhy.pos, oldPhy.dimension));
+                    MinecraftForge.EVENT_BUS.post(new EventHumanityPhylactery.Destroy(oldPhy.lifetimeUUID, oldPhy.permanentUUID, oldPhy.pos, oldPhy.dimension));
                 }
             }
             
@@ -395,7 +398,7 @@ public class TileHumanityPhylactery extends TileEntity {
     }
     
     public void deactivate(boolean isWorldLoad) {
-        ICapabilityWorldHumanity.Phylactery oldPhy = new ICapabilityWorldHumanity.Phylactery(lifetimeUUID, lifetimeUUID, this.getPos(), getWorld().provider.getDimension(), this.getPhylacteryState(), this.getMorphTarget());
+        ICapabilityWorldHumanity.Phylactery oldPhy = new ICapabilityWorldHumanity.Phylactery(lifetimeUUID, permanentUUID, this.getPos(), getWorld().provider.getDimension(), this.getPhylacteryState(), this.getMorphTarget());
         deactivate(this, oldPhy, isWorldLoad);
     }
     
@@ -594,6 +597,9 @@ public class TileHumanityPhylactery extends TileEntity {
         if (this.world.isRemote) {
             return;
         }
+        if (tryDisassemble()) {
+            return;
+        }
         for (EnumFacing facing : EnumFacing.VALUES) {
             BlockPos testPos = pos.offset(facing);
             if (tryDouse(this.world, pos, testPos)) {
@@ -628,8 +634,8 @@ public class TileHumanityPhylactery extends TileEntity {
         NBTTagCompound nbtOut = super.writeToNBT(compound);
         
         nbtOut.setTag(NBT_INVENTORY, inventory.serializeNBT());
-        if (playerUUID != null) {
-            nbtOut.setString(NBT_PLAYER_UUID, playerUUID.toString());
+        if (permanentUUID != null) {
+            nbtOut.setString(NBT_PLAYER_UUID, permanentUUID.toString());
         }
         if (lifetimeUUID != null) {
             nbtOut.setString(NBT_LIFETIME_UUID, lifetimeUUID.toString());
@@ -654,13 +660,13 @@ public class TileHumanityPhylactery extends TileEntity {
             inventory.deserializeNBT(inventoryNBT);
         }
         if (compound.hasKey(NBT_PLAYER_UUID, Serialization.NBT_STRING_ID)) {
-            playerUUID = UUID.fromString(compound.getString(NBT_PLAYER_UUID));
+            permanentUUID = UUID.fromString(compound.getString(NBT_PLAYER_UUID));
         }
         if (compound.hasKey(NBT_LIFETIME_UUID, Serialization.NBT_STRING_ID)) {
             lifetimeUUID = UUID.fromString(compound.getString(NBT_LIFETIME_UUID));
         }
 
-        ICapabilityWorldHumanity.Phylactery oldPhy = new ICapabilityWorldHumanity.Phylactery(lifetimeUUID, lifetimeUUID, getPos(), getWorld().provider.getDimension(), getPhylacteryState(), getMorphTarget());
-        checkWorldState(this, oldPhy, lifetimeUUID, playerUUID, true);
+        ICapabilityWorldHumanity.Phylactery oldPhy = new ICapabilityWorldHumanity.Phylactery(lifetimeUUID, permanentUUID, getPos(), getWorld().provider.getDimension(), getPhylacteryState(), getMorphTarget());
+        checkWorldState(this, oldPhy, lifetimeUUID, permanentUUID, true);
     }
 }

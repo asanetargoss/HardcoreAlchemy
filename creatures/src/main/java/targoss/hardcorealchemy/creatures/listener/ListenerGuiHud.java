@@ -48,8 +48,9 @@ public class ListenerGuiHud extends HardcoreAlchemyListener {
     private RandomWithPublicSeed rand = new RandomWithPublicSeed();
     private long randSeed = rand.getSeed();
     
-    public static final int HUMANITY_ICONS = 10;;
+    public static final int HUMANITY_ICONS = 10;
 
+    // TODO: Render humanity differently when the player is bound to a humanity phylactery
     @SubscribeEvent(priority=EventPriority.HIGHEST,receiveCanceled=true)
     public void onRenderHumanity(RenderGameOverlayEvent.Pre event) {
         if (event.getType() != ElementType.ARMOR) {

@@ -40,6 +40,7 @@ public class CapabilityMisc implements ICapabilityMisc {
     public static String DEFAULT_EXPECTED_PLAYER_VERSION = "";
     
     protected UUID lifetimeUUID = null;
+    protected UUID permanentUUID = null;
     protected int lastIncantationTick = 0;
     protected boolean hasChangedDimensionWhileAlive = false;
     protected String lastLoginVersion = DEFAULT_EXPECTED_PLAYER_VERSION;
@@ -58,6 +59,16 @@ public class CapabilityMisc implements ICapabilityMisc {
     @Override
     public void setLifetimeUUID(UUID uuid) {
         this.lifetimeUUID = uuid;
+    }
+
+    @Override
+    public UUID getPermanentUUID() {
+        return permanentUUID;
+    }
+
+    @Override
+    public void setPermanentUUID(UUID uuid) {
+        this.permanentUUID = uuid;
     }
 
     @Override

@@ -60,14 +60,14 @@ public interface ICapabilityWorldHumanity {
     public static class Phylactery {
         public Phylactery(UUID lifetimeUUID, UUID playerUUID, BlockPos pos, int dimension, ICapabilityWorldHumanity.State state, AbstractMorph morphTarget) {
             this.lifetimeUUID = lifetimeUUID;
-            this.playerUUID = playerUUID;
+            this.permanentUUID = playerUUID;
             this.pos = pos;
             this.dimension = dimension;
             this.state = state;
             this.morphTarget = morphTarget;
         }
         public UUID lifetimeUUID;
-        public UUID playerUUID;
+        public UUID permanentUUID;
         public BlockPos pos;
         public int dimension;
         public ICapabilityWorldHumanity.State state;

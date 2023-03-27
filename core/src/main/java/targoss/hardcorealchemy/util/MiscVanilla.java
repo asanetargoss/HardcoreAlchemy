@@ -50,14 +50,18 @@ public class MiscVanilla {
         return Minecraft.getMinecraft().player == player;
     }
     
+    public static boolean isLikelyServer() {
+        FMLCommonHandler fmlCommonHandler = FMLCommonHandler.instance();
+        return (fmlCommonHandler.getSide() == Side.SERVER ||
+                fmlCommonHandler.getEffectiveSide() == Side.SERVER);
+    }
+    
     /**
      * Gets the World instance on the current side.
      */
     public static World getWorld() {
-        FMLCommonHandler fmlCommonHandler = FMLCommonHandler.instance();
         World world = null;
-        if (fmlCommonHandler.getSide() == Side.SERVER ||
-                fmlCommonHandler.getEffectiveSide() == Side.SERVER) {
+        if (isLikelyServer()) {
             world = getWorldServer();
         }
         else {

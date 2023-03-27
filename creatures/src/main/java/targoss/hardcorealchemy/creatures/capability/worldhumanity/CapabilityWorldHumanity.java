@@ -38,16 +38,17 @@ public class CapabilityWorldHumanity implements ICapabilityWorldHumanity {
     protected static final int MAX_LOCATIONS_PER_PLAYER = 5;
     protected HashMap<UUID, ArrayList<Phylactery>> playerUUIDToPhylactery = new HashMap<>();
 
+    // TODO: Oops! Should use the perma-UUID instead of getting the player ID, as the player ID can vary in dev and probably also when offline
     @Override
     public void registerPhylactery(Phylactery location) {
-        ArrayList<Phylactery> phylacteries = playerUUIDToPhylactery.get(location.playerUUID);
+        ArrayList<Phylactery> phylacteries = playerUUIDToPhylactery.get(location.permanentUUID);
         if (phylacteries == null) {
             phylacteries = new ArrayList<>(1);
-            playerUUIDToPhylactery.put(location.playerUUID, phylacteries);
+            playerUUIDToPhylactery.put(location.permanentUUID, phylacteries);
         }
         for (int i = 0; i < phylacteries.size(); ++i) {
             Phylactery phylactery = phylacteries.get(i);
-            if (phylactery.lifetimeUUID.equals(location.lifetimeUUID) && phylactery.playerUUID.equals(location.playerUUID)) {
+            if (phylactery.lifetimeUUID.equals(location.lifetimeUUID) && phylactery.permanentUUID.equals(location.permanentUUID)) {
                 // Already exists. Remove from list
                 phylacteries.remove(i);
                 --entryCount;
@@ -192,7 +193,7 @@ public class CapabilityWorldHumanity implements ICapabilityWorldHumanity {
         boolean removed = false;
         for (int i = 0; i < phylacteries.size(); ++i) {
             Phylactery phy = phylacteries.get(i);
-            if (phy.lifetimeUUID.equals(lifetimeUUID) && phy.playerUUID.equals(playerUUID) &&
+            if (phy.lifetimeUUID.equals(lifetimeUUID) && phy.permanentUUID.equals(playerUUID) &&
                     phy.pos.equals(pos) && phy.dimension == dimension) {
                 phylacteries.remove(i);
                 --entryCount;

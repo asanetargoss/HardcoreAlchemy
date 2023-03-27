@@ -19,6 +19,8 @@
 
 package targoss.hardcorealchemy.listener;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import net.minecraft.entity.Entity;
@@ -26,6 +28,8 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
@@ -33,6 +37,7 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerChangedDimensionEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
 import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.capability.CapUtil;
@@ -51,6 +56,8 @@ import targoss.hardcorealchemy.capability.research.CapabilityResearch;
 import targoss.hardcorealchemy.capability.research.ICapabilityResearch;
 import targoss.hardcorealchemy.capability.research.ProviderResearch;
 import targoss.hardcorealchemy.network.MessageInactiveCapabilities;
+import targoss.hardcorealchemy.util.MiscVanilla;
+import targoss.hardcorealchemy.util.WorldUtil;
 
 /**
  * This listener handles lifecycles of some capabilities.
@@ -73,9 +80,7 @@ public class ListenerEntityCapabilities extends HardcoreAlchemyListener {
         if (event.getObject() instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer)(event.getObject());
             {
-                ProviderMisc misc = new ProviderMisc();
-                misc.instance.setLifetimeUUID(UUID.randomUUID());
-                event.addCapability(CapabilityMisc.RESOURCE_LOCATION, misc);
+                event.addCapability(CapabilityMisc.RESOURCE_LOCATION, new ProviderMisc());
             }
             {
                 event.addCapability(InactiveCapabilities.RESOURCE_LOCATION, new ProviderInactiveCapabilities());
@@ -101,12 +106,32 @@ public class ListenerEntityCapabilities extends HardcoreAlchemyListener {
         EntityPlayer oldPlayer = event.getOriginal();
         EntityPlayer newPlayer = event.getEntityPlayer();
         if (!event.isWasDeath()) {
-            CapUtil.copyOldToNew(MISC_CAPABILITY, oldPlayer, newPlayer);
             CapUtil.copyOldToNew(RESEARCH_CAPABILITY, oldPlayer, newPlayer);
             ListenerPlayerResearch.pruneResearchAfterDeath(newPlayer);
         }
         // Note: Pruning of individual inactive capabilities only occurs on respawn
         CapUtil.copyOldToNew(INACTIVE_CAPABILITIES, oldPlayer, newPlayer);
+        CapUtil.copyOldToNew(MISC_CAPABILITY, oldPlayer, newPlayer);
+        if (event.isWasDeath()) {
+            ICapabilityMisc misc = newPlayer.getCapability(MISC_CAPABILITY, null);
+            misc.setLifetimeUUID(UUID.randomUUID());
+        }
+    }
+    
+    protected static Map<UUID, UUID> permanentIDToPlayerID = new HashMap<>();
+    protected static Map<UUID, UUID> playerIDToPermanentID = new HashMap<>();
+    
+    public static EntityPlayer getPlayerFromPermanentID(UUID permanentID) {
+        UUID playerID = permanentIDToPlayerID.get(permanentID);
+        if (playerID == null) {
+            return null;
+        }
+        World world = WorldUtil.getOverworld();
+        MinecraftServer server = MiscVanilla.getServer(world);
+        if (server == null) {
+            return null;
+        }
+        return server.getPlayerList().getPlayerByUUID(playerID);
     }
     
     @SubscribeEvent
@@ -115,7 +140,34 @@ public class ListenerEntityCapabilities extends HardcoreAlchemyListener {
             return;
         }
         
+        ICapabilityMisc misc = event.player.getCapability(MISC_CAPABILITY, null);
+        if (misc != null) {
+            if (misc.getPermanentUUID() == null || misc.getPermanentUUID().equals(new UUID(0, 0))) {
+                misc.setPermanentUUID(UUID.randomUUID());
+            }
+            UUID permanentID = misc.getPermanentUUID();
+            permanentIDToPlayerID.put(permanentID, event.player.getUniqueID());
+            playerIDToPermanentID.put(event.player.getUniqueID(), permanentID);
+        }
+        
         syncFullPlayerCapabilities((EntityPlayerMP)(event.player));
+    }
+    
+    @SubscribeEvent
+    public void onPlayerLogout(PlayerLoggedOutEvent event) {
+        if (event.player.world.isRemote) {
+            return;
+        }
+        
+        ICapabilityMisc misc = event.player.getCapability(MISC_CAPABILITY, null);
+        if (misc != null) {
+            UUID permanentID = misc.getPermanentUUID();
+            UUID playerID = permanentIDToPlayerID.get(permanentID);
+            if (playerID != null) {
+                permanentIDToPlayerID.remove(permanentID);
+                playerIDToPermanentID.remove(playerID);
+            }
+        }
     }
     
     @SubscribeEvent

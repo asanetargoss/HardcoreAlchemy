@@ -38,7 +38,7 @@ import targoss.hardcorealchemy.util.Serialization;
 public class StorageWorldHumanity implements Capability.IStorage<ICapabilityWorldHumanity> {
     protected static final String PHYLACTERIES = "morph_abilities";
     protected static final String PHYLACTERY_LIFETIME_UUID = "lifetime_uuid";
-    protected static final String PHYLACTERY_PLAYER_UUID = "player_uuid";
+    protected static final String PHYLACTERY_PERMANENT_UUID = "permanent_uuid";
     protected static final String PHYLACTERY_POS = "pos";
     protected static final String PHYLACTERY_DIMENSION = "dimension";
     protected static final String PHYLACTERY_STATE = "state";
@@ -85,7 +85,7 @@ public class StorageWorldHumanity implements Capability.IStorage<ICapabilityWorl
             for (Phylactery phylactery : phylacteries) {
                 NBTTagCompound nbtPhylactery = new NBTTagCompound();
                 nbtPhylactery.setTag(PHYLACTERY_LIFETIME_UUID, NBTUtil.createUUIDTag(phylactery.lifetimeUUID));
-                nbtPhylactery.setTag(PHYLACTERY_PLAYER_UUID, NBTUtil.createUUIDTag(phylactery.playerUUID));
+                nbtPhylactery.setTag(PHYLACTERY_PERMANENT_UUID, NBTUtil.createUUIDTag(phylactery.permanentUUID));
                 nbtPhylactery.setTag(PHYLACTERY_POS, NBTUtil.createPosTag(phylactery.pos));
                 nbtPhylactery.setInteger(PHYLACTERY_DIMENSION, phylactery.dimension);
                 nbtPhylactery.setByte(PHYLACTERY_STATE, stateFromEnum(phylactery.state));      
@@ -117,10 +117,10 @@ public class StorageWorldHumanity implements Capability.IStorage<ICapabilityWorl
                     continue;
                 }
                 UUID lifetimeUUID = NBTUtil.getUUIDFromTag(nbtPhylactery.getCompoundTag(PHYLACTERY_LIFETIME_UUID));
-                if (!nbtPhylactery.hasKey(PHYLACTERY_PLAYER_UUID, Serialization.NBT_COMPOUND_ID)) {
+                if (!nbtPhylactery.hasKey(PHYLACTERY_PERMANENT_UUID, Serialization.NBT_COMPOUND_ID)) {
                     continue;
                 }
-                UUID playerUUID = NBTUtil.getUUIDFromTag(nbtPhylactery.getCompoundTag(PHYLACTERY_PLAYER_UUID));
+                UUID permanentUUID = NBTUtil.getUUIDFromTag(nbtPhylactery.getCompoundTag(PHYLACTERY_PERMANENT_UUID));
                 if (!nbtPhylactery.hasKey(PHYLACTERY_POS, Serialization.NBT_COMPOUND_ID)) {
                     continue;
                 }
@@ -133,7 +133,7 @@ public class StorageWorldHumanity implements Capability.IStorage<ICapabilityWorl
                 }
                 AbstractMorph morphTarget = MorphManager.INSTANCE.morphFromNBT(nbtPhylactery.getCompoundTag(PHYLACTERY_MORPH_TARGET));
                 
-                Phylactery phylactery = new Phylactery(lifetimeUUID, playerUUID, pos, dimension, state, morphTarget);
+                Phylactery phylactery = new Phylactery(lifetimeUUID, permanentUUID, pos, dimension, state, morphTarget);
                 phylacteries.add(phylactery);
             }
             

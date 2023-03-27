@@ -24,9 +24,7 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -44,8 +42,8 @@ import targoss.hardcorealchemy.creatures.capability.worldhumanity.ProviderWorldH
 import targoss.hardcorealchemy.creatures.event.EventHumanityPhylactery;
 import targoss.hardcorealchemy.creatures.util.MorphState;
 import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
+import targoss.hardcorealchemy.listener.ListenerEntityCapabilities;
 import targoss.hardcorealchemy.util.MiscVanilla;
-import targoss.hardcorealchemy.util.WorldUtil;
 
 public class ListenerWorldHumanity extends HardcoreAlchemyListener {
     @CapabilityInject(ICapabilityHumanity.class)
@@ -62,6 +60,9 @@ public class ListenerWorldHumanity extends HardcoreAlchemyListener {
 
     @SubscribeEvent
     public void onPlayerPhylacteryCreated(EventHumanityPhylactery.Create event) {
+        if (event.world.isRemote) {
+            return;
+        }
         ICapabilityWorldHumanity worldHumanity = UniverseCapabilityManager.INSTANCE.getCapability(HUMANITY_WORLD_CAPABILITY);
         if (worldHumanity == null) {
             return;
@@ -78,16 +79,14 @@ public class ListenerWorldHumanity extends HardcoreAlchemyListener {
 
     @SubscribeEvent
     public void onPlayerPhylacteryRecreated(EventHumanityPhylactery.Recreate event) {
+        if (!MiscVanilla.isLikelyServer()) {
+            return;
+        }
         ICapabilityWorldHumanity worldHumanity = UniverseCapabilityManager.INSTANCE.getCapability(HUMANITY_WORLD_CAPABILITY);
         if (worldHumanity == null) {
             return;
         }
-        World world = WorldUtil.getOverworld();
-        MinecraftServer server = MiscVanilla.getServer(world);
-        if (server == null) {
-            return;
-        }
-        EntityPlayer player = server.getPlayerList().getPlayerByUUID(event.playerUUID);
+        EntityPlayer player = ListenerEntityCapabilities.getPlayerFromPermanentID(event.permanentUUID);
         if (player == null) {
             return;
         }
@@ -127,12 +126,7 @@ public class ListenerWorldHumanity extends HardcoreAlchemyListener {
     
     @SubscribeEvent
     public void onPlayerPhylacteryDestroyed(EventHumanityPhylactery.Destroy event) {
-        World world = WorldUtil.getOverworld();
-        MinecraftServer server = MiscVanilla.getServer(world);
-        if (server == null) {
-            return;
-        }
-        EntityPlayer player = server.getPlayerList().getPlayerByUUID(event.playerUUID);
+        EntityPlayer player = ListenerEntityCapabilities.getPlayerFromPermanentID(event.permanentUUID);
         if (player == null) {
             return;
         }
