@@ -161,7 +161,12 @@ public class ListenerWorldHumanity extends HardcoreAlchemyListener {
         MorphState.forceForm(coreConfigs, player, MorphAbilityChangeReason.DESTROYED_HUMAN_FORM_PHYLACTERY);
     }
     
+    // TODO: Figure out why the phylactery isn't getting reset on player death (recommend testing with/without keep morphs config, and with/without dissolution, and with/without login/logout)
     public static void onPlayerDeath(EntityPlayer oldPlayer, EntityPlayer newPlayer, boolean keepPhylactery) {
+        if (newPlayer.world.isRemote) {
+            return;
+        }
+        
         ICapabilityHumanity oldHumanity = oldPlayer.getCapability(HUMANITY_CAPABILITY, null);
         if (oldHumanity == null) { return; }
         ICapabilityHumanity newHumanity = newPlayer.getCapability(HUMANITY_CAPABILITY, null);

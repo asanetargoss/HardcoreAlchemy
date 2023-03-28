@@ -50,7 +50,6 @@ public class ListenerGuiHud extends HardcoreAlchemyListener {
     
     public static final int HUMANITY_ICONS = 10;
 
-    // TODO: Render humanity differently when the player is bound to a humanity phylactery
     @SubscribeEvent(priority=EventPriority.HIGHEST,receiveCanceled=true)
     public void onRenderHumanity(RenderGameOverlayEvent.Pre event) {
         if (event.getType() != ElementType.ARMOR) {
@@ -100,6 +99,7 @@ public class ListenerGuiHud extends HardcoreAlchemyListener {
         GlStateManager.enableBlend();
         
         boolean drawDottedIcons = MorphExtension.INSTANCE.shouldDrawHumanityDottedIcons();
+        int phylacteryOffset = humanityCap.getIsHumanFormInPhylactery() ? (4 * 9) : 0;
         
         for (int i = 1; i <= HUMANITY_ICONS; i++) {
             int y = top;
@@ -113,47 +113,47 @@ public class ListenerGuiHud extends HardcoreAlchemyListener {
                 if (humanity <= (i*2)+1 && humanity > magicInhibition) {
                     // Magic inhibition on left, humanity on right
                     // Per the conservative estimate rule, even though both humanity and magic inhibition are greater than i*2
-                    mc.ingameGUI.drawTexturedModalRect(left + (i-1)*8, y, 18, 9, 9, 9);
+                    mc.ingameGUI.drawTexturedModalRect(left + (i-1)*8, y, 18 + phylacteryOffset, 9, 9, 9);
                 }
                 else {
                     // Magic inhibition only
-                    mc.ingameGUI.drawTexturedModalRect(left + (i-1)*8, y, 0, 9, 9, 9);
+                    mc.ingameGUI.drawTexturedModalRect(left + (i-1)*8, y, phylacteryOffset, 9, 9, 9);
                 }
             }
             else if (i*2 <= humanity) {
                 // Full icon
                 if (humanity <= magicInhibition) {
                     // Magic inhibition only
-                    mc.ingameGUI.drawTexturedModalRect(left + (i-1)*8, y, 0, 9, 9, 9);
+                    mc.ingameGUI.drawTexturedModalRect(left + (i-1)*8, y, phylacteryOffset, 9, 9, 9);
                 }
                 else if ((i*2)-1 < magicInhibition) {
                     // Magic inhibition on left, humanity on right
-                    mc.ingameGUI.drawTexturedModalRect(left + (i-1)*8, y, 18, 9, 9, 9);
+                    mc.ingameGUI.drawTexturedModalRect(left + (i-1)*8, y, 18 + phylacteryOffset, 9, 9, 9);
                 }
                 else {
                     // Humanity only
-                    mc.ingameGUI.drawTexturedModalRect(left + (i-1)*8, y, 0, 0, 9, 9);
+                    mc.ingameGUI.drawTexturedModalRect(left + (i-1)*8, y, phylacteryOffset, 0, 9, 9);
                 }
             }
             else if ((i*2)-1 <= humanity) {
                 // Half icon
                 if (humanity <= magicInhibition) {
                     // Magic inhibition only
-                    mc.ingameGUI.drawTexturedModalRect(left + (i-1)*8, y, 0, 9, 9, 9);
+                    mc.ingameGUI.drawTexturedModalRect(left + (i-1)*8, y, phylacteryOffset, 9, 9, 9);
                 }
                 else if ((i-1)*2 < magicInhibition) {
                     // Magic inhibition on left, humanity on right
-                    mc.ingameGUI.drawTexturedModalRect(left + (i-1)*8, y, 27, 9, 9, 9);
+                    mc.ingameGUI.drawTexturedModalRect(left + (i-1)*8, y, 27 + phylacteryOffset, 9, 9, 9);
                 }
                 else {
                     // Humanity only
-                    mc.ingameGUI.drawTexturedModalRect(left + (i-1)*8, y, 9, 0, 9, 9);
+                    mc.ingameGUI.drawTexturedModalRect(left + (i-1)*8, y, 9 + phylacteryOffset, 0, 9, 9);
                 }
             }
             else if (i*2 <= maxHumanity) {
                 if ((i*2)-1 <= magicInhibition) {
                     // Magic inhibition half icon
-                    mc.ingameGUI.drawTexturedModalRect(left + (i-1)*8, y, 9, 9, 9, 9);
+                    mc.ingameGUI.drawTexturedModalRect(left + (i-1)*8, y, 9 + phylacteryOffset, 9, 9, 9);
                 }
                 else {
                     // Empty icon
