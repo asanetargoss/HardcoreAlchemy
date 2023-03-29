@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.base.Predicate;
@@ -150,26 +151,15 @@ public class TileHumanityPhylactery extends TileEntity {
         @Override
         protected void onContentsChanged(int slot) {
             super.onContentsChanged(slot);
+            
+            // Make sure new inventory contents are saved
+            markDirty();
+            
             if (!sideEffects) {
                 sideEffects = true;
                 return;
             }
-            if (getWorld().isRemote) {
-                return;
-            }
-            if (tryDisassemble()) {
-                return;
-            }
-            for (EnumFacing facing : EnumFacing.VALUES) {
-                if (tryDouse(world, pos, pos.offset(facing))) {
-                    return;
-                }
-            }
-            for (EnumFacing facing : EnumFacing.VALUES) {
-                if (tryIgnite(world, pos, pos.offset(facing))) {
-                    return;
-                }
-            }
+            checkShouldStillBeActive();
         }
         
         protected Inventory withoutSideEffects() {
@@ -210,10 +200,57 @@ public class TileHumanityPhylactery extends TileEntity {
         }
     }
 
+    // Dirtied in onContentsChanged
     public final Inventory inventory = new Inventory();
-    public UUID permanentUUID = null;
-    public UUID lifetimeUUID = null;
-    public boolean dormant = false;
+    
+    // Dirtied in setters
+    protected UUID permanentUUID = null;
+    protected UUID lifetimeUUID = null;
+    protected boolean dormant = false;
+    
+    protected void setActive(@Nonnull UUID permanentUUID, @Nonnull UUID lifetimeUUID) {
+        assert(permanentUUID != null);
+        assert(lifetimeUUID != null);
+        
+        boolean dirty = false;
+        if (this.permanentUUID != permanentUUID) {
+            dirty = true;
+            this.permanentUUID = permanentUUID;
+        }
+        if (this.lifetimeUUID != lifetimeUUID) {
+            dirty = true;
+            this.lifetimeUUID = lifetimeUUID;
+        }
+        if (dirty) {
+            markDirty();
+        }
+    }
+    
+    protected void setDeactivated() {
+        boolean dirty = false;
+        if (this.permanentUUID != null) {
+            this.permanentUUID = null;
+            dirty = true;
+        }
+        if (this.lifetimeUUID != null) {
+            this.lifetimeUUID = null;
+            dirty = true;
+        }
+        if (this.dormant) {
+            this.dormant = false;
+            dirty = true;
+        }
+        if (dirty) {
+            markDirty();
+        }
+    }
+
+    protected void setDormant(boolean dormant) {
+        if (this.dormant != dormant) {
+            this.dormant = dormant;
+            markDirty();
+        }
+    }
     
     @Override
     public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
@@ -331,8 +368,8 @@ public class TileHumanityPhylactery extends TileEntity {
     // TODO: If the block is loaded, trigger a block update so the lighting changes
     protected static void create(@Nullable TileHumanityPhylactery phyTE, @Nullable EntityPlayer player, @Nullable ICapabilityMisc misc, AbstractMorph morphTarget, @Nullable ICapabilityWorldHumanity.Phylactery oldPhy, ICapabilityWorldHumanity.Phylactery newPhy, boolean isWorldLoad) {
         if (phyTE != null) {
-            phyTE.permanentUUID = newPhy.permanentUUID;
-            phyTE.lifetimeUUID = newPhy.lifetimeUUID;
+            phyTE.setActive(newPhy.permanentUUID, newPhy.lifetimeUUID);
+            
             if (!isWorldLoad) {
                 assert(player != null);
                 assert(misc != null);
@@ -373,15 +410,8 @@ public class TileHumanityPhylactery extends TileEntity {
         create(this, player, misc, morphTarget, oldPhy, newPhy, false);
     }
     
-    protected void setDeactivated() {
-        this.permanentUUID = null;
-        this.lifetimeUUID = null;
-        this.dormant = false;
-    }
-    
     protected static void deactivate(@Nullable TileHumanityPhylactery phyTE, ICapabilityWorldHumanity.Phylactery oldPhy, boolean isWorldLoad) {
         assert(oldPhy != null);
-        
         if (!isWorldLoad && oldPhy.state != State.DEACTIVATED && oldPhy.state != State.DORMANT) {
             ICapabilityWorldHumanity worldHumanity = UniverseCapabilityManager.INSTANCE.getCapability(HUMANITY_WORLD_CAPABILITY);
             if (worldHumanity != null) {
@@ -414,10 +444,6 @@ public class TileHumanityPhylactery extends TileEntity {
         }
     }
 
-    public void setDormant(boolean dormant) {
-        this.dormant = dormant;
-    }
-    
     protected static boolean isSufficientFuel(ItemStack itemStack) {
         int burnTime = TileEntityFurnace.getItemBurnTime(itemStack);
         return burnTime >= MIN_FUEL_QUALITY;
@@ -591,27 +617,27 @@ public class TileHumanityPhylactery extends TileEntity {
         return false;
     }
     
-    /** Given a neigboring block change, check if the tile
-     *  at the given pos needs to be activated/deactivated. **/
-    public void neighborChanged(BlockPos pos) {
-        if (this.world.isRemote) {
+    protected void checkShouldStillBeActive() {
+        if (getWorld().isRemote) {
             return;
         }
         if (tryDisassemble()) {
             return;
         }
         for (EnumFacing facing : EnumFacing.VALUES) {
-            BlockPos testPos = pos.offset(facing);
-            if (tryDouse(this.world, pos, testPos)) {
+            if (tryDouse(world, pos, pos.offset(facing))) {
                 return;
             }
         }
         for (EnumFacing facing : EnumFacing.VALUES) {
-            BlockPos testPos = pos.offset(facing);
-            if (tryIgnite(this.world, pos, testPos)) {
+            if (tryIgnite(world, pos, pos.offset(facing))) {
                 return;
             }
         }
+    }
+
+    public void neighborChanged() {
+        checkShouldStillBeActive();
     }
     
     public void breakBlock(World world, BlockPos pos) {

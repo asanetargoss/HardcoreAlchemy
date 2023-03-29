@@ -82,7 +82,7 @@ public class BlockHumanityPhylactery extends Block implements ITileEntityProvide
         
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof TileHumanityPhylactery) {
-            ((TileHumanityPhylactery)te).neighborChanged(pos);
+            ((TileHumanityPhylactery)te).neighborChanged();
         }
     }
 
