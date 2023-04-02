@@ -280,8 +280,6 @@ public class TileHumanityPhylactery extends TileEntity {
         return super.getCapability(capability, facing);
     }
 
-    // TODO: Syncing?
-
     public TileHumanityPhylactery(World world) {
         setWorld(world);
     }

@@ -23,6 +23,8 @@ import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
+import net.minecraft.block.SoundType;
+import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -37,12 +39,11 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import targoss.hardcorealchemy.creatures.gui.Guis;
 
-// TODO: Figure out why this block has the wrong drops (is dropping village box coins in dev, not dropping itself, and presumably not dropping its inventory)
-// TODO: Allow lighting the block directly with flint and steel
-// TODO: isFlammable = true when the phylactery is inactive and not near water
 public class BlockHumanityPhylactery extends Block implements ITileEntityProvider {
     public BlockHumanityPhylactery() {
-        super(Material.IRON);
+        super(Material.IRON, MapColor.IRON);
+        setHardness(2.5F);
+        setSoundType(SoundType.METAL);
     }
 
     @Override
@@ -75,6 +76,7 @@ public class BlockHumanityPhylactery extends Block implements ITileEntityProvide
         return true;
     }
     
+    @SuppressWarnings("deprecation")
     @Override
     public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block)
     {
@@ -91,7 +93,6 @@ public class BlockHumanityPhylactery extends Block implements ITileEntityProvide
      */
     @Override
     public void breakBlock(World world, BlockPos pos, IBlockState blockState) {
-        System.out.println("breakBlock"); // TODO: RAT
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof TileHumanityPhylactery) {
             ((TileHumanityPhylactery)te).breakBlock(world, pos);
