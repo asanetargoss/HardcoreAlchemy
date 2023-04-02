@@ -30,6 +30,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
+import targoss.hardcorealchemy.creatures.item.ItemSealOfForm;
 import targoss.hardcorealchemy.creatures.item.RecipeEnchantment;
 
 public class RecipeWrapperEnchantment implements IRecipeWrapper {
@@ -79,6 +80,9 @@ public class RecipeWrapperEnchantment implements IRecipeWrapper {
         {
             SEAL_OF_FORM_TYPES = new ArrayList<>();
             recipe.subItemsGetter.getSubItems(recipe.subItemsGetter, null, SEAL_OF_FORM_TYPES);
+            // The inactive variant of the seal of true form is not craftable via enchanting, so don't include it here.
+            // TODO: Why didn't this work?
+            SEAL_OF_FORM_TYPES.remove(ItemSealOfForm.getSealHuman(false));
         }
         return SEAL_OF_FORM_TYPES;
     }

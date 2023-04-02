@@ -105,7 +105,7 @@ public class BlockHumanityPhylactery extends Block implements ITileEntityProvide
     public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) {
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof TileHumanityPhylactery) {
-            return ((TileHumanityPhylactery) te).isActive() ? 15 : 0;
+            return ((TileHumanityPhylactery) te).isVisiblyActive() ? 15 : 0;
         }
         return super.getLightValue(state, world, pos);
     }

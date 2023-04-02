@@ -67,11 +67,17 @@ import targoss.hardcorealchemy.util.Chat.Type;
 
 public class ItemSealOfForm extends Item {
     public static final String HUMAN = HardcoreAlchemyCore.MOD_ID + ":" + "human";
+    public static final String INACTIVE = HardcoreAlchemyCore.MOD_ID + ":" + "inactive";
     
     public ItemSealOfForm() {
         this.addPropertyOverride(new ResourceLocation(HUMAN), new IItemPropertyGetter() {
             public float apply(ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity) {
                 return hasHumanTag(stack) ? 1.0F : 0.0F;
+            }
+        });
+        this.addPropertyOverride(new ResourceLocation(INACTIVE), new IItemPropertyGetter() {
+            public float apply(ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity) {
+                return hasInactiveTag(stack) ? 1.0F : 0.0F;
             }
         });
     }
@@ -146,6 +152,14 @@ public class ItemSealOfForm extends Item {
         return nbt.hasKey(HUMAN) && nbt.getBoolean(HUMAN);
     }
     
+    public static boolean hasInactiveTag(ItemStack stack) {
+        NBTTagCompound nbt = stack.getTagCompound();
+        if (nbt == null) {
+            return false;
+        }
+        return nbt.hasKey(INACTIVE) && nbt.getBoolean(INACTIVE);
+    }
+    
     public static @Nullable EntityMorph getEntityMorph(ItemStack stack) {
         String morphID = getMorphIDFromItem(stack);
         if (morphID == null) {
@@ -160,6 +174,13 @@ public class ItemSealOfForm extends Item {
     
     public static void setHumanTag(ItemStack stack) {
         stack.setTagInfo(HUMAN, Serialization.getBooleanTag(true));
+    }
+    
+    public static void setInactiveTag(ItemStack stack, boolean inactive) {
+        stack.setTagInfo(INACTIVE, Serialization.getBooleanTag(inactive));
+        if (!inactive) {
+            stack.getTagCompound().removeTag(INACTIVE);
+        }
     }
 
     // Based on the Metamorph entity serialization format, for future expansion.
@@ -236,20 +257,33 @@ public class ItemSealOfForm extends Item {
         blacklistInitialized = true;
     }
     
-    protected static ItemStack SEAL_OF_FORM_HUMAN = null;
-    protected static ItemStack getSealHuman() {
-        if (SEAL_OF_FORM_HUMAN == null) {
-            SEAL_OF_FORM_HUMAN = new ItemStack(Items.SEAL_OF_FORM);
-            setHumanTag(SEAL_OF_FORM_HUMAN);
+    protected static ItemStack SEAL_OF_FORM_HUMAN_ACTIVE = null;
+    protected static ItemStack SEAL_OF_FORM_HUMAN_INACTIVE = null;
+    public static ItemStack getSealHuman(boolean active) {
+        if (active) {
+            if (SEAL_OF_FORM_HUMAN_ACTIVE == null) {
+                SEAL_OF_FORM_HUMAN_ACTIVE = new ItemStack(Items.SEAL_OF_FORM);
+                setHumanTag(SEAL_OF_FORM_HUMAN_ACTIVE);
+                setInactiveTag(SEAL_OF_FORM_HUMAN_ACTIVE, !active);
+            }
+            return SEAL_OF_FORM_HUMAN_ACTIVE;
+        } else {
+            if (SEAL_OF_FORM_HUMAN_INACTIVE == null) {
+                SEAL_OF_FORM_HUMAN_INACTIVE = new ItemStack(Items.SEAL_OF_FORM);
+                setHumanTag(SEAL_OF_FORM_HUMAN_INACTIVE);
+                setInactiveTag(SEAL_OF_FORM_HUMAN_INACTIVE, !active);
+            }
+            return SEAL_OF_FORM_HUMAN_INACTIVE;
         }
-        return SEAL_OF_FORM_HUMAN;
     }
     
     @SideOnly(Side.CLIENT)
     @Override
     public void getSubItems(Item item, CreativeTabs tab, List<ItemStack> subItems) {
         // Special case: Human
-        subItems.add(getSealHuman());
+        subItems.add(getSealHuman(true));
+        // Special case: Human (inactive)
+        subItems.add(getSealHuman(false));
         
         // For all other seals of form, get entity spawns, filtering out blacklisted morphs.
         ensureMorphBlacklistInitialized();
@@ -278,11 +312,17 @@ public class ItemSealOfForm extends Item {
         return Entity.class;
     }
     
-    protected static ITextComponent UNMORPHED = new TextComponentTranslation("item.hardcorealchemy:seal_of_form.name.unmorphed");
+    protected static ITextComponent UNMORPHED_ACTIVE = new TextComponentTranslation("item.hardcorealchemy:seal_of_form.name.unmorphed_active");
+    protected static ITextComponent UNMORPHED_INACTIVE = new TextComponentTranslation("item.hardcorealchemy:seal_of_form.name.unmorphed_inactive");
     protected static ITextComponent getMorphName(ItemStack stack) {
         Class<? extends Entity> creatureClass = getCreatureClass(stack);
         if (creatureClass.equals(EntityPlayer.class)) {
-            return UNMORPHED;
+            if (hasInactiveTag(stack)) {
+                return UNMORPHED_INACTIVE;
+            }
+            else {
+                return UNMORPHED_ACTIVE;
+            }
         }
         return EntityUtil.getEntityName(creatureClass);
     }
@@ -290,7 +330,7 @@ public class ItemSealOfForm extends Item {
     @Override
     public String getItemStackDisplayName(ItemStack stack) {
         ITextComponent morphName = getMorphName(stack);
-        if (morphName == UNMORPHED) {
+        if (morphName == UNMORPHED_ACTIVE || morphName == UNMORPHED_INACTIVE) {
             return morphName.getFormattedText();
         }
         String unlocalizedName = getUnlocalizedName()  + ".name";

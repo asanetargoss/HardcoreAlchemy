@@ -142,12 +142,12 @@ public class CapabilityHumanity implements ICapabilityHumanity {
     
     @Override
     public boolean canMorphRightNow() {
-        return !(hasLostHumanity || hasForgottenMorphAbility || hasForgottenHumanForm || magicInhibition >= humanity);
+        return !(hasLostHumanity || hasForgottenMorphAbility || hasForgottenHumanForm || isHumanFormInPhylactery || magicInhibition >= humanity);
     }
     
     @Override
     public boolean canMorph() {
-        return !(hasLostHumanity || hasForgottenMorphAbility || hasForgottenHumanForm);
+        return !(hasLostHumanity || hasForgottenMorphAbility || hasForgottenHumanForm || isHumanFormInPhylactery);
     }
     
     @Override
@@ -180,6 +180,9 @@ public class CapabilityHumanity implements ICapabilityHumanity {
         }
         if (hasForgottenMorphAbility) {
             return new TextComponentTranslation("hardcorealchemy.morph.disabled.noability");
+        }
+        if (isHumanFormInPhylactery) {
+            return new TextComponentTranslation("hardcorealchemy.morph.disabled.inphylactery");
         }
         if (hasForgottenHumanForm) {
             return new TextComponentTranslation("hardcorealchemy.morph.disabled.nohumanform");

@@ -23,6 +23,7 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
+import mchorse.metamorph.api.MorphAPI;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
@@ -63,10 +64,6 @@ public class ListenerWorldHumanity extends HardcoreAlchemyListener {
         if (event.world.isRemote) {
             return;
         }
-        ICapabilityWorldHumanity worldHumanity = UniverseCapabilityManager.INSTANCE.getCapability(HUMANITY_WORLD_CAPABILITY);
-        if (worldHumanity == null) {
-            return;
-        }
         if (event.player == null) {
             return;
         }
@@ -76,6 +73,9 @@ public class ListenerWorldHumanity extends HardcoreAlchemyListener {
         }
         if (humanity.getHasForgottenMorphAbility()) {
             return;
+        }
+        if (event.morphTarget != null) {
+            MorphAPI.acquire(event.player, event.morphTarget);
         }
         MorphState.forceForm(HardcoreAlchemyCore.proxy.configs, event.player, MorphAbilityChangeReason.CREATED_HUMAN_FORM_PHYLACTERY, event.morphTarget);
     }
@@ -164,7 +164,6 @@ public class ListenerWorldHumanity extends HardcoreAlchemyListener {
         MorphState.forceForm(coreConfigs, player, MorphAbilityChangeReason.DESTROYED_HUMAN_FORM_PHYLACTERY);
     }
     
-    // TODO: Figure out why the phylactery isn't getting reset on player death (recommend testing with/without keep morphs config, and with/without dissolution, and with/without login/logout)
     public static void onPlayerDeath(EntityPlayer oldPlayer, EntityPlayer newPlayer, boolean keepPhylactery) {
         if (newPlayer.world.isRemote) {
             return;

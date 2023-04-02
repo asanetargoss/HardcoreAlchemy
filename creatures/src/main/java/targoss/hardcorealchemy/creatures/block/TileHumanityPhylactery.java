@@ -31,6 +31,8 @@ import javax.annotation.Nullable;
 import com.google.common.base.Predicate;
 
 import mchorse.metamorph.api.morphs.AbstractMorph;
+import mchorse.metamorph.capabilities.morphing.IMorphing;
+import mchorse.metamorph.capabilities.morphing.Morphing;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFire;
 import net.minecraft.block.state.IBlockState;
@@ -74,7 +76,6 @@ import targoss.hardcorealchemy.util.InventoryUtil;
 import targoss.hardcorealchemy.util.Serialization;
 import targoss.hardcorealchemy.util.WorldUtil;
 
-// TODO: Set the seal of true form to a visually different dormant state (and back) when the phylactery switches to a dormant or to fully active. If a dormant seal is placed into the block by a player, also clear its dormant state.
 public class TileHumanityPhylactery extends TileEntity {
     
     @CapabilityInject(IItemHandler.class)
@@ -132,7 +133,9 @@ public class TileHumanityPhylactery extends TileEntity {
     }
     
     protected class Inventory extends ConditionalItemHandler {
+        protected boolean worldLoad = false;
         protected boolean sideEffects = true;
+        public boolean changed = false;
         
         public Inventory() {
             super(SLOT_COUNT);
@@ -153,14 +156,42 @@ public class TileHumanityPhylactery extends TileEntity {
         protected void onContentsChanged(int slot) {
             super.onContentsChanged(slot);
             
+            if (worldLoad) {
+                worldLoad = false;
+                return;
+            }
+            
+            // If an inactive seal of true form is placed in the slot, make the seal active again
+            if (sideEffects && slot == SLOT_TRUE_FORM) {
+                ItemStack stack = this.stacks[slot];
+                if (!InventoryUtil.isEmptyItemStack(stack) && ItemSealOfForm.hasInactiveTag(stack)) {
+                    ItemStack newStack = stack.copy();
+                    ItemSealOfForm.setInactiveTag(newStack, false);
+                    this.stacks[slot] = newStack;
+                    changed = true;
+                }
+            }
+            if (!sideEffects) {
+                changed = true;
+            }
+
             // Make sure new inventory contents are saved
             markDirty();
+            if (changed) {
+                // Sync altered inventory state to client
+                markNeedsUpdate();
+            }
             
             if (!sideEffects) {
                 sideEffects = true;
                 return;
             }
             checkShouldStillBeActive();
+        }
+        
+        protected Inventory withWorldLoad() {
+            this.worldLoad = true;
+            return this;
         }
         
         protected Inventory withoutSideEffects() {
@@ -181,6 +212,9 @@ public class TileHumanityPhylactery extends TileEntity {
             if (!humanity.shouldDisplayHumanity()) {
                 return false;
             }
+            if (humanity.getIsHumanFormInPhylactery()) {
+                return false;
+            }
             return !humanity.getHasForgottenHumanForm();
         }
     }
@@ -195,6 +229,9 @@ public class TileHumanityPhylactery extends TileEntity {
                 return false;
             }
             if (!humanity.shouldDisplayHumanity()) {
+                return false;
+            }
+            if (humanity.getIsHumanFormInPhylactery()) {
                 return false;
             }
             return humanity.getHasForgottenHumanForm();
@@ -221,6 +258,9 @@ public class TileHumanityPhylactery extends TileEntity {
         if (this.lifetimeUUID != lifetimeUUID) {
             dirty = true;
             this.lifetimeUUID = lifetimeUUID;
+        }
+        if (isActive() && hasTrueFormSeal()) {
+            setTrueFormSealDormant(false, isWorldLoad);
         }
         if (dirty && !isWorldLoad) {
             markDirty();
@@ -257,6 +297,9 @@ public class TileHumanityPhylactery extends TileEntity {
         if (this.dormant != dormant) {
             this.dormant = dormant;
             dirty = true;
+        }
+        if (dormant && hasTrueFormSeal()) {
+            setTrueFormSealDormant(true, isWorldLoad);
         }
         if (dirty && !isWorldLoad) {
             markDirty();
@@ -506,6 +549,27 @@ public class TileHumanityPhylactery extends TileEntity {
         }
         return isTrueFormSeal(itemStack);
     }
+    
+    protected void setTrueFormSealDormant(boolean dormant, boolean isWorldLoad) {
+        ItemStack itemStack = inventory.getStackInSlot(SLOT_TRUE_FORM);
+        if (InventoryUtil.isEmptyItemStack(itemStack)) {
+            return;
+        }
+        if (!isTrueFormSeal(itemStack)) {
+            assert(false);
+            return;
+        }
+        if (dormant == ItemSealOfForm.hasInactiveTag(itemStack)) {
+            return;
+        }
+        ItemStack newStack = itemStack.copy();
+        ItemSealOfForm.setInactiveTag(newStack, dormant);
+        if (isWorldLoad) {
+            inventory.withWorldLoad().setStackInSlot(SLOT_TRUE_FORM, newStack);
+        } else {
+            inventory.withoutSideEffects().setStackInSlot(SLOT_TRUE_FORM, newStack);
+        }
+    }
 
     /** Check for missing item. Deactivate the phylactery if conditions are met.
      * Return true if the caller should stop checking neighboring blocks. **/
@@ -609,10 +673,23 @@ public class TileHumanityPhylactery extends TileEntity {
             if (misc == null) {
                 return true;
             }
+            IMorphing morphing = Morphing.get(nearestPlayer);
+            if (morphing == null) {
+                return true;
+            }
+            
+            // Consume resources before activation (these do not affect the player)
+            
             // Consume fuel
             inventory.withoutSideEffects().extractItem(SLOT_FUEL, 1, false);
+            // Grand the player the morph
+            boolean needsMorphTargetSeal = !morphing.acquiredMorph(morphTarget);
+            if (needsMorphTargetSeal) {
+                // Destroy the morph target seal
+                inventory.setStackInSlot(SLOT_MORPH_TARGET, InventoryUtil.ITEM_STACK_EMPTY);
+            }
             if (needTrueFormSeal) {
-                // Siphon the player's human form
+                // Create the human form seal
                 ItemStack trueFormSeal = new ItemStack(SEAL_OF_FORM);
                 ItemSealOfForm.setHumanTag(trueFormSeal);
                 inventory.setStackInSlot(SLOT_TRUE_FORM, trueFormSeal);
@@ -622,8 +699,11 @@ public class TileHumanityPhylactery extends TileEntity {
             world.setBlockState(testPos, Blocks.AIR.getDefaultState());
             this.sideEffects = true;
             WorldUtil.sendFireExtinguishSound(world, testPos);
-            // Give effect to player in range
+            
+            // Actually activate the phylactery (player affected via event listener)
+            
             activate(nearestPlayer, misc, morphTarget, pos, world.provider.getDimension());
+            
             return true;
         }
         return false;
@@ -668,6 +748,7 @@ public class TileHumanityPhylactery extends TileEntity {
     protected static final String NBT_INVENTORY = "inventory";
     protected static final String UPDATE_NBT_ACTIVE = "active";
     protected static final String UPDATE_NBT_DORMANT = "dormant";
+    protected static final String UPDATE_NBT_INVENTORY = NBT_INVENTORY;
     protected static final UUID ANONYMOUS_ID = new UUID(1, 1);
     
     @Override
@@ -716,6 +797,8 @@ public class TileHumanityPhylactery extends TileEntity {
         checkWorldState(this, oldPhy, lifetimeUUID, permanentUUID, true);
     }
     
+    protected boolean sendInventory = false;
+    
     /** Simple chunk invalidator which ignores block state. Contrast with World.setBlockState. Not suitable for real-time updates. */
     protected void markNeedsUpdate() {
         getWorld().checkLight(getPos());
@@ -743,6 +826,7 @@ public class TileHumanityPhylactery extends TileEntity {
         handleUpdateTag(pkt.getNbtCompound());
     }
 
+    protected NBTTagCompound inventoryTag = null;
     @Override
     public NBTTagCompound getUpdateTag() {
         NBTTagCompound updateTag = super.getUpdateTag();
@@ -754,6 +838,11 @@ public class TileHumanityPhylactery extends TileEntity {
         if (dormant) {
             updateTag.setBoolean(UPDATE_NBT_DORMANT, dormant);
         }
+        if (inventory.changed) {
+            inventory.changed = false;
+            inventoryTag = inventory.serializeNBT();
+        }
+        updateTag.setTag(NBT_INVENTORY, inventoryTag);
         return updateTag;
     }
 

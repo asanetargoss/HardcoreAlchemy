@@ -96,6 +96,7 @@ public class TESRHumanityPhylactery extends TileEntitySpecialRenderer<TileHumani
             GlStateManager.shadeModel(GL11.GL_FLAT);
         }
         
+        // TODO: Cache the GL commands
         // TODO: Use te data to determine if the frame should rotate
         // TODO: Rotational offset depending on the placement of the block
         // TODO: Smoothly enable rotation on activation, and randomize using some seed
