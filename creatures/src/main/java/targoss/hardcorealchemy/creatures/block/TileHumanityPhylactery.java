@@ -74,6 +74,7 @@ import targoss.hardcorealchemy.util.InventoryUtil;
 import targoss.hardcorealchemy.util.Serialization;
 import targoss.hardcorealchemy.util.WorldUtil;
 
+// TODO: Set the seal of true form to a visually different dormant state (and back) when the phylactery switches to a dormant or to fully active. If a dormant seal is placed into the block by a player, also clear its dormant state.
 public class TileHumanityPhylactery extends TileEntity {
     
     @CapabilityInject(IItemHandler.class)
@@ -379,8 +380,6 @@ public class TileHumanityPhylactery extends TileEntity {
             phyTE.setActive(newPhy.permanentUUID, newPhy.lifetimeUUID, isWorldLoad);
             
             if (!isWorldLoad) {
-                assert(player != null);
-                assert(misc != null);
                 assert(morphTarget != null);
                 MinecraftForge.EVENT_BUS.post(new EventHumanityPhylactery.Create(player, misc, morphTarget, phyTE.getWorld(), phyTE.getPos(), phyTE.getWorld().provider.getDimension()));
             }

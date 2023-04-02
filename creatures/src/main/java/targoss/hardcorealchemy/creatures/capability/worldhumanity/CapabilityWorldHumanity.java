@@ -38,7 +38,6 @@ public class CapabilityWorldHumanity implements ICapabilityWorldHumanity {
     protected static final int MAX_LOCATIONS_PER_PLAYER = 5;
     protected HashMap<UUID, ArrayList<Phylactery>> playerUUIDToPhylactery = new HashMap<>();
 
-    // TODO: Oops! Should use the perma-UUID instead of getting the player ID, as the player ID can vary in dev and probably also when offline
     @Override
     public void registerPhylactery(Phylactery location) {
         ArrayList<Phylactery> phylacteries = playerUUIDToPhylactery.get(location.permanentUUID);

@@ -67,6 +67,9 @@ public class ListenerWorldHumanity extends HardcoreAlchemyListener {
         if (worldHumanity == null) {
             return;
         }
+        if (event.player == null) {
+            return;
+        }
         ICapabilityHumanity humanity = event.player.getCapability(HUMANITY_CAPABILITY, null);
         if (humanity == null) {
             return;
@@ -153,7 +156,7 @@ public class ListenerWorldHumanity extends HardcoreAlchemyListener {
         if (misc == null) {
             return;
         }
-        if (worldHumanity.hasPlayerPhylactery(misc.getLifetimeUUID(), player.getUniqueID())) {
+        if (worldHumanity.hasPlayerPhylactery(misc.getLifetimeUUID(), misc.getPermanentUUID())) {
             // Phylactery exists and is still valid
             return;
         }
@@ -178,7 +181,7 @@ public class ListenerWorldHumanity extends HardcoreAlchemyListener {
         ICapabilityWorldHumanity worldHumanity = UniverseCapabilityManager.INSTANCE.getCapability(HUMANITY_WORLD_CAPABILITY);
         if (worldHumanity == null) { return; }
         
-        ICapabilityWorldHumanity.Phylactery oldPhylactery = worldHumanity.getPlayerPhylactery(oldMisc.getLifetimeUUID(), oldPlayer.getUniqueID());
+        ICapabilityWorldHumanity.Phylactery oldPhylactery = worldHumanity.getPlayerPhylactery(oldMisc.getLifetimeUUID(), oldMisc.getPermanentUUID());
         
         // Update the world bookkeeping of the phylactery
         if (keepPhylactery) {
@@ -187,7 +190,7 @@ public class ListenerWorldHumanity extends HardcoreAlchemyListener {
             if (oldPhylactery != null) {
                 oldPhylactery.state = ICapabilityWorldHumanity.State.REINCARNATED;
             }
-            worldHumanity.registerPhylactery(newMisc.getLifetimeUUID(), newPlayer.getUniqueID(), oldPhylactery.pos, oldPhylactery.dimension, oldPhylactery.morphTarget);
+            worldHumanity.registerPhylactery(newMisc.getLifetimeUUID(), newMisc.getPermanentUUID(), oldPhylactery.pos, oldPhylactery.dimension, oldPhylactery.morphTarget);
         }
         else {
             // Mark the entry as "dormant", but don't remove it
@@ -201,7 +204,7 @@ public class ListenerWorldHumanity extends HardcoreAlchemyListener {
         if (oldPhylactery != null) {
             // Update the phylactery's associated tile entity to match the new bookkeeping state, if it is currently loaded.
             // This function may then fire events, which may then change the player's morph state
-            TileHumanityPhylactery.checkWorldState(null, oldPhylactery, newMisc.getLifetimeUUID(), newPlayer.getUniqueID());
+            TileHumanityPhylactery.checkWorldState(null, oldPhylactery, newMisc.getLifetimeUUID(), newMisc.getPermanentUUID());
         }
     }
 }

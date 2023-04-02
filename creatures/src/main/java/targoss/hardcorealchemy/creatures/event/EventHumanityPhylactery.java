@@ -21,6 +21,8 @@ package targoss.hardcorealchemy.creatures.event;
 
 import java.util.UUID;
 
+import javax.annotation.Nullable;
+
 import mchorse.metamorph.api.morphs.AbstractMorph;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
@@ -31,14 +33,14 @@ import targoss.hardcorealchemy.capability.misc.ICapabilityMisc;
 public class EventHumanityPhylactery extends Event {
     
     public static class Create extends EventHumanityPhylactery {
-        public final EntityPlayer player;
+        @Nullable public final EntityPlayer player;
         public final ICapabilityMisc misc;
         public final AbstractMorph morphTarget;
         public final World world;
         public final BlockPos pos;
         public final int dimension;
 
-        public Create(EntityPlayer player, ICapabilityMisc misc, AbstractMorph morphTarget, World world, BlockPos pos, int dimension) {
+        public Create(@Nullable EntityPlayer player, ICapabilityMisc misc, AbstractMorph morphTarget, World world, BlockPos pos, int dimension) {
             this.player = player;
             this.misc = misc;
             this.morphTarget = morphTarget;
