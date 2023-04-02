@@ -22,7 +22,7 @@ license {
         header = project.file('../HEADER_lgpl3_upgradeable.txt')
         ext {
             name = 'Hardcore Alchemy Survival'
-            year = 2022
+            year = 2023
         }
     }
 }

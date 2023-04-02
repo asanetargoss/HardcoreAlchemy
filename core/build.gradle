@@ -22,7 +22,7 @@ license {
         header = project.file('../HEADER_lgpl3_upgradeable.txt')
         ext {
             name = 'Hardcore Alchemy Core'
-            year = 2022
+            year = 2023
         }
     }
     matching('**/*_at.cfg') {
@@ -32,7 +32,7 @@ license {
         }
         ext {
             name = 'Hardcore Alchemy Core'
-            year = 2022
+            year = 2023
         }
     }
 }
