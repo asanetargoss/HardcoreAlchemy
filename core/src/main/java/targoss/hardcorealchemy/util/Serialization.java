@@ -41,6 +41,7 @@ public class Serialization {
         return nbtType;
     }
 
+    public static final int NBT_BOOLEAN_ID = checkForNBTType("BYTE");
     public static final int NBT_FLOAT_ID = checkForNBTType("FLOAT");
     public static final int NBT_STRING_ID = checkForNBTType("STRING");
     public static final int NBT_LIST_ID = checkForNBTType("LIST");

@@ -41,6 +41,7 @@ import targoss.hardcorealchemy.HardcoreAlchemyCore;
 @SideOnly(Side.CLIENT)
 public class TESRHumanityPhylactery extends TileEntitySpecialRenderer<TileHumanityPhylactery> {
     
+    // TODO: Don't store per-tile variables here. Store in the tile entity
     protected double tickTime = 0;
     protected double particleTime = 0;
     protected Random rand = new Random();

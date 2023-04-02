@@ -73,7 +73,6 @@ import targoss.hardcorealchemy.util.InventoryUtil;
 import targoss.hardcorealchemy.util.Serialization;
 import targoss.hardcorealchemy.util.WorldUtil;
 
-// TODO: Figure out why removing items from the internal inventory does not make the player's humanity calculation change. Looks like the phylactery might be deactivated, so probably the phylactery flag isn't being unset?
 public class TileHumanityPhylactery extends TileEntity {
     
     @CapabilityInject(IItemHandler.class)
@@ -180,7 +179,7 @@ public class TileHumanityPhylactery extends TileEntity {
             if (!humanity.shouldDisplayHumanity()) {
                 return false;
             }
-            return !humanity.getHasForgottenMorphAbility();
+            return !humanity.getHasForgottenHumanForm();
         }
     }
 
@@ -196,7 +195,7 @@ public class TileHumanityPhylactery extends TileEntity {
             if (!humanity.shouldDisplayHumanity()) {
                 return false;
             }
-            return humanity.getHasForgottenMorphAbility();
+            return humanity.getHasForgottenHumanForm();
         }
     }
 
@@ -208,7 +207,7 @@ public class TileHumanityPhylactery extends TileEntity {
     protected UUID lifetimeUUID = null;
     protected boolean dormant = false;
     
-    protected void setActive(@Nonnull UUID permanentUUID, @Nonnull UUID lifetimeUUID) {
+    protected void setActive(@Nonnull UUID permanentUUID, @Nonnull UUID lifetimeUUID, boolean isWorldLoad) {
         assert(permanentUUID != null);
         assert(lifetimeUUID != null);
         
@@ -221,12 +220,16 @@ public class TileHumanityPhylactery extends TileEntity {
             dirty = true;
             this.lifetimeUUID = lifetimeUUID;
         }
-        if (dirty) {
+        if (dirty && !isWorldLoad) {
             markDirty();
         }
     }
     
-    protected void setDeactivated() {
+    /**
+     * 
+     * @param isWorldLoad - If the world is loaded
+     */
+    protected void setDeactivated(boolean isWorldLoad) {
         boolean dirty = false;
         if (this.permanentUUID != null) {
             this.permanentUUID = null;
@@ -240,14 +243,18 @@ public class TileHumanityPhylactery extends TileEntity {
             this.dormant = false;
             dirty = true;
         }
-        if (dirty) {
+        if (dirty && !isWorldLoad) {
             markDirty();
         }
     }
 
-    protected void setDormant(boolean dormant) {
+    protected void setDormant(boolean dormant, boolean isWorldLoad) {
+        boolean dirty = false;
         if (this.dormant != dormant) {
             this.dormant = dormant;
+            dirty = true;
+        }
+        if (dirty && !isWorldLoad) {
             markDirty();
         }
     }
@@ -348,7 +355,7 @@ public class TileHumanityPhylactery extends TileEntity {
                 deactivate(phyTE, oldPhy, isWorldLoad);
             }
             if (phyTE != null) {
-                phyTE.setDormant(worldStateDormant);
+                phyTE.setDormant(worldStateDormant, isWorldLoad);
             }
         }
     }
@@ -368,13 +375,12 @@ public class TileHumanityPhylactery extends TileEntity {
     // TODO: If the block is loaded, trigger a block update so the lighting changes
     protected static void create(@Nullable TileHumanityPhylactery phyTE, @Nullable EntityPlayer player, @Nullable ICapabilityMisc misc, AbstractMorph morphTarget, @Nullable ICapabilityWorldHumanity.Phylactery oldPhy, ICapabilityWorldHumanity.Phylactery newPhy, boolean isWorldLoad) {
         if (phyTE != null) {
-            phyTE.setActive(newPhy.permanentUUID, newPhy.lifetimeUUID);
+            phyTE.setActive(newPhy.permanentUUID, newPhy.lifetimeUUID, isWorldLoad);
             
             if (!isWorldLoad) {
                 assert(player != null);
                 assert(misc != null);
                 assert(morphTarget != null);
-                // TODO: Why isn't this event getting picked up by ListenerWorldHumanity?
                 MinecraftForge.EVENT_BUS.post(new EventHumanityPhylactery.Create(player, misc, morphTarget, phyTE.getWorld(), phyTE.getPos(), phyTE.getWorld().provider.getDimension()));
             }
         }
@@ -423,7 +429,7 @@ public class TileHumanityPhylactery extends TileEntity {
             
         }
         if (phyTE != null) {
-            phyTE.setDeactivated();
+            phyTE.setDeactivated(isWorldLoad);
         }
     }
     
@@ -654,6 +660,9 @@ public class TileHumanityPhylactery extends TileEntity {
     protected static final String NBT_PLAYER_UUID = "player_uuid";
     protected static final String NBT_LIFETIME_UUID = "lifetime_uuid";
     protected static final String NBT_INVENTORY = "inventory";
+    protected static final String UPDATE_NBT_ACTIVE = "active";
+    protected static final String UPDATE_NBT_DORMANT = "dormant";
+    protected static final UUID ANONYMOUS_ID = new UUID(1, 1);
     
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
@@ -691,8 +700,54 @@ public class TileHumanityPhylactery extends TileEntity {
         if (compound.hasKey(NBT_LIFETIME_UUID, Serialization.NBT_STRING_ID)) {
             lifetimeUUID = UUID.fromString(compound.getString(NBT_LIFETIME_UUID));
         }
-
+    }
+    
+    @Override
+    public void onLoad()
+    {
+        super.onLoad();
+        
         ICapabilityWorldHumanity.Phylactery oldPhy = new ICapabilityWorldHumanity.Phylactery(lifetimeUUID, permanentUUID, getPos(), getWorld().provider.getDimension(), getPhylacteryState(), getMorphTarget());
         checkWorldState(this, oldPhy, lifetimeUUID, permanentUUID, true);
+    }
+
+    @Override
+    public NBTTagCompound getUpdateTag()
+    {
+        NBTTagCompound updateTag = super.getUpdateTag();
+        boolean active = isActive();
+        if (active) {
+            updateTag.setBoolean(UPDATE_NBT_ACTIVE, active);
+        }
+        boolean dormant = isDormant();
+        if (dormant) {
+            updateTag.setBoolean(UPDATE_NBT_DORMANT, dormant);
+        }
+        return updateTag;
+    }
+
+    @Override
+    public void handleUpdateTag(NBTTagCompound tag)
+    {
+        super.handleUpdateTag(tag);
+        
+        boolean active = false;
+        if (tag.hasKey(UPDATE_NBT_ACTIVE, Serialization.NBT_BOOLEAN_ID)) {
+            active = tag.getBoolean(UPDATE_NBT_ACTIVE);
+        }
+        if (active) {
+            this.permanentUUID = ANONYMOUS_ID;
+            this.lifetimeUUID = ANONYMOUS_ID;
+        }
+        else {
+            this.permanentUUID = null;
+            this.lifetimeUUID = null;
+        }
+        
+        boolean dormant = false;
+        if (tag.hasKey(UPDATE_NBT_DORMANT, Serialization.NBT_BOOLEAN_ID)) {
+            dormant = tag.getBoolean(UPDATE_NBT_DORMANT);
+        }
+        this.dormant = dormant;
     }
 }
