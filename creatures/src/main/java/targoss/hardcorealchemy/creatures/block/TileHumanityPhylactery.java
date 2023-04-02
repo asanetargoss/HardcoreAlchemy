@@ -611,6 +611,12 @@ public class TileHumanityPhylactery extends TileEntity {
             }
             // Consume fuel
             inventory.withoutSideEffects().extractItem(SLOT_FUEL, 1, false);
+            if (needTrueFormSeal) {
+                // Siphon the player's human form
+                ItemStack trueFormSeal = new ItemStack(SEAL_OF_FORM);
+                ItemSealOfForm.setHumanTag(trueFormSeal);
+                inventory.setStackInSlot(SLOT_TRUE_FORM, trueFormSeal);
+            }
             // Extinguish flame and play sound
             this.sideEffects = false;
             world.setBlockState(testPos, Blocks.AIR.getDefaultState());
