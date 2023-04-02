@@ -42,6 +42,7 @@ import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.EnumFacing;
@@ -222,6 +223,7 @@ public class TileHumanityPhylactery extends TileEntity {
         }
         if (dirty && !isWorldLoad) {
             markDirty();
+            markNeedsUpdate();
         }
     }
     
@@ -245,6 +247,7 @@ public class TileHumanityPhylactery extends TileEntity {
         }
         if (dirty && !isWorldLoad) {
             markDirty();
+            markNeedsUpdate();
         }
     }
 
@@ -256,6 +259,7 @@ public class TileHumanityPhylactery extends TileEntity {
         }
         if (dirty && !isWorldLoad) {
             markDirty();
+            markNeedsUpdate();
         }
     }
     
@@ -372,7 +376,6 @@ public class TileHumanityPhylactery extends TileEntity {
         return isActive() && !isDormant();
     }
     
-    // TODO: If the block is loaded, trigger a block update so the lighting changes
     protected static void create(@Nullable TileHumanityPhylactery phyTE, @Nullable EntityPlayer player, @Nullable ICapabilityMisc misc, AbstractMorph morphTarget, @Nullable ICapabilityWorldHumanity.Phylactery oldPhy, ICapabilityWorldHumanity.Phylactery newPhy, boolean isWorldLoad) {
         if (phyTE != null) {
             phyTE.setActive(newPhy.permanentUUID, newPhy.lifetimeUUID, isWorldLoad);
@@ -709,17 +712,42 @@ public class TileHumanityPhylactery extends TileEntity {
     }
     
     @Override
-    public void onLoad()
-    {
+    public void onLoad() {
         super.onLoad();
         
         ICapabilityWorldHumanity.Phylactery oldPhy = new ICapabilityWorldHumanity.Phylactery(lifetimeUUID, permanentUUID, getPos(), getWorld().provider.getDimension(), getPhylacteryState(), getMorphTarget());
         checkWorldState(this, oldPhy, lifetimeUUID, permanentUUID, true);
     }
+    
+    /** Simple chunk invalidator which ignores block state. Contrast with World.setBlockState. Not suitable for real-time updates. */
+    protected void markNeedsUpdate() {
+        getWorld().checkLight(getPos());
+        IBlockState currentState = world.getBlockState(getPos());
+        getWorld().markAndNotifyBlock(pos, getWorld().getChunkFromBlockCoords(getPos()), currentState, currentState, 1 | 2 /* block update and send change to clients */);
+    }
+    
+    /** Client-side counterpart to markNeedsUpdate */
+    protected void clientGotUpdate() {
+        getWorld().checkLight(getPos());
+    }
+    
+    protected static final int NOT_A_VANILLA_TILE_ENTITY = 99999;
 
     @Override
-    public NBTTagCompound getUpdateTag()
+    @Nullable
+    public SPacketUpdateTileEntity getUpdatePacket()
     {
+        return new SPacketUpdateTileEntity(getPos(), NOT_A_VANILLA_TILE_ENTITY, getUpdateTag());
+    }
+    
+    @Override
+    public void onDataPacket(net.minecraft.network.NetworkManager net, net.minecraft.network.play.server.SPacketUpdateTileEntity pkt)
+    {
+        handleUpdateTag(pkt.getNbtCompound());
+    }
+
+    @Override
+    public NBTTagCompound getUpdateTag() {
         NBTTagCompound updateTag = super.getUpdateTag();
         boolean active = isActive();
         if (active) {
@@ -733,8 +761,7 @@ public class TileHumanityPhylactery extends TileEntity {
     }
 
     @Override
-    public void handleUpdateTag(NBTTagCompound tag)
-    {
+    public void handleUpdateTag(NBTTagCompound tag) {
         super.handleUpdateTag(tag);
         
         boolean active = false;
@@ -755,5 +782,7 @@ public class TileHumanityPhylactery extends TileEntity {
             dormant = tag.getBoolean(UPDATE_NBT_DORMANT);
         }
         this.dormant = dormant;
+
+        clientGotUpdate();
     }
 }
