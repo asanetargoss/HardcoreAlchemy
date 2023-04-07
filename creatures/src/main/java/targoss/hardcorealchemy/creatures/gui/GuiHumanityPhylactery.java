@@ -19,25 +19,38 @@
 
 package targoss.hardcorealchemy.creatures.gui;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.inventory.Container;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import targoss.hardcorealchemy.creatures.block.TileHumanityPhylactery;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 
 @SideOnly(Side.CLIENT)
 public class GuiHumanityPhylactery extends GuiContainer {
-    protected final TileHumanityPhylactery te;
+    protected final ITextComponent playerInventoryName;
+    
+    protected static final ResourceLocation TEXTURE = new ResourceLocation(HardcoreAlchemyCore.MOD_ID, "textures/gui/alchemist_core_background.png");
+    protected static final ITextComponent LABEL = new TextComponentTranslation(HardcoreAlchemyCore.MOD_ID + ".gui.alchemist_core.label");
 
-    public GuiHumanityPhylactery(Container container, TileHumanityPhylactery te) {
+    public GuiHumanityPhylactery(Container container, ITextComponent playerInventoryName) {
         super(container);
-        this.te = te;
+        this.playerInventoryName = playerInventoryName;
     }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        // TODO Auto-generated method stub
-
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        this.mc.getTextureManager().bindTexture(TEXTURE);
+        int i = (this.width - this.xSize) / 2;
+        int j = (this.height - this.ySize) / 2;
+        this.drawTexturedModalRect(i, j, 0, 0, this.xSize, this.ySize);
+        Minecraft.getMinecraft().fontRendererObj.drawString(LABEL.getFormattedText(), i + 24, j + 6, 0x404040);
+        Minecraft.getMinecraft().fontRendererObj.drawString(playerInventoryName.getFormattedText(), i + 8, j + 72, 0x404040);
     }
 
 }

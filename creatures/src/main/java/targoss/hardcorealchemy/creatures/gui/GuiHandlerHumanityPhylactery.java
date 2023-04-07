@@ -19,42 +19,28 @@
 
 package targoss.hardcorealchemy.creatures.gui;
 
-import java.util.List;
+import static targoss.hardcorealchemy.util.InventoryUtil.getPlayerInventorySlots;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
-import net.minecraft.inventory.Slot;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import targoss.hardcorealchemy.creatures.block.TileHumanityPhylactery;
 import targoss.hardcorealchemy.item.ContainerItemHandler;
-import targoss.hardcorealchemy.util.InventoryUtil;
 
 public class GuiHandlerHumanityPhylactery implements IGuiHandler {
-    public static final int[] CONTAINER_SLOT_COORDS = {  0,  0,
-                                                        16, 16,
-                                                        32, 32  };
-    
-    protected static List<Slot> getPlayerSlots(InventoryPlayer inv) {
-        List<Slot> playerSlots = InventoryUtil.getPlayerHotbarSlots(inv);
-        int n = playerSlots.size();
-        for (int i = 0; i < n; ++i) {
-            Slot slot = playerSlots.get(i);
-            slot.xPos = i * 16;
-            slot.yPos = 64;
-        }
-        return playerSlots;
-    }
+    public static final int[] CONTAINER_SLOT_COORDS = {  134, 29,
+                                                          80, 29,
+                                                          26, 47  };
     
     @Override
     public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         BlockPos pos = new BlockPos(x, y, z);
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof TileHumanityPhylactery) {
-            return new ContainerItemHandler(((TileHumanityPhylactery)te).inventory, CONTAINER_SLOT_COORDS, getPlayerSlots(player.inventory));
+            return new ContainerItemHandler(((TileHumanityPhylactery)te).inventory, CONTAINER_SLOT_COORDS, getPlayerInventorySlots(player.inventory));
         }
         return null;
     }
@@ -65,8 +51,8 @@ public class GuiHandlerHumanityPhylactery implements IGuiHandler {
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof TileHumanityPhylactery) {
             TileHumanityPhylactery phyTE = (TileHumanityPhylactery)te;
-            Container container = new ContainerItemHandler(phyTE.inventory, CONTAINER_SLOT_COORDS, getPlayerSlots(player.inventory));
-            return new GuiHumanityPhylactery(container, phyTE);
+            Container container = new ContainerItemHandler(phyTE.inventory, CONTAINER_SLOT_COORDS, getPlayerInventorySlots(player.inventory));
+            return new GuiHumanityPhylactery(container, player.inventory.getDisplayName());
         }
         return null;
     }

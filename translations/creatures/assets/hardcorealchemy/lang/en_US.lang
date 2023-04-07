@@ -133,3 +133,7 @@ item.hardcorealchemy:seal_of_form.name.unmorphed_inactive=Seal of True Form (Ina
 hardcorealchemy.item.seal_of_form.use.alreadyhavehuman=You already know how to be human.
 hardcorealchemy.item.seal_of_form.use.alreadyhavemorph=You already have this morph.
 
+# Guis
+
+hardcorealchemy.gui.alchemist_core.label=Morph
+

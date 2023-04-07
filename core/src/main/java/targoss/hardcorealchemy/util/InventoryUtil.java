@@ -102,11 +102,19 @@ public class InventoryUtil {
         return InventoryPlayer.isHotbar(index);
     }
     
-    public static List<Slot> getPlayerHotbarSlots(InventoryPlayer inv) {
+    public static List<Slot> getPlayerInventorySlots(InventoryPlayer inv) {
         List<Slot> slots = new ArrayList<>();
-        final int n = InventoryPlayer.getHotbarSize();
-        for (int i = 0; i < n; ++i) {
-            slots.add(new Slot(inv, i, 0, 0));
+        for (int i = 0; i < 3; ++i)
+        {
+            for (int j = 0; j < 9; ++j)
+            {
+                slots.add(new Slot(inv, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
+            }
+        }
+
+        for (int k = 0; k < 9; ++k)
+        {
+            slots.add(new Slot(inv, k, 8 + k * 18, 142));
         }
         return slots;
     }
