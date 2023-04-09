@@ -24,12 +24,14 @@ import java.util.Random;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -49,6 +51,8 @@ public class TESRHumanityPhylactery extends TileEntitySpecialRenderer<TileHumani
     protected static final float PARTICLE_INTERVAL = 1.5F;
     protected static IBakedModel outerFrame;
     protected static IBakedModel innerFrame;
+    protected static int outerFrameDisplayList = -1;
+    protected static int innerFrameDisplayList = -1;
 
     protected static IBakedModel getOuterFrame() {
         if (outerFrame == null) {
@@ -62,6 +66,62 @@ public class TESRHumanityPhylactery extends TileEntitySpecialRenderer<TileHumani
             innerFrame = Blocks.MODEL_HUMANITY_PHYLACTERY_INNER_FRAME.getBakedModel();
         }
         return innerFrame;
+    }
+    
+    protected static void renderOuterFrame(TileEntity te, World world) {
+        IBakedModel outerFrame = getOuterFrame();
+        if (outerFrame == null) {
+            return;
+        }
+        
+        if (outerFrameDisplayList == -1) {
+            outerFrameDisplayList = GLAllocation.generateDisplayLists(1);
+            GlStateManager.glNewList(outerFrameDisplayList, 4864);
+
+            Tessellator vertexbuffer = Tessellator.getInstance();
+            // NOTE: Switching the vertex format to ITEM here causes the backside of the model to appear dark
+            vertexbuffer.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+            Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(
+                    world,
+                    outerFrame,
+                    world.getBlockState(te.getPos()),
+                    te.getPos(),
+                    Tessellator.getInstance().getBuffer(),
+                    false);
+            vertexbuffer.draw();
+
+            GlStateManager.glEndList();
+        }
+        
+        GlStateManager.callList(outerFrameDisplayList);
+    }
+    
+    protected static void renderInnerFrame(TileEntity te, World world) {
+        IBakedModel innerFrame = getInnerFrame();
+        if (innerFrame == null) {
+            return;
+        }
+        
+        if (innerFrameDisplayList == -1) {
+            innerFrameDisplayList = GLAllocation.generateDisplayLists(1);
+            GlStateManager.glNewList(innerFrameDisplayList, 4864);
+
+            Tessellator vertexbuffer = Tessellator.getInstance();
+            // NOTE: Switching the vertex format to ITEM here causes the backside of the model to appear dark
+            vertexbuffer.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+            Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(
+                    world,
+                    innerFrame,
+                    world.getBlockState(te.getPos()),
+                    te.getPos(),
+                    Tessellator.getInstance().getBuffer(),
+                    false);
+            vertexbuffer.draw();
+
+            GlStateManager.glEndList();
+        }
+        
+        GlStateManager.callList(innerFrameDisplayList);
     }
     
     @Override
@@ -80,10 +140,6 @@ public class TESRHumanityPhylactery extends TileEntitySpecialRenderer<TileHumani
     }
     
     protected void renderFrame(TileHumanityPhylactery te, double playerToBlockX, double playerToBlockY, double playerToBlockZ) {
-        IBakedModel outerFrame = getOuterFrame();
-        if (outerFrame == null) {
-            return;
-        }
         IBakedModel innerFrame = getInnerFrame();
         if (innerFrame == null) {
             return;
@@ -96,7 +152,6 @@ public class TESRHumanityPhylactery extends TileEntitySpecialRenderer<TileHumani
             GlStateManager.shadeModel(GL11.GL_FLAT);
         }
         
-        // TODO: Cache the GL commands
         // TODO: Use te data to determine if the frame should rotate
         // TODO: Rotational offset depending on the placement of the block
         // TODO: Smoothly enable rotation on activation, and randomize using some seed
@@ -145,17 +200,7 @@ public class TESRHumanityPhylactery extends TileEntitySpecialRenderer<TileHumani
             // ¯\_(ツ)_/¯
             GlStateManager.translate(-blockPos.getX(), -blockPos.getY(), -blockPos.getZ());
             
-            Tessellator tessellator = Tessellator.getInstance();
-            // NOTE: Switching the vertex format to ITEM here causes the backside of the model to appear dark
-            tessellator.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-            Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(
-                    world,
-                    outerFrame,
-                    world.getBlockState(te.getPos()),
-                    te.getPos(),
-                    Tessellator.getInstance().getBuffer(),
-                    false);
-            tessellator.draw();
+            renderOuterFrame(te, world);
         }
         GlStateManager.popMatrix();
         
@@ -171,17 +216,7 @@ public class TESRHumanityPhylactery extends TileEntitySpecialRenderer<TileHumani
             // ¯\_(ツ)_/¯
             GlStateManager.translate(-blockPos.getX(), -blockPos.getY(), -blockPos.getZ());
     
-            Tessellator tessellator = Tessellator.getInstance();
-            // NOTE: Switching the vertex format to ITEM here causes the backside of the model to appear dark
-            tessellator.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-            Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(
-                    world,
-                    innerFrame,
-                    world.getBlockState(te.getPos()),
-                    te.getPos(),
-                    Tessellator.getInstance().getBuffer(),
-                    false);
-            tessellator.draw();
+            renderInnerFrame(te, world);
         }
         GlStateManager.popMatrix();
 
