@@ -1,6 +1,6 @@
-# Blender v3.0.1 OBJ File: 'humanity_phylactery.blend'
+# Blender v3.0.1 OBJ File: 'alchemist_core.blend'
 # www.blender.org
-mtllib humanity_phylactery.mtl
+mtllib alchemist_core.mtl
 o Inner_frame_Cube.002
 v -0.062500 0.000000 0.500000
 v -0.062500 0.500000 0.250000
@@ -93,7 +93,6 @@ vn 0.0000 -1.0000 0.0000
 vn 0.0000 -0.4472 0.8944
 vn -1.0000 0.0000 0.0000
 usemtl Material
-s off
 f 10/1/1 12/2/1 24/3/1 20/4/1
 f 24/5/2 23/6/2 15/7/2 16/8/2
 f 4/9/3 3/10/3 13/11/3 22/12/3
@@ -118,4 +117,3 @@ f 22/45/2 13/47/2 19/48/2 20/46/2
 f 19/48/2 13/47/2 14/49/2 18/50/2
 f 18/50/2 14/49/2 17/51/2 21/52/2
 f 15/7/2 23/6/2 21/52/2 17/51/2
-l 8 25

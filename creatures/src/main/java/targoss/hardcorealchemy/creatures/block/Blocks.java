@@ -39,16 +39,16 @@ import targoss.hardcorealchemy.block.BlockModelInfo;
 import targoss.hardcorealchemy.block.TileEntityInfo;
 
 public class Blocks {
-    public static final Block BLOCK_HUMANITY_PHYLACTERY = BLOCKS.add("humanity_phylactery", new BlockHumanityPhylactery());
+    public static final Block BLOCK_HUMANITY_PHYLACTERY = BLOCKS.add("alchemist_core", new BlockHumanityPhylactery());
     
-    public static final TileEntityInfo<TileHumanityPhylactery> TILE_HUMANITY_PHYLACTERY = TILE_ENTITIES.add("humanity_phlactery", new TileEntityInfo<TileHumanityPhylactery>(TileHumanityPhylactery.class));
+    public static final TileEntityInfo<TileHumanityPhylactery> TILE_HUMANITY_PHYLACTERY = TILE_ENTITIES.add("alchemist_core", new TileEntityInfo<TileHumanityPhylactery>(TileHumanityPhylactery.class));
     
     public static final ResourceLocation PARTICLES_HUMANITY_PHYLACTERY = new ResourceLocation(HardcoreAlchemyCore.MOD_ID, "items/alchemist_core");
-    public static final BlockModelInfo<TileHumanityPhylactery> MODEL_HUMANITY_PHYLACTERY_OUTER_FRAME = BLOCK_MODELS.add("humanity_phylactery_outer_frame", new BlockModelInfo<TileHumanityPhylactery>(BLOCK_HUMANITY_PHYLACTERY, TILE_HUMANITY_PHYLACTERY.clazz).setCustomParticleTexture(PARTICLES_HUMANITY_PHYLACTERY));
-    public static final BlockModelInfo<TileHumanityPhylactery> MODEL_HUMANITY_PHYLACTERY_INNER_FRAME = BLOCK_MODELS.add("humanity_phylactery_inner_frame", new BlockModelInfo<TileHumanityPhylactery>(BLOCK_HUMANITY_PHYLACTERY, TILE_HUMANITY_PHYLACTERY.clazz).setCustomParticleTexture(PARTICLES_HUMANITY_PHYLACTERY));
+    public static final BlockModelInfo<TileHumanityPhylactery> MODEL_HUMANITY_PHYLACTERY_OUTER_FRAME = BLOCK_MODELS.add("alchemist_core_outer_frame", new BlockModelInfo<TileHumanityPhylactery>(BLOCK_HUMANITY_PHYLACTERY, TILE_HUMANITY_PHYLACTERY.clazz).setCustomParticleTexture(PARTICLES_HUMANITY_PHYLACTERY));
+    public static final BlockModelInfo<TileHumanityPhylactery> MODEL_HUMANITY_PHYLACTERY_INNER_FRAME = BLOCK_MODELS.add("alchemist_core_inner_frame", new BlockModelInfo<TileHumanityPhylactery>(BLOCK_HUMANITY_PHYLACTERY, TILE_HUMANITY_PHYLACTERY.clazz).setCustomParticleTexture(PARTICLES_HUMANITY_PHYLACTERY));
     
     public static class Client {
-        public static final BlockModelInfo.Client<TileHumanityPhylactery> CLIENT_MODEL_HUMANITY_PHYLACTERY = CLIENT_BLOCK_MODELS.add("humanity_phylactery", new BlockModelInfo.Client<TileHumanityPhylactery>(MODEL_HUMANITY_PHYLACTERY_OUTER_FRAME, new TESRHumanityPhylactery()));
+        public static final BlockModelInfo.Client<TileHumanityPhylactery> CLIENT_MODEL_HUMANITY_PHYLACTERY = CLIENT_BLOCK_MODELS.add("alchemist_core", new BlockModelInfo.Client<TileHumanityPhylactery>(MODEL_HUMANITY_PHYLACTERY_OUTER_FRAME, new TESRHumanityPhylactery()));
     }
     
     public static void registerRecipes() {

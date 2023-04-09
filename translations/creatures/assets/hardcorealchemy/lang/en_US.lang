@@ -25,7 +25,7 @@ language.code=en_US
 
 hardcorealchemy.morph.disabled.noability=You seem to have misplaced knowledge of how to morph.
 hardcorealchemy.morph.disabled.nohumanity=Your humanity is gone. Your mind is confined to this body.
-hardcorealchemy.morph.disabled.inphylactery=The flame contains your morphing knowledge. You must disrupt the flame to get it back.
+hardcorealchemy.morph.disabled.inalchemistcore=The flame contains your morphing knowledge. You must disrupt the flame to get it back.
 hardcorealchemy.morph.disabled.nohumanform=You seem to have misplaced knowledge of your human form. Morphing is not possible without it.
 hardcorealchemy.morph.disabled.magic_inhibition=A powerful magic interferes with your ability to change forms.
 hardcorealchemy.morph.disabled.dead=Your soul shall always be human.
@@ -132,7 +132,7 @@ item.hardcorealchemy:seal_of_form.name.unmorphed_active=Seal of True Form
 item.hardcorealchemy:seal_of_form.name.unmorphed_inactive=Seal of True Form (Inactive)
 hardcorealchemy.item.seal_of_form.use.alreadyhavehuman=You already know how to be human.
 hardcorealchemy.item.seal_of_form.use.alreadyhavemorph=You already have this morph.
-tile.hardcorealchemy.humanity_phylactery.name=Alchemist Core
+tile.hardcorealchemy.alchemist_core.name=Alchemist Core
 
 # Guis
 

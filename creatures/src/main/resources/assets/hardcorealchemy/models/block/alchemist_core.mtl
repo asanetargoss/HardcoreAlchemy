@@ -1,0 +1,8 @@
+# Blender MTL File: 'alchemist_core.blend'
+# Material Count: 1
+
+newmtl Material
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+d 1.000000
+map_Ka alchemist_core.png

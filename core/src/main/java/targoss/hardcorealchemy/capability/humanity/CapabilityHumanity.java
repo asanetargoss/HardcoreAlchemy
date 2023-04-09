@@ -182,7 +182,7 @@ public class CapabilityHumanity implements ICapabilityHumanity {
             return new TextComponentTranslation("hardcorealchemy.morph.disabled.noability");
         }
         if (isHumanFormInPhylactery) {
-            return new TextComponentTranslation("hardcorealchemy.morph.disabled.inphylactery");
+            return new TextComponentTranslation("hardcorealchemy.morph.disabled.inalchemistcore");
         }
         if (hasForgottenHumanForm) {
             return new TextComponentTranslation("hardcorealchemy.morph.disabled.nohumanform");

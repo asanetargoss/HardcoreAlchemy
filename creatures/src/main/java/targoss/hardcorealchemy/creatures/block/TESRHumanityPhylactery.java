@@ -131,7 +131,7 @@ public class TESRHumanityPhylactery extends TileEntitySpecialRenderer<TileHumani
         }
         
         // TODO: Different texture when on?
-        bindTexture(new ResourceLocation(HardcoreAlchemyCore.MOD_ID, "models/block/humanity_phylactery.png"));
+        bindTexture(new ResourceLocation(HardcoreAlchemyCore.MOD_ID, "models/block/alchemist_core.png"));
         
         // Render outer frame
         GlStateManager.pushMatrix();

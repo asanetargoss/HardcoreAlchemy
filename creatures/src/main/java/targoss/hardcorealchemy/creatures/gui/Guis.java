@@ -24,5 +24,5 @@ import static targoss.hardcorealchemy.gui.Guis.GUI_HANDLERS;
 import targoss.hardcorealchemy.gui.IndexedGuiHandler;
 
 public class Guis {
-    public static final IndexedGuiHandler GUI_HANDLER_HUMANITY_PHYLACTERY = GUI_HANDLERS.add("humanity_phylactery", new IndexedGuiHandler(new GuiHandlerHumanityPhylactery()));
+    public static final IndexedGuiHandler GUI_HANDLER_HUMANITY_PHYLACTERY = GUI_HANDLERS.add("alchemist_core", new IndexedGuiHandler(new GuiHandlerHumanityPhylactery()));
 }
