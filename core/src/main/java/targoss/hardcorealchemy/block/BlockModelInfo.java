@@ -29,6 +29,7 @@ import javax.annotation.Nullable;
 import com.google.common.base.Function;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -53,10 +54,16 @@ public class BlockModelInfo<T extends TileEntity> {
     public ResourceLocation id;
     protected static IBakedModel dummyBakedModel = null;
     protected IBakedModel bakedModel = null;
+    public @Nullable ResourceLocation customParticleTexture = null;
     
     public BlockModelInfo(Block block, @Nullable Class<T> teClass) {
         this.block = block;
         this.teClass = teClass;
+    }
+    
+    public BlockModelInfo<T> setCustomParticleTexture(ResourceLocation resource) {
+        this.customParticleTexture = resource;
+        return this;
     }
     
     protected static class SimpleTextureAtlasSprite extends TextureAtlasSprite {
@@ -99,6 +106,56 @@ public class BlockModelInfo<T extends TileEntity> {
         }
     }
     
+    protected static class BakedModelWithParticles implements IBakedModel {
+        protected final @Nullable IBakedModel delegate;
+        protected final @Nullable TextureAtlasSprite customParticleTexture;
+        
+        public BakedModelWithParticles(IBakedModel delegate, @Nullable ResourceLocation customParticleTexture) {
+            this.delegate = delegate;
+            this.customParticleTexture = customParticleTexture == null ? null : Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(customParticleTexture.toString());
+        }
+        
+        @Override
+        public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) {
+            return delegate.getQuads(state, side, rand);
+        }
+
+        @Override
+        public boolean isAmbientOcclusion() {
+            return delegate.isAmbientOcclusion();
+        }
+
+        @Override
+        public boolean isGui3d() {
+            return delegate.isGui3d();
+        }
+
+        @Override
+        public boolean isBuiltInRenderer() {
+            return delegate.isBuiltInRenderer();
+        }
+
+        @Override
+        public TextureAtlasSprite getParticleTexture() {
+            if (customParticleTexture != null) {
+                return customParticleTexture;
+            }
+            return delegate.getParticleTexture();
+        }
+
+        @SuppressWarnings("deprecation")
+        @Override
+        public ItemCameraTransforms getItemCameraTransforms() {
+            return delegate.getItemCameraTransforms();
+        }
+
+        @Override
+        public ItemOverrideList getOverrides() {
+            return delegate.getOverrides();
+        }
+        
+    }
+    
     protected static IBakedModel getDummyBakedModel() {
         Map<EnumFacing, List<BakedQuad>> faceQuads = new HashMap<>();
         for (EnumFacing facing : EnumFacing.values()) {
@@ -108,12 +165,16 @@ public class BlockModelInfo<T extends TileEntity> {
         return dummyBakedModel;
     }
     
-    // TODO: Is the correct vertex format ITEM, or something else?
+    protected IBakedModel createBakedModel() throws Exception {
+        net.minecraftforge.client.model.IModel model = ModelLoaderRegistry.getModel(id);
+        IBakedModel objModel = model.bake(TRSRTransformation.identity(), DefaultVertexFormats.ITEM, SimpleTextureGetter.INSTANCE);
+        return new BakedModelWithParticles(objModel, customParticleTexture);
+    }
+    
     public IBakedModel getBakedModel() {
         if (bakedModel == null) {
             try {
-                net.minecraftforge.client.model.IModel model = ModelLoaderRegistry.getModel(id);
-                bakedModel = model.bake(TRSRTransformation.identity(), DefaultVertexFormats.ITEM, SimpleTextureGetter.INSTANCE);
+                bakedModel = createBakedModel();
             } catch (Exception e) {
                 HardcoreAlchemyCore.LOGGER.error("Failed to get baked model '" + id + "'. Substituting a dummy one.", e);
                 bakedModel = getDummyBakedModel();

@@ -33,11 +33,13 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import targoss.hardcorealchemy.creatures.gui.Guis;
+import targoss.hardcorealchemy.util.BlockUtil;
 
 public class BlockHumanityPhylactery extends Block implements ITileEntityProvider {
     public BlockHumanityPhylactery() {
@@ -45,7 +47,6 @@ public class BlockHumanityPhylactery extends Block implements ITileEntityProvide
         setHardness(2.5F);
         setSoundType(SoundType.METAL);
     }
-    // TODO: Figure out why the block breaking particles sample from missingno (they should probably sample from the item texture)
 
     @Override
     public TileEntity createNewTileEntity(World world, int meta) {
@@ -100,6 +101,20 @@ public class BlockHumanityPhylactery extends Block implements ITileEntityProvide
         }
         
         super.breakBlock(world, pos, blockState);
+    }
+    
+    @SideOnly(Side.CLIENT)
+    public boolean addHitEffects(IBlockState state, World worldObj, RayTraceResult target, net.minecraft.client.particle.ParticleManager manager)
+    {
+        BlockUtil.addBlockHitEffects(this, worldObj, target, manager, Blocks.MODEL_HUMANITY_PHYLACTERY_OUTER_FRAME.getBakedModel().getParticleTexture());
+        return true;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public boolean addDestroyEffects(World world, BlockPos pos, net.minecraft.client.particle.ParticleManager manager)
+    {
+        BlockUtil.addBlockDestroyEffects(this, world, pos, manager, Blocks.MODEL_HUMANITY_PHYLACTERY_OUTER_FRAME.getBakedModel().getParticleTexture());
+        return true;
     }
     
     @Override
