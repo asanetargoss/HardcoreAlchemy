@@ -20,6 +20,7 @@
 package targoss.hardcorealchemy.creatures;
 
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.creatures.block.Blocks;
@@ -104,6 +105,11 @@ public class CommonProxy {
 
     public void init(FMLInitializationEvent event) {
         Items.registerRecipes();
+        Blocks.registerRecipes();
         HcAMetamorphPack.registerAbilities();
+    }
+    
+    public void postInit(FMLPostInitializationEvent event) {
+        Blocks.registerCompat();
     }
 }

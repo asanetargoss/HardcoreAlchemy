@@ -23,9 +23,6 @@ import java.util.Map;
 
 import net.minecraftforge.fml.common.ModContainer;
 
-/**
- * Note: Not all ids have a corresponding boolean
- */
 public final class ModState {
     public static final String ADINFEROS_ID = "adinferos";
     public static final String ALCHEMIC_ASH_ID = "AlchemicAsh";

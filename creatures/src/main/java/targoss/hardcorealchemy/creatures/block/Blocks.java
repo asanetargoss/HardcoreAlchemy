@@ -19,13 +19,21 @@
 
 package targoss.hardcorealchemy.creatures.block;
 
+import static net.minecraft.init.Items.IRON_INGOT;
+import static net.minecraft.init.Items.QUARTZ;
 import static targoss.hardcorealchemy.block.Blocks.BLOCKS;
 import static targoss.hardcorealchemy.block.Blocks.BLOCK_MODELS;
+import static targoss.hardcorealchemy.block.Blocks.ORE_DIMENSIONAL_FLUX_CRYSTAL;
 import static targoss.hardcorealchemy.block.Blocks.TILE_ENTITIES;
 import static targoss.hardcorealchemy.block.Blocks.Client.CLIENT_BLOCK_MODELS;
+import static targoss.hardcorealchemy.item.Items.EMPTY_SLATE;
 
 import net.minecraft.block.Block;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.oredict.ShapedOreRecipe;
 import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.block.BlockModelInfo;
 import targoss.hardcorealchemy.block.TileEntityInfo;
@@ -41,5 +49,23 @@ public class Blocks {
     
     public static class Client {
         public static final BlockModelInfo.Client<TileHumanityPhylactery> CLIENT_MODEL_HUMANITY_PHYLACTERY = CLIENT_BLOCK_MODELS.add("humanity_phylactery", new BlockModelInfo.Client<TileHumanityPhylactery>(MODEL_HUMANITY_PHYLACTERY_OUTER_FRAME, new TESRHumanityPhylactery()));
+    }
+    
+    public static void registerRecipes() {
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(BLOCK_HUMANITY_PHYLACTERY), new Object[] {
+                /* Mirrored */ true,
+                "SII",
+                "ICI",
+                "IIS",
+                'I', new ItemStack(IRON_INGOT),
+                'C', ORE_DIMENSIONAL_FLUX_CRYSTAL,
+                'S', EMPTY_SLATE
+        }));
+    }
+    
+    public static void registerCompat() {
+        if (OreDictionary.getOres(ORE_DIMENSIONAL_FLUX_CRYSTAL).isEmpty()) {
+            OreDictionary.registerOre(ORE_DIMENSIONAL_FLUX_CRYSTAL, QUARTZ);
+        }
     }
 }

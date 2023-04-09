@@ -32,6 +32,8 @@ public class Blocks {
     public static final Registrar<TileEntityInfo<?>> TILE_ENTITIES = new RegistrarTileEntity("tile_entities", HardcoreAlchemyCore.MOD_ID, HardcoreAlchemyPreInit.LOGGER);
     public static final Registrar<BlockModelInfo<?>> BLOCK_MODELS = new RegistrarBlockModel("block_models", HardcoreAlchemyCore.MOD_ID, HardcoreAlchemyPreInit.LOGGER);
     
+    public static final String ORE_DIMENSIONAL_FLUX_CRYSTAL = HardcoreAlchemyCore.MOD_ID + ":dimensional_flux_crystal";
+    
     public static class Client {
         public static final Registrar<BlockModelInfo.Client<?>> CLIENT_BLOCK_MODELS = new RegistrarBlockModel.Client("client_block_models", HardcoreAlchemyCore.MOD_ID, HardcoreAlchemyPreInit.LOGGER);
     }

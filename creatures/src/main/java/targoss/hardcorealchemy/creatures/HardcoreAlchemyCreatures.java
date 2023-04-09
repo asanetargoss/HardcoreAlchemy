@@ -25,6 +25,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.ModState;
@@ -66,7 +67,12 @@ public class HardcoreAlchemyCreatures
     }
     
     @EventHandler
-    public void preInit(FMLInitializationEvent event) {
+    public void init(FMLInitializationEvent event) {
         proxy.init(event);
+    }
+    
+    @EventHandler
+    public void postInit(FMLPostInitializationEvent event) {
+        proxy.postInit(event);
     }
 }

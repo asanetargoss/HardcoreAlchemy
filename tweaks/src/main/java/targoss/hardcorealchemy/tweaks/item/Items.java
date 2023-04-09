@@ -29,6 +29,7 @@ import static net.minecraft.init.Items.REDSTONE;
 import static net.minecraft.init.Items.ROTTEN_FLESH;
 import static net.minecraft.init.Items.SNOWBALL;
 import static targoss.hardcorealchemy.ClientProxy.TILESET;
+import static targoss.hardcorealchemy.block.Blocks.ORE_DIMENSIONAL_FLUX_CRYSTAL;
 import static targoss.hardcorealchemy.item.HcAPotion.BAD_EFFECT;
 import static targoss.hardcorealchemy.item.Items.HEARTS;
 import static targoss.hardcorealchemy.item.Items.ITEMS;
@@ -50,6 +51,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.IForgeRegistry;
+import net.minecraftforge.oredict.OreDictionary;
 import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.heart.Heart;
 import targoss.hardcorealchemy.item.HcAPotion;
@@ -95,6 +97,8 @@ public class Items {
     }
     
     public static void registerRecipes() {
+        OreDictionary.registerOre(ORE_DIMENSIONAL_FLUX_CRYSTAL, DIMENSIONAL_FLUX_CRYSTAL);
+        
         GameRegistry.addRecipe(new RecipeTimefrozen(
                     new ItemStack[] {
                             InventoryUtil.ITEM_STACK_EMPTY, new ItemStack(SNOWBALL), InventoryUtil.ITEM_STACK_EMPTY,
