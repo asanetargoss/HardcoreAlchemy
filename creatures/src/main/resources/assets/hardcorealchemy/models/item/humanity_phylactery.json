@@ -1,3 +1,6 @@
 {
-  "parent": "hardcorealchemy:block/humanity_phylactery"
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "hardcorealchemy:items/alchemist_core"
+  }
 }

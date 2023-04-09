@@ -45,6 +45,7 @@ public class BlockHumanityPhylactery extends Block implements ITileEntityProvide
         setHardness(2.5F);
         setSoundType(SoundType.METAL);
     }
+    // TODO: Figure out why the block breaking particles sample from missingno (they should probably sample from the item texture)
 
     @Override
     public TileEntity createNewTileEntity(World world, int meta) {

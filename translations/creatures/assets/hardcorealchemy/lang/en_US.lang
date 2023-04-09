@@ -123,7 +123,7 @@ hardcorealchemy.research.knowledge_fact.magic_inhibition_warning.acquire=You fea
 hardcorealchemy.research.knowledge_fact.dig_dirt_warning.acquire=You suspect your current tool is not suitable for digging dirt.
 hardcorealchemy.research.knowledge_fact.kill_mastery_hint.acquire=With each creature you master, you will acquire their form, and can more easily exploit their weaknesses.
 
-# Items
+# Items/Blocks
 
 item.hardcorealchemy:drowned_ender_pearl.name=Drowned Ender Pearl
 item.hardcorealchemy:ash.name=Ash
@@ -132,6 +132,7 @@ item.hardcorealchemy:seal_of_form.name.unmorphed_active=Seal of True Form
 item.hardcorealchemy:seal_of_form.name.unmorphed_inactive=Seal of True Form (Inactive)
 hardcorealchemy.item.seal_of_form.use.alreadyhavehuman=You already know how to be human.
 hardcorealchemy.item.seal_of_form.use.alreadyhavemorph=You already have this morph.
+tile.hardcorealchemy.humanity_phylactery.name=Alchemist Core
 
 # Guis
 
