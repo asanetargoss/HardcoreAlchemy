@@ -58,6 +58,8 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.SlotItemHandler;
@@ -246,6 +248,27 @@ public class TileHumanityPhylactery extends TileEntity {
     protected UUID lifetimeUUID = null;
     protected boolean dormant = false;
     
+    // Used for syncing and rendering
+    public static final float ROTATION_FREQUENCY = 0.5F;
+    
+    // TODO: Figure out loading/syncing
+    // Dirtied in setters, but prefer client prediction when practical
+    // activeFramePhaseTime is milliseconds since the Unix epoch, modulo the phylactery rotation rate. It determines the rotation of the phylactery when it is active // TODO: Make it so
+    // inactiveFramePhase determines the rotation of the phylactery when it is inactive // TODO: Make it so
+    // Angle and phase are in radians and determine the orientation of the frames
+    public long activeFramePhaseTime = 0;
+    public float initialFrameAngle = 0;
+    public float inactiveFramePhase = 0;
+    
+    public float getFramePhase(long currentTimeMillis) {
+        // TODO: Implement properly for case when the phylactery is active
+        return inactiveFramePhase;
+    }
+    
+    // Used for rendering
+    @SideOnly(Side.CLIENT)
+    public double particleTime = 0;
+
     protected void setActive(@Nonnull UUID permanentUUID, @Nonnull UUID lifetimeUUID, boolean isWorldLoad) {
         assert(permanentUUID != null);
         assert(lifetimeUUID != null);

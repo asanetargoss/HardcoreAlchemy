@@ -45,9 +45,7 @@ public class TESRHumanityPhylactery extends TileEntitySpecialRenderer<TileHumani
     
     // TODO: Don't store per-tile variables here. Store in the tile entity
     protected double tickTime = 0;
-    protected double particleTime = 0;
     protected Random rand = new Random();
-    protected static final float ROTATION_FREQUENCY = 0.5F;
     protected static final float PARTICLE_INTERVAL = 1.5F;
     protected static IBakedModel outerFrame;
     protected static IBakedModel innerFrame;
@@ -129,13 +127,13 @@ public class TESRHumanityPhylactery extends TileEntitySpecialRenderer<TileHumani
         boolean active = te.isVisiblyActive();
         if (!active)
         {
-            particleTime = 0;
+            te.particleTime = 0;
         }
         renderFrame(te, playerToBlockX, playerToBlockY, playerToBlockZ);
         if (active)
         {
             tickTime += partialTicks;
-            particleTime += partialTicks;
+            te.particleTime += partialTicks;
         }
     }
     
@@ -155,19 +153,19 @@ public class TESRHumanityPhylactery extends TileEntitySpecialRenderer<TileHumani
         // TODO: Use te data to determine if the frame should rotate
         // TODO: Rotational offset depending on the placement of the block
         // TODO: Smoothly enable rotation on activation, and randomize using some seed
-        double angleOuter = (ROTATION_FREQUENCY * (Math.PI * 2 * tickTime / 20)) % 360;
-        double angleInner = (-1.0 * ROTATION_FREQUENCY * (Math.PI * 2 * tickTime / 20)) % 360;
+        double angleOuter = (TileHumanityPhylactery.ROTATION_FREQUENCY * (Math.PI * 2 * tickTime / 20)) % 360;
+        double angleInner = (-1.0 * TileHumanityPhylactery.ROTATION_FREQUENCY * (Math.PI * 2 * tickTime / 20)) % 360;
 
         World world = te.getWorld();
         BlockPos blockPos = te.getPos();
         
-        if (particleTime > 0)
+        if (te.particleTime > 0)
         {
             // Spherically random particles
             // TODO: Custom particles
-            if ((rand.nextFloat())*particleTime > (PARTICLE_INTERVAL / 2))
+            if ((rand.nextFloat())*te.particleTime > (PARTICLE_INTERVAL / 2))
             {
-                particleTime -= PARTICLE_INTERVAL;
+                te.particleTime -= PARTICLE_INTERVAL;
                 float radius = rand.nextFloat();
                 radius *= radius;
                 radius = 0.2F * (1.0F - radius);
