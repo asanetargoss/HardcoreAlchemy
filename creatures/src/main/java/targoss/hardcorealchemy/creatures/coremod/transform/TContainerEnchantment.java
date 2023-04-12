@@ -38,7 +38,9 @@ import targoss.hardcorealchemy.event.EventEnchant;
 public class TContainerEnchantment extends MethodPatcher {
     protected static final String CONTAINER_ENCHANTMENT = "net.minecraft.inventory.ContainerEnchantment";
     protected static final ObfuscatedName ENCHANT_ITEM = new ObfuscatedName("func_75140_a" /*enchantItem*/);
+    // Need two method name checks to account for Minecraft code differences in dev vs release - this rarely happens!
     protected static final ObfuscatedName ADD_STAT = new ObfuscatedName("func_71064_a" /*EntityPlayer.addStat*/);
+    protected static final ObfuscatedName ADD_STAT_2 = new ObfuscatedName("func_71029_a" /*EntityPlayer.addStat*/);
     
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
@@ -60,7 +62,9 @@ public class TContainerEnchantment extends MethodPatcher {
                 if (!(insn instanceof MethodInsnNode)) {
                     continue;
                 }
-                if (!((MethodInsnNode)insn).name.equals(ADD_STAT.get())) {
+                String methodName = ((MethodInsnNode)insn).name;
+                if (!( methodName.equals(  ADD_STAT.get()) ||
+                       methodName.equals(ADD_STAT_2.get())    )) {
                     continue;
                 }
                 
