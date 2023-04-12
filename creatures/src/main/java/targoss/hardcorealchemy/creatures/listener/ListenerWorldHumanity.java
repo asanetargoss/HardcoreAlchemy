@@ -188,8 +188,8 @@ public class ListenerWorldHumanity extends HardcoreAlchemyListener {
             // Then add a duplicate entry. Same position but different IDs
             if (oldPhylactery != null) {
                 oldPhylactery.state = ICapabilityWorldHumanity.State.REINCARNATED;
+                worldHumanity.registerPhylactery(newMisc.getLifetimeUUID(), newMisc.getPermanentUUID(), oldPhylactery.pos, oldPhylactery.dimension, oldPhylactery.morphTarget);
             }
-            worldHumanity.registerPhylactery(newMisc.getLifetimeUUID(), newMisc.getPermanentUUID(), oldPhylactery.pos, oldPhylactery.dimension, oldPhylactery.morphTarget);
         }
         else {
             // Mark the entry as "dormant", but don't remove it
