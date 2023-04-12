@@ -26,12 +26,14 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundCategory;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import targoss.hardcorealchemy.capability.misc.ICapabilityMisc;
 import targoss.hardcorealchemy.capability.misc.ProviderMisc;
+import targoss.hardcorealchemy.capstone.CapstoneModState;
 import targoss.hardcorealchemy.capstone.HardcoreAlchemyCapstone;
 import targoss.hardcorealchemy.capstone.guide.HCAUpgradeGuides;
 import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
@@ -40,6 +42,7 @@ public class ListenerPlayerInventory extends HardcoreAlchemyListener {
     protected Random random = new Random();
     
     @SubscribeEvent
+    @Optional.Method(modid=CapstoneModState.GUIDEAPI_ID)
     public void onPlayerNeedUpgradeGuides(PlayerLoggedInEvent event) {
         ICapabilityMisc misc = event.player.getCapability(ProviderMisc.MISC_CAPABILITY, null);
         if (misc == null) {
