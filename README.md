@@ -118,6 +118,7 @@ The commands in the instructions below assume your command line is a unix-style 
     * If you only want to set up a certain `[PROJECT_NAME]`, you can run `./gradlew [PROJECT_NAME]:setupDecompWorkspace [PROJECT_NAME]:eclipse`
     * If you only want to build a certain `[PROJECT_NAME]`, you can run `./gradlew [PROJECT_NAME]:build`
     * You can comment out a project in the top-level `settings.gradle` and `build.gradle` to completely ignore it
+* Assertions are enabled in all `targoss.hardcorealchemy...` packages. To debug assertions, add `AssertionError` as an exception breakpoint
 
 ### Other resources
 

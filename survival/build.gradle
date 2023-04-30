@@ -48,8 +48,11 @@ minecraft {
     replace "\"required-before:\" + HardcoreAlchemyCore.MOD_ID", "\"required-before:\" + HardcoreAlchemyCore.MOD_ID + \"@[\" + HardcoreAlchemyCore.VERSION + \"]\""
     replaceIn "HardcoreAlchemySurvival.java"
 
-    clientJvmArgs += ["-Dfml.coreMods.load=targoss.hardcorealchemy.coremod.HardcoreAlchemyCoreCoremod,${coremodPath}"]
-    serverJvmArgs += ["-Dfml.coreMods.load=targoss.hardcorealchemy.coremod.HardcoreAlchemyCoreCoremod,${coremodPath}"]
+    String jvmArgs = " " +
+        "-Dfml.coreMods.load=targoss.hardcorealchemy.coremod.HardcoreAlchemyCoreCoremod,${coremodPath}" + " " +
+        "-enableassertions:targoss.hardcorealchemy..." + " "
+    clientJvmArgs += jvmArgs;
+    serverJvmArgs += jvmArgs;
 }
 
 dependencies {

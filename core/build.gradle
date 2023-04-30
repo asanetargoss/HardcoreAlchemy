@@ -55,9 +55,11 @@ minecraft {
     replace "@HARDCORE_ALCHEMY_CORE_VERSION@", project.version
     replaceIn "HardcoreAlchemyCore.java"
 
-    // These arguments let us load the coremod properly when testing in a dev environment
-    clientJvmArgs = ["-Dfml.coreMods.load=" + coremodPath]
-    serverJvmArgs = ["-Dfml.coreMods.load=" + coremodPath]
+    String jvmArgs = " " +
+        "-Dfml.coreMods.load=${coremodPath}" + " " +
+        "-enableassertions:targoss.hardcorealchemy..." + " "
+    clientJvmArgs += jvmArgs;
+    serverJvmArgs += jvmArgs;
 }
 
 dependencies {
