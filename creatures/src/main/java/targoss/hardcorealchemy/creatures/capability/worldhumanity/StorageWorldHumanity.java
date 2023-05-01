@@ -88,7 +88,7 @@ public class StorageWorldHumanity implements Capability.IStorage<ICapabilityWorl
                 nbtPhylactery.setTag(PHYLACTERY_PERMANENT_UUID, NBTUtil.createUUIDTag(phylactery.permanentUUID));
                 nbtPhylactery.setTag(PHYLACTERY_POS, NBTUtil.createPosTag(phylactery.pos));
                 nbtPhylactery.setInteger(PHYLACTERY_DIMENSION, phylactery.dimension);
-                nbtPhylactery.setByte(PHYLACTERY_STATE, stateFromEnum(phylactery.state));      
+                nbtPhylactery.setByte(PHYLACTERY_STATE, stateFromEnum(phylactery.state));
                 nbtPhylactery.setTag(PHYLACTERY_MORPH_TARGET, phylactery.morphTarget.toNBT());
                 nbtPhylacteries.appendTag(nbtPhylactery);
             }

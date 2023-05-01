@@ -145,6 +145,9 @@ public class ListenerEntityCapabilities extends HardcoreAlchemyListener {
             if (misc.getPermanentUUID() == null || misc.getPermanentUUID().equals(new UUID(0, 0))) {
                 misc.setPermanentUUID(UUID.randomUUID());
             }
+            if (misc.getLifetimeUUID() == null || misc.getLifetimeUUID().equals(new UUID(0, 0))) {
+                misc.setLifetimeUUID(UUID.randomUUID());
+            }
             UUID permanentID = misc.getPermanentUUID();
             permanentIDToPlayerID.put(permanentID, event.player.getUniqueID());
             playerIDToPermanentID.put(event.player.getUniqueID(), permanentID);

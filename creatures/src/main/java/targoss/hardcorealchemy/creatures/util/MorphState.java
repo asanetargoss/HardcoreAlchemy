@@ -126,9 +126,9 @@ public class MorphState {
 
     /**
      * Updates the player's morph abilities.
-     * If the morph is different than the current one, the player into the given AbstractMorph.
+     * If the morph is different than the current one, morph the player into the given AbstractMorph,
      * with the given reason, and updates the player's needs and instincts.
-     * Returns true if successful
+     * Returns true if successful.
      * Note that like MorphAPI.morph, this function should generally only be called
      * on the server side, or you will get desyncs.
      */
@@ -143,6 +143,7 @@ public class MorphState {
         }
 
         // NOTE: On the client side, the player is already morphed because MorphAPI.morph sent a packet first.
+        // TODO: Better morph equality comparison
         boolean sameMorph = (lastMorph == null && morph == null) ||
                             (lastMorph != null && lastMorph.equals(morph));
         boolean success = player.world.isRemote ||
