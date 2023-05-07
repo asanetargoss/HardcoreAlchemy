@@ -27,6 +27,7 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -50,7 +51,10 @@ public class BlockHumanityPhylactery extends Block implements ITileEntityProvide
 
     @Override
     public TileEntity createNewTileEntity(World world, int meta) {
-        return new TileHumanityPhylactery(world);
+        TileHumanityPhylactery te = new TileHumanityPhylactery(world);
+        te.initialFrameAngle = nextInitialFrameAngle;
+        nextInitialFrameAngle = 0.0F;
+        return te;
     }
 
     @Override
@@ -67,6 +71,33 @@ public class BlockHumanityPhylactery extends Block implements ITileEntityProvide
     @Override
     public boolean isOpaqueCube(IBlockState blockState) {
         return false;
+    }
+    
+    // Cache the intended placement info and use to initialize the next tile entity
+    // Rotation is in radians relative to +X, rotated about +Y (+X is East)
+    static float nextInitialFrameAngle = 0.0F;
+    // Assume single-threaded
+    @Override
+    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, ItemStack stack)
+    {
+        switch(placer.getHorizontalFacing())
+        {
+        case SOUTH:
+            nextInitialFrameAngle = 1.5F * (float)Math.PI;
+            break;
+        case WEST:
+            nextInitialFrameAngle = (float)Math.PI;
+            break;
+        case NORTH:
+            nextInitialFrameAngle = 0.5F * (float)Math.PI;
+            break;
+        case EAST:
+        default:
+            nextInitialFrameAngle = 0.0F;
+            break;
+        
+        }
+        return super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer, stack);
     }
     
     @Override

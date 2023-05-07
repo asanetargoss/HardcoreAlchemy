@@ -42,8 +42,6 @@ import targoss.hardcorealchemy.HardcoreAlchemyCore;
 @SideOnly(Side.CLIENT)
 public class TESRHumanityPhylactery extends TileEntitySpecialRenderer<TileHumanityPhylactery> {
     
-    // TODO: Don't store per-tile variables here. Store in the tile entity
-    protected double tickTime = 0;
     protected Random rand = new Random();
     protected static final float PARTICLE_INTERVAL = 1.5F;
     protected static IBakedModel outerFrame;
@@ -113,7 +111,7 @@ public class TESRHumanityPhylactery extends TileEntitySpecialRenderer<TileHumani
         renderFrame(te, playerToBlockX, playerToBlockY, playerToBlockZ);
         if (active)
         {
-            tickTime += partialTicks;
+            te.tickTime += partialTicks;
             te.particleTime += partialTicks;
         }
     }
@@ -131,11 +129,9 @@ public class TESRHumanityPhylactery extends TileEntitySpecialRenderer<TileHumani
             GlStateManager.shadeModel(GL11.GL_FLAT);
         }
         
-        // TODO: Use te data to determine if the frame should rotate
-        // TODO: Rotational offset depending on the placement of the block
-        // TODO: Smoothly enable rotation on activation, and randomize using some seed
-        double angleOuter = (TileHumanityPhylactery.ROTATION_FREQUENCY * (Math.PI * 2 * tickTime / 20)) % 360;
-        double angleInner = (-1.0 * TileHumanityPhylactery.ROTATION_FREQUENCY * (Math.PI * 2 * tickTime / 20)) % 360;
+        double timeOffsetSeconds = (te.tickTime / 20.0) + (te.activeFramePhaseTime / 1000.0);
+        double angleOuter = (((te.initialFrameAngle + te.inactiveFramePhase) * 180.0 / Math.PI) + (TileHumanityPhylactery.ROTATION_FREQUENCY * 360.0 * timeOffsetSeconds)) % 360;
+        double angleInner = (((te.initialFrameAngle - te.inactiveFramePhase) * 180.0 / Math.PI) + (-1.0 * TileHumanityPhylactery.ROTATION_FREQUENCY * 360.0 * timeOffsetSeconds)) % 360;
 
         World world = te.getWorld();
         BlockPos blockPos = te.getPos();

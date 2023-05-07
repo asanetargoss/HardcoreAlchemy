@@ -248,30 +248,59 @@ public class TileHumanityPhylactery extends TileEntity {
     protected UUID lifetimeUUID = null;
     protected boolean dormant = false;
     
+    // Rotation rate of the outer ring, in revolutions per second
     // Used for syncing and rendering
-    public static final float ROTATION_FREQUENCY = 0.5F;
+    public static final float ROTATION_FREQUENCY = 0.0083F;
     
-    // TODO: Figure out loading/syncing
+    protected static long getTimeModuloRotation(long time) {
+        long modulo = (long)(1000 * ROTATION_FREQUENCY);
+        long modtime = time % modulo;
+        if (modtime < 0) {
+            modtime += modulo;
+        }
+        return modtime;
+    }
+    
+    public float getRotationOffsetFromTime(long time) {
+        float modulo = 2.0F * (float)Math.PI;
+        float modRot = (ROTATION_FREQUENCY * (float)time / 1000.0F) % modulo;
+        if (modRot < 0.0F) {
+            modRot += modulo;
+        }
+        return modRot;
+    }
+
     // Dirtied in setters, but prefer client prediction when practical
-    // activeFramePhaseTime is milliseconds since the Unix epoch, modulo the phylactery rotation rate. It determines the rotation of the phylactery when it is active // TODO: Make it so
-    // inactiveFramePhase determines the rotation of the phylactery when it is inactive // TODO: Make it so
+    // activeFramePhaseTime is milliseconds since the Unix epoch, modulo the phylactery rotation rate. It determines the rotation of the phylactery when it is active
+    // inactiveFramePhase determines the rotation of the phylactery when it is inactive
     // Angle and phase are in radians and determine the orientation of the frames
     public long activeFramePhaseTime = 0;
     public float initialFrameAngle = 0;
     public float inactiveFramePhase = 0;
     
-    public float getFramePhase(long currentTimeMillis) {
-        // TODO: Implement properly for case when the phylactery is active
-        return inactiveFramePhase;
-    }
-    
     // Used for rendering
+    public double tickTime = 0;
     @SideOnly(Side.CLIENT)
     public double particleTime = 0;
-
+    
+    protected void recordPhaseTimeStart(boolean wasVisiblyActive) {
+        serializePhase(wasVisiblyActive);
+        activeFramePhaseTime = getTimeModuloRotation(-System.currentTimeMillis());
+    }
+    
+    protected void serializePhase(boolean wasVisiblyActive) {
+        long activeTime = wasVisiblyActive ? System.currentTimeMillis() : 0L;
+        inactiveFramePhase += getRotationOffsetFromTime(activeTime - activeFramePhaseTime);
+        inactiveFramePhase = inactiveFramePhase % (2.0F * (float)Math.PI);
+        activeFramePhaseTime = 0;
+        tickTime = 0;
+    }
+    
     protected void setActive(@Nonnull UUID permanentUUID, @Nonnull UUID lifetimeUUID, boolean isWorldLoad) {
         assert(permanentUUID != null);
         assert(lifetimeUUID != null);
+        
+        boolean wasVisiblyActive = isVisiblyActive();
         
         boolean dirty = false;
         if (this.permanentUUID != permanentUUID) {
@@ -282,12 +311,17 @@ public class TileHumanityPhylactery extends TileEntity {
             dirty = true;
             this.lifetimeUUID = lifetimeUUID;
         }
+        
         if (isActive() && hasTrueFormSeal()) {
             setTrueFormSealDormant(false, isWorldLoad);
         }
         if (dirty && !isWorldLoad) {
-            markDirty();
-            markNeedsUpdate();
+            recordPhaseTimeStart(wasVisiblyActive);
+            
+            if (!this.world.isRemote) {
+                markDirty();
+                markNeedsUpdate();
+            }
         }
     }
     
@@ -296,6 +330,8 @@ public class TileHumanityPhylactery extends TileEntity {
      * @param isWorldLoad - If the world is loaded
      */
     protected void setDeactivated(boolean isWorldLoad) {
+        boolean wasVisiblyActive = isVisiblyActive();
+        
         boolean dirty = false;
         if (this.permanentUUID != null) {
             this.permanentUUID = null;
@@ -309,13 +345,20 @@ public class TileHumanityPhylactery extends TileEntity {
             this.dormant = false;
             dirty = true;
         }
+        
         if (dirty && !isWorldLoad) {
-            markDirty();
-            markNeedsUpdate();
+            serializePhase(wasVisiblyActive);
+            
+            if (!this.world.isRemote) {
+                markDirty();
+                markNeedsUpdate();
+            }
         }
     }
 
     protected void setDormant(boolean dormant, boolean isWorldLoad) {
+        boolean wasVisiblyActive = isVisiblyActive();
+        
         boolean dirty = false;
         if (this.dormant != dormant) {
             this.dormant = dormant;
@@ -324,9 +367,14 @@ public class TileHumanityPhylactery extends TileEntity {
         if (dormant && hasTrueFormSeal()) {
             setTrueFormSealDormant(true, isWorldLoad);
         }
+        
         if (dirty && !isWorldLoad) {
-            markDirty();
-            markNeedsUpdate();
+            serializePhase(wasVisiblyActive);
+            
+            if (!this.world.isRemote) {
+                markDirty();
+                markNeedsUpdate();
+            }
         }
     }
     
@@ -769,9 +817,15 @@ public class TileHumanityPhylactery extends TileEntity {
     protected static final String NBT_PLAYER_UUID = "player_uuid";
     protected static final String NBT_LIFETIME_UUID = "lifetime_uuid";
     protected static final String NBT_INVENTORY = "inventory";
+    protected static final String NBT_ACTIVE_FRAME_PHASE_TIME = "phase_time";
+    protected static final String NBT_INITIAL_FRAME_ANGLE = "angle";
+    protected static final String NBT_INACTIVE_FRAME_PHASE = "phase";
     protected static final String UPDATE_NBT_ACTIVE = "active";
     protected static final String UPDATE_NBT_DORMANT = "dormant";
     protected static final String UPDATE_NBT_INVENTORY = NBT_INVENTORY;
+    protected static final String UPDATE_NBT_ACTIVE_FRAME_PHASE_TIME = NBT_ACTIVE_FRAME_PHASE_TIME;
+    protected static final String UPDATE_NBT_INITIAL_FRAME_ANGLE = NBT_INITIAL_FRAME_ANGLE;
+    protected static final String UPDATE_NBT_INACTIVE_FRAME_PHASE = NBT_INACTIVE_FRAME_PHASE;
     protected static final UUID ANONYMOUS_ID = new UUID(1, 1);
     
     @Override
@@ -785,6 +839,10 @@ public class TileHumanityPhylactery extends TileEntity {
         if (lifetimeUUID != null) {
             nbtOut.setString(NBT_LIFETIME_UUID, lifetimeUUID.toString());
         }
+        serializePhase(isVisiblyActive());
+        nbtOut.setLong(NBT_ACTIVE_FRAME_PHASE_TIME, activeFramePhaseTime);
+        nbtOut.setFloat(NBT_INITIAL_FRAME_ANGLE, initialFrameAngle);
+        nbtOut.setFloat(NBT_INACTIVE_FRAME_PHASE, inactiveFramePhase);
         
         return nbtOut;
     }
@@ -810,6 +868,9 @@ public class TileHumanityPhylactery extends TileEntity {
         if (compound.hasKey(NBT_LIFETIME_UUID, Serialization.NBT_STRING_ID)) {
             lifetimeUUID = UUID.fromString(compound.getString(NBT_LIFETIME_UUID));
         }
+        activeFramePhaseTime = compound.getLong(NBT_ACTIVE_FRAME_PHASE_TIME);
+        initialFrameAngle = compound.getFloat(NBT_INITIAL_FRAME_ANGLE);
+        inactiveFramePhase = compound.getFloat(NBT_INACTIVE_FRAME_PHASE);
     }
     
     @Override
@@ -853,6 +914,7 @@ public class TileHumanityPhylactery extends TileEntity {
     @Override
     public NBTTagCompound getUpdateTag() {
         NBTTagCompound updateTag = super.getUpdateTag();
+        
         boolean active = isActive();
         if (active) {
             updateTag.setBoolean(UPDATE_NBT_ACTIVE, active);
@@ -865,13 +927,19 @@ public class TileHumanityPhylactery extends TileEntity {
             inventory.changed = false;
             inventoryTag = inventory.serializeNBT();
         }
-        updateTag.setTag(NBT_INVENTORY, inventoryTag);
+        updateTag.setTag(UPDATE_NBT_INVENTORY, inventoryTag);
+        updateTag.setLong(UPDATE_NBT_ACTIVE_FRAME_PHASE_TIME, activeFramePhaseTime);
+        updateTag.setFloat(UPDATE_NBT_INITIAL_FRAME_ANGLE, initialFrameAngle);
+        updateTag.setFloat(UPDATE_NBT_INACTIVE_FRAME_PHASE, inactiveFramePhase);
+        
         return updateTag;
     }
 
     @Override
     public void handleUpdateTag(NBTTagCompound tag) {
         super.handleUpdateTag(tag);
+        
+        boolean wasVisiblyActive = isVisiblyActive();
         
         boolean active = false;
         if (tag.hasKey(UPDATE_NBT_ACTIVE, Serialization.NBT_BOOLEAN_ID)) {
@@ -891,6 +959,36 @@ public class TileHumanityPhylactery extends TileEntity {
             dormant = tag.getBoolean(UPDATE_NBT_DORMANT);
         }
         this.dormant = dormant;
+        if (tag.hasKey(UPDATE_NBT_INVENTORY, Serialization.NBT_COMPOUND_ID)) {
+            NBTTagCompound inventoryTag = tag.getCompoundTag(UPDATE_NBT_INVENTORY);
+            if (this.inventoryTag == null || !this.inventoryTag.equals(inventoryTag)) {
+                this.inventoryTag = inventoryTag;
+                inventory.deserializeNBT(inventoryTag);
+            }
+        }
+        
+        float oldInitialFrameAngle = this.initialFrameAngle;
+        this.initialFrameAngle = tag.getFloat(UPDATE_NBT_INITIAL_FRAME_ANGLE);
+        boolean isVisiblyActive = isVisiblyActive();
+        if ((oldInitialFrameAngle != this.initialFrameAngle) || (activeFramePhaseTime == 0L && inactiveFramePhase == 0.0F)) {
+            activeFramePhaseTime = tag.getLong(UPDATE_NBT_ACTIVE_FRAME_PHASE_TIME);
+            if (isActive()) {
+                tickTime = (System.currentTimeMillis() - activeFramePhaseTime) * 20.0 / 1000.0;
+            }
+            else {
+                tickTime = 0;
+            }
+            inactiveFramePhase = tag.getFloat(UPDATE_NBT_INACTIVE_FRAME_PHASE);
+        }
+        else if (wasVisiblyActive != isVisiblyActive) {
+            // Prefer client-side prediction
+            if (isVisiblyActive) {
+                recordPhaseTimeStart(wasVisiblyActive);
+            }
+            else {
+                serializePhase(wasVisiblyActive);
+            }
+        }
 
         clientGotUpdate();
     }
