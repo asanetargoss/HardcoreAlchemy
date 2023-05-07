@@ -42,7 +42,7 @@ The Hardcore Alchemy mod suite is tested to work with specific mods. Below are t
 
 There is a lot more in terms of mod selection, configuration, and tweaking, in order for a hardcore modpack to work well. Please exercise discretion when selecting punishing mechanics for your modpack and be mindful of the player's time.
 
-Also, since these mods were built for the Hardcore Alchemy modpack, config options are not planned, except as needed for compatibility with vanilla hardcore mode and serious accessibility concerns. If a third-party modpack developer is interested in these mods having a another type of config option or compatibility, they are welcome to contribute code.
+Also, since these mods were built for the Hardcore Alchemy modpack, config options are not planned, except as needed for compatibility with vanilla hardcore mode and serious accessibility concerns.
 
 ## Developing/building
 
