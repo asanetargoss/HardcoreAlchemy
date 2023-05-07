@@ -149,7 +149,6 @@ public class ListenerPlayerMorphs extends HardcoreAlchemyListener {
         morphBlacklist.addAll(MobLists.getHumans());
         morphBlacklist.addAll(MobLists.getNonMobs());
         morphBlacklist.addAll(MobLists.getBosses());
-        morphBlacklist.addAll(MobLists.getTrollMobs());
     }
 
     @SubscribeEvent
