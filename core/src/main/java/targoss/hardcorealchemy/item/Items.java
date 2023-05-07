@@ -21,6 +21,8 @@ package targoss.hardcorealchemy.item;
 
 import static targoss.hardcorealchemy.item.HcAPotion.GOOD_EFFECT;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -33,6 +35,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.IForgeRegistry;
 import net.minecraftforge.fml.common.registry.RegistryBuilder;
 import targoss.hardcorealchemy.HardcoreAlchemyCore;
+import targoss.hardcorealchemy.coremod.HardcoreAlchemyCoreCoremod;
 import targoss.hardcorealchemy.coremod.HardcoreAlchemyPreInit;
 import targoss.hardcorealchemy.heart.Heart;
 import targoss.hardcorealchemy.registrar.Registrar;
@@ -57,6 +60,7 @@ public class Items {
     
     public static final Item ESSENCE_MAGE = ITEMS.add("essence_mage", new Item());
     public static final Item EMPTY_SLATE = ITEMS.add("empty_slate", new ItemEmptySlate());
+    public static final @Nullable Item LOOT_TESTER = !HardcoreAlchemyCoreCoremod.obfuscated ? ITEMS.add("loot_tester", new ItemLootTester()) : null;
     
     public static final Potion POTION_ALLOW_MAGIC = POTIONS.add("allow_magic", new HcAPotion(GOOD_EFFECT, new Color(113, 80, 182), 5, false));
 

@@ -103,3 +103,9 @@ splash_potion.effect.hardcorealchemy:slip=Splash Potion of Slip
 lingering_potion.effect.hardcorealchemy:slip=Lingering Potion of Slip
 tipped_arrow.effect.hardcorealchemy:slip=Arrow of Slip
 
+# Debugging
+
+hardcorealchemy.debug.loot_table.item_renamed=Loot tester item set to table: "%1$s" (last chat message). Apply by clicking on a chest.
+hardcorealchemy.debug.loot_table.set=Loot table set to: "%1$s"
+hardcorealchemy.debug.loot_table.not_found=Loot table not found: "%1$s"
+

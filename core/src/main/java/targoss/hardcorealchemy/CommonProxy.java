@@ -34,6 +34,7 @@ import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import targoss.hardcorealchemy.block.Blocks;
 import targoss.hardcorealchemy.capability.VirtualCapabilityManager;
 import targoss.hardcorealchemy.config.Configs;
+import targoss.hardcorealchemy.coremod.HardcoreAlchemyCoreCoremod;
 import targoss.hardcorealchemy.entity.Entities;
 import targoss.hardcorealchemy.gui.Guis;
 import targoss.hardcorealchemy.incantation.Incantations;
@@ -42,6 +43,7 @@ import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
 import targoss.hardcorealchemy.listener.ListenerCapabilities;
 import targoss.hardcorealchemy.listener.ListenerConfigs;
 import targoss.hardcorealchemy.listener.ListenerEntityCapabilities;
+import targoss.hardcorealchemy.listener.ListenerLootTester;
 import targoss.hardcorealchemy.listener.ListenerPlayerIncantation;
 import targoss.hardcorealchemy.listener.ListenerPlayerResearch;
 import targoss.hardcorealchemy.listener.ListenerUniverseCapabilities;
@@ -72,6 +74,7 @@ public class CommonProxy {
         addListener(new ListenerPlayerIncantation());
         addListener(new ListenerPlayerResearch());
         addListener(new ListenerConfigs());
+        if (!HardcoreAlchemyCoreCoremod.obfuscated) { addListener(new ListenerLootTester()); }
     }
     
     public void registerNetworking() {
