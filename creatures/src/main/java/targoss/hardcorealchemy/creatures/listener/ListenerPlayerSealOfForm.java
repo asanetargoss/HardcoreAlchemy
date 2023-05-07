@@ -21,18 +21,39 @@ package targoss.hardcorealchemy.creatures.listener;
 
 import static targoss.hardcorealchemy.item.Items.EMPTY_SLATE;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
 
 import mchorse.metamorph.api.morphs.AbstractMorph;
 import mchorse.metamorph.capabilities.morphing.IMorphing;
 import mchorse.metamorph.capabilities.morphing.Morphing;
+import net.minecraft.entity.EntityList;
 import net.minecraft.entity.monster.EntitySlime;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.JsonUtils;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.storage.loot.LootContext;
+import net.minecraft.world.storage.loot.LootEntry;
+import net.minecraft.world.storage.loot.LootEntryItem;
+import net.minecraft.world.storage.loot.LootPool;
+import net.minecraft.world.storage.loot.RandomValueRange;
+import net.minecraft.world.storage.loot.conditions.LootCondition;
+import net.minecraft.world.storage.loot.conditions.RandomChance;
+import net.minecraft.world.storage.loot.functions.LootFunction;
+import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.capability.humanity.ICapabilityHumanity;
 import targoss.hardcorealchemy.capability.humanity.MorphAbilityChangeReason;
 import targoss.hardcorealchemy.capability.humanity.ProviderHumanity;
@@ -45,6 +66,7 @@ import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
 import targoss.hardcorealchemy.util.Chat;
 import targoss.hardcorealchemy.util.Chat.Type;
 import targoss.hardcorealchemy.util.InventoryUtil;
+import targoss.hardcorealchemy.util.MobLists;
 
 public class ListenerPlayerSealOfForm extends HardcoreAlchemyListener {
     {
@@ -140,6 +162,124 @@ public class ListenerPlayerSealOfForm extends HardcoreAlchemyListener {
         if (availableFormCount == 0) {
             // What exactly did you expect to happen?
             player.attackEntityFrom(DamageSource.outOfWorld, 1000.0F);
+        }
+    }
+    
+    protected static class SealLootFunction extends LootFunction {
+        protected List<String> mobs = new ArrayList<>();
+        protected Random rand = new Random();
+
+        public SealLootFunction(String... mobs) {
+            super(new LootCondition[] {});
+            assert(mobs.length > 0);
+            for (String mob : mobs) {
+                this.mobs.add(mob);
+            }
+        }
+
+        public SealLootFunction(LootCondition[] conditions, List<String> mobs) {
+            super(conditions);
+            assert(mobs.size() > 0);
+            for (String mob : mobs) {
+                this.mobs.add(mob);
+            }
+        }
+
+        @Override
+        public ItemStack apply(ItemStack stack, Random rand, LootContext context) {
+            stack = stack.copy();
+
+            while (!mobs.isEmpty()) {
+                int n = mobs.size();
+                int i = rand.nextInt(n);
+                String mob = mobs.get(i);
+                if (EntityList.isStringValidEntityName(mob)) {
+                    ItemSealOfForm.setEntityMorphOnItem(stack, mob, null);
+                    break;
+                }
+                else {
+                    mobs.remove(i);
+                }
+            }
+            if (mobs.isEmpty()) {
+                ItemSealOfForm.setEntityMorphOnItem(stack, MobLists.PIG, null);
+            }
+            
+            return stack;
+        }
+        
+        public static class Serializer extends LootFunction.Serializer<SealLootFunction> {
+
+            protected Serializer(ResourceLocation location, Class<SealLootFunction> clazz) {
+                super(new ResourceLocation(HardcoreAlchemyCore.MOD_ID, "random_morph_seal"), SealLootFunction.class);
+            }
+
+            @Override
+            public void serialize(JsonObject object, SealLootFunction functionClazz,
+                    JsonSerializationContext serializationContext) {
+                if (functionClazz.mobs != null && !functionClazz.mobs.isEmpty())
+                {
+                    JsonArray jsonarray = new JsonArray();
+
+                    for (String mob : functionClazz.mobs)
+                    {
+                        jsonarray.add(new JsonPrimitive(mob));
+                    }
+
+                    object.add("morphs", jsonarray);
+                }
+                
+            }
+
+            @Override
+            public SealLootFunction deserialize(JsonObject object, JsonDeserializationContext deserializationContext,
+                    LootCondition[] conditionsIn) {
+                List<String> mobs = new ArrayList<String>();
+
+                if (object.has("morphs"))
+                {
+                    for (JsonElement jsonelement : JsonUtils.getJsonArray(object, "morphs"))
+                    {
+                        String mob = JsonUtils.getString(jsonelement, "morph");
+                        mobs.add(mob);
+                    }
+                }
+
+                return new SealLootFunction(conditionsIn, mobs);
+            }
+            
+        }
+    }
+    
+    protected static LootPool buildSealLootPool(String name, String... mobs) {
+        LootEntryItem entry = new LootEntryItem(Items.SEAL_OF_FORM,
+                1,
+                0,
+                new LootFunction[] { new SealLootFunction(mobs) },
+                new LootCondition[]{ new RandomChance(0.2F) },
+                HardcoreAlchemyCore.MOD_ID + ":seal_of_form_loot_" + name);
+        LootPool pool = new LootPool(new LootEntry[] { entry },
+                new LootCondition[]{},
+                new RandomValueRange(1, 2),
+                new RandomValueRange(0),
+                HardcoreAlchemyCore.MOD_ID + ":seal_of_form_pool_" + name);
+        return pool;
+    }
+    
+    @SubscribeEvent
+    public void onLoot(LootTableLoadEvent event) {
+        String name = event.getName().toString();
+        if (name.equals("minecraft:chests/abandoned_mineshaft")) {
+            event.getTable().addPool(buildSealLootPool("mineshaft", MobLists.CAVE_SPIDER, MobLists.SPIDER));
+        }
+        else if (name.equals("minecraft:chests/stronghold_corridor")) {
+            event.getTable().addPool(buildSealLootPool("stronghold", MobLists.SILVERFISH, MobLists.SKELETON, MobLists.ZOMBIE, MobLists.ENDERMAN));
+        }
+        else if (name.equals("minecraft:chests/igloo_chest")) {
+            event.getTable().addPool(buildSealLootPool("igloo", MobLists.ZOMBIE, MobLists.POLAR_BEAR, MobLists.WOLF));
+        }
+        else if (name.equals("minecraft:chests/jungle_temple")) {
+            event.getTable().addPool(buildSealLootPool("jungle_temple", MobLists.OCELOT, MobLists.CREEPER));
         }
     }
 }

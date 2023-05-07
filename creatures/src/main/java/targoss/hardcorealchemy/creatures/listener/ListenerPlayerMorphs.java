@@ -125,6 +125,7 @@ public class ListenerPlayerMorphs extends HardcoreAlchemyListener {
         mapRequiredKills.put("Slime", 6);
         mapRequiredKills.put("Silverfish", 8);
         mapRequiredKills.put("Spider", 8);
+        mapRequiredKills.put("CaveSpider", 14);
         mapRequiredKills.put("Zombie", 12);
         mapRequiredKills.put("Skeleton", 24);
         mapRequiredKills.put("Creeper", 12);

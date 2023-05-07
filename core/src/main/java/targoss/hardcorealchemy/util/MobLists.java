@@ -30,8 +30,18 @@ import java.util.Set;
  *
  */
 public class MobLists {
-    
+
+    public static final String PIG = "Pig";
+    public static final String WOLF = "Wolf";
+    public static final String OCELOT = "Ozelot";
+    public static final String POLAR_BEAR = "PolarBear";
+    public static final String ZOMBIE = "Zombie";
+    public static final String SKELETON = "Skeleton";
     public static final String SPIDER = "Spider";
+    public static final String CREEPER = "Creeper";
+    public static final String CAVE_SPIDER = "CaveSpider";
+    public static final String SILVERFISH = "Silverfish";
+    public static final String ENDERMAN = "Enderman";
     
     public static Set<String> getBosses() {
         Set<String> bosses = new HashSet<>();
@@ -160,10 +170,10 @@ public class MobLists {
         Set<String> humanoids = getHumans();
         
         // Vanilla
-        humanoids.add("Zombie");
-        humanoids.add("Skeleton");
+        humanoids.add(ZOMBIE);
+        humanoids.add(SKELETON);
         humanoids.add("PigZombie");
-        humanoids.add("Enderman");
+        humanoids.add(ENDERMAN);
         // Ender Zoo
         humanoids.add("EnderZoo.Enderminy");
         humanoids.add("EnderZoo.FallenKnight");
@@ -204,7 +214,7 @@ public class MobLists {
         Set<String> passiveMobs = new HashSet<>();
         
         // Minecraft
-        passiveMobs.add("Pig");
+        passiveMobs.add(PIG);
         passiveMobs.add("Cow");
         passiveMobs.add("Chicken");
         passiveMobs.add("Sheep");
@@ -223,13 +233,13 @@ public class MobLists {
         Set<String> grassMobs = new HashSet<>();
         
         // Minecraft
-        grassMobs.add("Pig");
+        grassMobs.add(PIG);
         grassMobs.add("Cow");
         grassMobs.add("Chicken");
         grassMobs.add("Sheep");
         grassMobs.add("EntityHorse");
-        grassMobs.add("Wolf");
-        grassMobs.add("Ozelot");
+        grassMobs.add(WOLF);
+        grassMobs.add(OCELOT);
         grassMobs.add("Rabbit");
         // ToroQuest
         grassMobs.add("toroquest.toro");
@@ -244,15 +254,15 @@ public class MobLists {
         Set<String> landAnimals = new HashSet<>();
         
         // Minecraft
-        landAnimals.add("Pig");
+        landAnimals.add(PIG);
         landAnimals.add("Cow");
         landAnimals.add("Chicken");
         landAnimals.add("Sheep");
         landAnimals.add("EntityHorse");
-        landAnimals.add("Wolf");
-        landAnimals.add("Ozelot");
+        landAnimals.add(WOLF);
+        landAnimals.add(OCELOT);
         landAnimals.add("Rabbit");
-        landAnimals.add("PolarBear");
+        landAnimals.add(POLAR_BEAR);
         landAnimals.add("MushroomCow");
         // ToroQuest
         landAnimals.add("toroquest.toro");
@@ -271,8 +281,8 @@ public class MobLists {
         Set<String> entityTameables = new HashSet<>();
         
         // Minecraft
-        entityTameables.add("Wolf");
-        entityTameables.add("Ozelot");
+        entityTameables.add(WOLF);
+        entityTameables.add(OCELOT);
         // Voidcraft
         entityTameables.add("voidcraft.FireElemental");
         // ToroQuest
@@ -288,12 +298,13 @@ public class MobLists {
         Set<String> nightMobs = new HashSet<>();
         
         // Minecraft
-        nightMobs.add("Zombie");
-        nightMobs.add("Skeleton");
-        nightMobs.add("Creeper");
-        nightMobs.add("Spider");
-        nightMobs.add("Enderman");
-        nightMobs.add("Silverfish");
+        nightMobs.add(ZOMBIE);
+        nightMobs.add(SKELETON);
+        nightMobs.add(CREEPER);
+        nightMobs.add(SPIDER);
+        nightMobs.add(CAVE_SPIDER);
+        nightMobs.add(ENDERMAN);
+        nightMobs.add(SILVERFISH);
         nightMobs.add("Slime");
         nightMobs.add("Bat");
         // Deadly Monsters
