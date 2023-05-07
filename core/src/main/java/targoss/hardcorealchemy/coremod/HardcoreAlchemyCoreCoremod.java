@@ -83,6 +83,10 @@ public class HardcoreAlchemyCoreCoremod implements IFMLLoadingPlugin {
 				TWorld.class.getName()
 		};
 	}
+	
+	public static boolean enableDebugFeatures() {
+	    return !obfuscated;
+	}
 
 	@Override
 	public String getModContainerClass() {

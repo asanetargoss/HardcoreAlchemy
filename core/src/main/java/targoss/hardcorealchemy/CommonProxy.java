@@ -74,7 +74,7 @@ public class CommonProxy {
         addListener(new ListenerPlayerIncantation());
         addListener(new ListenerPlayerResearch());
         addListener(new ListenerConfigs());
-        if (!HardcoreAlchemyCoreCoremod.obfuscated) { addListener(new ListenerLootTester()); }
+        if (HardcoreAlchemyCoreCoremod.enableDebugFeatures()) { addListener(new ListenerLootTester()); }
     }
     
     public void registerNetworking() {
