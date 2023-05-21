@@ -45,7 +45,7 @@ public class HCAModpackGuide {
                         .build())
                 .addCategory(new BookBuilder.Category().setId("survival").setItemId("wooden_shovel")
                         .addEntry("intro", "dirt", numStrings(1, 5))
-                        .addEntry("settling_in", "armor_stand", numStrings(1, 8))
+                        .addEntry("settling_in", "armor_stand", numStrings(1, 9))
                         .addEntry("death", "bone", numStrings(1, 5))
                         .addEntry("humans", "emerald", numStrings(1, 3))
                         .build())
