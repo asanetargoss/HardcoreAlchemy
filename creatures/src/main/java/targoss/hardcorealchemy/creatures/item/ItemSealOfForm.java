@@ -282,8 +282,6 @@ public class ItemSealOfForm extends Item {
     public void getSubItems(Item item, CreativeTabs tab, List<ItemStack> subItems) {
         // Special case: Human
         subItems.add(getSealHuman(true));
-        // Special case: Human (inactive)
-        subItems.add(getSealHuman(false));
         
         // For all other seals of form, get entity spawns, filtering out blacklisted morphs.
         ensureMorphBlacklistInitialized();
