@@ -337,6 +337,4 @@ public class ItemSealOfForm extends Item {
         ITextComponent stackName = new TextComponentTranslation(unlocalizedName, morphName);
         return stackName.getFormattedText();
     }
-
-    // TODO: Dungeon loot (add blank slate to dungeon loot maybe also?)
 }
