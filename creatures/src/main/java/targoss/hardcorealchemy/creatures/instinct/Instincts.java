@@ -57,16 +57,13 @@ public class Instincts {
     public static final Instinct PREDATOR = INSTINCTS.add("predator", new InstinctPredator());
     public static final Instinct HOMESICK_NATURE = INSTINCTS.add("homesick_nature", new InstinctHomesickNature());
     public static final Instinct HOMESICK_NETHER = INSTINCTS.add("homesick_nether", new InstinctHomesickNether());
-    public static final Instinct UNENCUMBERED = INSTINCTS.add("unencumbered", new InstinctUnencumbered());
     
     public static final InstinctNeedFactory NEED_ATTACK_PREY = INSTINCT_NEED_FACTORIES.add("attack_prey", new InstinctNeedFactorySimple(new InstinctNeedAttackPrey()));
     public static final InstinctNeedFactory NEED_SPAWN_ENVIRONMENT = INSTINCT_NEED_FACTORIES.add("environment", new IInstinctNeedEnvironment.Factory());
-    public static final InstinctNeedFactory NEED_UNENCUMBERED = INSTINCT_NEED_FACTORIES.add("unencumbered", new InstinctNeedFactorySimple(new InstinctNeedUnencumbered()));
     
     public static final InstinctEffect EFFECT_HINDERED_MIND = INSTINCT_EFFECTS.add("hindered_mind", new InstinctEffectHinderedMind());
     public static final InstinctEffect EFFECT_HUNTED = INSTINCT_EFFECTS.add("hunted", new InstinctEffectHunted());
     public static final InstinctEffect EFFECT_NETHER_FEVER = INSTINCT_EFFECTS.add("nether_fever", new InstinctEffectNetherFever());
     public static final InstinctEffect EFFECT_TEMPERED_FLAME = INSTINCT_EFFECTS.add("tempered_flame", new InstinctEffectTemperedFlame());
     public static final InstinctEffect EFFECT_OVERHEAT = INSTINCT_EFFECTS.add("overheat", new InstinctEffectOverheat());
-    public static final InstinctEffect EFFECT_VESTIPHOBIA = INSTINCT_EFFECTS.add("vestiphobia", new InstinctEffectVestiphobia());
 }
