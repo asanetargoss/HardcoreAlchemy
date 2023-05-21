@@ -726,7 +726,6 @@ public class TileHumanityPhylactery extends TileEntity {
         AxisAlignedBB bb = new AxisAlignedBB(pos).expandXyz(activationDistance);
         boolean needTrueFormSeal = !hasTrueFormSeal();
         // Target different player depending on if this tile's inventory has a seal of true form in it
-        // TODO: This is a subtle mechanic. Don't forget to document this
         Predicate<EntityPlayer> predicate = needTrueFormSeal ? NoForgotMorphPredicate.INSTANCE : ForgotMorphPredicate.INSTANCE;
         List<EntityPlayer> nearbyPlayers = world.getEntitiesWithinAABB(EntityPlayer.class, bb, predicate);
         if (!nearbyPlayers.isEmpty()) {

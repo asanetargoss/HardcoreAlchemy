@@ -53,7 +53,8 @@ public class HCAUpgradeGuides {
                 ));
         UPGRADE_GUIDES.add("0.8.1", new UpgradeGuide(new BookBuilder()
                 .addCategory(new BookBuilder.Category().setId("gameplay_tips").setItemId("sign")
-                        .addEntry("earlygame", "sign", "1", "2")
+                        .addEntry("earlygame", "sign", "1", "2", "3")
+                        .addEntry("midgame", "sign", "1", "2", "3")
                         .build())
                 ));
     }

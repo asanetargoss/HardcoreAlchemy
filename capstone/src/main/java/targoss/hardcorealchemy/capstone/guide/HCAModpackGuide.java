@@ -18,6 +18,8 @@
 
 package targoss.hardcorealchemy.capstone.guide;
 
+import static targoss.hardcorealchemy.creatures.block.Blocks.BLOCK_HUMANITY_PHYLACTERY;
+import static targoss.hardcorealchemy.creatures.item.Items.SEAL_OF_FORM;
 import static targoss.hardcorealchemy.tweaks.item.Items.DIMENSIONAL_FLUX_CRYSTAL;
 
 import amerifrance.guideapi.api.GuideAPI;
@@ -40,11 +42,11 @@ public class HCAModpackGuide {
                         .addEntry("jei_primer", "crafting_table", numStrings(1, 6))
                         .addEntry("known_issues", "poisonous_potato", numStrings(1, 6))
                         .build())
-                .addCategory(new BookBuilder.Category().setId("unexpected_journey").setItemId("adinferos:pocket_wormhole")
-                        .addEntry("intro", "wooden_axe", numStrings(1, 5))
-                        .addEntry("settling_in", "armor_stand", numStrings(1, 7))
+                .addCategory(new BookBuilder.Category().setId("survival").setItemId("wooden_shovel")
+                        .addEntry("intro", "dirt", numStrings(1, 5))
+                        .addEntry("settling_in", "armor_stand", numStrings(1, 8))
+                        .addEntry("death", "bone", numStrings(1, 5))
                         .addEntry("humans", "emerald", numStrings(1, 3))
-                        .addEntry("the_nether", "quartz_ore", numStrings(1, 6))
                         .build())
                 .addCategory(new BookBuilder.Category().setId("exploring_the_arcane").setItemId("bloodmagic:ItemFluidRouterFilter")
                         .addEntry("intro", "bookshelf", "1")
@@ -61,13 +63,20 @@ public class HCAModpackGuide {
                         .addEntry("intro", "golden_apple", numStrings(1, 3))
                         .addEntry("abilities", "ender_pearl", "1")
                         .addEntry("lost_humanity", "rotten_flesh", numStrings(1, 3))
-                        .addEntry("instinct_attack_prey", "bone", "1")
+                        .addEntry("instinct_attack_prey", "beef", "1")
                         .addEntry("ability_primitive_sustenance", "grass", "1")
                         .addEntry("instinct_homesick_nature", "sapling", "1")
                         .addEntry("instinct_homesick_nether", "magma_cream", "1")
                         .build())
                 .addCategory(new BookBuilder.Category().setId("curiosities").setItemId(DIMENSIONAL_FLUX_CRYSTAL.getRegistryName().toString())
-                        .addEntry("dimensional_flux_crystals", DIMENSIONAL_FLUX_CRYSTAL.getRegistryName().toString(), "1", "2")
+                        .addEntry("dimensional_flux_crystals", DIMENSIONAL_FLUX_CRYSTAL.getRegistryName().toString(), numStrings(1, 3))
+                        .build())
+                .addCategory(new BookBuilder.Category().setId("incantation").setItemId(SEAL_OF_FORM.getRegistryName().toString())
+                        .addEntry("intro", "book", "1")
+                        .addEntry("change", "egg", "1")
+                        .addEntry("remember", Items.EMPTY_SLATE.getRegistryName().toString(), "1")
+                        .addEntry("seal_of_form", SEAL_OF_FORM.getRegistryName().toString(), "1")
+                        .addEntry("alchemist_core", BLOCK_HUMANITY_PHYLACTERY.getRegistryName().toString(), numStrings(1,5))
                         .build())
                 .build();
 
