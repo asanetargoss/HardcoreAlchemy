@@ -191,28 +191,28 @@ hardcorealchemy.guide.curiosities.dimensional_flux_crystals.2=The crystals can a
 hardcorealchemy.guide.curiosities.dimensional_flux_crystals.3=Dimensional Flux Crystals can also be used to craft the Alchemist Core, an advanced device for prolonged shapeshifting.
 
 
-## An Alchemist's Gambit
-hardcorealchemy.guide.incantation.title=An Alchemist's Gambit
+## An Alchemist's Gamble
+hardcorealchemy.guide.incantation.title=An Alchemist's Gamble
 
-## An Alchemist's Gambit: Incantations
+## An Alchemist's Gamble: Incantations
 hardcorealchemy.guide.incantation.intro.title=Incantations
 hardcorealchemy.guide.incantation.intro.1=You have the gift of magic, and this gift comes with responsibilities. Do not needlessly shout in ALL CAPS, or you may risk invoking some power that you did not intend to.
 
-## An Alchemist's Gambit: Incantation: Change
+## An Alchemist's Gamble: Incantation: Change
 hardcorealchemy.guide.incantation.change.title=Incantation: Change
 hardcorealchemy.guide.incantation.change.1="CHANGE" is a powerful incantation that will cause you to shapeshift into the likeness of a nearby creature, permanently. Be mindful, as the creature you end up turning into may not be the one you expect, and the side effects of the transformation may place you in immediate peril. As such, this power should be used only as a last resort. Note that it is possible to use the "CHANGE" incantation in some situations where it would otherwise not be possible to shapeshift.
 
-## An Alchemist's Gambit: Incantation: Remember
+## An Alchemist's Gamble: Incantation: Remember
 hardcorealchemy.guide.incantation.remember.title=Incantation: Remember
 hardcorealchemy.guide.incantation.remember.1="REMEMBER" is a deceptively safe incantation that will carve an Empty Slate from the most mundane smooth stone, directly in front of you. The slate is a tempting crafting ingredient for curious miners, who may not fully understand its liminal nature.
 
-## An Alchemist's Gambit: Seal of Form
+## An Alchemist's Gamble: Seal of Form
 hardcorealchemy.guide.incantation.seal_of_form.title=Seal of Form
 hardcorealchemy.guide.incantation.seal_of_form.1=Enchanting an Empty Slate will cause you to forfeit your current form, and create a Seal of Form. Using a Seal of Form will restore knowledge of the form. You should inspect your body before and after enchantment, as well as the newly created seal, to confirm you created the seal you intended to.
 hardcorealchemy.guide.incantation.seal_of_form.2=In most cases, creating a Seal of Form will cause you to return to your human form. If you do not have a human form, you will return to whatever form you were in previously. If you no longer have that form either, the outcome will be unpredictable.
 hardcorealchemy.guide.incantation.seal_of_form.3=By forfeiting a morph to a Seal of Form, it is possible to re-acquire knowledge of that morph repeatedly, and accumulate seals as a resource. Such seals may be placed in storage that transcends distance or death, allowing an alchemist to regain some or all of their morphing knowledge from past lives. An extra Seal of Form can also greatly decrease the operating cost of the Alchemist Core.
 
-## An Alchemist's Gambit: Alchemist Core
+## An Alchemist's Gamble: Alchemist Core
 hardcorealchemy.guide.incantation.alchemist_core.title=Alchemist Core
 hardcorealchemy.guide.incantation.alchemist_core.1=The Alchemist Core is an advanced device that allows you to stay in a non-human form for an extended period of time without getting stuck that way. In exchange, you must return to the location of your core in order to return to human form. While the core is burning, you will also be susceptible to instincts of whatever creature you are stuck as, as if you have lost your humanity.
 hardcorealchemy.guide.incantation.alchemist_core.2=The center of the Alchemist Core will contain your knowledge of your human form. If the Seal of True Form is present during ignition, the core will target the nearest person who lacks a human form. If the Seal of True Form is not present during ignition, the core will target the nearest person who remembers their human form. In most cases, it is better to not provide a Seal of True Form ahead of time, as it makes the Alchemist Core more expensive to operate.
