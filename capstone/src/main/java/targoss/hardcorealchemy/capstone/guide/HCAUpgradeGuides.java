@@ -56,6 +56,9 @@ public class HCAUpgradeGuides {
                         .addEntry("earlygame", "sign", "1", "2", "3")
                         .addEntry("midgame", "sign", "1", "2", "3")
                         .build())
+                .addCategory(new BookBuilder.Category().setId("feedback").setItemId("red_flower")
+                        .addEntry("feedback", "red_flower", "1", "2", "3")
+                        .build())
                 ));
     }
     

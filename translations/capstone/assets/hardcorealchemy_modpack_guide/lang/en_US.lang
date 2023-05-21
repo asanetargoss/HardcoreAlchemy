@@ -132,3 +132,12 @@ hardcorealchemy.upgradeguide.0.8.1.gameplay_tips.midgame.title=Mid game
 hardcorealchemy.upgradeguide.0.8.1.gameplay_tips.midgame.1=The timefrozen recipe was broken. Sorry about that! It should be fixed now. The timefrozen crafting mechanic can be used to preserve food, freeze clocks in place, and many other odd uses. It should work on any item. To try it out, look up "timefrozen" in JEI.
 hardcorealchemy.upgradeguide.0.8.1.gameplay_tips.midgame.2=The Traveling Alchemist has a new section called "Death", which provides more hints about what happens to the player after death, and how to deal with it. You may already be familiar with some of it, but it's well worth a re-read. You can find it in the "Survive and Thrive" section.
 hardcorealchemy.upgradeguide.0.8.1.gameplay_tips.midgame.3=One storage option you may have missed is the Alchemical Chest. It's a single-block chest that stores a lot more items than an ordinary chest.
+
+# 0.8.1 Upgrade Guide: Feedback
+
+hardcorealchemy.upgradeguide.0.8.1.feedback.title=Feedback
+
+hardcorealchemy.upgradeguide.0.8.1.feedback.feedback.title=Giving Feedback
+hardcorealchemy.upgradeguide.0.8.1.feedback.feedback.1=The Hardcore Alchemy modpack is in development, and feedback is highly welcome. There are a few ways to give feedback on the pack.
+hardcorealchemy.upgradeguide.0.8.1.feedback.feedback.2=If you have found a bug or have a feature idea, the best place to share those things is on the Hardcore Alchemy issue tracker on GitHub: https://github.com/asanetargoss/HardcoreAlchemy/issues
+hardcorealchemy.upgradeguide.0.8.1.feedback.feedback.3=If you want to give feedback about your overall impression of the Hardcore Alchemy modpack, and/or you want to let other people know what you think about the pack, the best place to do that is by writing a review on mmcreviews.com: https://mmcreviews.com/all/modpacks/hardcore-alchemy/

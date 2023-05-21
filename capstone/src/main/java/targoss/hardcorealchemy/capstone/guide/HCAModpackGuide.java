@@ -38,6 +38,7 @@ public class HCAModpackGuide {
         guideBuildResult = new BookBuilder().setNamespace(HardcoreAlchemyCore.MOD_ID).setID("guide")
                 .addCategory(new BookBuilder.Category().setId("modpack_info").setItemId("sign")
                         .addEntry("about_the_pack", "compass", "1", "2", "3")
+                        .addEntry("feedback", "red_flower", "1", "2", "3")
                         .addEntry("keybinding_primer", "feather", "1", "2", "3")
                         .addEntry("jei_primer", "crafting_table", numStrings(1, 6))
                         .addEntry("known_issues", "poisonous_potato", numStrings(1, 6))
