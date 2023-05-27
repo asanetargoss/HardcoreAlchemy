@@ -48,11 +48,11 @@ Also, since these mods were built for the Hardcore Alchemy modpack, config optio
 
 ### Dependencies
 
-This branch targets the 0.7.2+ version of the modpack. Download the file `compilelibs-0.7.2.zip` from the link below and be ready to add its contents to `compilelibs/` in the Hardcore Alchemy repository folder:
+This branch targets the 0.8.1+ version of the modpack. Download the file `compilelibs-0.8.1.zip` from the link below and be ready to add its contents to `compilelibs/` in the Hardcore Alchemy repository folder:
 
 http://www.mediafire.com/folder/grwn2vsjr2lce/Hardcore_Alchemy_Libs
 
-The SHA-256 checksum of `compilelibs-0.7.2.zip` is: `220b5f8d0c9c1c507e78078c54dfce6ae14fddb18cd9a3bbe73c9dd2ce727cb9`
+The SHA-256 checksum of `compilelibs-0.8.1.zip` is: `8fd451e5ddd4df2e276c1fe3d7c23eed9f1b820ef51d81ac32db654d563b552a`
 
 Please note: The following mods included in the HcA_compilelibs zip file above are custom forks:
 * Nutrition: https://github.com/asanetargoss/Nutrition
