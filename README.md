@@ -4,7 +4,7 @@ The Hardcore Alchemy Mod Suite is a collection of mods for Minecraft 1.10.2 with
 
 ## Hardcore Alchemy: Magic With Consequences
 
-For more information about the Hardcore Alchemy modpack, [visit its post on the Minecraft Forum](https://www.minecraftforum.net/forums/mapping-and-modding-java-edition/minecraft-mods/mod-packs/2900247-hardcore-alchemy-0-7-3-inhumanity-hotfix).
+For more information about the Hardcore Alchemy modpack, [visit the wiki](https://github.com/asanetargoss/HardcoreAlchemy/wiki).
 
 ## Using the mod suite
 
