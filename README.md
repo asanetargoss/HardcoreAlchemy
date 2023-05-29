@@ -82,6 +82,25 @@ The commands in the instructions below assume your command line is a unix-style 
     * If you answered **yes**, then proceed as normal
 * **IntelliJ Users** - Unfortunately, I haven't tested this gradle setup with IntelliJ, so I don't know if it works or not. If you figure out how to get it working, please report back! That being said, it most likely involves the command `./gradlew idea`
 
+### Java 8 setup
+
+To develop for the hca mod suite, you will need Java 8 (OpenJDK). You can install a FOSS version of Java 8 from [Adoptium](https://adoptium.net/temurin/releases/?version=8), or alternatively your package manager may have a package available.
+
+There are tools to allow using a different Java version per path. If you are using a unix-y command line, [jenv](https://github.com/jenv/jenv) is a good choice.
+
+Regardless of the method used, the goal is to have Java 8 on your `$PATH` (or equivalent), so that when you use the Gradle wrapper, and that wrapper calls `java`, it uses the Java 8 version.
+
+You can verify you are using the correct version of Java by typing `java -version`. The version given should start with "1.8". See the example below. Note that later versions of Java use different version conventions.
+
+```
+> java -version
+openjdk version "1.8.0_362"
+OpenJDK Runtime Environment (build 1.8.0_362-8u362-ga-0ubuntu1~22.04-b09)
+OpenJDK 64-Bit Server VM (build 25.362-b09, mixed mode)
+```
+
+Your IDE may already provide a different version of Java 8 internally. If it does, there is no reason to change the Java version that your IDE uses, as that version is likely optimized for debugging with that particular IDE.
+
 ### Workspace setup
 
 * Clone this repository into a folder. If you are using Eclipse, it is recommended that you create this folder inside of another folder, so the higher-up folder can be used as your multi-project workspace.
