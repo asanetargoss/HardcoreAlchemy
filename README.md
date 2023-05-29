@@ -99,6 +99,24 @@ OpenJDK Runtime Environment (build 1.8.0_362-8u362-ga-0ubuntu1~22.04-b09)
 OpenJDK 64-Bit Server VM (build 25.362-b09, mixed mode)
 ```
 
+Later on, when you are using the Gradle wrapper (`./gradlew`), you can also verify directly that it's calling the right Java version, by typing `./gradlew --version`. Note the JVM line in the output below:
+
+```
+> ./gradlew --version
+
+------------------------------------------------------------
+Gradle 2.14
+------------------------------------------------------------
+
+Build time:   2016-06-14 07:16:37 UTC
+Revision:     cba5fea19f1e0c6a00cc904828a6ec4e11739abc
+
+Groovy:       2.4.4
+Ant:          Apache Ant(TM) version 1.9.6 compiled on June 29 2015
+JVM:          1.8.0_362 (Private Build 25.362-b09)
+OS:           Linux 5.15.0-71-generic amd64
+```
+
 Your IDE may already provide a different version of Java 8 internally. If it does, there is no reason to change the Java version that your IDE uses, as that version is likely optimized for debugging with that particular IDE.
 
 ### Workspace setup
