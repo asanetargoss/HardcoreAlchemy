@@ -460,7 +460,10 @@ public class ListenerPlayerMagic extends HardcoreAlchemyListener {
         if (tileHistory == null) {
             return;
         }
-        if (tileHistory.getOwnerLifetimeUUID() != lifetimeUUID) {
+        if (tileHistory.getOwnerLifetimeUUID() == null) {
+            return;
+        }
+        if (!(tileHistory.getOwnerLifetimeUUID().equals(lifetimeUUID))) {
             // This Master Ritual Stone was activated in a past life, so it should no longer work
             event.setCanceled(true);
             event.mrs.stopRitual(BreakType.DEACTIVATE);
