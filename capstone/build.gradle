@@ -155,7 +155,6 @@ task buildModSuite(type: Zip) {
     from ("../magic/build/libs/${project(":magic").jarLabel}-${project(":magic").version}.jar")
     from ("../survival/build/libs/${project(":survival").jarLabel}-${project(":survival").version}.jar")
     from ("../capstone/build/libs/${project(":capstone").jarLabel}-${project(":capstone").version}.jar")
-    from ("build/libs/${project(":capstone").jarLabel}-${project(":capstone").version}.jar")
     into("libs") {
     }
 }
