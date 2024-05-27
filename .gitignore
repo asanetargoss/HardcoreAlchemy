@@ -37,3 +37,5 @@ compilelibs/*
 # moved somewhere else such as private/gradle.properties .
 gradle.properties
 !*/gradle.properties
+# Gradle build crashes
+*.log
