@@ -48,6 +48,7 @@ public class HCAModpackGuide {
                         .addEntry("settling_in", "armor_stand", numStrings(1, 9))
                         .addEntry("death", "bone", numStrings(1, 5))
                         .addEntry("humans", "emerald", numStrings(1, 3))
+                        .addEntry("conveniences", "planks", "1")
                         .build())
                 .addCategory(new BookBuilder.Category().setId("exploring_the_arcane").setItemId("bloodmagic:ItemFluidRouterFilter")
                         .addEntry("intro", "bookshelf", "1")

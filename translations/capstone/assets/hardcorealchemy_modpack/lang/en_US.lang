@@ -104,6 +104,11 @@ hardcorealchemy.guide.survival.humans.1=Even in these wild lands, civilization c
 hardcorealchemy.guide.survival.humans.2=Not all humanoids of this world are either peaceful or forgiving. Some, if they are not outright hostile from the start, may retailate with weapons and spells, or summon the aid of a powerful ally. Even humans which tolerate you initially may become less tolerant at the sight of one of your alternate forms.
 hardcorealchemy.guide.survival.humans.3=Other dimensions are not hospitable to human life, and you are unlikely to encounter civilization there.
 
+## Survive and Thrive: Conveniences
+
+hardcorealchemy.guide.survival.conveniences.title=Conveniences
+hardcorealchemy.guide.survival.conveniences.1=A sign can be edited after it is placed by interacting with it.
+
 
 # Exploring the Arcane
 hardcorealchemy.guide.exploring_the_arcane.title=Exploring the Arcane
