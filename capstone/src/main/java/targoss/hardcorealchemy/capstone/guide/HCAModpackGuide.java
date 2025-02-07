@@ -59,6 +59,7 @@ public class HCAModpackGuide {
                         .addEntry("astral_sorcery", "astralsorcery:ItemWand", "1")
                         .addEntry("projecte", "projecte:item.pe_philosophers_stone", "1")
                         .addEntry("thaumcraft", "thaumcraft:goggles", "1")
+                        .addEntry("potions", "minecraft:brewing_stand", "1")
                         .addEntry("unique_crops", "uniquecrops:seednormal", "1")
                         .build())
                 .addCategory(new BookBuilder.Category().setId("morphing").setItemId(Items.ESSENCE_MAGE.getRegistryName().toString())
