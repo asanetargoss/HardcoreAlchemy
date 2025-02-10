@@ -90,4 +90,31 @@ public class VirtualCapTrackingTag extends NBTTagCompound implements ICapability
         }
         addProvider(provider);
     }
+    
+    public <T> void removeProvider(Capability<T> capability) {
+        if (providers == null || providers.length == 0) {
+            return;
+        }
+        int removeIndex = -1;
+        for (int providerIndex = 0; providerIndex < providers.length; ++providerIndex) {
+            ICapabilityProvider storedProvider = providers[providerIndex];
+            if (storedProvider.hasCapability(capability, null)) {
+                removeIndex = providerIndex;
+                break;
+            }
+        }
+        if (removeIndex == -1) {
+            return;
+        }
+        ICapabilityProvider[] newProviders = new ICapabilityProvider[providers.length];
+        int newProviderIndex = 0;
+        for (; newProviderIndex < removeIndex; ++newProviderIndex) {
+            newProviders[newProviderIndex] = providers[newProviderIndex];
+        }
+        for (; newProviderIndex < newProviders.length; ++newProviderIndex) {
+            newProviders[newProviderIndex] = providers[newProviderIndex+1];
+        }
+        providers = newProviders;
+        
+    }
 }

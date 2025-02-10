@@ -164,4 +164,14 @@ public class VirtualCapabilityManager {
         NBTBase thisCapNBT = capability.getStorage().writeNBT(capability, instance, null);
         virtuals.setTag(key, thisCapNBT);
     }
+    
+    public <T> void removeVirtualCapability(ItemStack itemStack, Capability<T> capability) {
+        String key = capabilityRegistryReverse.get(capability);
+        if (key == null) {
+            return;
+        }
+        VirtualCapTrackingTag virtuals = getVirtuals(itemStack, true);
+        virtuals.removeTag(key);
+        virtuals.removeProvider(capability);
+    }
 }
