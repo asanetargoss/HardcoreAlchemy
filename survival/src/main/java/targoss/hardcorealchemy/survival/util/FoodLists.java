@@ -24,10 +24,13 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
+import targoss.hardcorealchemy.capability.food.ICapabilityFood;
 import targoss.hardcorealchemy.util.InventoryUtil;
 import targoss.hardcorealchemy.util.MorphDiet;
 
@@ -214,18 +217,24 @@ public class FoodLists {
     /**
      * Given an item stack, return the strictest dietary restriction for which
      * the food can still be consumed, or null if there is no such restriction.
-     * Checks for the specific item first.
+     * Checks the capability first.
+     * Then checks the specific item lookup.
      * Falls back to ore dictionary lookup if the specific item is not found.
-     * 
-     * DOES NOT check for NBT/Capability/crafting history!
      */
-    public static MorphDiet.Restriction getRestriction(ItemStack itemStack) {
+    public static MorphDiet.Restriction getRestriction(ItemStack itemStack, @Nullable ICapabilityFood food) {
         if (InventoryUtil.isEmptyItemStack(itemStack)) {
             return null;
         }
         Item item = itemStack.getItem();
         if (item == null) {
             return null;
+        }
+        
+        if (food != null) {
+            MorphDiet.Restriction restriction = food.getRestriction();
+            if (restriction != null) {
+                return restriction;
+            }
         }
         
         String itemName;

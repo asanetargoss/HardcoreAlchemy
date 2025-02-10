@@ -117,11 +117,6 @@ public class ListenerPlayerDiet extends HardcoreAlchemyListener {
             return;
         }
         
-        if (FoodLists.getRestriction(outputStack) != null) {
-            // The dietary restriction is already defined for this item, and can be evaluated dynamically
-            return;
-        }
-        
         if (!FoodLists.isFoodOrIngredient(outputStack)) {
             return;
         }
@@ -137,12 +132,7 @@ public class ListenerPlayerDiet extends HardcoreAlchemyListener {
             if (!FoodLists.getIgnoresCrafting(inputStack)) {
                 MorphDiet.Restriction inputRestriction = null;
                 ICapabilityFood inputFoodCap = VirtualCapabilityManager.INSTANCE.getVirtualCapability(inputStack, FOOD_CAPABILITY, false);
-                if (inputFoodCap != null) {
-                    inputRestriction = inputFoodCap.getRestriction();
-                }
-                else {
-                    inputRestriction = FoodLists.getRestriction(inputStack);
-                }
+                inputRestriction = FoodLists.getRestriction(inputStack, inputFoodCap);
                 // A dietary restriction derived from the ingredients. VEGAN
                 // + CARNIVORE = OMNIVORE, et cetra
                 // Input restrictions and result restriction may be null
@@ -150,10 +140,17 @@ public class ListenerPlayerDiet extends HardcoreAlchemyListener {
             }
         }
         
-        if (restriction != null) {
-            ICapabilityFood outputFoodCap = VirtualCapabilityManager.INSTANCE.getVirtualCapability(outputStack, FOOD_CAPABILITY, true);
-            outputFoodCap.setRestriction(restriction);
-            VirtualCapabilityManager.INSTANCE.updateVirtualCapability(outputStack, FOOD_CAPABILITY);
+        ICapabilityFood outputFoodCap = VirtualCapabilityManager.INSTANCE.getVirtualCapability(outputStack, FOOD_CAPABILITY, false);
+        MorphDiet.Restriction oldRestriction = FoodLists.getRestriction(outputStack, outputFoodCap);
+        if (restriction != oldRestriction) {
+            if (restriction == null) {
+                VirtualCapabilityManager.INSTANCE.removeVirtualCapability(outputStack, FOOD_CAPABILITY);
+            }
+            else {
+                outputFoodCap = VirtualCapabilityManager.INSTANCE.getVirtualCapability(outputStack, FOOD_CAPABILITY, true);
+                outputFoodCap.setRestriction(restriction);
+                VirtualCapabilityManager.INSTANCE.updateVirtualCapability(outputStack, FOOD_CAPABILITY);
+            }
         }
     }
 
@@ -168,13 +165,7 @@ public class ListenerPlayerDiet extends HardcoreAlchemyListener {
         MorphDiet.Needs needs = NutritionExtension.INSTANCE.getNeeds(player);
         
         ICapabilityFood capabilityFood = VirtualCapabilityManager.INSTANCE.getVirtualCapability(itemStack, FOOD_CAPABILITY, false);
-        MorphDiet.Restriction itemRestriction = null;
-        if (capabilityFood != null) {
-            itemRestriction = capabilityFood.getRestriction();
-        }
-        else {
-            itemRestriction = FoodLists.getRestriction(itemStack);
-        }
+        MorphDiet.Restriction itemRestriction = FoodLists.getRestriction(itemStack, capabilityFood);
 
         if (!needs.restriction.canEat(itemRestriction)) {
             /*TODO: Add a client-side silence period that gets reset

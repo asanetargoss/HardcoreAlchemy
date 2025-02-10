@@ -43,12 +43,7 @@ public class ListenerGuiInventory extends HardcoreAlchemyListener {
         // We're on the client side. NBT tags are synchronized, but we need to
         // turn it into a capability ourselves.
         ICapabilityFood capabilityFood = VirtualCapabilityManager.INSTANCE.getVirtualCapability(itemStack, ProviderFood.FOOD_CAPABILITY, false);
-        if (capabilityFood != null) {
-            itemRestriction = capabilityFood.getRestriction();
-        }
-        else {
-            itemRestriction = FoodLists.getRestriction(itemStack);
-        }
+        itemRestriction = FoodLists.getRestriction(itemStack, capabilityFood);
 
         if (itemRestriction != null) {
             List<String> tooltips = event.getToolTip();
