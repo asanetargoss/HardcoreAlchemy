@@ -90,6 +90,8 @@ public class FoodLists {
         // Vanilla Minecraft
         
         items.put("minecraft:apple", vegan);
+        items.put("minecraft:golden_apple", vegan);
+        items.put("minecraft:golden_carrot", vegan);
         items.put("minecraft:red_mushroom", vegan);
         items.put("minecraft:brown_mushroom", vegan);
         items.put("minecraft:reeds", vegan);
