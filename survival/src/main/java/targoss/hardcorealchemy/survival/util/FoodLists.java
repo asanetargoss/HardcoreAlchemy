@@ -163,6 +163,8 @@ public class FoodLists {
         items.put("harvestcraft:silkentofuitem", vegan);
         items.put("harvestcraft:soymilkitem", vegan);
         
+        itemFoodIngredients.add("harvestcraft:mayoitem");
+        
         // Unique Crops
         
         items.put("uniquecrops:generic:6", vegan);
