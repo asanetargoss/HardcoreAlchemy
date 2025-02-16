@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2023 asanetargoss
+ * Copyright 2017-2025 asanetargoss
  *
  * This file is part of Hardcore Alchemy Core.
  *
@@ -40,6 +40,7 @@ import targoss.hardcorealchemy.coremod.transform.TDataVillage;
 import targoss.hardcorealchemy.coremod.transform.TEntityLivingBase;
 import targoss.hardcorealchemy.coremod.transform.TEntityPlayerSP;
 import targoss.hardcorealchemy.coremod.transform.TGuiContainer;
+import targoss.hardcorealchemy.coremod.transform.TInventoryCraftBook;
 import targoss.hardcorealchemy.coremod.transform.TItemRenderer;
 import targoss.hardcorealchemy.coremod.transform.TMinecraftServer;
 import targoss.hardcorealchemy.coremod.transform.TRenderEntityItem;
@@ -71,6 +72,7 @@ public class HardcoreAlchemyCoreCoremod implements IFMLLoadingPlugin {
 	            TEntityLivingBase.class.getName(),
 				TSlot.class.getName(),
 				TCraftingManager.class.getName(),
+                TInventoryCraftBook.class.getName(),
 				TThirstOverlayHandler.class.getName(),
 				TClassInheritanceMultiMap.class.getName(),
 				TDataVillage.class.getName(),

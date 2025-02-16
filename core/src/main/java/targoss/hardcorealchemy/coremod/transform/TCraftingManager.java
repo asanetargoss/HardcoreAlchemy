@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2023 asanetargoss
+ * Copyright 2017-2025 asanetargoss
  *
  * This file is part of Hardcore Alchemy Core.
  *
@@ -31,8 +31,12 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
+import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 import targoss.hardcorealchemy.coremod.MethodPatcher;
 import targoss.hardcorealchemy.coremod.ObfuscatedName;
+import targoss.hardcorealchemy.event.EventCraftPredict;
 
 public class TCraftingManager extends MethodPatcher {
     private static final String CRAFTING_MANAGER = "net.minecraft.item.crafting.CraftingManager";
@@ -72,7 +76,7 @@ public class TCraftingManager extends MethodPatcher {
                 hook.add(new VarInsnNode(Opcodes.ALOAD, 1)); // InventoryCrafting
                 hook.add(new VarInsnNode(Opcodes.ALOAD, 2)); // World
                 hook.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
-                        "targoss/hardcorealchemy/event/EventCraftPredict", 
+                        this.getClass().getName().replace('.', '/') + "$Hooks",
                         "onCraftPredict",
                         "(Lnet/minecraft/item/ItemStack;Lnet/minecraft/inventory/InventoryCrafting;" +
                         "Lnet/minecraft/world/World;)Lnet/minecraft/item/ItemStack;",
@@ -80,6 +84,12 @@ public class TCraftingManager extends MethodPatcher {
                 
                 code.insertBefore(entryPoint, hook);
             }
+        }
+    }
+    
+    public static class Hooks {
+        public static ItemStack onCraftPredict(ItemStack craftResult, InventoryCrafting craftGrid, World world) {
+            return EventCraftPredict.onCraftPredict(craftResult, craftGrid, world);
         }
     }
 }
