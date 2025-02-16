@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2023 asanetargoss
+ * Copyright 2017-2025 asanetargoss
  *
  * This file is part of Hardcore Alchemy Magic.
  *
