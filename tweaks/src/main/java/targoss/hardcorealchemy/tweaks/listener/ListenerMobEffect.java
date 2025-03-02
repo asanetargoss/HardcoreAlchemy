@@ -27,7 +27,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import targoss.hardcorealchemy.event.EventLivingAttack;
 import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
 import targoss.hardcorealchemy.tweaks.item.Items;
-import targoss.hardcorealchemy.util.MobLists;
+import targoss.hardcorealchemy.util.VanillaMobs;
 
 public class ListenerMobEffect extends HardcoreAlchemyListener {
     @SubscribeEvent
@@ -44,7 +44,7 @@ public class ListenerMobEffect extends HardcoreAlchemyListener {
             return;
         }
         String sourceEntityString = EntityList.CLASS_TO_NAME.get(sourceEntity.getClass());
-        if (!MobLists.SPIDER.equals(sourceEntityString)) {
+        if (!VanillaMobs.SPIDER.equals(sourceEntityString)) {
             return;
         }
         if (event.entity.canBlockDamageSource(event.source)) {

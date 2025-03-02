@@ -32,6 +32,7 @@ import targoss.hardcorealchemy.creatures.item.Items;
 import targoss.hardcorealchemy.creatures.listener.ListenerCapabilities;
 import targoss.hardcorealchemy.creatures.listener.ListenerInstinctOverheat;
 import targoss.hardcorealchemy.creatures.listener.ListenerMobAI;
+import targoss.hardcorealchemy.creatures.listener.ListenerMobLists;
 import targoss.hardcorealchemy.creatures.listener.ListenerMorphExtension;
 import targoss.hardcorealchemy.creatures.listener.ListenerNutritionExtension;
 import targoss.hardcorealchemy.creatures.listener.ListenerPlayerHinderedMind;
@@ -73,6 +74,7 @@ public class CommonProxy {
     }
     
     public void preInit(FMLPreInitializationEvent event) {
+        HardcoreAlchemyCore.proxy.addListener(new ListenerMobLists());
         HardcoreAlchemyCore.proxy.addListener(new ListenerCapabilities());
         HardcoreAlchemyCore.proxy.addListener(new ListenerPlayerKillMastery());
         HardcoreAlchemyCore.proxy.addListener(new ListenerMorphExtension());

@@ -66,7 +66,7 @@ import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
 import targoss.hardcorealchemy.util.Chat;
 import targoss.hardcorealchemy.util.Chat.Type;
 import targoss.hardcorealchemy.util.InventoryUtil;
-import targoss.hardcorealchemy.util.MobLists;
+import targoss.hardcorealchemy.util.VanillaMobs;
 
 public class ListenerPlayerSealOfForm extends HardcoreAlchemyListener {
     {
@@ -202,7 +202,7 @@ public class ListenerPlayerSealOfForm extends HardcoreAlchemyListener {
                 }
             }
             if (mobs.isEmpty()) {
-                ItemSealOfForm.setEntityMorphOnItem(stack, MobLists.PIG, null);
+                ItemSealOfForm.setEntityMorphOnItem(stack, VanillaMobs.PIG, null);
             }
             
             return stack;
@@ -270,16 +270,16 @@ public class ListenerPlayerSealOfForm extends HardcoreAlchemyListener {
     public void onLoot(LootTableLoadEvent event) {
         String name = event.getName().toString();
         if (name.equals("minecraft:chests/abandoned_mineshaft")) {
-            event.getTable().addPool(buildSealLootPool("mineshaft", MobLists.CAVE_SPIDER, MobLists.SPIDER));
+            event.getTable().addPool(buildSealLootPool("mineshaft", VanillaMobs.CAVE_SPIDER, VanillaMobs.SPIDER));
         }
         else if (name.equals("minecraft:chests/stronghold_corridor")) {
-            event.getTable().addPool(buildSealLootPool("stronghold", MobLists.SILVERFISH, MobLists.SKELETON, MobLists.ZOMBIE, MobLists.ENDERMAN));
+            event.getTable().addPool(buildSealLootPool("stronghold", VanillaMobs.SILVERFISH, VanillaMobs.SKELETON, VanillaMobs.ZOMBIE, VanillaMobs.ENDERMAN));
         }
         else if (name.equals("minecraft:chests/igloo_chest")) {
-            event.getTable().addPool(buildSealLootPool("igloo", MobLists.ZOMBIE, MobLists.POLAR_BEAR, MobLists.WOLF));
+            event.getTable().addPool(buildSealLootPool("igloo", VanillaMobs.ZOMBIE, VanillaMobs.POLAR_BEAR, VanillaMobs.WOLF));
         }
         else if (name.equals("minecraft:chests/jungle_temple")) {
-            event.getTable().addPool(buildSealLootPool("jungle_temple", MobLists.OCELOT, MobLists.CREEPER));
+            event.getTable().addPool(buildSealLootPool("jungle_temple", VanillaMobs.OCELOT, VanillaMobs.CREEPER));
         }
     }
 }
