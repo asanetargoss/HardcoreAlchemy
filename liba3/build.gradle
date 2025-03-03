@@ -1,0 +1,107 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            url "http://maven.minecraftforge.net"
+        }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
+    }
+}
+
+plugins {
+    id 'org.cadixdev.licenser' version '0.5.0'
+}
+apply plugin: 'net.minecraftforge.gradle.forge'
+
+license {
+    // Ignore access transformers, which are in core only
+    include '**/*.java'
+    matching('**/*.java') {
+        header = project.file('../HEADER_agpl3.txt')
+        ext {
+            name = 'Hardcore Alchemy LibA3'
+            year = 2025
+        }
+    }
+}
+
+// Project settings
+archivesBaseName = jarLabel
+
+sourceCompatibility = targetCompatibility = "1.8" // Need this here so Eclipse task generates correctly.
+compileJava {
+    sourceCompatibility = targetCompatibility = "1.8"
+}
+
+minecraft {
+    version = "1.10.2-12.18.3.2511"
+    runDir = "run"
+    
+    mappings = "stable_29"
+
+    replace "@HARDCORE_ALCHEMY_LIBA3_VERSION@", project.version
+    replaceIn "HardcoreAlchemyLibA3.java"
+
+    replace "\"required-before:\" + HardcoreAlchemyCore.MOD_ID", "\"required-before:\" + HardcoreAlchemyCore.MOD_ID + \"@[\" + HardcoreAlchemyCore.VERSION + \"]\""
+
+    String jvmArgs = " " +
+        "-enableassertions:targoss.hardcorealchemy..." + " "
+    clientJvmArgs += jvmArgs;
+    serverJvmArgs += jvmArgs;
+    replaceIn "HardcoreAlchemyLibA3.java"
+}
+
+dependencies {
+    compileOnly project(":core")
+    compileOnly fileTree(dir: "../compilelibs/core", include: "**/*.jar")
+}
+
+sourceSets.main.resources.srcDirs += ["../translations/liba3"]
+
+processResources
+{
+    // This will ensure that this task is redone when the versions change.
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
+
+    // Replace stuff in mcmod.info, nothing else
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+                
+        // Replace version and mcversion with the settings we've defined for our project
+        expand 'version':project.version, 'mcversion':project.minecraft.version
+    }
+        
+    // Copy everything else that's not the mcmod.info
+    // Also exclude the access transformers, which are a part of core
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+        exclude 'hardcorealchemy_at.cfg'
+    }
+}
+
+// Hack to inherit recompiled Minecraft files with access transformers applied from core, so the decompiled Minecraft jar that this subproject depends on is effectively the same as the one in core.
+task setupDecompWorkspace(type: Copy, overwrite: true, dependsOn: ":core:setupDecompWorkspace") {
+    from "../core/.gradle/minecraft/"
+    into ".gradle/minecraft/"
+    rename { String fileName ->
+        fileName.replace("(core)", "(${project.name})")
+    }
+}
+tasks["eclipse"].dependsOn setupDecompWorkspace
+// Need to also have an (unused) access transformer file in this project so that the eclipse classpath uses the patched Minecraft jar
+task copyAccessTransformerFromCore(type: Copy) {
+    from "../core/src/main/resources/META-INF/hardcorealchemy_at.cfg"
+    into "src/main/resources/META-INF"
+}
+setupDecompWorkspace.dependsOn copyAccessTransformerFromCore
+processResources.dependsOn copyAccessTransformerFromCore
+
+// Run configs are shared between submods
+task setupRunConfig(type: Copy) {
+    from "../testconfig"
+    into "run/config"
+}
+setupDecompWorkspace.dependsOn setupRunConfig

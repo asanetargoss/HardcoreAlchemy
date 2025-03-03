@@ -1,0 +1,16 @@
+[
+{
+  "modid": "hardcorealchemy_liba3",
+  "name": "Hardcore Alchemy LibA3",
+  "description": "Tweaks for AGPLv3 mods",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["asanetargoss"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": ["hardcorealchemy"]
+}
+]

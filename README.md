@@ -14,6 +14,7 @@ The Hardcore Alchemy mod suite is released under different licenses depending on
 
 - core, tweaks, creatures, magic, survival - GNU LGPL v3 or later
 - capstone - GNU GPL v3
+- liba3 - GNU AGPL v3
 
 In short: You are allowed to use any of these listed mods in your own modpack.
 
@@ -72,6 +73,7 @@ Please note: The following mods included in the HcA_compilelibs zip file above a
 * `magic/` - A mod project containing features which make magic mods work better in a hardcore respawn gameplay context. It also contains various tweaks and fixes for magic mods.
 * `survival/` - A mod project containing various features related to nutrition, thirst, and crop growth. It interacts with various survival and crop mods.
 * `capstone/` - A mod project which handles magic/survival cross-mod compatibility for GPLv3-licensed mods. It also adds guidebooks and integration tests for the Hardcore Alchemy modpack.
+* `liba3/` - A mod project which handles magic/survival cross-mod compatibility for AGPLv3-licensed mods.
 
 ### Notes on Windows and IntelliJ IDEA
 

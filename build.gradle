@@ -5,6 +5,7 @@ task exportModsToDev(type: Copy) {
     dependsOn ":magic:build"
     dependsOn ":survival:build"
     dependsOn ":capstone:build"
+    dependsOn ":liba3:build"
 
     from ("core/build/libs/${project(":core").jarLabel}-${project(":core").version}.jar")
     from ("tweaks/build/libs/${project(":tweaks").jarLabel}-${project(":tweaks").version}.jar")
@@ -12,5 +13,6 @@ task exportModsToDev(type: Copy) {
     from ("magic/build/libs/${project(":magic").jarLabel}-${project(":magic").version}.jar")
     from ("survival/build/libs/${project(":survival").jarLabel}-${project(":survival").version}.jar")
     from ("capstone/build/libs/${project(":capstone").jarLabel}-${project(":capstone").version}.jar")
+    from ("liba3/build/libs/${project(":liba3").jarLabel}-${project(":liba3").version}.jar")
     into(modpack_dev_dir)
 }
