@@ -163,5 +163,5 @@ Your IDE may already provide a different version of Java 8 internally. If it doe
 
 * Decompiler plugin: http://jd.benow.ca/ (Why: Required to view source code for all the mods in `libs/`, since most do not have dev builds)
 * MCP Mapping Viewer: https://github.com/bspkrs/MCPMappingViewer/ (Why: To figure out the meaning of `func_12345` and their ilk, and translate to them when needed in a release environment)
-* Bytecode outline for Eclipse: http://andrei.gmxhome.de/bytecode/index.html (Why: Only if you need to coremod. It will help you understand the Java bytecode better. Do not trust the stack feature.)
+* Bytecode outline for Eclipse: http://andrei.gmxhome.de/bytecode/index.html (Why: Only if you need to coremod. It will help you understand the Java bytecode better. Note: Installed by default in the default Eclipse SDK package since 2023)
 
