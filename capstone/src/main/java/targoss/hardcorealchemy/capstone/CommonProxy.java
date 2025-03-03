@@ -22,11 +22,13 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.capstone.listener.ListenerGuides;
 import targoss.hardcorealchemy.capstone.listener.ListenerInventoryExtension;
+import targoss.hardcorealchemy.capstone.listener.ListenerMobLists;
 import targoss.hardcorealchemy.capstone.listener.ListenerPlayerInventory;
 import targoss.hardcorealchemy.capstone.listener.ListenerPlayerMagicState;
 
 public class CommonProxy {
     public void preInit(FMLPreInitializationEvent event) {
+        HardcoreAlchemyCore.proxy.addListener(new ListenerMobLists());
         HardcoreAlchemyCore.proxy.addListener(new ListenerPlayerInventory());
         HardcoreAlchemyCore.proxy.addListener(new ListenerInventoryExtension());
         HardcoreAlchemyCore.proxy.addListener(new ListenerPlayerMagicState());

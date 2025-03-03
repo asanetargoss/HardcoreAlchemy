@@ -97,8 +97,6 @@ public class ListenerMobLists extends HardcoreAlchemyListener {
             entityTameables.add(VanillaMobs.OCELOT);
             // Voidcraft
             entityTameables.add("voidcraft.FireElemental");
-            // ToroQuest
-            entityTameables.add("toroquest.toro");
             
             break;
         case FREEBIE:
@@ -137,8 +135,6 @@ public class ListenerMobLists extends HardcoreAlchemyListener {
             grassMobs.add(VanillaMobs.WOLF);
             grassMobs.add(VanillaMobs.OCELOT);
             grassMobs.add("Rabbit");
-            // ToroQuest
-            grassMobs.add("toroquest.toro");
             
             break;
         case HUMAN:
@@ -152,15 +148,6 @@ public class ListenerMobLists extends HardcoreAlchemyListener {
             humans.add("arsmagica2.DarkMage");
             // Minecraft Comes Alive
             humans.add("MCA.EntityHuman");
-            // ToroQuest
-            humans.add("toroquest.fugitive");
-            humans.add("toroquest.guard");
-            humans.add("toroquest.mage");
-            humans.add("toroquest.rainbow_guard");
-            humans.add("toroquest.rainbow_king");
-            humans.add("toroquest.sentry");
-            humans.add("toroquest.shopkeeper");
-            humans.add("toroquest.village_lord");
             // Village Box
             humans.add("villagebox.villager");
             // Thaumcraft
@@ -235,8 +222,6 @@ public class ListenerMobLists extends HardcoreAlchemyListener {
             landAnimals.add("Rabbit");
             landAnimals.add(VanillaMobs.POLAR_BEAR);
             landAnimals.add("MushroomCow");
-            // ToroQuest
-            landAnimals.add("toroquest.toro");
             // Ender Zoo
             landAnimals.add("EnderZoo.DireWolf");
             // Sophisticated Wolves
@@ -340,8 +325,6 @@ public class ListenerMobLists extends HardcoreAlchemyListener {
             nonMobs.add("thaumcraft.ArcaneBore");
             nonMobs.add("thaumcraft.Golem");
             nonMobs.add("thaumcraft.Spellbat");
-            // Jon's Useless Mod
-            nonMobs.add("jum.Useless Arrow");
             
             break;
         case PASSIVE:
@@ -373,8 +356,6 @@ public class ListenerMobLists extends HardcoreAlchemyListener {
         case TROLL:
             Set<String> trollMobs = event.set;
 
-            // Jon's Useless Mod
-            trollMobs.add("jum.Dave the Useless");
             // Meme in a Bottle
             trollMobs.add("miab.memeSplash");
             trollMobs.add("miab.DogeWolf");

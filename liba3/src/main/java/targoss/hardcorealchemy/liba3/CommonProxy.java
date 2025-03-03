@@ -19,9 +19,11 @@
 package targoss.hardcorealchemy.liba3;
 
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
+import targoss.hardcorealchemy.liba3.listener.ListenerMobLists;
 
 public class CommonProxy {
     public void preInit(FMLPreInitializationEvent event) {
-        // TODO: Register listener
+        HardcoreAlchemyCore.proxy.addListener(new ListenerMobLists());
     }
 }
