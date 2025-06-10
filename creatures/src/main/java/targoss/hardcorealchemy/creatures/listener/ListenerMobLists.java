@@ -377,6 +377,11 @@ public class ListenerMobLists extends HardcoreAlchemyListener {
             trollMobs.add("miab.Nigelthornberry");
             
             break;
+        case WATER_ALLERGY:
+        // fallthrough
+        case ENDER_WATER_ALLERGY:
+            event.set.add("EnderZoo.EnderMiny");
+            break;
         default:
             break;
         }

@@ -30,6 +30,7 @@ import targoss.hardcorealchemy.creatures.incantation.Incantations;
 import targoss.hardcorealchemy.creatures.instinct.Instincts;
 import targoss.hardcorealchemy.creatures.item.Items;
 import targoss.hardcorealchemy.creatures.listener.ListenerCapabilities;
+import targoss.hardcorealchemy.creatures.listener.ListenerEntityExtension;
 import targoss.hardcorealchemy.creatures.listener.ListenerInstinctOverheat;
 import targoss.hardcorealchemy.creatures.listener.ListenerMobAI;
 import targoss.hardcorealchemy.creatures.listener.ListenerMobLists;
@@ -79,6 +80,7 @@ public class CommonProxy {
         HardcoreAlchemyCore.proxy.addListener(new ListenerPlayerKillMastery());
         HardcoreAlchemyCore.proxy.addListener(new ListenerMorphExtension());
         HardcoreAlchemyCore.proxy.addListener(new ListenerNutritionExtension());
+        HardcoreAlchemyCore.proxy.addListener(new ListenerEntityExtension());
         HardcoreAlchemyCore.proxy.addListener(new ListenerPlayerMorphs());
         HardcoreAlchemyCore.proxy.addListener(new ListenerPlayerHumanity());
         HardcoreAlchemyCore.proxy.addListener(new ListenerMobAI());

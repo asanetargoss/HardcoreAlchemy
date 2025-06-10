@@ -30,6 +30,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.heart.Heart;
+import targoss.hardcorealchemy.util.Tooltip;
 
 public class ItemHeartShard extends Item {
     public final Heart heart;
@@ -39,6 +40,9 @@ public class ItemHeartShard extends Item {
         this.heart = heart;
     }
     
+    protected static final String GENERAL_HINT_KEY_1 = HardcoreAlchemyCore.MOD_ID + ".heart.generic_hint.1";
+    protected static final String GENERAL_HINT_KEY_2 = HardcoreAlchemyCore.MOD_ID + ".heart.generic_hint.2";
+    
     @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean advanced)
@@ -47,18 +51,19 @@ public class ItemHeartShard extends Item {
         String heartId = heart.getRegistryName().getResourcePath();
         String tooltipKey = heartNamespace + ".heart." + heartId + ".hint";
         ITextComponent tooltipComponent = new TextComponentTranslation(tooltipKey);
+        if (heart.dangerous) {
+            tooltipComponent.setStyle(Tooltip.Type.DANGER.style);
+        }
         String tooltipLine = tooltipComponent.getFormattedText();
         tooltip.add(tooltipLine);
         
         {
-            String generalHintKey1 = HardcoreAlchemyCore.MOD_ID + ".heart.generic_hint.1";
-            ITextComponent generalHintComponent1 = new TextComponentTranslation(generalHintKey1);
+            ITextComponent generalHintComponent1 = new TextComponentTranslation(GENERAL_HINT_KEY_1);
             String generalHintLine1 = generalHintComponent1.getFormattedText();
             tooltip.add(generalHintLine1);
         }
         {
-            String generalHintKey2 = HardcoreAlchemyCore.MOD_ID + ".heart.generic_hint.2";
-            ITextComponent generalHintComponent2 = new TextComponentTranslation(generalHintKey2);
+            TextComponentTranslation generalHintComponent2 = new TextComponentTranslation(GENERAL_HINT_KEY_2);
             String generalHintLine2 = generalHintComponent2.getFormattedText();
             tooltip.add(generalHintLine2);
         }

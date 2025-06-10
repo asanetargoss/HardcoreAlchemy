@@ -43,7 +43,6 @@ public class HcAPotion extends Potion {
     private static final int EFFECT_COUNT = 4;
     private static final int REGION_X = 72;
     private static final int REGION_Y = 0;
-    private static final int REGION_SIZE = EFFECT_WIDTH*EFFECT_COUNT;
     
     public static final boolean GOOD_EFFECT = false;
     public static final boolean BAD_EFFECT = true;

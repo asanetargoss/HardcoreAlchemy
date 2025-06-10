@@ -44,6 +44,7 @@ import targoss.hardcorealchemy.listener.ListenerCapabilities;
 import targoss.hardcorealchemy.listener.ListenerConfigs;
 import targoss.hardcorealchemy.listener.ListenerEntityCapabilities;
 import targoss.hardcorealchemy.listener.ListenerLootTester;
+import targoss.hardcorealchemy.listener.ListenerMobLists;
 import targoss.hardcorealchemy.listener.ListenerPlayerIncantation;
 import targoss.hardcorealchemy.listener.ListenerPlayerResearch;
 import targoss.hardcorealchemy.listener.ListenerUniverseCapabilities;
@@ -71,6 +72,7 @@ public class CommonProxy {
         addListener(new ListenerCapabilities());
         addListener(new ListenerUniverseCapabilities());
         addListener(new ListenerEntityCapabilities());
+        addListener(new ListenerMobLists());
         addListener(new ListenerPlayerIncantation());
         addListener(new ListenerPlayerResearch());
         addListener(new ListenerConfigs());

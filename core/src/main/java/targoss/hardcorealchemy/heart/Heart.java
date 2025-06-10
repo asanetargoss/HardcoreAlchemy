@@ -38,16 +38,18 @@ public class Heart extends IForgeRegistryEntry.Impl<Heart> {
     public int tileV;
     public int highlightTileU;
     public int highlightTileV;
+    public boolean dangerous;
     protected AttributeModifier modifier;
     protected static final String BASE_MODIFIER_NAME = "hardcorealchemy:default_hearts";
     protected static final UUID BASE_MODIFIER_ID = UUID.fromString("893bbc91-501b-4143-8aaa-640295b1e672");
     
-    public Heart(ResourceLocation tileset, int tileU, int tileV, int highlightTileU, int highlightTileV) {
+    public Heart(ResourceLocation tileset, int tileU, int tileV, int highlightTileU, int highlightTileV, boolean dangerous) {
         this.tileset = tileset;
         this.tileU = tileU;
         this.tileV = tileV;
         this.highlightTileU = highlightTileU;
         this.highlightTileV = highlightTileV;
+        this.dangerous = dangerous;
     }
     
     protected static final long seedBase1 = 8955423686119581968L;

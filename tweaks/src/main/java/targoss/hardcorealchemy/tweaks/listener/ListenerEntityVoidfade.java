@@ -51,6 +51,7 @@ import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
+import net.minecraftforge.event.entity.living.EnderTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
@@ -75,10 +76,12 @@ import targoss.hardcorealchemy.tweaks.capability.dimensionhistory.CapabilityDime
 import targoss.hardcorealchemy.tweaks.capability.dimensionhistory.ICapabilityDimensionHistory;
 import targoss.hardcorealchemy.tweaks.capability.dimensionhistory.ProviderDimensionHistory;
 import targoss.hardcorealchemy.tweaks.capability.dimensionhistory.StorageDimensionHistory;
+import targoss.hardcorealchemy.tweaks.capability.hearts.ICapabilityHearts;
 import targoss.hardcorealchemy.tweaks.event.EventPlayerDamageBlockSound;
 import targoss.hardcorealchemy.tweaks.event.EventPlayerInventorySlotSet;
 import targoss.hardcorealchemy.tweaks.item.Items;
 import targoss.hardcorealchemy.tweaks.research.Studies;
+import targoss.hardcorealchemy.util.EntityExtension;
 import targoss.hardcorealchemy.util.InventoryExtension;
 import targoss.hardcorealchemy.util.InventoryUtil;
 import targoss.hardcorealchemy.util.MorphExtension;
@@ -86,6 +89,8 @@ import targoss.hardcorealchemy.util.MorphExtension;
 public class ListenerEntityVoidfade extends HardcoreAlchemyListener {
     @CapabilityInject(ICapabilityDimensionHistory.class)
     public static final Capability<ICapabilityDimensionHistory> DIMENSION_HISTORY_CAPABILITY = null;
+    @CapabilityInject(ICapabilityHearts.class)
+    public static final Capability<ICapabilityHearts> HEARTS_CAPABILITY = null;
     
     @Override
     public void registerCapabilities(CapabilityManager manager, VirtualCapabilityManager virtualManager) {
@@ -328,13 +333,37 @@ public class ListenerEntityVoidfade extends HardcoreAlchemyListener {
             applyVoidfade(entityLiving, 5);
         }
     }
+    
+    @SubscribeEvent
+    public void onEnderTeleport(EnderTeleportEvent event) {
+        EntityLivingBase entity = event.getEntityLiving();
+        if (!(entity instanceof EntityPlayer)) {
+            return;
+        }
+        EntityPlayer player = (EntityPlayer)entity;
+        applyVoidfade(player, 1);
+    }
 
+    // Players in a morph with natural water allergy get the heart shard of void
     // Prevent entities with voidfade from receiving damage
     @SubscribeEvent(priority=EventPriority.HIGH)
     public void onEntityHurt(LivingHurtEvent event) {
-        EntityLivingBase entityLiving = event.getEntityLiving();
-        if (entityLiving.isPotionActive(Items.POTION_VOIDFADE)) {
-            event.setCanceled(true);
+        EntityLivingBase entity = event.getEntityLiving();
+        if (event.getSource() == DamageSource.drown) {
+            if (entity.getAir() > 0 && !entity.world.isRemote && (entity instanceof EntityPlayer)) {
+                // Most likely taking damage due to water allergy
+                EntityPlayer player = (EntityPlayer)entity;
+                if (EntityExtension.INSTANCE.hasEnderWaterAllergy(player)) {
+                    ICapabilityHearts hearts = player.getCapability(HEARTS_CAPABILITY, null);
+                    if (hearts != null) {
+                        ListenerHeartShards.acquireHeartShard(player, hearts, Items.HEART_VOID);
+                    }
+                }
+            }
+        } else {
+            if (entity.isPotionActive(Items.POTION_VOIDFADE)) {
+                event.setCanceled(true);
+            }
         }
     }
     

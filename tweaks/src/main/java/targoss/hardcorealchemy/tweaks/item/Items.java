@@ -20,11 +20,14 @@
 package targoss.hardcorealchemy.tweaks.item;
 
 import static net.minecraft.init.Blocks.MAGMA;
+import static net.minecraft.init.Blocks.OBSIDIAN;
 import static net.minecraft.init.Items.BONE;
 import static net.minecraft.init.Items.DIAMOND;
+import static net.minecraft.init.Items.ENDER_PEARL;
 import static net.minecraft.init.Items.FEATHER;
 import static net.minecraft.init.Items.FIRE_CHARGE;
 import static net.minecraft.init.Items.IRON_INGOT;
+import static net.minecraft.init.Items.PRISMARINE_SHARD;
 import static net.minecraft.init.Items.REDSTONE;
 import static net.minecraft.init.Items.ROTTEN_FLESH;
 import static net.minecraft.init.Items.SNOWBALL;
@@ -66,15 +69,16 @@ public class Items {
     public static final Item DIMENSIONAL_FLUX_CRYSTAL = ITEMS.add("dimensional_flux_crystal", new Item());
     public static final Item TIMEFROZEN = ITEMS.add("timefrozen", new TimefrozenItem());
     
-    public static final Potion POTION_VOIDFADE = POTIONS.add("voidfade", new HcAPotion(BAD_EFFECT, new Color(94, 10, 199), 3, false));
+    public static final Potion POTION_VOIDFADE = POTIONS.add("voidfade", new PotionVoidfade(BAD_EFFECT, new Color(94, 10, 199), 3, false));
     public static final Potion POTION_SLIP = POTIONS.add("slip", new HcAPotion(BAD_EFFECT, new Color(223, 69, 0), 4, false));
     
     public static final PotionType POTION_TYPE_VOIDFADE = POTION_TYPES.add("voidfade", RegistrarPotionType.potionTypeFromPotion(POTION_VOIDFADE, 90*20));
     public static final PotionType POTION_TYPE_VOIDFADE_EXTENDED = POTION_TYPES.add("voidfade_extended", RegistrarPotionType.potionTypeFromPotion(POTION_VOIDFADE, 6*60*20));
     
-    public static final Heart HEART_FLAME = HEARTS.add("flame", new Heart(TILESET, 0, 54, 0, 63));
-    public static final Heart HEART_TEARS = HEARTS.add("tears", new Heart(TILESET, 9, 54, 9, 63));
-    public static final Heart HEART_HUNTER = HEARTS.add("hunter", new Heart(TILESET, 18, 54, 18, 63));
+    public static final Heart HEART_FLAME = HEARTS.add("flame", new Heart(TILESET, 0, 54, 0, 63, false));
+    public static final Heart HEART_TEARS = HEARTS.add("tears", new Heart(TILESET, 9, 54, 9, 63, false));
+    public static final Heart HEART_HUNTER = HEARTS.add("hunter", new Heart(TILESET, 18, 54, 18, 63, false));
+    public static final Heart HEART_VOID = HEARTS.add("void", new Heart(TILESET, 27, 54, 27, 63, true));
     
     public static class HeartRegistryImpl extends RegistrarHeart.RegistryBase {
         @Override
@@ -133,6 +137,16 @@ public class Items {
             'I', new ItemStack(IRON_INGOT),
             'B', new ItemStack(BONE)
         );
+        GameRegistry.addShapedRecipe(new ItemStack(HEART_VOID.ITEM),
+                "CEC",
+                "PHP",
+                "COC",
+                'H', new ItemStack(HEART_VOID.ITEM_SHARD),
+                'C', new ItemStack(DIMENSIONAL_FLUX_CRYSTAL),
+                'E', new ItemStack(ENDER_PEARL),
+                'P', new ItemStack(PRISMARINE_SHARD),
+                'O', new ItemStack(OBSIDIAN)
+            );
         
         IForgeRegistry<PotionType> potionTypeRegistry = GameRegistry.findRegistry(PotionType.class);
         PotionType awkwardPotion = potionTypeRegistry.getValue(new ResourceLocation("awkward"));

@@ -50,7 +50,9 @@ public class MobLists {
         TAINT,
         ELDRITCH,
         TROLL,
-        FREEBIE;
+        FREEBIE,
+        WATER_ALLERGY, // TODO: Populate list
+        ENDER_WATER_ALLERGY; // TODO: Populate list
         
         public Set<String> get() {
             Set<String> list = new HashSet<>();

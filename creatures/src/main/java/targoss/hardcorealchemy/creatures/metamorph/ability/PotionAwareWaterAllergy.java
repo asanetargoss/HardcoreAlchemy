@@ -21,7 +21,7 @@ package targoss.hardcorealchemy.creatures.metamorph.ability;
 
 import mchorse.vanilla_pack.abilities.WaterAllergy;
 import net.minecraft.entity.EntityLivingBase;
-import targoss.hardcorealchemy.creatures.item.Items;
+import targoss.hardcorealchemy.item.Items;
 
 public class PotionAwareWaterAllergy extends WaterAllergy {
     protected WaterAllergy delegate;
