@@ -60,6 +60,11 @@ public class HCAUpgradeGuides {
                         .addEntry("feedback", "red_flower", "1", "2", "3")
                         .build())
                 ));
+        UPGRADE_GUIDES.add("0.8.5", new UpgradeGuide(new BookBuilder()
+                .addCategory(new BookBuilder.Category().setId("gameplay_tips").setItemId("sign")
+                        .addEntry("midgame", "sign", "1", "2")
+                        .build())
+                ));
     }
     
 }
