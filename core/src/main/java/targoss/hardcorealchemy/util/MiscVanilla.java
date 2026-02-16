@@ -22,6 +22,8 @@ package targoss.hardcorealchemy.util;
 import java.util.Calendar;
 import java.util.Random;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.Language;
 import net.minecraft.client.resources.LanguageManager;
@@ -100,11 +102,15 @@ public class MiscVanilla {
         return mc.getIntegratedServer();
     }
     
-    public static MinecraftServer getServer(World dummyWorld) {
+    public static @Nullable MinecraftServer getServer(@Nullable World world) {
         FMLCommonHandler fmlCommonHandler = FMLCommonHandler.instance();
         if (fmlCommonHandler.getSide() == Side.SERVER ||
                 fmlCommonHandler.getEffectiveSide() == Side.SERVER) {
-            return dummyWorld.getMinecraftServer();
+            if (world != null) {
+                return world.getMinecraftServer();
+            } else {
+                return HardcoreAlchemyCore.SERVER_REFERENCE.get();
+            }
         }
         else {
             return getIntegratedServer();
