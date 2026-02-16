@@ -1,0 +1,8 @@
+{
+  "parent":"item/generated",
+  "textures": {
+    "layer0":"hardcorealchemy:items/arrow_bottom",
+    "layer1":"hardcorealchemy:items/heart_flame",
+    "layer2":"hardcorealchemy:items/arrow_top"
+  }
+}

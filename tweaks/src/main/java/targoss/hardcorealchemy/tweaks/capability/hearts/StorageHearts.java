@@ -42,6 +42,7 @@ import targoss.hardcorealchemy.util.Serialization;
 
 public class StorageHearts implements Capability.IStorage<ICapabilityHearts> {
     protected static final String HEARTS = "hearts";
+    protected static final String SACRIFICED_HEARTS = "sacrificed_hearts";
     protected static final String REMOVED_HEARTS = "removed_hearts";
     protected static final String ACQUIRED_SHARDS = "acquired_shards";
     public static final String SHARD_PROGRESS = "shard_progress";
@@ -60,6 +61,16 @@ public class StorageHearts implements Capability.IStorage<ICapabilityHearts> {
                     nbtHearts.appendTag(new NBTTagString(heart.getRegistryName().toString()));
                 }
                 nbt.setTag(HEARTS, nbtHearts);
+            }
+        }
+        {
+            Set<Heart> sacrificedHearts = instance.getSacrificed();
+            if (sacrificedHearts.size() != 0) {
+                NBTTagList nbtSacrificedHearts = new NBTTagList();
+                for (Heart sacrificedHeart : sacrificedHearts) {
+                    nbtSacrificedHearts.appendTag(new NBTTagString(sacrificedHeart.getRegistryName().toString()));
+                }
+                nbt.setTag(SACRIFICED_HEARTS, nbtSacrificedHearts);
             }
         }
         {
@@ -117,27 +128,11 @@ public class StorageHearts implements Capability.IStorage<ICapabilityHearts> {
         
 
         Set<Heart> hearts = new HashSet<>();
+        Set<Heart> sacrificedHearts = new HashSet<>();
         List<ResourceLocation> removedHearts = new ArrayList<>();
         Set<Heart> acquiredShards = new HashSet<>();
         Map<Heart, ShardProgress> shardProgressMap = new HashMap<>();
-        
-        if (nbtCompound.hasKey(HEARTS, Serialization.NBT_LIST_ID)) {
-            try {
-                NBTTagList nbtHearts = nbtCompound.getTagList(HEARTS, Serialization.NBT_STRING_ID);
-                int n = nbtHearts.tagCount();
-                for (int i = 0; i < n; ++i) {
-                    String heartId = nbtHearts.getStringTagAt(i);
-                    if (heartId == null) {
-                        continue;
-                    }
-                    Heart heart = HEART_REGISTRY.getValue(new ResourceLocation(heartId));
-                    if (heart == null) {
-                        continue;
-                    }
-                    hearts.add(heart);
-                }
-            } catch (ReportedException e) {}
-        }
+
         if (nbtCompound.hasKey(REMOVED_HEARTS, Serialization.NBT_LIST_ID)) {
             try {
                 NBTTagList nbtRemovedHearts = nbtCompound.getTagList(REMOVED_HEARTS, Serialization.NBT_STRING_ID);
@@ -148,6 +143,38 @@ public class StorageHearts implements Capability.IStorage<ICapabilityHearts> {
                         continue;
                     }
                     removedHearts.add(new ResourceLocation(removedHeartId));
+                }
+            } catch (ReportedException e) {}
+        }
+        if (nbtCompound.hasKey(HEARTS, Serialization.NBT_LIST_ID)) {
+            try {
+                NBTTagList nbtHearts = nbtCompound.getTagList(HEARTS, Serialization.NBT_STRING_ID);
+                int n = nbtHearts.tagCount();
+                for (int i = 0; i < n; ++i) {
+                    String heartId = nbtHearts.getStringTagAt(i);
+                    Heart heart = HEART_REGISTRY.getValue(new ResourceLocation(heartId));
+                    if (heart == null) {
+                        removedHearts.add(new ResourceLocation(heartId));
+                        continue;
+                    }
+                    hearts.add(heart);
+                }
+            } catch (ReportedException e) {}
+        }
+        if (nbtCompound.hasKey(SACRIFICED_HEARTS, Serialization.NBT_LIST_ID)) {
+            try {
+                NBTTagList nbtSacrificedHearts = nbtCompound.getTagList(SACRIFICED_HEARTS, Serialization.NBT_STRING_ID);
+                int n = nbtSacrificedHearts.tagCount();
+                for (int i = 0; i < n; ++i) {
+                    String sacrificedHeartId = nbtSacrificedHearts.getStringTagAt(i);
+                    if (sacrificedHeartId == null) {
+                        continue;
+                    }
+                    Heart sacrificedHeart = HEART_REGISTRY.getValue(new ResourceLocation(sacrificedHeartId));
+                    if (sacrificedHeart == null) {
+                        continue;
+                    }
+                    sacrificedHearts.add(sacrificedHeart);
                 }
             } catch (ReportedException e) {}
         }
@@ -195,6 +222,7 @@ public class StorageHearts implements Capability.IStorage<ICapabilityHearts> {
         }
         
         instance.set(hearts);
+        instance.setSacrificed(sacrificedHearts);
         instance.setRemoved(removedHearts);
         instance.setAcquiredShards(acquiredShards);
         instance.setShardProgressMap(shardProgressMap);

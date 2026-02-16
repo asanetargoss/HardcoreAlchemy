@@ -34,6 +34,7 @@ public class CapabilityHearts implements ICapabilityHearts {
     public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(HardcoreAlchemyCore.MOD_ID, "hearts");
     
     protected Set<Heart> hearts = new HashSet<>();
+    protected Set<Heart> sacrificedHearts = new HashSet<>();
     protected List<ResourceLocation> removedHearts = new ArrayList<>();
     protected Set<Heart> acquiredShards = new HashSet<>();
     protected Map<Heart, ShardProgress> shardProgressMap = new HashMap<>();
@@ -46,6 +47,16 @@ public class CapabilityHearts implements ICapabilityHearts {
     @Override
     public void set(Set<Heart> hearts) {
         this.hearts = hearts;
+    }
+    
+    @Override
+    public Set<Heart> getSacrificed() {
+        return sacrificedHearts;
+    }
+
+    @Override
+    public void setSacrificed(Set<Heart> sacrificedHearts) {
+        this.sacrificedHearts = sacrificedHearts;
     }
 
     @Override

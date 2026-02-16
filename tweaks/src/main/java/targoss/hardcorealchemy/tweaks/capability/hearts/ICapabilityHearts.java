@@ -31,6 +31,8 @@ import targoss.hardcorealchemy.heart.Heart;
 public interface ICapabilityHearts {
     Set<Heart> get();
     void set(Set<Heart> hearts);
+    Set<Heart> getSacrificed();
+    void setSacrificed(Set<Heart> sacrificedHearts);
     List<ResourceLocation> getRemoved();
     void setRemoved(List<ResourceLocation> removedHearts);
     /** Per life */

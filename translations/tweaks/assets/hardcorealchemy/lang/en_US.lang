@@ -40,12 +40,16 @@ item.hardcorealchemy:timefrozen.name=Timefrozen %s
 
 item.hardcorealchemy:heart_flame.name=Heart of Flame
 item.hardcorealchemy:heart_flame_shard.name=Broken Heart of Flame
+item.hardcorealchemy:heart_flame_sacrificed.name=Sacrificed Heart of Flame
 item.hardcorealchemy:heart_hunter.name=Heart of the Hunter
 item.hardcorealchemy:heart_hunter_shard.name=Broken Heart of the Hunter
+item.hardcorealchemy:heart_hunter_sacrificed.name=Sacrificed Heart of the Hunter
 item.hardcorealchemy:heart_tears.name=Heart of Tears
 item.hardcorealchemy:heart_tears_shard.name=Broken Heart of Tears
+item.hardcorealchemy:heart_tears_sacrificed.name=Sacrificed Heart of Tears
 item.hardcorealchemy:heart_void.name=Heart of Void
 item.hardcorealchemy:heart_void_shard.name=Broken Heart of Void
+item.hardcorealchemy:heart_void_sacrificed.name=Sacrificed Heart of Void
 
 hardcorealchemy.heart.already_added=You already have this heart.
 hardcorealchemy.heart.generic_hint.1=Can only acquire once per life.

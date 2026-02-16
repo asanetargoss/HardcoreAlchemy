@@ -87,8 +87,10 @@ public class Items {
             for (Heart entry : entries) {
                 entry.ITEM = new ItemHeart(entry);
                 entry.ITEM_SHARD = new ItemHeartShard(entry);
+                entry.ITEM_SACRIFICED = new ItemHeartSacrificed(entry);
                 ITEMS.add("heart_" + entry.name, entry.ITEM);
                 ITEMS.add("heart_" + entry.name + "_shard", entry.ITEM_SHARD);
+                ITEMS.add("heart_" + entry.name + "_sacrificed", entry.ITEM_SACRIFICED);
             }
             return true;
         }

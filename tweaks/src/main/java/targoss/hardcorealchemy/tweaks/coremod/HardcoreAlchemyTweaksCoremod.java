@@ -33,6 +33,7 @@ import targoss.hardcorealchemy.tweaks.coremod.transform.TEntityAIAttackMelee;
 import targoss.hardcorealchemy.tweaks.coremod.transform.TEntityArrow;
 import targoss.hardcorealchemy.tweaks.coremod.transform.TGuiIngame;
 import targoss.hardcorealchemy.tweaks.coremod.transform.TInventoryPlayer;
+import targoss.hardcorealchemy.tweaks.coremod.transform.TMinecraftServer;
 import targoss.hardcorealchemy.tweaks.coremod.transform.TNetHandlerPlayServer;
 import targoss.hardcorealchemy.tweaks.coremod.transform.TPlayerControllerMP;
 import targoss.hardcorealchemy.tweaks.coremod.transform.TPlayerInteractionManager;
@@ -59,7 +60,8 @@ public class HardcoreAlchemyTweaksCoremod implements IFMLLoadingPlugin {
             TEntityAIAttackMelee.class.getName(),
             TEntityArrow.class.getName(),
             TGuiIngame.class.getName(),
-            TContainer.class.getName()
+            TContainer.class.getName(),
+            TMinecraftServer.class.getName()
         };
     }
 

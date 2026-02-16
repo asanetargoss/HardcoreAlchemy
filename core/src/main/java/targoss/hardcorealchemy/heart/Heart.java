@@ -33,6 +33,7 @@ public class Heart extends IForgeRegistryEntry.Impl<Heart> {
     public String name;
     public Item ITEM;
     public Item ITEM_SHARD;
+    public Item ITEM_SACRIFICED;
     public ResourceLocation tileset;
     public int tileU;
     public int tileV;

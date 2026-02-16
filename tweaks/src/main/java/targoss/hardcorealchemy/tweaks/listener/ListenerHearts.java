@@ -37,6 +37,8 @@ import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.MobEffects;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.GuiIngameForge;
@@ -63,6 +65,7 @@ import targoss.hardcorealchemy.tweaks.capability.hearts.CapabilityHearts;
 import targoss.hardcorealchemy.tweaks.capability.hearts.ICapabilityHearts;
 import targoss.hardcorealchemy.tweaks.capability.hearts.ProviderHearts;
 import targoss.hardcorealchemy.tweaks.capability.hearts.StorageHearts;
+import targoss.hardcorealchemy.tweaks.event.EventServerDifficulty;
 import targoss.hardcorealchemy.tweaks.network.MessageHearts;
 import targoss.hardcorealchemy.util.MiscVanilla;
 import targoss.hardcorealchemy.util.MorphExtension;
@@ -110,18 +113,24 @@ public class ListenerHearts extends HardcoreAlchemyListener {
         }
     }
     
-    public static boolean addHeart(Configs configs, EntityPlayer player, ICapabilityHearts hearts, Heart heart) {
-        boolean added = hearts.get().add(heart);
+    public static boolean addHeart(Configs configs, EntityPlayer player, ICapabilityHearts hearts, Heart heart, boolean sacrificed) {
+        boolean alreadyAdded = hearts.get().contains(heart) || hearts.getSacrificed().contains(heart);
+        if (alreadyAdded) {
+            return false;
+        }
+        boolean added = (sacrificed ? hearts.getSacrificed() : hearts.get()).add(heart);
         if (added) {
             updateHeartModifiers(configs, player, hearts);
-            float healthAfterBonus = (float)(player.getHealth() + heart.getModifier().getAmount());
-            player.setHealth(healthAfterBonus);
+            if (!sacrificed) {
+                float healthAfterBonus = (float)(player.getHealth() + heart.getModifier().getAmount());
+                player.setHealth(healthAfterBonus);
+            }
         }
         return added;
     }
     
     public static boolean removeHeart(Configs configs, EntityPlayer player, ICapabilityHearts hearts, Heart heart) {
-        boolean removed = hearts.get().remove(heart);
+        boolean removed = hearts.get().remove(heart) || hearts.getSacrificed().remove(heart);
         if (removed) {
             updateHeartModifiers(configs, player, hearts);
         }
@@ -150,15 +159,27 @@ public class ListenerHearts extends HardcoreAlchemyListener {
             if (event.isWasDeath()) {
                 // Chance to remove heart
                 if (hearts.get().size() > 0 && random.nextInt(HEART_REMOVE_CHANCE) == 0) {
-                    int heartIndexToRemove = random.nextInt(hearts.get().size());
-                    int i = 0;
+                    int heartIndexToRemove = random.nextInt(hearts.get().size() + hearts.getSacrificed().size());
                     Heart heartToRemove = null;
-                    for (Heart heart : hearts.get()) {
-                        if (i == heartIndexToRemove) {
-                            heartToRemove = heart;
-                            break;
+                    if (heartIndexToRemove < hearts.get().size()) {
+                        int i = 0;
+                        for (Heart heart : hearts.get()) {
+                            if (i == heartIndexToRemove) {
+                                heartToRemove = heart;
+                                break;
+                            }
+                            ++i;
                         }
-                        ++i;
+                    } else {
+                        heartIndexToRemove -= hearts.get().size();
+                        int i = 0;
+                        for (Heart heart : hearts.getSacrificed()) {
+                            if (i == heartIndexToRemove) {
+                                heartToRemove = heart;
+                                break;
+                            }
+                            ++i;
+                        }
                     }
                     if (heartToRemove != null) {
                         removeHeart(coreConfigs, newPlayer, hearts, heartToRemove);
@@ -200,6 +221,20 @@ public class ListenerHearts extends HardcoreAlchemyListener {
         updateHeartModifiers(coreConfigs, event.player, hearts);
     }
     
+    @SubscribeEvent
+    public void onServerDifficultyChange(EventServerDifficulty event) {
+        MinecraftServer server = MiscVanilla.getServer(null);
+        if (server == null) {
+            assert(false);
+            return;
+        }
+        PlayerList playerList = server.getPlayerList();
+        for (EntityPlayerMP player : playerList.getPlayers()) {
+            @Nullable ICapabilityHearts hearts = player.getCapability(HEARTS_CAPABILITY, null);
+            updateHeartModifiers(coreConfigs, player, hearts);
+        }
+    }
+    
     public void syncFullPlayerCapabilities(EntityPlayerMP player) {
         @Nullable ICapabilityHearts hearts = player.getCapability(HEARTS_CAPABILITY, null);
         updateHeartModifiers(coreConfigs, player, hearts);
@@ -217,6 +252,10 @@ public class ListenerHearts extends HardcoreAlchemyListener {
         protected long heartsUpdateCounter;
         protected int playerMaxHealth;
         protected int lastPlayerMaxHealth;
+
+        protected final ResourceLocation vanillaTileset = Gui.ICONS;
+        protected ResourceLocation currentTileset;
+        protected boolean blending;
         
         @SubscribeEvent(priority=EventPriority.LOWEST)
         public void onRenderHeartsPre(RenderGameOverlayEvent.Pre event) {
@@ -225,12 +264,100 @@ public class ListenerHearts extends HardcoreAlchemyListener {
             }
             left_height = GuiIngameForge.left_height;
         }
+        
+        @SubscribeEvent(priority=EventPriority.HIGHEST)
+        public void onRenderHeartsPost(RenderGameOverlayEvent.Post event) {
+            if (event.getType() != ElementType.HEALTH) {
+                return;
+            }
+            blending = false;
+            currentTileset = vanillaTileset;
+            renderHearts(event);
+            renderSacrificedHearts(event);
+            if (currentTileset != vanillaTileset) {
+                Minecraft.getMinecraft().getTextureManager().bindTexture(vanillaTileset);
+                currentTileset = vanillaTileset;
+            }
+            // HACK: Don't disable blend if Tough As Nails is altering the GUI
+            if (blending && !ModState.isTanLoaded) {
+                GlStateManager.disableBlend();
+            }
+        }
+
+       /* This is separate from renderHearts because the behavior of heart
+        * shaking depends on the state of a randomizer.
+        */
+       public void renderSacrificedHearts(RenderGameOverlayEvent.Post event) {
+           EntityPlayer player = MiscVanilla.getTheMinecraftPlayer();
+           if (player.isCreative()) {
+               return;
+           }
+           if (MorphExtension.INSTANCE.isGhost(player)) {
+               return;
+           }
+           
+           ICapabilityHearts hearts = player.getCapability(HEARTS_CAPABILITY, null);
+           if (hearts == null) {
+               return;
+           }
+           if (hearts.getSacrificed().size() == 0) {
+               return;
+           }
+           ArrayList<Heart> sacrificedHeartArray = new ArrayList<>();
+           sacrificedHeartArray.addAll(hearts.getSacrificed());
+
+           Minecraft mc = Minecraft.getMinecraft();
+           
+           ScaledResolution resolution = event.getResolution();
+           int width = resolution.getScaledWidth();
+           int height = resolution.getScaledHeight();
+           int sacrificeOffsetX = -10;
+           int right = width / 2 - 91 + sacrificeOffsetX;
+           int top = height - left_height;
+           
+           final float sacrificeRowSize = 3.0f;
+           final int sacrificeRowSizeInt = (int)sacrificeRowSize;
+
+           if (!blending) {
+               GlStateManager.enableBlend();
+               blending = true;
+           }
+
+           if (currentTileset != vanillaTileset) {
+               Minecraft.getMinecraft().getTextureManager().bindTexture(vanillaTileset);
+               currentTileset = vanillaTileset;
+           }
+           final int HEART_OUTLINE_U = 16;
+           final int HEART_OUTLINE_V = 0;
+           for (int i = sacrificedHeartArray.size() - 1; i >= 0; --i) {
+               int row = MathHelper.floor((float)i / sacrificeRowSize);
+               int x = right - ((i % sacrificeRowSizeInt + 1) * 8);
+               int y = top - (row * 9);
+               Gui.drawModalRectWithCustomSizedTexture(x, y, (float)(256 - HEART_OUTLINE_U - 9), (float)(256 - HEART_OUTLINE_V - 9), 9, 9, -256, -256);
+           }
+           final int ARROW_FRONT_U = 0;
+           final int ARROW_FRONT_V = 72;
+           final int ARROW_BACK_U = 9;
+           final int ARROW_BACK_V = 72;
+           for (int i = sacrificedHeartArray.size() - 1; i >= 0; --i) {
+               Heart sacrificedHeart = sacrificedHeartArray.get(i);
+               if (sacrificedHeart.tileset != currentTileset) {
+                   currentTileset = sacrificedHeart.tileset;
+                   mc.getTextureManager().bindTexture(sacrificedHeart.tileset);
+               }
+               int row = MathHelper.floor((float)i / sacrificeRowSize);
+               int x = right - ((i % sacrificeRowSizeInt + 1) * 8);
+               int y = top - (row * 9);
+               Gui.drawModalRectWithCustomSizedTexture(x, y, (float)(256 - ARROW_BACK_U - 9), (float)(256 - ARROW_BACK_V - 9), 9, 9, -256, -256);
+               Gui.drawModalRectWithCustomSizedTexture(x, y, (float)(256 - sacrificedHeart.tileU - 9), (float)(256 - sacrificedHeart.tileV - 9), 9, 9, -256, -256);
+               Gui.drawModalRectWithCustomSizedTexture(x, y, (float)(256 - ARROW_FRONT_U - 9), (float)(256 - ARROW_FRONT_V - 9), 9, 9, -256, -256);
+           }
+       }
 
         /* Render heart overlay differently for vanilla vs Mantle
          * Currently this only works for up to 10 hearts, which is fine for now
          */
-        @SubscribeEvent(priority=EventPriority.HIGHEST)
-        public void onRenderHeartsPost(RenderGameOverlayEvent.Post event) {
+        public void renderHearts(RenderGameOverlayEvent.Post event) {
             EntityPlayer player = MiscVanilla.getTheMinecraftPlayer();
             if (player.isCreative()) {
                 return;
@@ -309,11 +436,14 @@ public class ListenerHearts extends HardcoreAlchemyListener {
                 regen = updateCounter % 25;
             }
 
-            GlStateManager.enableBlend();
+            if (!blending) {
+                GlStateManager.enableBlend();
+                blending = true;
+            }
             
-            ResourceLocation vanillaTileset = Gui.ICONS;
-            mc.getTextureManager().bindTexture(vanillaTileset);
-            ResourceLocation currentTileset = vanillaTileset;
+            if (currentTileset != vanillaTileset) {
+                mc.getTextureManager().bindTexture(vanillaTileset);
+            }
 
             // Set the seed
             rand.setSeed(updateCounter * 312871);
@@ -325,14 +455,14 @@ public class ListenerHearts extends HardcoreAlchemyListener {
                     int row = MathHelper.ceil((float)(i + 1) / 10.0F) - 1;
                     int x = left + i % 10 * 8;
                     int y = top - row * rowHeight;
-    
+            
                     if (health <= 4) {
                         y += rand.nextInt(2);
                     }
                     if (i == regen) {
                         y -= 2;
                     }
-    
+            
                     gui.drawTexturedModalRect(x, y, 25, TOP, 9, 9);
                 }
             }
@@ -345,7 +475,7 @@ public class ListenerHearts extends HardcoreAlchemyListener {
                 int row = MathHelper.ceil((float)(i + 1) / 10.0F) - 1;
                 int x = left + i % 10 * 8;
                 int y = top - row * rowHeight;
-
+            
                 if (health <= 4) {
                     y += rand.nextInt(2);
                 }
@@ -361,7 +491,7 @@ public class ListenerHearts extends HardcoreAlchemyListener {
                 if (i == regen) {
                     y -= 2;
                 }
-
+            
                 if (highlight || heartsHighlight)
                 {
                     if (i * 2 + 1 < healthLast) {
@@ -379,15 +509,6 @@ public class ListenerHearts extends HardcoreAlchemyListener {
                         gui.drawTexturedModalRect(x, y, heart.tileU, heart.tileV, 5, 9);
                     }
                 }
-            }
-            
-            if (currentTileset != vanillaTileset) {
-                mc.getTextureManager().bindTexture(vanillaTileset);
-            }
-
-            // HACK: Don't disable blend if Tough As Nails is altering the GUI
-            if (!ModState.isTanLoaded) {
-                GlStateManager.disableBlend();
             }
         }
     }
