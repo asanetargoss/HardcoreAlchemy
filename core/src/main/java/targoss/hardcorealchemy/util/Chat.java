@@ -32,6 +32,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.play.server.SPacketChat;
+import net.minecraft.util.ChatAllowedCharacters;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -156,5 +157,16 @@ public class Chat {
         
         return false;
         
+    }
+    
+    public static boolean isAllowedCharacters(String message) {
+        for (int i = 0; i < message.length(); ++i)
+        {
+            if (!ChatAllowedCharacters.isAllowedCharacter(message.charAt(i)))
+            {
+                return false;
+            }
+        }
+        return true;
     }
 }

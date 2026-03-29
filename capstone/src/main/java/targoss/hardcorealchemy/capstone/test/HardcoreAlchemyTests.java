@@ -26,6 +26,7 @@ import targoss.hardcorealchemy.capstone.test.api.ITestSuite;
 import targoss.hardcorealchemy.capstone.test.api.TestSystem;
 import targoss.hardcorealchemy.capstone.test.suite.TestFoodRot;
 import targoss.hardcorealchemy.capstone.test.suite.TestHumanity;
+import targoss.hardcorealchemy.capstone.test.suite.TestIncantationParts;
 import targoss.hardcorealchemy.capstone.test.suite.TestMobLists;
 import targoss.hardcorealchemy.capstone.test.suite.TestTimeFuzz;
 import targoss.hardcorealchemy.capstone.test.suite.TestWorldReference;
@@ -56,6 +57,7 @@ public class HardcoreAlchemyTests extends TestSystem {
         TEST_SUITES.add(TestHumanity.class);
         TEST_SUITES.add(TestMobLists.class);
         TEST_SUITES.add(TestTimeFuzz.class);
+        TEST_SUITES.add(TestIncantationParts.class);
     }
     
     @Override

@@ -19,6 +19,8 @@
 
 package targoss.hardcorealchemy.network;
 
+import com.mojang.authlib.GameProfile;
+
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -50,7 +52,7 @@ public class RequestIncantation extends RequestToServer<HardcoreAlchemyCore> {
     
     public static class ReceiveAction implements Runnable {
         private EntityPlayerMP player;
-        private IncantationParts parts;
+        private IncantationParts parts; // If null, assume invalid characters and disconnect the player
 
         public ReceiveAction(EntityPlayerMP player, IncantationParts parts) {
             this.player = player;
@@ -59,15 +61,29 @@ public class RequestIncantation extends RequestToServer<HardcoreAlchemyCore> {
 
         @Override
         public void run() {
-            ListenerPlayerIncantation.invokeSpells(player, parts);
+            if (parts != null) {
+                ListenerPlayerIncantation.invokeSpells(player, parts);
+            } else {
+                player.connection.disconnect("Illegal characters in chat");
+            }
         }
     }
     
     public static class Handler implements IMessageHandler<RequestIncantation, IMessage> {
         @Override
         public IMessage onMessage(RequestIncantation message, MessageContext ctx) {
-            if (!message.parts.isEmpty() && message.parts.isValid()) {
-                message.getThreadListener(ctx).addScheduledTask(new ReceiveAction(ctx.getServerHandler().playerEntity, message.parts));
+            if (!message.parts.isEmpty()) {
+                if (message.parts.isValid()) {
+                    message.parts.trim();
+                    message.getThreadListener(ctx).addScheduledTask(new ReceiveAction(ctx.getServerHandler().playerEntity, message.parts));
+                } else {
+                    // Disconnect the player
+                    message.getThreadListener(ctx).addScheduledTask(new ReceiveAction(ctx.getServerHandler().playerEntity, null));
+                }
+            } else {
+                EntityPlayerMP player = ctx.getServerHandler().playerEntity;
+                GameProfile profile = player != null ? player.getGameProfile() : null;
+                HardcoreAlchemyCore.LOGGER.error("Ignoring invalid incantation message for player: " + (profile != null ? profile.toString() : "null"));
             }
             return null;
         }

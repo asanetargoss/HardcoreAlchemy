@@ -22,12 +22,17 @@ package targoss.hardcorealchemy.incantation;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.Level;
+
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.incantation.api.ISpell;
 import targoss.hardcorealchemy.incantation.api.Incantation;
+import targoss.hardcorealchemy.util.Chat;
+import targoss.hardcorealchemy.util.StringUtil;
 
 public class IncantationParts implements IMessage {
     public static enum Type {
@@ -48,11 +53,56 @@ public class IncantationParts implements IMessage {
         }
     }
     
-    protected List<Type> types = new ArrayList<>();
+    @Deprecated
+    public List<Type> types = new ArrayList<>();
 
-    protected List<String> fillers = new ArrayList<>();
-    protected List<String> words = new ArrayList<>();
-    protected List<IncantationDefinition> incantations = new ArrayList<>();
+    @Deprecated
+    public List<String> fillers = new ArrayList<>();
+    @Deprecated
+    public List<String> words = new ArrayList<>();
+    @Deprecated
+    public List<IncantationDefinition> incantations = new ArrayList<>();
+    
+    public String toString() {
+        String ret = "{types:[";
+        boolean firstType = true;
+        for (Type type : types) {
+            if (!firstType) {
+                ret += ",";
+            }
+            firstType = false;
+            ret += type.toString();
+        }
+        ret += "],fillers:[";
+        boolean firstFiller = true;
+        for (String filler : fillers) {
+            if (!firstFiller) {
+                ret += ",";
+            }
+            firstFiller = false;
+            ret += "\"" + filler.replaceAll("\"", "\\\"") + "\"";
+        }
+        ret += "],words:[";
+        boolean firstWord = true;
+        for (String word : words) {
+            if (!firstWord) {
+                ret += ",";
+            }
+            firstWord = false;
+            ret += "\"" + word.replaceAll("\"", "\\\"") + "\"";
+        }
+        ret += "],incantations:[";
+        boolean firstIncantation = true;
+        for (IncantationDefinition incantation : incantations) {
+            if (!firstIncantation) {
+                ret += ",";
+            }
+            firstIncantation = false;
+            ret += "\"" + incantation.displayString.replaceAll("\"",  "\\\"") + "\"<" + incantation.incantation.getRegistryName().toString() + ">";
+        }
+        ret += "])";
+        return ret;
+    }
     
     public boolean hasIncantation() {
         return !incantations.isEmpty();
@@ -126,6 +176,49 @@ public class IncantationParts implements IMessage {
     public Iterator iterator() {
         return new Iterator();
     }
+    
+    public class ReverseIterator {
+        protected int i = types.size() - 1;
+        protected int iFiller = fillers.size() - 1;
+        protected int iWord = words.size() - 1;
+        protected int iIncantation = incantations.size() - 1;
+        
+        public boolean hasNext() {
+            return i >= 0;
+        }
+        
+        public Type checkNextType() {
+            return types.get(i);
+        }
+        
+        public String nextFiller() {
+            assert(types.get(i) == Type.FILLER);
+            String filler = fillers.get(iFiller);
+            --i;
+            --iFiller;
+            return filler;
+        }
+        
+        public String nextWord() {
+            assert(types.get(i) == Type.WORD);
+            String word = words.get(iWord);
+            --i;
+            --iWord;
+            return word;
+        }
+        
+        public IncantationDefinition nextIncantation() {
+            assert(types.get(i) == Type.INCANTATION);
+            IncantationDefinition incantation = incantations.get(iIncantation);
+            --i;
+            --iIncantation;
+            return incantation;
+        }
+    }
+    
+    public ReverseIterator reverseIterator() {
+        return new ReverseIterator();
+    }
 
     @Override
     public void toBytes(ByteBuf buf) {
@@ -151,27 +244,38 @@ public class IncantationParts implements IMessage {
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        int numTypes = buf.readInt();
-        for (int i = 0; i < numTypes; ++i) {
-            byte typeByte = buf.readByte();
-            Type type = Type.values()[typeByte];
-            types.add(type);
-        }
-        int numFillers = buf.readInt();
-        for (int i = 0; i < numFillers; ++i) {
-            fillers.add(ByteBufUtils.readUTF8String(buf));
-        }
-        int numWords = buf.readInt();
-        for (int i = 0; i < numWords; ++i) {
-            words.add(ByteBufUtils.readUTF8String(buf));
-        }
-        int numIncantations = buf.readInt();
-        for (int i = 0; i < numIncantations; ++i) {
-            String displayString = ByteBufUtils.readUTF8String(buf);
-            String incantationName = ByteBufUtils.readUTF8String(buf);
-            Incantation incantation = Incantations.INCANTATION_REGISTRY.getValue(new ResourceLocation(incantationName));
-            ISpell spell = incantation.spellFromBytes(buf);
-            incantations.add(new IncantationDefinition(displayString, incantation, spell));
+        try {
+            int numTypes = buf.readInt();
+            for (int i = 0; i < numTypes; ++i) {
+                byte typeByte = buf.readByte();
+                Type type = Type.values()[typeByte];
+                types.add(type);
+            }
+            int numFillers = buf.readInt();
+            for (int i = 0; i < numFillers; ++i) {
+                fillers.add(ByteBufUtils.readUTF8String(buf));
+            }
+            int numWords = buf.readInt();
+            for (int i = 0; i < numWords; ++i) {
+                words.add(ByteBufUtils.readUTF8String(buf));
+            }
+            int numIncantations = buf.readInt();
+            for (int i = 0; i < numIncantations; ++i) {
+                String displayString = ByteBufUtils.readUTF8String(buf);
+                String incantationName = ByteBufUtils.readUTF8String(buf);
+                Incantation incantation = Incantations.INCANTATION_REGISTRY.getValue(new ResourceLocation(incantationName));
+                if (incantation == null) {
+                    throw new NullPointerException("Invalid incantation resource location: \"" + incantationName + "\"");
+                }
+                ISpell spell = incantation.spellFromBytes(buf);
+                if (spell == null) {
+                    throw new NullPointerException("Invalid spell generated for incantation: \"" + incantationName + "\"");
+                }
+                incantations.add(new IncantationDefinition(displayString, incantation, spell));
+            }
+        } catch (Exception e) {
+            HardcoreAlchemyCore.LOGGER.catching(Level.DEBUG, e);
+            clear();
         }
     }
     
@@ -195,29 +299,135 @@ public class IncantationParts implements IMessage {
         
         if (numFillers != fillers.size() ||
                 numWords != words.size() ||
-                numIncantations != incantations.size()) {
+                numIncantations != incantations.size() ||
+                numIncantations == 0) {
             return false;
         }
         
         for (String filler : fillers) {
-            if (filler == null) {
+            if (filler == null || !Chat.isAllowedCharacters(filler) || filler.isEmpty()) {
                 return false;
             }
         }
         
         for (String word : words) {
-            if (word == null) {
+            if (word == null || !Chat.isAllowedCharacters(word) || word.isEmpty()) {
                 return false;
             }
         }
         
         for (IncantationDefinition incantation : incantations) {
             if (incantation.displayString == null ||
-                    incantation.incantation == null) {
+                    incantation.incantation == null ||
+                    !Chat.isAllowedCharacters(incantation.displayString) ||
+                    incantation.displayString.isEmpty()) {
                 return false;
             }
         }
         
         return true;
+    }
+    
+    public void trim() {
+        int leadingFillers = 0;
+        int leadingWords = 0;
+        int leadingIncantations = 0;
+        int trailingFillers = 0;
+        int trailingWords = 0;
+        int trailingIncantations = 0;
+        {
+            Iterator leadingIt = iterator();
+            leading:
+            while (leadingIt.hasNext()) {
+                Type type = leadingIt.checkNextType();
+                switch (type) {
+                case FILLER:
+                    String filler = leadingIt.nextFiller();
+                    filler = StringUtil.trimBefore(filler);
+                    fillers.set(leadingIt.iFiller - 1, filler);
+                    if (filler.length() == 0) {
+                        ++leadingFillers;
+                    } else {
+                        break leading;
+                    }
+                    break;
+                case WORD:
+                    String word = leadingIt.nextWord();
+                    word = StringUtil.trimBefore(word);
+                    words.set(leadingIt.iWord - 1, word);
+                    if (word.length() == 0) {
+                        ++leadingWords;
+                    } else {
+                        break leading;
+                    }
+                    break;
+                case INCANTATION:
+                    IncantationDefinition incantation = leadingIt.nextIncantation();
+                    incantation.displayString = StringUtil.trimBefore(incantation.displayString);
+                    if (incantation.displayString.length() == 0) {
+                        ++leadingIncantations;
+                    } else {
+                        break leading;
+                    }
+                    break;
+                default:
+                    break leading;
+                }
+            }
+        }
+        
+        {
+            ReverseIterator trailingIt = reverseIterator();
+            trailing:
+            while (trailingIt.hasNext()) {
+                Type type = trailingIt.checkNextType();
+                switch (type) {
+                case FILLER:
+                    String filler = trailingIt.nextFiller();
+                    filler = StringUtil.trimAfter(filler);
+                    fillers.set(trailingIt.iFiller + 1, filler);
+                    if (filler.length() == 0) {
+                        ++trailingFillers;
+                    } else {
+                        break trailing;
+                    }
+                    break;
+                case WORD:
+                    String word = trailingIt.nextWord();
+                    word = StringUtil.trimAfter(word);
+                    words.set(trailingIt.iWord + 1, word);
+                    if (word.length() == 0) {
+                        ++trailingWords;
+                    } else {
+                        break trailing;
+                    }
+                    break;
+                case INCANTATION:
+                    IncantationDefinition incantation = trailingIt.nextIncantation();
+                    incantation.displayString = StringUtil.trimAfter(incantation.displayString);
+                    if (incantation.displayString.length() == 0) {
+                        ++trailingIncantations;
+                    } else {
+                        break trailing;
+                    }
+                    break;
+                default:
+                    break trailing;
+                }
+            }
+        }
+        
+        int leading = leadingFillers + leadingWords + leadingIncantations;
+        if ((leadingFillers + leadingWords) == types.size()) {
+            assert(false); // Should have called isValid() first
+            clear();
+        } else {
+            int trailing = trailingFillers + trailingWords + trailingIncantations;
+            types = types.subList(leading, types.size() - trailing);
+            fillers = fillers.subList(leadingFillers, fillers.size() - trailingFillers);
+            words = words.subList(leadingWords, words.size() - trailingWords);
+            incantations = incantations.subList(leadingIncantations, incantations.size() - trailingIncantations);
+        }
+        
     }
 }
