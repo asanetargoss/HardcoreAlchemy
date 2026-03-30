@@ -25,6 +25,10 @@ language.code=en_US
 
 hardcorealchemy.research.knowledge_fact.dimensional_flux_crystal_accident.acquire=The crystals in your pocket have transformed into something new.
 
+# Recipes
+
+hardcorealchemy.recipe.category.arrow=Arrow Crafting
+
 # Items, Potions
 
 item.hardcorealchemy:dimensional_flux_crystal.name=Dimensional Flux Crystal
@@ -54,7 +58,12 @@ item.hardcorealchemy:heart_void_sacrificed.name=Sacrificed Heart of Void
 hardcorealchemy.heart.already_added=You already have this heart.
 hardcorealchemy.heart.generic_hint.1=Can only acquire once per life.
 hardcorealchemy.heart.generic_hint.2=Must not already have the heart.
+hardcorealchemy.heart.sacrifice.generic=Instead of health, grants perk:
 hardcorealchemy.heart.flame.hint=Trial by fire. Must take damage.
+hardcorealchemy.heart.flame.sacrifice.perk="FLINT AND STEEL" incantation.
 hardcorealchemy.heart.hunter.hint=Kill 5 hostile creatures in 2 minutes. No repeats.
+hardcorealchemy.heart.hunter.sacrifice.perk=Sneak shows nearby hostile creatures.
 hardcorealchemy.heart.tears.hint=Kill a Ghast.
+hardcorealchemy.heart.tears.sacrifice.perk=Immune to fall damage.
 hardcorealchemy.heart.void.hint=Water and teleportation don't mix.
+hardcorealchemy.heart.void.sacrifice.perk=Safely look endermen in the eye.

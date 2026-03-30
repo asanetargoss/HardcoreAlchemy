@@ -26,17 +26,31 @@ import mezz.jei.api.BlankModPlugin;
 import mezz.jei.api.IModRegistry;
 import mezz.jei.api.JEIPlugin;
 import targoss.hardcorealchemy.incantation.Incantations;
+import targoss.hardcorealchemy.item.RecipeArrow;
+import targoss.hardcorealchemy.jei.arrow.RecipeHandlerArrow;
+import targoss.hardcorealchemy.jei.incantation.RecipeHandlerIncantation;
 
 @JEIPlugin
 public class HardcoreAlchemyJEI extends BlankModPlugin {
     @Override
     public void register(IModRegistry registry) {
-        RecipeHandlerIncantation handlerIncantation = new RecipeHandlerIncantation();
-        registry.addRecipeHandlers(handlerIncantation);
-        registry.addRecipeCategories(handlerIncantation.category);
-        
-        List<Object> recipes = new ArrayList<>();
-        recipes.add(Incantations.RECIPE_INCANTATION_CREATE_SLATE);
-        registry.addRecipes(recipes);
+        {
+            RecipeHandlerIncantation handlerIncantation = new RecipeHandlerIncantation();
+            registry.addRecipeHandlers(handlerIncantation);
+            registry.addRecipeCategories(handlerIncantation.category);
+            
+            List<Object> recipes = new ArrayList<>();
+            recipes.add(Incantations.RECIPE_INCANTATION_CREATE_SLATE);
+            registry.addRecipes(recipes);
+        }
+        {
+            RecipeHandlerArrow handlerArrow = new RecipeHandlerArrow();
+            registry.addRecipeHandlers(handlerArrow);
+            registry.addRecipeCategories(handlerArrow.category);
+            
+            List<Object> recipeArrows = new ArrayList<>();
+            recipeArrows.addAll(RecipeArrow.RECIPES.values());
+            registry.addRecipes(recipeArrows);
+        }
     }
 }

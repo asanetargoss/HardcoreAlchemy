@@ -37,6 +37,7 @@ import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 import targoss.hardcorealchemy.coremod.transform.TClassInheritanceMultiMap;
 import targoss.hardcorealchemy.coremod.transform.TCraftingManager;
 import targoss.hardcorealchemy.coremod.transform.TDataVillage;
+import targoss.hardcorealchemy.coremod.transform.TEntityArrow;
 import targoss.hardcorealchemy.coremod.transform.TEntityLivingBase;
 import targoss.hardcorealchemy.coremod.transform.TEntityPlayerSP;
 import targoss.hardcorealchemy.coremod.transform.TGuiContainer;
@@ -82,7 +83,8 @@ public class HardcoreAlchemyCoreCoremod implements IFMLLoadingPlugin {
 				TRenderItem.class.getName(),
 				TEntityPlayerSP.class.getName(),
 				TMinecraftServer.class.getName(),
-				TWorld.class.getName()
+				TWorld.class.getName(),
+				TEntityArrow.class.getName()
 		};
 	}
 	

@@ -30,7 +30,7 @@ import net.minecraftforge.fml.common.registry.RegistryBuilder;
 import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.coremod.HardcoreAlchemyPreInit;
 import targoss.hardcorealchemy.incantation.api.Incantation;
-import targoss.hardcorealchemy.jei.RecipeIncantation;
+import targoss.hardcorealchemy.jei.incantation.RecipeIncantation;
 import targoss.hardcorealchemy.registrar.Registrar;
 import targoss.hardcorealchemy.registrar.RegistrarForge;
 

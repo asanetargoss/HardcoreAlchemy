@@ -58,6 +58,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.heart.Heart;
 import targoss.hardcorealchemy.item.HcAPotion;
+import targoss.hardcorealchemy.item.RecipeArrow;
 import targoss.hardcorealchemy.registrar.RegistrarHeart;
 import targoss.hardcorealchemy.registrar.RegistrarPotionType;
 import targoss.hardcorealchemy.tweaks.capability.dimensionhistory.ICapabilityDimensionHistory;
@@ -88,6 +89,8 @@ public class Items {
                 entry.ITEM = new ItemHeart(entry);
                 entry.ITEM_SHARD = new ItemHeartShard(entry);
                 entry.ITEM_SACRIFICED = new ItemHeartSacrificed(entry);
+                // Self-registering
+                entry.RECIPE_SACRIFICED = new RecipeArrow(entry.ITEM, entry.ITEM_SACRIFICED);
                 ITEMS.add("heart_" + entry.name, entry.ITEM);
                 ITEMS.add("heart_" + entry.name + "_shard", entry.ITEM_SHARD);
                 ITEMS.add("heart_" + entry.name + "_sacrificed", entry.ITEM_SACRIFICED);

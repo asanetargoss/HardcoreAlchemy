@@ -40,6 +40,7 @@ import targoss.hardcorealchemy.gui.Guis;
 import targoss.hardcorealchemy.incantation.Incantations;
 import targoss.hardcorealchemy.item.Items;
 import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
+import targoss.hardcorealchemy.listener.ListenerArrow;
 import targoss.hardcorealchemy.listener.ListenerCapabilities;
 import targoss.hardcorealchemy.listener.ListenerConfigs;
 import targoss.hardcorealchemy.listener.ListenerEntityCapabilities;
@@ -76,6 +77,7 @@ public class CommonProxy {
         addListener(new ListenerPlayerIncantation());
         addListener(new ListenerPlayerResearch());
         addListener(new ListenerConfigs());
+        addListener(new ListenerArrow());
         if (HardcoreAlchemyCoreCoremod.enableDebugFeatures()) { addListener(new ListenerLootTester()); }
     }
     

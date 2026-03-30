@@ -43,6 +43,10 @@ public abstract class Registrar<T> {
         return entry;
     }
     
+    public Iterable<T> getEntries() {
+        return entries;
+    }
+    
     public int getPhase() {
         return lastPhase;
     }

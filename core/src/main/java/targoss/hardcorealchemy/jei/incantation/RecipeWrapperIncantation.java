@@ -17,7 +17,7 @@
  * with Hardcore Alchemy Core. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.jei;
+package targoss.hardcorealchemy.jei.incantation;
 
 import java.util.ArrayList;
 import java.util.List;

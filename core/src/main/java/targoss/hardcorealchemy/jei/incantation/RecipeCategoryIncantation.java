@@ -17,7 +17,7 @@
  * with Hardcore Alchemy Core. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package targoss.hardcorealchemy.jei;
+package targoss.hardcorealchemy.jei.incantation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +34,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import targoss.hardcorealchemy.ClientProxy;
 import targoss.hardcorealchemy.HardcoreAlchemyCore;
+import targoss.hardcorealchemy.jei.ScaledDrawableResource;
 
 public class RecipeCategoryIncantation implements IRecipeCategory<RecipeWrapperIncantation> {
     protected static final String UID = new ResourceLocation(HardcoreAlchemyCore.MOD_ID, "incantation").toString();

@@ -31,6 +31,9 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityList;
@@ -39,8 +42,10 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAITasks;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
@@ -106,6 +111,31 @@ public class EntityUtil {
         }
         return new TextComponentTranslation("entity." + entityString + ".name");
     }
+    
+    public static final Predicate<Entity> SELECTOR_IS_ITEM = new Predicate<Entity>() {
+        @Override
+        public boolean apply(Entity entity) {
+            return (entity instanceof EntityItem) && entity.isEntityAlive();
+        }
+    };
+    
+    @SuppressWarnings("unchecked")
+    public static final Predicate<Entity> SELECTOR_IS_ARROW_TARGET = Predicates.and(
+        EntitySelectors.NOT_SPECTATING,
+        EntitySelectors.IS_ALIVE,
+        new Predicate<Entity>() {
+            public boolean apply(@Nullable Entity entity)
+            {
+                return entity.canBeCollidedWith();
+            }
+        },
+        new Predicate<Entity>() {
+            @Override
+            public boolean apply(Entity entity) {
+                return (entity instanceof EntityItem) && entity.isEntityAlive();
+            }
+        }
+    );
     
     public static @Nullable <T extends Entity> T createEntity(Class<T> entityClass) {
         World entityWorld = MiscVanilla.getWorld();
@@ -253,7 +283,7 @@ public class EntityUtil {
         for (EntityAITasks.EntityAITaskEntry entry : aiTargetTasks) {
             if (entry.action instanceof EntityAINearestAttackableTarget) {
                 @SuppressWarnings("rawtypes")
-                Class<?> targetClass = ((EntityAINearestAttackableTarget)entry.action).targetClass;
+                Class<?> targetClass = ((EntityAINearestAttackableTarget<?>)entry.action).targetClass;
                 if (EntityPlayer.class.isAssignableFrom(targetClass)) {
                     return true;
                 }

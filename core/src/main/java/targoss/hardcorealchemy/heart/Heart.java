@@ -28,12 +28,14 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.IForgeRegistryEntry;
 import targoss.hardcorealchemy.config.Configs;
+import targoss.hardcorealchemy.item.RecipeArrow;
 
 public class Heart extends IForgeRegistryEntry.Impl<Heart> {
     public String name;
     public Item ITEM;
     public Item ITEM_SHARD;
     public Item ITEM_SACRIFICED;
+    public RecipeArrow RECIPE_SACRIFICED;
     public ResourceLocation tileset;
     public int tileU;
     public int tileV;
