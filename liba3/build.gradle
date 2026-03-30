@@ -22,7 +22,7 @@ license {
         header = project.file('../HEADER_agpl3.txt')
         ext {
             name = 'Hardcore Alchemy LibA3'
-            year = 2025
+            year = 2026
         }
     }
 }
