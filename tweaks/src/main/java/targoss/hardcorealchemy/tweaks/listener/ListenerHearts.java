@@ -158,8 +158,9 @@ public class ListenerHearts extends HardcoreAlchemyListener {
             CapUtil.copyOldToNew(HEARTS_CAPABILITY, oldPlayer, newPlayer);
             if (event.isWasDeath()) {
                 // Chance to remove heart
-                if (hearts.get().size() > 0 && random.nextInt(HEART_REMOVE_CHANCE) == 0) {
-                    int heartIndexToRemove = random.nextInt(hearts.get().size() + hearts.getSacrificed().size());
+                int totalHearts = hearts.get().size() + hearts.getSacrificed().size();
+                if (totalHearts > 0 && random.nextInt(HEART_REMOVE_CHANCE) == 0) {
+                    int heartIndexToRemove = random.nextInt(totalHearts);
                     Heart heartToRemove = null;
                     if (heartIndexToRemove < hearts.get().size()) {
                         int i = 0;
