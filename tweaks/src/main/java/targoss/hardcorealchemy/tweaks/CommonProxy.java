@@ -25,6 +25,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.network.NetMessenger;
+import targoss.hardcorealchemy.tweaks.incantation.Incantations;
 import targoss.hardcorealchemy.tweaks.item.Items;
 import targoss.hardcorealchemy.tweaks.listener.ListenerBedBreakHarvest;
 import targoss.hardcorealchemy.tweaks.listener.ListenerCraftTimefrozen;
@@ -66,6 +67,8 @@ public class CommonProxy {
         HEARTS.register();
         // Initialize via classload
         new Studies();
+        // Initialize via classload
+        new Incantations();
         
         registerNetworking();
     }

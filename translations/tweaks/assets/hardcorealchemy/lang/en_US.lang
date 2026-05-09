@@ -67,3 +67,8 @@ hardcorealchemy.heart.tears.hint=Kill a Ghast.
 hardcorealchemy.heart.tears.sacrifice.perk=Immune to fall damage.
 hardcorealchemy.heart.void.hint=Water and teleportation don't mix.
 hardcorealchemy.heart.void.sacrifice.perk=Safely look endermen in the eye.
+
+# Incantations
+
+hardcorealchemy.incantation.flint_and_steel.name=Flint and Steel
+hardcorealchemy.incantation.flint_and_steel.command=FLINT AND STEEL
