@@ -123,6 +123,29 @@ public class IncantationParts implements IMessage {
         incantations.add(incantation);
     }
     
+    public void add(IncantationParts other) {
+        assert(this != other);
+        Iterator it = other.iterator();
+        while (it.hasNext()) {
+            Type type = it.checkNextType();
+            switch (type) {
+            case FILLER:
+                addFiller(it.nextFiller());
+                break;
+            case INCANTATION:
+                addIncantation(it.nextIncantation());
+                break;
+            case WORD:
+                addWord(it.nextWord());
+                break;
+            default:
+                assert(false);
+                return;
+            
+            }
+        }
+    }
+    
     public boolean isEmpty() {
         return types.isEmpty();
     }

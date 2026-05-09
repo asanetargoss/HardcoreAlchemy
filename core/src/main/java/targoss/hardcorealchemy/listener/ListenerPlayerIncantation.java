@@ -19,9 +19,6 @@
 
 package targoss.hardcorealchemy.listener;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.lwjgl.input.Keyboard;
 
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -36,134 +33,22 @@ import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.capability.misc.ICapabilityMisc;
 import targoss.hardcorealchemy.capability.misc.ProviderMisc;
 import targoss.hardcorealchemy.event.EventSendChatMessage;
-import targoss.hardcorealchemy.incantation.IncantationLookup;
 import targoss.hardcorealchemy.incantation.IncantationParser;
 import targoss.hardcorealchemy.incantation.IncantationParts;
-import targoss.hardcorealchemy.incantation.IncantationParts.IncantationDefinition;
 import targoss.hardcorealchemy.incantation.api.ISpell;
-import targoss.hardcorealchemy.incantation.api.Incantation;
 import targoss.hardcorealchemy.network.RequestIncantation;
 import targoss.hardcorealchemy.util.Chat;
 import targoss.hardcorealchemy.util.Chat.Type;
 
 public class ListenerPlayerIncantation extends HardcoreAlchemyListener {
-    protected static final Set<String> fillerCharacters = new HashSet<>();
-    static {
-        fillerCharacters.add(" ");
-        fillerCharacters.add("\t");
-        fillerCharacters.add("\n");
-        fillerCharacters.add(",");
-        fillerCharacters.add(";");
-        fillerCharacters.add(".");
-        fillerCharacters.add("\"");
-        fillerCharacters.add("!");
-        fillerCharacters.add("?");
-    }
-    
-    /**
-     * Step 1: Break up the player chat message into filler (whitespace, etc)
-     * and words (continuous letters and numbers).
-     * Words will later be candidates to become incantations.
-     */
-    protected static IncantationParts preParseIncantations(String message) {
-        IncantationParts parts = new IncantationParts();
-        
-        String piece = "";
-        IncantationParts.Type type = IncantationParts.Type.FILLER;
-        for (int i = 0; i < message.length(); ++i) {
-            char c = message.charAt(i);
-            IncantationParts.Type nextType;
-            if (fillerCharacters.contains("" + c)) {
-                nextType = IncantationParts.Type.FILLER;
-            } else {
-                nextType = IncantationParts.Type.WORD;
-            }
-            
-            if (nextType != type && !piece.isEmpty()) {
-                switch (type) {
-                case FILLER:
-                    parts.addFiller(piece);
-                    break;
-                case WORD:
-                    parts.addWord(piece);
-                    break;
-                case INCANTATION:
-                    break;
-                }
-                piece = "";
-            }
-            
-            type = nextType;
-            piece += c;
-        }
-        
-        if (!piece.isEmpty()) {
-            switch (type) {
-            case FILLER:
-                parts.addFiller(piece);
-                break;
-            case WORD:
-                parts.addWord(piece);
-                break;
-            case INCANTATION:
-                break;
-            }
-            piece = "";
-        }
-        
-        return parts;
-    }
-    
-    protected static final IncantationLookup INCANTATION_LOOKUP = new IncantationLookup();
-    
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public void onKeyInput(KeyInputEvent event) {
         int pressedKey = Keyboard.getEventKey() == 0 ? Keyboard.getEventCharacter() + 256 : Keyboard.getEventKey();
         boolean reloadedResources = Keyboard.isKeyDown(61) && pressedKey == 20;
         if (reloadedResources) {
-            INCANTATION_LOOKUP.clear();
+            IncantationParser.INCANTATION_LOOKUP.invalidate();
         }
-    }
-    
-    /**
-     * This is where words get converted into incantations.
-     * Later on, some of this functionality will move into IncantationParser,
-     * so that incantations can do their own parsing.
-     */
-    protected static IncantationParts parseIncantations(IncantationParts preParts) {
-        IncantationParts parts = new IncantationParts();
-        IncantationParser parser = new IncantationParser();
-        
-        IncantationParts.Iterator iterator = preParts.iterator();
-        while (iterator.hasNext()) {
-            IncantationParts.Type preType = iterator.checkNextType();
-            switch (preType) {
-            case FILLER:
-                String filler = iterator.nextFiller();
-                parts.addFiller(filler);
-                break;
-            case WORD:
-                String word = iterator.nextWord();
-                Incantation incantation = INCANTATION_LOOKUP.get(word);
-                if (incantation == null) {
-                    parts.addWord(word);
-                } else {
-                    ISpell spell = incantation.getSpell(parser);
-                    if (spell != null) {
-                        parts.addIncantation(new IncantationDefinition(word, incantation, spell));
-                    } else {
-                        parts.addWord(word);
-                    }
-                }
-                break;
-            case INCANTATION:
-                // Shouldn't happen
-                break;
-            }
-        }
-        
-        return parts;
     }
     
     @SideOnly(Side.CLIENT)
@@ -172,8 +57,7 @@ public class ListenerPlayerIncantation extends HardcoreAlchemyListener {
         if (event.message == null || event.message.startsWith("/")) {
             return;
         }
-        IncantationParts preParts = preParseIncantations(event.message);
-        IncantationParts parts = parseIncantations(preParts);
+        IncantationParts parts = IncantationParser.parseIncantations(event.message);
 
         if (!parts.hasIncantation()) {
             return;

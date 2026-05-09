@@ -19,8 +19,8 @@
 
 package targoss.hardcorealchemy.incantation;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.Nullable;
 
@@ -30,30 +30,160 @@ import targoss.hardcorealchemy.util.MiscVanilla;
 
 public class IncantationLookup {
     protected String currentLocale = "";
-    protected Map<String, Incantation> map = new HashMap<String, Incantation>();
+    protected Node root = new Node();
 
     /**
      * This should be called if resources are reloaded, to force initialization
      */
-    public void clear() {
+    public void invalidate() {
         currentLocale = "";
     }
     
     protected void init() {
-        map.clear();
+        root = new Node();
         for (Incantation incantation : Incantations.INCANTATION_REGISTRY.getValues()) {
-            ITextComponent command = incantation.getCommand();
-            String word = command.getUnformattedText();
-            map.put(word, incantation);
+            root.add(incantation, null);
         }
     }
     
-    public @Nullable Incantation get(String word) {
+    protected void maybeInit() {
         String expectedLocale = MiscVanilla.getCurrentLocale();
         if (expectedLocale != currentLocale) {
             init();
             currentLocale = expectedLocale;
         }
-        return map.get(word);
+    }
+    
+    public @Nullable Node.Result find(String message, int start) {
+        maybeInit();
+        return root.find(message, start);
+    }
+    
+    /**
+     * Incantation matching tree for searching for an incantation of arbitrary complexity and size in a string.
+     * Currently, pattern sizes resemble preParseIncantations, but this may change in the future.
+     * Currently, patterns are only strings of filler and non-filler, but this may change in the future.
+     */
+    public static class Node {
+        protected String pattern; // null for root or filler
+        protected List<Node> children; // null for leaf
+        protected Incantation incantation; // non-null for leaf (unless empty)
+        
+        public void add(Incantation incantation, @Nullable IncantationParts.Iterator it) {
+            if (it == null) {
+                ITextComponent command = incantation.getCommand();
+                String text = command.getUnformattedText();
+                IncantationParts parts = IncantationParser.preParseIncantation(text);
+                it = parts.iterator();
+            }
+            assert(it.hasNext());
+            IncantationParts.Type type = it.checkNextType();
+            assert(type != IncantationParts.Type.INCANTATION);
+            String pattern = null;
+            switch (type) {
+            case FILLER:
+                it.nextFiller();
+                break;
+            case WORD:
+                pattern = it.nextWord();
+                break;
+            case INCANTATION:
+            default:
+                return;
+            }
+            Node child = null;
+            if (children == null) {
+                children = new ArrayList<>();
+            }
+            for (Node existingChild : children) {
+                if (existingChild.pattern == null ? (pattern == null) : existingChild.pattern.equals(pattern)) {
+                    child = existingChild;
+                    break;
+                }
+            }
+            if (child == null) {
+                child = new Node();
+                child.pattern = pattern;
+                children.add(child);
+            }
+            if (!it.hasNext()) {
+                assert(child.incantation == null);
+                child.incantation = incantation;
+                return;
+            }
+            child.add(incantation, it);
+        }
+        
+        public static class Result {
+            public int end;
+            public Incantation incantation;
+            public Result(int end, Incantation incantation) {
+                this.end = end;
+                this.incantation = incantation;
+            }
+        }
+        
+        public @Nullable Result find(String s, int start) {
+            if (children == null) {
+                // Empty root
+                return null;
+            }
+            int i = start;
+            char c = s.charAt(i);
+            for (int j = 0; j < IncantationParser.fillerCharacters.length; ++j) {
+                if (IncantationParser.fillerCharacters[j] == c) {
+                    return null;
+                }
+            }
+            return findAssumeNoLeadingFiller(s, start);
+        }
+        
+        protected @Nullable Result findAssumeNoLeadingFiller(String s, int start) {
+            int i = start;
+            charIter:
+            for (; i < s.length(); ++i) {
+                char c = s.charAt(i);
+                if (pattern == null) {
+                    // Optional filler
+                    for (int j = 0; j < IncantationParser.fillerCharacters.length; ++j) {
+                        if (IncantationParser.fillerCharacters[j] == c) {
+                            continue charIter;
+                        }
+                    }
+                } else {
+                    // Required matching character
+                    int j = i - start;
+                    if (j < pattern.length()) {
+                        char p = pattern.charAt(j);
+                        if (p != c) {
+                            return null;
+                        } else {
+                            continue charIter;
+                        }
+                    }
+                }
+                break;
+            }
+            // Filler or word match complete. Continue match to child if available.
+            if (incantation != null) {
+                if (i <= s.length()) {
+                    return new Result(i, incantation);
+                } else {
+                    assert(false);
+                    return null;
+                }
+            }
+            if (children == null) {
+                assert(false);
+                return null;
+            }
+            for (Node child : children) {
+                Result res = child.findAssumeNoLeadingFiller(s, i);
+                if (res != null) {
+                    return res;
+                }
+            }
+            return null;
+        }
     }
 }
