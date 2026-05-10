@@ -20,6 +20,7 @@
 package targoss.hardcorealchemy.util;
 
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -40,8 +41,10 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.EnumCreatureType;
+import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAITasks;
+import net.minecraft.entity.ai.EntityAITasks.EntityAITaskEntry;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.player.EntityPlayer;
@@ -159,6 +162,20 @@ public class EntityUtil {
         return entity;
     }
     
+    public static class AIReplacer {
+        public Class<? extends EntityAIBase> targetClazz;
+        public Class<? extends EntityAIBase> replaceClazz;
+        public Class<? extends EntityAIBase> delegateClazz;
+        public AIReplacer(Class<? extends EntityAIBase> targetClazz, Class<? extends EntityAIBase> replaceClazz, Class<? extends EntityAIBase> delegateClazz) {
+            this.targetClazz = targetClazz;
+            this.replaceClazz = replaceClazz;
+            this.delegateClazz = delegateClazz;
+        }
+        public AIReplacer(Class<? extends EntityAIBase> targetClazz, Class<? extends EntityAIBase> replaceClazz) {
+            this(targetClazz, replaceClazz, targetClazz);
+        }
+    }
+
     private static final ObfuscatedName INIT_ENTITY_AI = new ObfuscatedName("func_184651_r" /*initEntityAI*/);
     
     private static void forceInitEntityAI(EntityLiving entity) {
@@ -193,6 +210,41 @@ public class EntityUtil {
         }
     }
     
+    /**
+     * Replace an instance of the AI EntityAIBase. Assume the
+     * replacement AI's constructor takes the old AI instance
+     * upcasted to delegateClazz as a first parameter, and the
+     * AI entity as a second parameter.
+     * If it doesn't, you will get errors, because reflection.
+     */
+    public static void wrapReplaceAttackAI(EntityLiving entityLiving, AIReplacer aiReplacer) {
+        try {
+            Constructor<? extends EntityAIBase> replaceConstructor = aiReplacer.replaceClazz.getConstructor(aiReplacer.delegateClazz, EntityLiving.class);
+            
+            // Find instances of the AI to replace
+            EntityAITasks targetTaskList = entityLiving.targetTasks;
+            List<EntityAIBase> aisToReplace = new ArrayList<EntityAIBase>();
+            List<Integer> prioritiesToReplace = new ArrayList<Integer>();
+            for (EntityAITasks.EntityAITaskEntry targetTask : targetTaskList.taskEntries) {
+                if (aiReplacer.targetClazz.getName().equals(targetTask.action.getClass().getName())) {
+                    aisToReplace.add(targetTask.action);
+                    prioritiesToReplace.add(targetTask.priority);
+                }
+            }
+            
+            // Replace the AIs with new AIs that take morphs into account, while maintaining the same AI priority
+            for (int i = 0; i < aisToReplace.size(); i++) {
+                targetTaskList.removeTask(aisToReplace.get(i));
+                targetTaskList.addTask(prioritiesToReplace.get(i),
+                            replaceConstructor.newInstance(aisToReplace.get(i), entityLiving)
+                        );
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Gets the list of entities permitted to spawn at the given location, along with additional spawn information.
      * May be the original or a copy depending on the situation.

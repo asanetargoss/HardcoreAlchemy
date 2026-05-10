@@ -19,10 +19,7 @@
 
 package targoss.hardcorealchemy.creatures.listener;
 
-import java.lang.reflect.Constructor;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import net.minecraft.entity.Entity;
@@ -55,6 +52,7 @@ import targoss.hardcorealchemy.creatures.entity.ai.AITargetChosenPlayer;
 import targoss.hardcorealchemy.creatures.entity.ai.AITargetUnmorphedPlayer;
 import targoss.hardcorealchemy.creatures.entity.ai.AIUntamedAttackMobOrMorph;
 import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
+import targoss.hardcorealchemy.util.EntityUtil;
 import targoss.hardcorealchemy.util.MobLists;
 
 public class ListenerMobAI extends HardcoreAlchemyListener {
@@ -64,30 +62,16 @@ public class ListenerMobAI extends HardcoreAlchemyListener {
     
     public static Set<String> mobAIIgnoreMorphList = new HashSet<>();
     
-    public static class AIReplacer {
-        Class<? extends EntityAIBase> targetClazz;
-        Class<? extends EntityAIBase> replaceClazz;
-        Class<? extends EntityAIBase> delegateClazz;
-        public AIReplacer(Class<? extends EntityAIBase> targetClazz, Class<? extends EntityAIBase> replaceClazz, Class<? extends EntityAIBase> delegateClazz) {
-            this.targetClazz = targetClazz;
-            this.replaceClazz = replaceClazz;
-            this.delegateClazz = delegateClazz;
-        }
-        public AIReplacer(Class<? extends EntityAIBase> targetClazz, Class<? extends EntityAIBase> replaceClazz) {
-            this(targetClazz, replaceClazz, targetClazz);
-        }
-    }
-    
-    public static Set<AIReplacer> aiReplacers = new HashSet<>();
+    public static Set<EntityUtil.AIReplacer> morphAwareAIReplacers = new HashSet<>();
     
     static {
         mobAIIgnoreMorphList.addAll(MobLists.getBosses());
         mobAIIgnoreMorphList.addAll(MobLists.getNonMobs());
-        aiReplacers.add(new AIReplacer(EntityAINearestAttackableTarget.class, AIAttackTargetMobOrMorph.class));
-        aiReplacers.add(new AIReplacer(EntityAITargetNonTamed.class, AIUntamedAttackMobOrMorph.class));
-        aiReplacers.add(new AIReplacer(EntitySpider.AISpiderTarget.class, AISpiderTargetMobOrMorph.class));
-        aiReplacers.add(new AIReplacer(EntityPolarBear.AIAttackPlayer.class, AIPolarBearTargetMobOrMorph.class));
-        aiReplacers.add(new AIReplacer(EntityAIFindEntityNearestPlayer.class, AITargetUnmorphedPlayer.class));
+        morphAwareAIReplacers.add(new EntityUtil.AIReplacer(EntityAINearestAttackableTarget.class, AIAttackTargetMobOrMorph.class));
+        morphAwareAIReplacers.add(new EntityUtil.AIReplacer(EntityAITargetNonTamed.class, AIUntamedAttackMobOrMorph.class));
+        morphAwareAIReplacers.add(new EntityUtil.AIReplacer(EntitySpider.AISpiderTarget.class, AISpiderTargetMobOrMorph.class));
+        morphAwareAIReplacers.add(new EntityUtil.AIReplacer(EntityPolarBear.AIAttackPlayer.class, AIPolarBearTargetMobOrMorph.class));
+        morphAwareAIReplacers.add(new EntityUtil.AIReplacer(EntityAIFindEntityNearestPlayer.class, AITargetUnmorphedPlayer.class));
     }
     
     public static class DeadlyMonsters {
@@ -95,7 +79,7 @@ public class ListenerMobAI extends HardcoreAlchemyListener {
             try {
                 @SuppressWarnings("unchecked")
                 Class<? extends EntityAIBase> DEADLY_MONSTERS_CLIMBER_AI = (Class<? extends EntityAIBase>)Class.forName("com.dmonsters.entity.EntityClimber$AISpiderTarget");
-                aiReplacers.add(new AIReplacer(DEADLY_MONSTERS_CLIMBER_AI, AIAttackTargetMobOrMorph.class, EntityAINearestAttackableTarget.class));
+                morphAwareAIReplacers.add(new EntityUtil.AIReplacer(DEADLY_MONSTERS_CLIMBER_AI, AIAttackTargetMobOrMorph.class, EntityAINearestAttackableTarget.class));
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
@@ -116,8 +100,8 @@ public class ListenerMobAI extends HardcoreAlchemyListener {
             
             // Persuade entities that morphs aren't human, unless said entity knows better
             if (!mobAIIgnoreMorphList.contains(EntityList.getEntityString(entity))) {
-                for (AIReplacer aiReplacer : aiReplacers) {
-                    wrapReplaceAttackAI(entityLiving, aiReplacer);
+                for (EntityUtil.AIReplacer aiReplacer : morphAwareAIReplacers) {
+                    EntityUtil.wrapReplaceAttackAI(entityLiving, aiReplacer);
                 }
             }
             
@@ -127,41 +111,6 @@ public class ListenerMobAI extends HardcoreAlchemyListener {
                 
                 addTargetSpecificPlayerTask(entityCreature);
             }
-        }
-    }
-    
-    /**
-     * Replace an instance of the AI EntityAIBase. Assume the
-     * replacement AI's constructor takes the old AI instance
-     * upcasted to delegateClazz as a first parameter, and the
-     * AI entity as a second parameter.
-     * If it doesn't, you will get errors, because reflection.
-     */
-    private static void wrapReplaceAttackAI(EntityLiving entityLiving, AIReplacer aiReplacer) {
-        try {
-            Constructor<? extends EntityAIBase> replaceConstructor = aiReplacer.replaceClazz.getConstructor(aiReplacer.delegateClazz, EntityLiving.class);
-            
-            // Find instances of the AI to replace
-            EntityAITasks targetTaskList = entityLiving.targetTasks;
-            List<EntityAIBase> aisToReplace = new ArrayList<EntityAIBase>();
-            List<Integer> prioritiesToReplace = new ArrayList<Integer>();
-            for (EntityAITasks.EntityAITaskEntry targetTask : targetTaskList.taskEntries) {
-                if (aiReplacer.targetClazz.getName().equals(targetTask.action.getClass().getName())) {
-                    aisToReplace.add(targetTask.action);
-                    prioritiesToReplace.add(targetTask.priority);
-                }
-            }
-            
-            // Replace the AIs with new AIs that take morphs into account, while maintaining the same AI priority
-            for (int i = 0; i < aisToReplace.size(); i++) {
-                targetTaskList.removeTask(aisToReplace.get(i));
-                targetTaskList.addTask(prioritiesToReplace.get(i),
-                            replaceConstructor.newInstance(aisToReplace.get(i), entityLiving)
-                        );
-            }
-        }
-        catch (Exception e) {
-            e.printStackTrace();
         }
     }
     
