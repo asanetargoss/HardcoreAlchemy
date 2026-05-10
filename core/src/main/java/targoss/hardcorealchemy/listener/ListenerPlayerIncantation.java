@@ -105,15 +105,10 @@ public class ListenerPlayerIncantation extends HardcoreAlchemyListener {
         // Prevent player from casting spells too quickly
         int timeSinceIncantation = -1;
         ICapabilityMisc misc = player.getCapability(ProviderMisc.MISC_CAPABILITY, null);
-        if (misc != null) {
-            timeSinceIncantation = player.ticksExisted - misc.getLastIncantationTick();
-        }
-        if (timeSinceIncantation > 0 && timeSinceIncantation < INCANTATION_COOLDOWN_TICKS) {
-            // Casting spells too quickly
-            Chat.message(Type.NOTIFY, player, new TextComponentTranslation("hardcorealchemy.incantation.too_fast"));
+        if (misc == null) {
             return;
         }
-        misc.setLastIncantationTick(player.ticksExisted);
+        timeSinceIncantation = player.ticksExisted - misc.getLastIncantationTick();
         
         // Prepare the chat message to display before the spell
         int spellsToCast = 0;
@@ -141,6 +136,14 @@ public class ListenerPlayerIncantation extends HardcoreAlchemyListener {
                 break;
             }
         }
+
+        boolean castingTooQuickly = (timeSinceIncantation > 0 && timeSinceIncantation < INCANTATION_COOLDOWN_TICKS);
+        if (spellsToCast > 0 && castingTooQuickly) {
+            // Casting spells too quickly
+            Chat.message(Type.NOTIFY, player, new TextComponentTranslation("hardcorealchemy.incantation.too_fast"));
+            return;
+        }
+        misc.setLastIncantationTick(player.ticksExisted);
         
         // Display fancy message (or less fancy if not successful)
         ITextComponent message = getMessageFromParts(partsToExecute);
