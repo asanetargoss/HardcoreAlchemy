@@ -32,6 +32,7 @@ import targoss.hardcorealchemy.tweaks.listener.ListenerCraftTimefrozen;
 import targoss.hardcorealchemy.tweaks.listener.ListenerEntityVoidfade;
 import targoss.hardcorealchemy.tweaks.listener.ListenerHeartShards;
 import targoss.hardcorealchemy.tweaks.listener.ListenerHearts;
+import targoss.hardcorealchemy.tweaks.listener.ListenerHeartsSacrificed;
 import targoss.hardcorealchemy.tweaks.listener.ListenerInventoryFoodRot;
 import targoss.hardcorealchemy.tweaks.listener.ListenerMobEffect;
 import targoss.hardcorealchemy.tweaks.listener.ListenerPlayerShield;
@@ -61,6 +62,7 @@ public class CommonProxy {
         HardcoreAlchemyCore.proxy.addListener(new ListenerCraftTimefrozen());
         HardcoreAlchemyCore.proxy.addListener(new ListenerHearts());
         HardcoreAlchemyCore.proxy.addListener(new ListenerHeartShards());
+        HardcoreAlchemyCore.proxy.addListener(new ListenerHeartsSacrificed());
 
         // Initialize via classload
         new Items();
