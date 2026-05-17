@@ -32,9 +32,14 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
+import org.lwjgl.util.vector.Vector3f;
+import org.lwjgl.util.vector.Vector4f;
+
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.Matrix4f;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityList;
@@ -44,11 +49,11 @@ import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAITasks;
-import net.minecraft.entity.ai.EntityAITasks.EntityAITaskEntry;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EntitySelectors;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
@@ -56,8 +61,11 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.LoaderState;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.ModStateException;
 import targoss.hardcorealchemy.coremod.ObfuscatedName;
@@ -356,5 +364,147 @@ public class EntityUtil {
         entityLiving.renderYawOffset = entityLiving.rotationYaw;
         entityLiving.onInitialSpawn(entityLiving.world.getDifficultyForLocation(new BlockPos(entityLiving)), null);
         entityLiving.world.spawnEntity(entityLiving);
+    }
+    
+    /** 
+     * Field of view (vertical, degrees, full)
+     */
+    @SideOnly(Side.CLIENT)
+    private static float FOV = 90.0F;
+
+    @SideOnly(Side.CLIENT)
+    private static float[][] viewFrustumNoFar = new float[5][4];
+
+    @SideOnly(Side.CLIENT)
+    private static void updateViewFrustumNoFar(float viewPitch, float viewYaw) {
+        Minecraft mc = Minecraft.getMinecraft();
+        final float nearClip = 0.05F; // EntityRender.renderWorldPass (1.10.2)
+        final float aspect = (float)mc.displayWidth / (float)mc.displayHeight;
+        final float DEG_TO_RAD = (float)Math.PI / 180.0F;
+        final float HALF_FOVY_RAD = FOV * DEG_TO_RAD / 2.0F;
+        final float HALF_FOVX_RAD = (float)Math.atan(aspect * Math.tan(HALF_FOVY_RAD));
+        // Assuming this coordinate system (i.e. voxel space):
+        // forward = +z
+        // up = +y
+        // right = -x
+        // x,y,z are the standard OpenGL coordinate vectors (right-handed)
+        // pitch = tilt down (this is applied first)
+        // yaw = turn clockwise (this is applied second)
+        // For the sake of accuracy, must apply both. Can't assume they are separable, so need some matrix math.
+        Matrix4f viewMat = new Matrix4f();
+        viewMat.setIdentity();
+        Vector3f offset = new Vector3f(0.0F, 0.0F, nearClip);
+        Vector4f offset4 = new Vector4f(offset.x, offset.y, offset.z, 0.0F);
+        viewMat.rotate(-viewYaw * DEG_TO_RAD, new Vector3f(0.0F, 1.0F, 0.0F));
+        viewMat.rotate(-viewPitch * DEG_TO_RAD, new Vector3f(-1.0F, 0.0F, 0.0F));
+        {
+            Vector4f nearNorm = new Vector4f(0.0F, 0.0F, 1.0F, 1.0F);
+            Vector4f nearNormTrans = Matrix4f.transform(viewMat, nearNorm, null);
+            viewFrustumNoFar[0][0] = nearNormTrans.x;
+            viewFrustumNoFar[0][1] = nearNormTrans.y;
+            viewFrustumNoFar[0][2] = nearNormTrans.z;
+            viewFrustumNoFar[0][3] = nearClip + Vector4f.dot(nearNorm, offset4);
+        }
+        {
+            Vector4f leftNorm = new Vector4f(-1.0F, 0.0F, 0.0F, 1.0F);
+            Matrix4f leftMat = new Matrix4f();
+            leftMat.setIdentity();
+            leftMat.rotate(HALF_FOVX_RAD, new Vector3f(0.0F, 1.0F, 0.0F));
+            leftNorm = Matrix4f.transform(leftMat, leftNorm, null);
+            Vector4f leftNormTrans = Matrix4f.transform(viewMat, leftNorm, null);
+            viewFrustumNoFar[1][0] = leftNormTrans.x;
+            viewFrustumNoFar[1][1] = leftNormTrans.y;
+            viewFrustumNoFar[1][2] = leftNormTrans.z;
+            viewFrustumNoFar[1][3] = Vector4f.dot(leftNorm, offset4);
+        }
+        {
+            Vector4f rightNorm = new Vector4f(1.0F, 0.0F, 0.0F, 1.0F);
+            Matrix4f rightMat = new Matrix4f();
+            rightMat.setIdentity();
+            rightMat.rotate(-HALF_FOVX_RAD, new Vector3f(0.0F, 1.0F, 0.0F));
+            rightNorm = Matrix4f.transform(rightMat, rightNorm, null);
+            Vector4f rightNormTrans = Matrix4f.transform(viewMat, rightNorm, null);
+            viewFrustumNoFar[2][0] = rightNormTrans.x;
+            viewFrustumNoFar[2][1] = rightNormTrans.y;
+            viewFrustumNoFar[2][2] = rightNormTrans.z;
+            viewFrustumNoFar[2][3] = Vector4f.dot(rightNorm, offset4);
+        }
+        {
+            Vector4f topNorm = new Vector4f(0.0F, -1.0F, 0.0F, 1.0F);
+            Matrix4f topMat = new Matrix4f();
+            topMat.setIdentity();
+            topMat.rotate(-HALF_FOVY_RAD, new Vector3f(1.0F, 0.0F, 0.0F));
+            topNorm = Matrix4f.transform(topMat, topNorm, null);
+            Vector4f topNormTrans = Matrix4f.transform(viewMat, topNorm, null);
+            viewFrustumNoFar[3][0] = topNormTrans.x;
+            viewFrustumNoFar[3][1] = topNormTrans.y;
+            viewFrustumNoFar[3][2] = topNormTrans.z;
+            viewFrustumNoFar[3][3] = Vector4f.dot(topNorm, offset4);
+        }
+        {
+            Vector4f bottomNorm = new Vector4f(0.0F, 1.0F, 0.0F, 1.0F);
+            Matrix4f bottomMat = new Matrix4f();
+            bottomMat.setIdentity();
+            bottomMat.rotate(HALF_FOVY_RAD, new Vector3f(1.0F, 0.0F, 0.0F));
+            bottomNorm = Matrix4f.transform(bottomMat, bottomNorm, null);
+            Vector4f bottomNormTrans = Matrix4f.transform(viewMat, bottomNorm, null);
+            viewFrustumNoFar[4][0] = bottomNormTrans.x;
+            viewFrustumNoFar[4][1] = bottomNormTrans.y;
+            viewFrustumNoFar[4][2] = bottomNormTrans.z;
+            viewFrustumNoFar[4][3] = Vector4f.dot(bottomNorm, offset4);
+        }
+    }
+    
+    @SideOnly(Side.CLIENT)
+    public static void updateViewFrustumNoFar(EntityViewRenderEvent.FOVModifier event) {
+        FOV = event.getFOV();
+        Entity viewer = Minecraft.getMinecraft().getRenderViewEntity();
+        updateViewFrustumNoFar(viewer.rotationPitch, viewer.rotationYaw);
+    }
+    
+    @SideOnly(Side.CLIENT)
+    private static final double frustumPlaneDistance(float[] frustumPlane, double x, double y, double z)
+    {
+        return (double)frustumPlane[0] * x + (double)frustumPlane[1] * y + (double)frustumPlane[2] * z + (double)frustumPlane[3];
+    }
+
+    @SideOnly(Side.CLIENT)
+    private static boolean isBoxInFrustumIgnoreFarClip(float[][] frustum, double minX, double minY, double minZ, double maxX, double maxY, double maxZ) {
+        for (int i = 0; i < frustum.length; ++i)
+        {
+            float[] frustumPlane = frustum[i];
+
+            if (frustumPlaneDistance(frustumPlane, minX, minY, minZ) <= 0.0D &&
+                frustumPlaneDistance(frustumPlane, maxX, minY, minZ) <= 0.0D &&
+                frustumPlaneDistance(frustumPlane, minX, maxY, minZ) <= 0.0D &&
+                frustumPlaneDistance(frustumPlane, maxX, maxY, minZ) <= 0.0D &&
+                frustumPlaneDistance(frustumPlane, minX, minY, maxZ) <= 0.0D &&
+                frustumPlaneDistance(frustumPlane, maxX, minY, maxZ) <= 0.0D &&
+                frustumPlaneDistance(frustumPlane, minX, maxY, maxZ) <= 0.0D &&
+                frustumPlaneDistance(frustumPlane, maxX, maxY, maxZ) <= 0.0D)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     *  Stricter bounding box than the equivalent vanilla calculation.
+     *  
+     *  There are details of EntityRender.orientCamera (1.10.2) which are excluded here, so there is
+     *  possibility for false negatives on some bounding boxes near the edge of the screen.
+     *  Don't use for rendering, but probably good enough for highlighting entities.
+     *  Modified from ClippingHelper.
+     */
+    @SideOnly(Side.CLIENT)
+    public static boolean isEntityInFrustumStrictIgnoreFarClip(double viewerPosX, double viewerPosY, double viewerPosZ, Entity entity) {
+        AxisAlignedBB aabb = entity.getRenderBoundingBox();//.expandXyz(0.5); // Keep bounding box strict (commented out adjustment is used in reference function)
+        if (aabb.hasNaN() || aabb.getAverageEdgeLength() == 0.0D)
+        {
+            aabb = new AxisAlignedBB(entity.posX - 2.0D, entity.posY - 2.0D, entity.posZ - 2.0D, entity.posX + 2.0D, entity.posY + 2.0D, entity.posZ + 2.0D);
+        }
+        return isBoxInFrustumIgnoreFarClip(viewFrustumNoFar, aabb.minX - viewerPosX, aabb.minY - viewerPosY, aabb.minZ - viewerPosZ, aabb.maxX- viewerPosX, aabb.maxY - viewerPosY, aabb.maxZ - viewerPosZ);
     }
 }
