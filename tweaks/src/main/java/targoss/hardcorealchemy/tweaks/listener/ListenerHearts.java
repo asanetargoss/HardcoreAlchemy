@@ -266,9 +266,9 @@ public class ListenerHearts extends HardcoreAlchemyListener {
             left_height = GuiIngameForge.left_height;
         }
         
-        @SubscribeEvent(priority=EventPriority.HIGHEST)
-        public void onRenderHeartsPost(RenderGameOverlayEvent.Post event) {
-            if (event.getType() != ElementType.HEALTH) {
+        @SubscribeEvent(priority=EventPriority.HIGHEST, receiveCanceled=true)
+        public void onRenderHeartsPost(RenderGameOverlayEvent.Pre event) {
+            if (event.getType() != ElementType.ARMOR) {
                 return;
             }
             blending = false;
@@ -288,7 +288,7 @@ public class ListenerHearts extends HardcoreAlchemyListener {
        /* This is separate from renderHearts because the behavior of heart
         * shaking depends on the state of a randomizer.
         */
-       public void renderSacrificedHearts(RenderGameOverlayEvent.Post event) {
+       public void renderSacrificedHearts(RenderGameOverlayEvent.Pre event) {
            EntityPlayer player = MiscVanilla.getTheMinecraftPlayer();
            if (player.isCreative()) {
                return;
@@ -358,7 +358,7 @@ public class ListenerHearts extends HardcoreAlchemyListener {
         /* Render heart overlay differently for vanilla vs Mantle
          * Currently this only works for up to 10 hearts, which is fine for now
          */
-        public void renderHearts(RenderGameOverlayEvent.Post event) {
+        public void renderHearts(RenderGameOverlayEvent.Pre event) {
             EntityPlayer player = MiscVanilla.getTheMinecraftPlayer();
             if (player.isCreative()) {
                 return;
