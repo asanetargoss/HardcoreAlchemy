@@ -25,7 +25,6 @@ import java.util.Set;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
-// TODO: Much of this happens at class load time, so need to be more careful
 /**
  * Various mob lists, mainly used for deciding which
  * mobs should have certain tweaks. Each received list
@@ -51,8 +50,8 @@ public class MobLists {
         ELDRITCH,
         TROLL,
         FREEBIE,
-        WATER_ALLERGY, // TODO: Populate list
-        ENDER_WATER_ALLERGY; // TODO: Populate list
+        WATER_ALLERGY,
+        ENDER_WATER_ALLERGY;
         
         public Set<String> get() {
             Set<String> list = new HashSet<>();
