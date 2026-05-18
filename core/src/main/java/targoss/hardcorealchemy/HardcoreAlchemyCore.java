@@ -95,7 +95,7 @@ public class HardcoreAlchemyCore
         proxy.postInit(event);
     }
     
-    public static WeakReference<MinecraftServer> SERVER_REFERENCE = null;
+    public static WeakReference<MinecraftServer> SERVER_REFERENCE = new WeakReference<>(null);
     
     @EventHandler
     public void serverAboutToStart(FMLServerAboutToStartEvent event) {
