@@ -37,6 +37,7 @@ hardcorealchemy.dimensional_flux_crystal.description.fluxed_at=Transported to: %
 hardcorealchemy.dimensional_flux_crystal.description.fluxed_unknown_one=Transported across dimensions
 hardcorealchemy.dimensional_flux_crystal.description.fluxed_unknown_multiple=Transported to multiple dimensions
 hardcorealchemy.dimensional_flux_crystal.description.fluxed_unknown_many=Warped by dimensional travel
+item.hardcorealchemy:heartbreak_essence.name=Essence of Heartbreak
 
 item.hardcorealchemy:timefrozen.name=Timefrozen %s
 

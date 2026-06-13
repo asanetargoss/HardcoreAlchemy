@@ -149,6 +149,36 @@ public class ListenerHearts extends HardcoreAlchemyListener {
         }
     }
     
+    public static @Nullable Heart getRandomHeart(ICapabilityHearts hearts) {
+        int totalHearts = hearts.get().size() + hearts.getSacrificed().size();
+        if (totalHearts == 0) {
+            return null;
+        }
+        int randomHeartIndex = (new Random()).nextInt(totalHearts);
+        Heart randomHeart = null;
+        if (randomHeartIndex < hearts.get().size()) {
+            int i = 0;
+            for (Heart heart : hearts.get()) {
+                if (i == randomHeartIndex) {
+                    randomHeart = heart;
+                    break;
+                }
+                ++i;
+            }
+        } else {
+            randomHeartIndex -= hearts.get().size();
+            int i = 0;
+            for (Heart heart : hearts.getSacrificed()) {
+                if (i == randomHeartIndex) {
+                    randomHeart = heart;
+                    break;
+                }
+                ++i;
+            }
+        }
+        return randomHeart;
+    }
+    
     @SubscribeEvent
     public void onPlayerClone(PlayerEvent.Clone event) {
         EntityPlayer oldPlayer = event.getOriginal();
@@ -160,28 +190,7 @@ public class ListenerHearts extends HardcoreAlchemyListener {
                 // Chance to remove heart
                 int totalHearts = hearts.get().size() + hearts.getSacrificed().size();
                 if (totalHearts > 0 && random.nextInt(HEART_REMOVE_CHANCE) == 0) {
-                    int heartIndexToRemove = random.nextInt(totalHearts);
-                    Heart heartToRemove = null;
-                    if (heartIndexToRemove < hearts.get().size()) {
-                        int i = 0;
-                        for (Heart heart : hearts.get()) {
-                            if (i == heartIndexToRemove) {
-                                heartToRemove = heart;
-                                break;
-                            }
-                            ++i;
-                        }
-                    } else {
-                        heartIndexToRemove -= hearts.get().size();
-                        int i = 0;
-                        for (Heart heart : hearts.getSacrificed()) {
-                            if (i == heartIndexToRemove) {
-                                heartToRemove = heart;
-                                break;
-                            }
-                            ++i;
-                        }
-                    }
+                    Heart heartToRemove = getRandomHeart(hearts);
                     if (heartToRemove != null) {
                         removeHeart(coreConfigs, newPlayer, hearts, heartToRemove);
                     }

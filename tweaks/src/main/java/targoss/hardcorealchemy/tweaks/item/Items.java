@@ -21,7 +21,9 @@ package targoss.hardcorealchemy.tweaks.item;
 
 import static net.minecraft.init.Blocks.MAGMA;
 import static net.minecraft.init.Blocks.OBSIDIAN;
+import static net.minecraft.init.Blocks.RED_FLOWER;
 import static net.minecraft.init.Items.BONE;
+import static net.minecraft.init.Items.CLOCK;
 import static net.minecraft.init.Items.DIAMOND;
 import static net.minecraft.init.Items.ENDER_PEARL;
 import static net.minecraft.init.Items.FEATHER;
@@ -40,6 +42,7 @@ import static targoss.hardcorealchemy.item.Items.POTIONS;
 import static targoss.hardcorealchemy.item.Items.POTION_TYPES;
 import static targoss.hardcorealchemy.item.Items.addPotionRecipe;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -47,6 +50,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionType;
 import net.minecraft.util.ResourceLocation;
@@ -59,6 +63,7 @@ import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.heart.Heart;
 import targoss.hardcorealchemy.item.HcAPotion;
 import targoss.hardcorealchemy.item.RecipeArrow;
+import targoss.hardcorealchemy.recipe.RecipeShapelessPreserving;
 import targoss.hardcorealchemy.registrar.RegistrarHeart;
 import targoss.hardcorealchemy.registrar.RegistrarPotionType;
 import targoss.hardcorealchemy.tweaks.capability.dimensionhistory.ICapabilityDimensionHistory;
@@ -69,6 +74,7 @@ import targoss.hardcorealchemy.util.InventoryUtil;
 public class Items {
     public static final Item DIMENSIONAL_FLUX_CRYSTAL = ITEMS.add("dimensional_flux_crystal", new Item());
     public static final Item TIMEFROZEN = ITEMS.add("timefrozen", new TimefrozenItem());
+    public static final Item HEARTBREAK_ESSENCE = ITEMS.add("heartbreak_essence", new ItemHeartbreak());
     
     public static final Potion POTION_VOIDFADE = POTIONS.add("voidfade", new PotionVoidfade(BAD_EFFECT, new Color(94, 10, 199), 3, false));
     public static final Potion POTION_SLIP = POTIONS.add("slip", new HcAPotion(BAD_EFFECT, new Color(223, 69, 0), 4, false));
@@ -152,6 +158,18 @@ public class Items {
                 'P', new ItemStack(PRISMARINE_SHARD),
                 'O', new ItemStack(OBSIDIAN)
             );
+        
+        {
+            ArrayList<ItemStack> heartbreakInputs = new ArrayList<>();
+            heartbreakInputs.add(new ItemStack(RED_FLOWER));
+            heartbreakInputs.add(new ItemStack(CLOCK));
+            ArrayList<Boolean> heartbreakInputsPreserving = new ArrayList<>();
+            heartbreakInputsPreserving.add(false);
+            heartbreakInputsPreserving.add(true);
+            CraftingManager.getInstance().addRecipe(new RecipeShapelessPreserving(new ItemStack(HEARTBREAK_ESSENCE),
+                    heartbreakInputs,
+                    heartbreakInputsPreserving));
+        }
         
         IForgeRegistry<PotionType> potionTypeRegistry = GameRegistry.findRegistry(PotionType.class);
         PotionType awkwardPotion = potionTypeRegistry.getValue(new ResourceLocation("awkward"));
