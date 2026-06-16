@@ -36,9 +36,7 @@ hardcorealchemy.guide.modpack_info.about_the_pack.3=Thanks for playing!\n\n-asan
 
 ## Modpack Info: Feedback
 hardcorealchemy.guide.modpack_info.feedback.title=Giving Feedback
-hardcorealchemy.guide.modpack_info.feedback.1=The Hardcore Alchemy modpack is in development, and feedback is highly welcome. There are a few ways to give feedback on the pack.
-hardcorealchemy.guide.modpack_info.feedback.2=If you have found a bug or have a feature idea, the best place to share those things is on the Hardcore Alchemy issue tracker on GitHub: https://github.com/asanetargoss/HardcoreAlchemy/issues
-hardcorealchemy.guide.modpack_info.feedback.3=If you want to give feedback about your overall impression of the Hardcore Alchemy modpack, and/or you want to let other people know what you think about the pack, the best place to do that is by writing a review on mmcreviews.com: https://mmcreviews.com/all/modpacks/hardcore-alchemy/
+hardcorealchemy.guide.modpack_info.feedback.1=The Hardcore Alchemy modpack is in development, and feedback is highly welcome. If you have found a bug or have a feature idea, the best place to share those things is on the Hardcore Alchemy issue tracker on GitHub: https://github.com/asanetargoss/HardcoreAlchemy/issues
 
 ## Modpack Info: Keybinding Primer
 hardcorealchemy.guide.modpack_info.keybinding_primer.title=Keybinding Primer
