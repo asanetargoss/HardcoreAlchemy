@@ -133,6 +133,7 @@ public class ListenerHearts extends HardcoreAlchemyListener {
         boolean removed = hearts.get().remove(heart) || hearts.getSacrificed().remove(heart);
         if (removed) {
             hearts.getRemoved().add(heart.getRegistryName());
+            hearts.getAcquiredShards().remove(heart);
             updateHeartModifiers(configs, player, hearts);
         }
         return removed;
