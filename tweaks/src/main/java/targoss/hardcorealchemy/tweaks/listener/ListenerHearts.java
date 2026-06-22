@@ -132,6 +132,7 @@ public class ListenerHearts extends HardcoreAlchemyListener {
     public static boolean removeHeart(Configs configs, EntityPlayer player, ICapabilityHearts hearts, Heart heart) {
         boolean removed = hearts.get().remove(heart) || hearts.getSacrificed().remove(heart);
         if (removed) {
+            hearts.getRemoved().add(heart.getRegistryName());
             updateHeartModifiers(configs, player, hearts);
         }
         return removed;
