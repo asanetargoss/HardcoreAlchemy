@@ -39,7 +39,7 @@ public class PotionAirBreathing extends HcAPotion {
     }
     
     @Override
-    public void performEffect(EntityLivingBase entity, int ampifier) {
+    public void doPerformEffect(EntityLivingBase entity, int ampifier) {
         IMorphing morphing = entity.getCapability(MORPHING_CAPABILITY, null);
         if (morphing != null) {
             morphing.setSquidAir(300);

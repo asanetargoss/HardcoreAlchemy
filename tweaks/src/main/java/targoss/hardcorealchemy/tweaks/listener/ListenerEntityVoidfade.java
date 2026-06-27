@@ -349,7 +349,7 @@ public class ListenerEntityVoidfade extends HardcoreAlchemyListener {
     @SubscribeEvent(priority=EventPriority.HIGH)
     public void onEntityHurt(LivingHurtEvent event) {
         EntityLivingBase entity = event.getEntityLiving();
-        if (event.getSource() == DamageSource.drown) {
+        if (event.getSource() != null && event.getSource().damageType.equals(DamageSource.drown.damageType)) {
             if (entity.getAir() > 0 && !entity.world.isRemote && (entity instanceof EntityPlayer)) {
                 // Most likely taking damage due to water allergy
                 EntityPlayer player = (EntityPlayer)entity;

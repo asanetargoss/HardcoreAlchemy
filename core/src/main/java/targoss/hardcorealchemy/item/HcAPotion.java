@@ -36,6 +36,11 @@ import targoss.hardcorealchemy.util.Color;
 
 /**
  * A base for custom potion effects.
+ * WARNING: Due to limitations in MCP patching, it is not (known to be) possible
+ * to override vanilla functions twice and still have MCP patch them correctly.
+ * To work around this issue, doXyz(...) functions will be implemented as necessary,
+ * and overridden Potion functions should be marked final + deprecated here.
+ * An alternative solution would be to use the wrapper/delegate pattern.
  */
 public class HcAPotion extends Potion {
     private static final ResourceLocation TILESET = new ResourceLocation(HardcoreAlchemyCore.MOD_ID, "textures/gui/icon_tileset.png");
@@ -57,33 +62,43 @@ public class HcAPotion extends Potion {
     }
     
     @Override
-    public boolean isInstant()
+    public final boolean isInstant()
     {
         return false;
     }
     
     @Override
-    public void affectEntity(@Nullable Entity source, @Nullable Entity indirectSource,
+    public final void affectEntity(@Nullable Entity source, @Nullable Entity indirectSource,
             EntityLivingBase entityLivingBaseIn, int amplifier, double health) { }
     
     @Override
-    public boolean isReady(int duration, int amplifier) {
+    @Deprecated
+    public final boolean isReady(int duration, int amplifier) {
+        return doIsReady(duration, amplifier);
+    }
+
+    public boolean doIsReady(int duration, int amplifier) {
         return true;
     }
     
+    @Override
+    @Deprecated
+    public final void performEffect(EntityLivingBase entity, int amplifier) {
+        doPerformEffect(entity, amplifier);
+    }
+
     /**
      * By default, this method does nothing, and is called every tick 
-     * (due to having isInstant() == false and isReady() == true).
+     * (due to having doIsInstant() == false and doIsReady() == true).
      */
-    @Override
-    public void performEffect(EntityLivingBase entity, int ampifier) { }
+    public void doPerformEffect(EntityLivingBase entity, int amplifier) { }
     
     /**
      * Render potion effect in inventory using icon in TEXTURES
      */
     @Override
     @SideOnly(Side.CLIENT)
-    public void renderInventoryEffect(int x, int y, PotionEffect effect, net.minecraft.client.Minecraft mc) {
+    public final void renderInventoryEffect(int x, int y, PotionEffect effect, net.minecraft.client.Minecraft mc) {
         mc.getTextureManager().bindTexture(TILESET);
         float UV_SCALE = 1.0F/256.0F;
         int textureX = REGION_X + EFFECT_WIDTH * (iconId % EFFECT_COUNT);
@@ -104,7 +119,7 @@ public class HcAPotion extends Potion {
      */
     @Override
     @SideOnly(Side.CLIENT)
-    public void renderHUDEffect(int x, int y, PotionEffect effect, net.minecraft.client.Minecraft mc, float alpha) {
+    public final void renderHUDEffect(int x, int y, PotionEffect effect, net.minecraft.client.Minecraft mc, float alpha) {
         mc.getTextureManager().bindTexture(TILESET);
         int textureX = REGION_X + EFFECT_WIDTH * (iconId % EFFECT_COUNT);
         int textureY = REGION_Y + EFFECT_WIDTH * (iconId / EFFECT_COUNT);

@@ -43,7 +43,7 @@ public class PotionVoidfade extends HcAPotion {
     }
     
     @Override
-    public void performEffect(EntityLivingBase entity, int ampifier) {
+    public void doPerformEffect(EntityLivingBase entity, int ampifier) {
         if (entity.isWet()) {
             // Extend duration
             int MIN_DURATION_WHEN_WET = (5 * 20) + 1;
