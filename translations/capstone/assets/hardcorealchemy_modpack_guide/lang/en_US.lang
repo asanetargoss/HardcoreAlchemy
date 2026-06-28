@@ -154,8 +154,9 @@ hardcorealchemy.upgradeguide.0.8.5.welcome=Hardcore Alchemy
 
 # 0.8.5 Upgrade Guide: Gameplay tips
 
+hardcorealchemy.upgradeguide.0.8.5.gameplay_tips.title=Gameplay tips
+
 hardcorealchemy.upgradeguide.0.8.5.gameplay_tips.midgame.title=Mid game
 hardcorealchemy.upgradeguide.0.8.5.gameplay_tips.midgame.1=The Voidfade potion effect now gives the player a temporary water allergy. In addition to being caused by entering a Nether Portal, Voidfade can now also be caused by ender pearl teleportation, and can become more severe when the player stays wet. Be mindful of using ender pearls or Nether Portals near water. The effect can be mitigated with the Potion of Water Resistance, or can be cured with milk.
 hardcorealchemy.upgradeguide.0.8.5.gameplay_tips.midgame.2=Foods crafted using the Cooking for Blockheads tools and blocks now retain the dietary restrictions of their ingredients.
 hardcorealchemy.upgradeguide.0.8.5.gameplay_tips.midgame.3=The Potion of Water Breathing was previously not working and has been fixed. Sorry about that! It should now properly prevent drowning for morphs that breathe water.
-
