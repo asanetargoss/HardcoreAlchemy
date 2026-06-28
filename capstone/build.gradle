@@ -145,6 +145,7 @@ task buildModSuite(type: Zip) {
     dependsOn ":magic:build"
     dependsOn ":survival:build"
     dependsOn ":capstone:build"
+    dependsOn ":liba3:build"
 
     baseName = "hardcorealchemy_modsuite"
     version = project.version
@@ -155,6 +156,7 @@ task buildModSuite(type: Zip) {
     from ("../magic/build/libs/${project(":magic").jarLabel}-${project(":magic").version}.jar")
     from ("../survival/build/libs/${project(":survival").jarLabel}-${project(":survival").version}.jar")
     from ("../capstone/build/libs/${project(":capstone").jarLabel}-${project(":capstone").version}.jar")
+    from ("../liba3/build/libs/${project(":liba3").jarLabel}-${project(":liba3").version}.jar")
     into("libs") {
     }
 }
