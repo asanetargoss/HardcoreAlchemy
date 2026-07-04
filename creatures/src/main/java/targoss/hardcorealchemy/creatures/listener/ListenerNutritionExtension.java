@@ -71,6 +71,7 @@ public class ListenerNutritionExtension extends HardcoreAlchemyListener {
         
         @Override
         public @Nonnull Needs getNeeds(EntityPlayer player) {
+            initNeeds();
             if (MorphExtension.INSTANCE.isGhost(player)) {
                 return NO_NEEDS;
             }
@@ -124,7 +125,7 @@ public class ListenerNutritionExtension extends HardcoreAlchemyListener {
     /**
      * Dietary needs indexed by the fully-qualified name of the entity class which the morph represents
      */
-    public static Map<String, Needs> morphDiets = new HashMap<String, Needs>();
+    public static Map<String, Needs> morphDiets = null;
     public static final Needs NO_NEEDS = new Needs(Needs.NO_NUTRIENTS, Restriction.UNFEEDING, false);
     public static final Needs IDEALIST_VEGAN_NEEDS = new Needs(Needs.DEFAULT_NUTRIENTS, Restriction.VEGAN);
     public static final Needs GRAZER_NEEDS = new Needs(new String[]{"grain"}, Restriction.VEGAN);
@@ -134,7 +135,11 @@ public class ListenerNutritionExtension extends HardcoreAlchemyListener {
     public static final Needs TAINT_MOB_NEEDS = new Needs(Needs.NO_NUTRIENTS, Restriction.UNFEEDING, false);
     public static final Needs ELDRITCH_MOB_NEEDS = new Needs(Needs.NO_NUTRIENTS, Restriction.UNFEEDING, false);
     
-    static {
+    protected static void initNeeds() {
+        if (morphDiets != null) {
+            return;
+        }
+        morphDiets = new HashMap<String, Needs>();
         /* With some exceptions, hostile mobs and tameables are carnivores,
          * and Nether mobs are also thirstless.
          * Passive mobs are vegans and eat wheat.
