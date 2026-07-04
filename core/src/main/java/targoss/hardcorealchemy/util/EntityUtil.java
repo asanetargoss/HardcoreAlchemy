@@ -21,6 +21,7 @@ package targoss.hardcorealchemy.util;
 
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -246,6 +247,16 @@ public class EntityUtil {
                 targetTaskList.addTask(prioritiesToReplace.get(i),
                             replaceConstructor.newInstance(aisToReplace.get(i), entityLiving)
                         );
+            }
+            
+            // Detect and replace custom AI fields
+            for (Field field : entityLiving.getClass().getDeclaredFields()) {
+                if (field.getType().getName().equals(aiReplacer.targetClazz.getName())) {
+                    field.setAccessible(true);
+                    EntityAIBase ai = (EntityAIBase)field.get(entityLiving);
+                    EntityAIBase wrapped = replaceConstructor.newInstance(ai, entityLiving);
+                    field.set(entityLiving, wrapped);
+                }
             }
         }
         catch (Exception e) {
