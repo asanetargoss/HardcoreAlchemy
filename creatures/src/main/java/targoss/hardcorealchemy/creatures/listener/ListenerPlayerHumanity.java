@@ -259,9 +259,11 @@ public class ListenerPlayerHumanity extends HardcoreAlchemyListener {
             return;
         }
         // If the player has a humanity bar, then their humanity and magicInhibition can change
-        if (capabilityHumanity.shouldDisplayHumanity()) {
-            double oldHumanity = capabilityHumanity.getLastHumanity();
-            double newHumanity = capabilityHumanity.getHumanity();
+        // Edge case: If humanity stat is set to 0 for any reason, update once so the player's morph state is properly updated.
+        double oldHumanity = capabilityHumanity.getLastHumanity();
+        double newHumanity = capabilityHumanity.getHumanity();
+        boolean aboutToLoseHumanity = oldHumanity > 0.0D && newHumanity <= 0.0D;
+        if (capabilityHumanity.shouldDisplayHumanity() || aboutToLoseHumanity) {
             // Always reduce magic inhibition at the rate of humanity loss
             double newMagicInhibition = capabilityHumanity.getMagicInhibition();
             newMagicInhibition -= capabilityHumanity.getHumanityLossRate();
@@ -269,8 +271,8 @@ public class ListenerPlayerHumanity extends HardcoreAlchemyListener {
             capabilityHumanity.setMagicInhibition(newMagicInhibition);
             // Are we in a morph? (check if the player's AbstractMorph is not null)
             IMorphing morphing = player.getCapability(MORPHING_CAPABILITY, null);
-            if (morphing.isMorphed()) {
-                // Drain humanity when the player is voluntarily in a morph
+            if (morphing.isMorphed() || aboutToLoseHumanity) {
+                // Drain humanity when the player is voluntarily in a morph. Otherwise, this is a no-op.
                 newHumanity = MathHelper.clamp(newHumanity-capabilityHumanity.getHumanityLossRate(), 0.0D, maxHumanity.getAttributeValue());
                 capabilityHumanity.setHumanity(newHumanity);
                 // If humanity reaches zero, make player stuck in a morph

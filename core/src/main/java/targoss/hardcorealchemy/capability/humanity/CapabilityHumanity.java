@@ -187,6 +187,10 @@ public class CapabilityHumanity implements ICapabilityHumanity {
         if (hasForgottenHumanForm) {
             return new TextComponentTranslation("hardcorealchemy.morph.disabled.nohumanform");
         }
+        if (humanity <= 0.0D) {
+            // Equivalent to hasLostHumanity, but morph state has not updated yet for this frame.
+            return new TextComponentTranslation("hardcorealchemy.morph.disabled.nohumanity");
+        }
         if (magicInhibition >= humanity) {
             return new TextComponentTranslation("hardcorealchemy.morph.disabled.magic_inhibition");
         }
