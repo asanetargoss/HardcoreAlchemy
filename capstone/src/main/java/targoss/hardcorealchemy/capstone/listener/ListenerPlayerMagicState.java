@@ -43,6 +43,7 @@ import targoss.hardcorealchemy.HardcoreAlchemyCore;
 import targoss.hardcorealchemy.capability.inactive.IInactiveCapabilities;
 import targoss.hardcorealchemy.capstone.CapstoneModState;
 import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
+import targoss.hardcorealchemy.util.IMorphExtension;
 import targoss.hardcorealchemy.util.MorphExtension;
 
 public class ListenerPlayerMagicState extends HardcoreAlchemyListener {
@@ -91,7 +92,7 @@ public class ListenerPlayerMagicState extends HardcoreAlchemyListener {
             return;
         }
         
-        if (MorphExtension.INSTANCE.canUseHighMagic(player)) {
+        if (IMorphExtension.canUseHighMagic(MorphExtension.INSTANCE, player)) {
             if (CapstoneModState.isAstralSorceryLoaded) {
                 activateStellarAlignment(player);
             }

@@ -35,7 +35,6 @@ import targoss.hardcorealchemy.item.Items;
 public class MorphExtension implements IMorphExtension {
     public static IMorphExtension INSTANCE = new MorphExtension();
 
-    @Override
     public boolean shouldDrawHumanityDottedIcons() {
         return false;
     }
@@ -44,10 +43,7 @@ public class MorphExtension implements IMorphExtension {
         return true;
     }
     
-    public boolean canUseHighMagic(EntityPlayer player) {
-        if (canUseHighMagicWithoutBuff(player)) {
-            return true;
-        }
+    public boolean hasHighMagicBuff(EntityPlayer player) {
         return player.getActivePotionEffect(Items.POTION_ALLOW_MAGIC) != null;
     }
     

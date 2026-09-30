@@ -81,6 +81,7 @@ import targoss.hardcorealchemy.magic.research.Studies;
 import targoss.hardcorealchemy.magic.will.WillState;
 import targoss.hardcorealchemy.magic.will.Wills;
 import targoss.hardcorealchemy.util.Chat;
+import targoss.hardcorealchemy.util.IMorphExtension;
 import targoss.hardcorealchemy.util.Interaction;
 import targoss.hardcorealchemy.util.InventoryExtension;
 import targoss.hardcorealchemy.util.InventoryUtil;
@@ -183,7 +184,7 @@ public class ListenerPlayerMagic extends HardcoreAlchemyListener {
     public static boolean isCraftingAllowed(EntityPlayer player, ItemStack craftResult) {
         ICapabilityHumanity capabilityHumanity = player.getCapability(ProviderHumanity.HUMANITY_CAPABILITY, null);
         if (capabilityHumanity != null &&
-                !MorphExtension.INSTANCE.canUseHighMagic(player) &&
+                !IMorphExtension.canUseHighMagic(MorphExtension.INSTANCE, player) &&
                 !isCraftingAllowedWhenMagicHindered(craftResult)) {
             return false;
         }
@@ -245,7 +246,7 @@ public class ListenerPlayerMagic extends HardcoreAlchemyListener {
         EntityPlayer player = event.getEntityPlayer();
         ItemStack itemStack = event.getItemStack();
         ICapabilityHumanity capabilityHumanity = player.getCapability(HUMANITY_CAPABILITY, null);
-        if (capabilityHumanity != null && !MorphExtension.INSTANCE.canUseHighMagic(player) && !isUseAllowed(itemStack)) {
+        if (capabilityHumanity != null && !IMorphExtension.canUseHighMagic(MorphExtension.INSTANCE, player) && !isUseAllowed(itemStack)) {
             event.setCanceled(true);
             if (player.world.isRemote) {
                 Chat.messageSP(Chat.Type.NOTIFY, player, new TextComponentTranslation("hardcorealchemy.magic.disabled.item"), 2, MAGIC_NOT_ALLOWED);
@@ -265,7 +266,7 @@ public class ListenerPlayerMagic extends HardcoreAlchemyListener {
         Block block = event.getWorld().getBlockState(event.getPos()).getBlock();
         EntityPlayer player = event.getEntityPlayer();
         ICapabilityHumanity capabilityHumanity = player.getCapability(HUMANITY_CAPABILITY, null);
-        if (capabilityHumanity != null && !MorphExtension.INSTANCE.canUseHighMagic(player) && !isUseAllowed(block)) {
+        if (capabilityHumanity != null && !IMorphExtension.canUseHighMagic(MorphExtension.INSTANCE, player) && !isUseAllowed(block)) {
             event.setUseBlock(Result.DENY);
             if (player.world.isRemote) {
                 Chat.messageSP(Chat.Type.NOTIFY, player, new TextComponentTranslation("hardcorealchemy.magic.disabled.block"), 2, MAGIC_NOT_ALLOWED);
@@ -293,7 +294,7 @@ public class ListenerPlayerMagic extends HardcoreAlchemyListener {
         EntityPlayer player = event.player;
         ICapabilityHumanity capabilityHumanity = player.getCapability(HUMANITY_CAPABILITY, null);
         if (capabilityHumanity != null &&
-                !MorphExtension.INSTANCE.canUseHighMagic(player) &&
+                !IMorphExtension.canUseHighMagic(MorphExtension.INSTANCE, player) &&
                 !isCraftingAllowed(craftResult)) {
             event.setCanceled(true);
         }
@@ -302,7 +303,7 @@ public class ListenerPlayerMagic extends HardcoreAlchemyListener {
     @CoremodHook
     public static boolean canUseProjectEKeybinds(EntityPlayerMP player) {
         ICapabilityHumanity capabilityHumanity = player.getCapability(HUMANITY_CAPABILITY, null);
-        if (capabilityHumanity == null || MorphExtension.INSTANCE.canUseHighMagic(player)) {
+        if (capabilityHumanity == null || IMorphExtension.canUseHighMagic(MorphExtension.INSTANCE, player)) {
             return true;
         }
         Chat.message(Chat.Type.NOTIFY, player, new TextComponentTranslation("hardcorealchemy.magic.disabled.projectekeypress"), 2, MAGIC_NOT_ALLOWED);

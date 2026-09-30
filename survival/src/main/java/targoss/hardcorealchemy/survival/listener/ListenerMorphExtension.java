@@ -62,8 +62,8 @@ public class ListenerMorphExtension extends HardcoreAlchemyListener {
         }
 
         @Override
-        public boolean canUseHighMagic(EntityPlayer player) {
-            return delegate.canUseHighMagic(player);
+        public boolean hasHighMagicBuff(EntityPlayer player) {
+            return delegate.hasHighMagicBuff(player);
         }
 
         @Override

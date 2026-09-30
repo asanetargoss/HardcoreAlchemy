@@ -52,6 +52,7 @@ import targoss.hardcorealchemy.event.EventCraftPredict;
 import targoss.hardcorealchemy.event.EventTakeStack;
 import targoss.hardcorealchemy.listener.HardcoreAlchemyListener;
 import targoss.hardcorealchemy.util.Chat;
+import targoss.hardcorealchemy.util.IMorphExtension;
 import targoss.hardcorealchemy.util.InventoryExtension;
 import targoss.hardcorealchemy.util.InventoryUtil;
 import targoss.hardcorealchemy.util.MiscVanilla;
@@ -202,7 +203,7 @@ public class ListenerPlayerMagicState extends HardcoreAlchemyListener {
             return;
         }
         
-        if (MorphExtension.INSTANCE.canUseHighMagic(player)) {
+        if (IMorphExtension.canUseHighMagic(MorphExtension.INSTANCE, player)) {
             if (ModState.isArsMagicaLoaded) {
                 activateSpellcasting(player);
             }
@@ -544,7 +545,7 @@ public class ListenerPlayerMagicState extends HardcoreAlchemyListener {
     @Optional.Method(modid=ModState.THAUMCRAFT_ID)
     @CoremodHook
     public static boolean canStartThaumcraftResearch(EntityPlayer player) {
-        return MorphExtension.INSTANCE.canUseHighMagic(player);
+        return IMorphExtension.canUseHighMagic(MorphExtension.INSTANCE, player);
     }
     
     /**

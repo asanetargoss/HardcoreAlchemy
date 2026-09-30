@@ -69,7 +69,13 @@ public interface IMorphExtension {
     }
     public boolean shouldDrawHumanityDottedIcons();
     public boolean canUseHighMagicWithoutBuff(EntityPlayer player);
-    public boolean canUseHighMagic(EntityPlayer player);
+    public boolean hasHighMagicBuff(EntityPlayer player);
+    public static boolean canUseHighMagic(IMorphExtension extension, EntityPlayer player) {
+        if (extension.hasHighMagicBuff(player)) {
+            return true;
+        }
+        return extension.canUseHighMagicWithoutBuff(player);
+    }
     public boolean isGhost(EntityLivingBase entity);
     public boolean canMorphInto(EntityLivingBase entity);
     <T extends EntityLivingBase> List<T> getEntitiesAndMorphs(World world, Class<? extends T> entityClass, AxisAlignedBB aabb);

@@ -87,6 +87,11 @@ public class ListenerMorphExtension extends HardcoreAlchemyListener {
         }
 
         @Override
+        public boolean hasHighMagicBuff(EntityPlayer player) {
+            return delegate.hasHighMagicBuff(player);
+        }
+
+        @Override
         public boolean isGhost(EntityLivingBase entity) {
             if (delegate.isGhost(entity)) {
                 return true;
@@ -157,11 +162,6 @@ public class ListenerMorphExtension extends HardcoreAlchemyListener {
         @Override
         public boolean shouldDrawHumanityDottedIcons() {
             return delegate.shouldDrawHumanityDottedIcons();
-        }
-
-        @Override
-        public boolean canUseHighMagic(EntityPlayer player) {
-            return delegate.canUseHighMagic(player);
         }
 
         @Override
